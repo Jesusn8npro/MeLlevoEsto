@@ -1,0 +1,425 @@
+/* Modal de Autenticación - ME LLEVO ESTO */
+
+.fondo-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-inicio-sesion {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  max-width: 450px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.3s ease-out;
+}
+
+.boton-cerrar-modal {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.2s ease;
+  z-index: 10;
+}
+
+.boton-cerrar-modal:hover {
+  color: #333;
+}
+
+.logo-modal {
+  text-align: center;
+  padding: 40px 40px 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.logo-contenedor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.logo-texto {
+  font-size: 28px;
+  font-weight: 800;
+  color: #ff6b35;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.logo-dominio {
+  font-size: 20px;
+  color: #666;
+  font-weight: 400;
+}
+
+.contenido-modal {
+  padding: 30px 40px 40px;
+}
+
+.titulo-modal {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 10px 0;
+  text-align: center;
+}
+
+.login-desc {
+  color: #666;
+  text-align: center;
+  margin: 0 0 30px 0;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.formulario-inicio-sesion {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.campo-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campo-formulario label {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.input-icono {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icono input {
+  width: 100%;
+  padding: 15px 45px 15px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  background: #fafafa;
+}
+
+.input-icono input:focus {
+  outline: none;
+  border-color: #ff6b35;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.icono-input {
+  position: absolute;
+  right: 15px;
+  color: #999;
+  pointer-events: none;
+}
+
+.boton-mostrar-contrasena {
+  position: absolute;
+  right: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  padding: 5px;
+  border-radius: 4px;
+  transition: color 0.2s ease;
+}
+
+.boton-mostrar-contrasena:hover {
+  color: #666;
+}
+
+.fila-nombre-apellido {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.input-whatsapp {
+  display: flex;
+  gap: 10px;
+}
+
+.selector-pais-container {
+  position: relative;
+  min-width: 120px;
+}
+
+.selector-pais {
+  width: 100%;
+  padding: 15px 35px 15px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: #fafafa;
+  font-size: 16px;
+  cursor: pointer;
+  appearance: none;
+  transition: all 0.2s ease;
+}
+
+.selector-pais:focus {
+  outline: none;
+  border-color: #ff6b35;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.flecha-selector {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  pointer-events: none;
+  font-size: 12px;
+}
+
+.input-numero {
+  flex: 1;
+  position: relative;
+}
+
+.input-numero input {
+  width: 100%;
+  padding: 15px 45px 15px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  background: #fafafa;
+}
+
+.input-numero input:focus {
+  outline: none;
+  border-color: #ff6b35;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.boton-enviar {
+  background: linear-gradient(135deg, #ff6b35, #ff8c42);
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 10px;
+}
+
+.boton-enviar:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+}
+
+.boton-enviar:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.separador-o {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 25px 0;
+}
+
+.linea {
+  flex: 1;
+  height: 1px;
+  background: #e0e0e0;
+}
+
+.texto-o {
+  color: #999;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.botones-sociales {
+  margin-bottom: 25px;
+}
+
+.boton-google {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.boton-google:hover:not(:disabled) {
+  border-color: #ff6b35;
+  background: #fff8f5;
+  transform: translateY(-1px);
+}
+
+.boton-google:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.google-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.google-texto {
+  color: #333;
+}
+
+.enlaces-extra {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  text-align: center;
+}
+
+.enlace-olvido,
+.enlace-registrarse {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.enlace-olvido:hover,
+.enlace-registrarse:hover {
+  color: #ff6b35;
+}
+
+.enlace-registrarse b {
+  color: #ff6b35;
+  font-weight: 600;
+}
+
+.mensaje-error {
+  background: #fee;
+  color: #c33;
+  padding: 12px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+  border: 1px solid #fcc;
+}
+
+.mensaje-info {
+  padding: 12px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.mensaje-info.success {
+  background: #efe;
+  color: #363;
+  border: 1px solid #cfc;
+}
+
+.mensaje-info.error {
+  background: #fee;
+  color: #c33;
+  border: 1px solid #fcc;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .fondo-modal {
+    padding: 10px;
+  }
+  
+  .modal-inicio-sesion {
+    max-width: 100%;
+  }
+  
+  .contenido-modal {
+    padding: 20px 25px 30px;
+  }
+  
+  .logo-modal {
+    padding: 30px 25px 15px;
+  }
+  
+  .logo-texto {
+    font-size: 24px;
+  }
+  
+  .titulo-modal {
+    font-size: 20px;
+  }
+  
+  .fila-nombre-apellido {
+    grid-template-columns: 1fr;
+  }
+  
+  .input-whatsapp {
+    flex-direction: column;
+  }
+  
+  .selector-pais-container {
+    min-width: auto;
+  }
+}
+
+
+
