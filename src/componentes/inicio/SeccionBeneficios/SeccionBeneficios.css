@@ -1,0 +1,189 @@
+/* ========================================
+   SECCIÓN BENEFICIOS
+   ======================================== */
+
+.seccion-beneficios {
+  width: 100%;
+  padding: 40px 0;
+  background-color: white;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.beneficios-contenedor {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 30px;
+}
+
+/* ========================================
+   TARJETAS DE BENEFICIOS
+   ======================================== */
+
+.beneficio-tarjeta {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px 15px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.beneficio-tarjeta:hover {
+  background-color: #f8f9fa;
+  transform: translateY(-2px);
+}
+
+.beneficio-icono {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.beneficio-tarjeta:hover .beneficio-icono {
+  background-color: rgba(0, 0, 0, 0.1);
+  transform: scale(1.1);
+}
+
+.beneficio-contenido {
+  flex: 1;
+  min-width: 0;
+}
+
+.beneficio-titulo {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 2px 0;
+  line-height: 1.3;
+  font-weight: 400;
+}
+
+.beneficio-subtitulo {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  line-height: 1.2;
+}
+
+.beneficio-descripcion {
+  font-size: 11px;
+  color: #999;
+  margin: 0;
+  line-height: 1.3;
+  display: none; /* Oculto por defecto, se muestra en hover */
+}
+
+.beneficio-tarjeta:hover .beneficio-descripcion {
+  display: block;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* Tablets grandes */
+@media (max-width: 1024px) {
+  .beneficios-contenedor {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+  }
+  
+  .beneficio-tarjeta {
+    flex-direction: column;
+    text-align: center;
+    padding: 25px 15px;
+  }
+  
+  .beneficio-icono {
+    margin-bottom: 10px;
+  }
+  
+  .beneficio-descripcion {
+    display: block;
+  }
+}
+
+/* Tablets medianos */
+@media (max-width: 900px) and (min-width: 769px) {
+  .beneficios-contenedor {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  
+  .beneficio-tarjeta {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px 15px;
+  }
+  
+  .beneficio-icono {
+    margin-bottom: 10px;
+    margin-right: 0;
+  }
+  
+  .beneficio-descripcion {
+    display: block;
+    font-size: 10px;
+  }
+}
+
+/* Móviles y tablets pequeños */
+@media (max-width: 768px) {
+  .seccion-beneficios {
+    padding: 20px 0;
+  }
+  
+  .beneficios-contenedor {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 0 15px;
+  }
+  
+  .beneficio-tarjeta {
+    flex-direction: row;
+    text-align: left;
+    padding: 12px 15px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    min-height: auto;
+  }
+  
+  .beneficio-icono {
+    width: 30px;
+    height: 30px;
+    margin-bottom: 0;
+    margin-right: 12px;
+  }
+  
+  .beneficio-icono svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .beneficio-titulo {
+    font-size: 11px;
+    margin-bottom: 2px;
+    line-height: 1.2;
+  }
+  
+  .beneficio-subtitulo {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 0;
+    line-height: 1.1;
+  }
+  
+  .beneficio-descripcion {
+    display: none;
+  }
+}

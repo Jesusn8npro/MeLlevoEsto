@@ -1,0 +1,395 @@
+/* ========================================
+   HERO INICIO - SECCIÓN PRINCIPAL
+   ======================================== */
+
+.hero-inicio {
+  width: 100%;
+  padding: 20px 0;
+  background-color: #f8f9fa;
+}
+
+.hero-inicio-contenedor {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  height: 400px;
+}
+
+.hero-inicio-slider {
+  height: 100%;
+}
+
+.hero-inicio-promociones {
+  height: 100%;
+}
+
+/* ========================================
+   SLIDER PRINCIPAL
+   ======================================== */
+
+.slider-principal {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.slider-contenido {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 40px;
+  transition: all 0.5s ease;
+}
+
+.slider-imagen {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.slider-imagen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.slider-imagen::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 100%);
+  z-index: 1;
+}
+
+.slider-texto {
+  position: relative;
+  z-index: 3;
+  max-width: 50%;
+}
+
+.slider-subtitulo {
+  display: inline-block;
+  background-color: #4fc3f7;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.slider-titulo {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.2;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+}
+
+.slider-descripcion {
+  font-size: 16px;
+  color: #7f8c8d;
+  margin: 0 0 15px 0;
+  font-weight: 500;
+}
+
+.slider-precio {
+  font-size: 32px;
+  font-weight: 700;
+  color: #27ae60;
+  margin: 0 0 20px 0;
+}
+
+.slider-boton {
+  background-color: #f39c12;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.slider-boton:hover {
+  background-color: #e67e22;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Controles del slider */
+.slider-flecha {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 3;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.slider-flecha:hover {
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.slider-flecha-izquierda {
+  left: 15px;
+}
+
+.slider-flecha-derecha {
+  right: 15px;
+}
+
+/* Indicadores */
+.slider-indicadores {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 3;
+}
+
+.slider-punto {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.slider-punto.activo {
+  background-color: white;
+  transform: scale(1.2);
+}
+
+/* ========================================
+   TARJETAS PROMOCIONALES
+   ======================================== */
+
+.tarjetas-promocionales {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+}
+
+.tarjeta-promocional {
+  flex: 1;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.tarjeta-promocional:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.tarjeta-contenido {
+  flex: 1;
+  padding-right: 15px;
+}
+
+.tarjeta-titulo {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.tarjeta-descripcion {
+  font-size: 12px;
+  color: #7f8c8d;
+  margin: 0 0 15px 0;
+  line-height: 1.4;
+}
+
+.tarjeta-descuento {
+  display: inline-block;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.tarjeta-imagen {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+}
+
+.tarjeta-imagen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .hero-inicio-contenedor {
+    grid-template-columns: 1fr;
+    height: auto;
+    gap: 15px;
+  }
+  
+  .hero-inicio-slider {
+    height: 300px;
+  }
+  
+  .slider-contenido {
+    padding: 30px 20px;
+  }
+  
+  .slider-titulo {
+    font-size: 24px;
+  }
+  
+  .slider-precio {
+    font-size: 28px;
+  }
+  
+  .tarjetas-promocionales {
+    flex-direction: row;
+    height: auto;
+  }
+  
+  .tarjeta-promocional {
+    flex-direction: column;
+    text-align: center;
+    padding: 15px;
+  }
+  
+  .tarjeta-contenido {
+    padding-right: 0;
+    margin-bottom: 10px;
+  }
+  
+  .tarjeta-imagen {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+/* Móviles */
+@media (max-width: 480px) {
+  .hero-inicio {
+    padding: 15px 0;
+  }
+  
+  .hero-inicio-contenedor {
+    padding: 0 15px;
+    gap: 15px;
+  }
+  
+  .hero-inicio-slider {
+    height: 250px;
+  }
+  
+  .slider-contenido {
+    padding: 20px 15px;
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .slider-imagen {
+    position: relative;
+    width: 100%;
+    height: 120px;
+    margin-bottom: 15px;
+  }
+  
+  .slider-texto {
+    max-width: 100%;
+  }
+  
+  .slider-titulo {
+    font-size: 20px;
+  }
+  
+  .slider-precio {
+    font-size: 24px;
+  }
+  
+  .tarjetas-promocionales {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .tarjeta-promocional {
+    flex-direction: row;
+    padding: 12px;
+  }
+  
+  .tarjeta-titulo {
+    font-size: 16px;
+  }
+  
+  .tarjeta-descripcion {
+    font-size: 11px;
+  }
+  
+  .tarjeta-imagen {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .slider-flecha {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .slider-flecha-izquierda {
+    left: 10px;
+  }
+  
+  .slider-flecha-derecha {
+    right: 10px;
+  }
+}

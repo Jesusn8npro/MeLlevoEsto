@@ -1,0 +1,295 @@
+/* ========================================
+   SECCIÓN CATEGORÍAS
+   ======================================== */
+
+.seccion-categorias {
+  width: 100%;
+  padding: 50px 0;
+  background-color: #f8f9fa;
+}
+
+.categorias-contenedor {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+.categorias-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.categorias-titulo {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.categorias-ver-todas {
+  color: #e74c3c;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 16px;
+  border: 2px solid #e74c3c;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.categorias-ver-todas:hover {
+  background-color: #e74c3c;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* ========================================
+   LOADING
+   ======================================== */
+
+.categorias-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #7f8c8d;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ecf0f1;
+  border-top: 4px solid #e74c3c;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ========================================
+   SLIDER
+   ======================================== */
+
+.categorias-slider-contenedor {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.categorias-slider {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 10px 0;
+  flex: 1;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.categorias-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.categorias-flecha {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.categorias-flecha:hover {
+  background-color: #e74c3c;
+  color: white;
+  border-color: #e74c3c;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.categorias-flecha-izq {
+  left: -22px;
+}
+
+.categorias-flecha-der {
+  right: -22px;
+}
+
+/* ========================================
+   TARJETAS DE CATEGORÍA
+   ======================================== */
+
+.categoria-card {
+  min-width: 200px;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+}
+
+.categoria-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  text-decoration: none;
+  color: inherit;
+}
+
+.categoria-imagen {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  overflow: hidden;
+}
+
+.categoria-imagen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.categoria-card:hover .categoria-imagen img {
+  transform: scale(1.05);
+}
+
+.categoria-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #e74c3c;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.categoria-info {
+  padding: 20px;
+  text-align: center;
+}
+
+.categoria-nombre {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.categoria-productos {
+  font-size: 13px;
+  color: #7f8c8d;
+  margin: 0;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .seccion-categorias {
+    padding: 40px 0;
+  }
+  
+  .categorias-contenedor {
+    padding: 0 15px;
+  }
+  
+  .categorias-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+  
+  .categorias-titulo {
+    font-size: 24px;
+  }
+  
+  .categorias-flecha {
+    display: none;
+  }
+  
+  .categoria-card {
+    min-width: 160px;
+  }
+  
+  .categoria-imagen {
+    height: 120px;
+  }
+  
+  .categoria-info {
+    padding: 15px;
+  }
+  
+  .categoria-nombre {
+    font-size: 14px;
+  }
+  
+  .categoria-productos {
+    font-size: 12px;
+  }
+}
+
+/* Móviles */
+@media (max-width: 480px) {
+  .seccion-categorias {
+    padding: 30px 0;
+  }
+  
+  .categorias-titulo {
+    font-size: 20px;
+  }
+  
+  .categorias-ver-todas {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+  
+  .categoria-card {
+    min-width: 140px;
+  }
+  
+  .categoria-imagen {
+    height: 100px;
+  }
+  
+  .categoria-info {
+    padding: 12px;
+  }
+  
+  .categoria-nombre {
+    font-size: 13px;
+  }
+  
+  .categoria-productos {
+    font-size: 11px;
+  }
+}

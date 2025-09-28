@@ -1,0 +1,249 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "productos",
+        "returnAll": true,
+        "options": {
+          "select": "id, nombre, slug, precio, descripcion_corta, categoria, estado, creado_el"
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        2496,
+        3088
+      ],
+      "id": "90a8b250-58bd-476b-88d0-463ea1363588",
+      "name": "consultar_productos",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase- Correo ► JOSHUA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "productos",
+        "id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('producto_id', 'ID del producto a consultar', 'string') }}",
+        "options": {
+          "select": "*"
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        2304,
+        3088
+      ],
+      "id": "consultar-producto-especifico",
+      "name": "consultar_producto_por_id",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase- Correo ► JOSHUA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "productos",
+        "id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('producto_id', 'ID del producto a actualizar', 'string') }}",
+        "updateFields": {
+          "nombre": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nombre', 'Nuevo nombre del producto', 'string') }}",
+          "precio": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('precio', 'Nuevo precio del producto', 'number') }}",
+          "descripcion_corta": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('descripcion_corta', 'Nueva descripción corta', 'string') }}",
+          "estado": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('estado', 'Nuevo estado del producto (activo/inactivo)', 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        2688,
+        3088
+      ],
+      "id": "c8707a2a-b5ce-45c9-8f52-521533584145",
+      "name": "actualizar_producto",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase- Correo ► JOSHUA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "producto_imagenes",
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "producto_id",
+              "condition": "equals",
+              "keyValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('producto_id', 'ID del producto para consultar imágenes', 'string') }}"
+            }
+          ]
+        },
+        "options": {
+          "select": "*"
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        2880,
+        3088
+      ],
+      "id": "consultar-imagenes-producto",
+      "name": "consultar_imagenes_producto",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase- Correo ► JOSHUA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "producto_imagenes",
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "producto_id",
+              "condition": "equals",
+              "keyValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('producto_id', 'ID del producto para actualizar imágenes', 'string') }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "imagen_principal",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_principal', 'URL de la imagen principal', 'string') }}"
+            },
+            {
+              "fieldId": "imagen_secundaria_1",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_secundaria_1', 'URL de la imagen secundaria 1', 'string') }}"
+            },
+            {
+              "fieldId": "imagen_secundaria_2",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_secundaria_2', 'URL de la imagen secundaria 2', 'string') }}"
+            },
+            {
+              "fieldId": "estado",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('estado_imagenes', 'Estado de las imágenes (generado/procesando)', 'string') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        3072,
+        3088
+      ],
+      "id": "actualizar-imagenes-producto",
+      "name": "actualizar_imagenes_producto",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase- Correo ► JOSHUA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "tableId": "productos",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "nombre",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nombre', 'Nombre del nuevo producto', 'string') }}"
+            },
+            {
+              "fieldId": "slug",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('slug', 'Slug del producto (URL amigable)', 'string') }}"
+            },
+            {
+              "fieldId": "precio",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('precio', 'Precio del producto', 'number') }}"
+            },
+            {
+              "fieldId": "descripcion_corta",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('descripcion_corta', 'Descripción corta del producto', 'string') }}"
+            },
+            {
+              "fieldId": "categoria",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('categoria', 'Categoría del producto', 'string') }}"
+            },
+            {
+              "fieldId": "estado",
+              "fieldValue": "activo"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        2112,
+        3088
+      ],
+      "id": "crear-producto-nuevo",
+      "name": "crear_producto",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase- Correo ► JOSHUA"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "consultar_productos": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "consultar_producto_por_id": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "actualizar_producto": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "consultar_imagenes_producto": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "actualizar_imagenes_producto": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "crear_producto": {
+      "ai_tool": [
+        []
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8000b702e0a3d9ac6d70099a2751603316de4028cd14af0949776a26efecb219"
+  }
+}

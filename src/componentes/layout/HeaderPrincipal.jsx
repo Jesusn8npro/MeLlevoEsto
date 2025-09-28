@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../contextos/ContextoAutenticacion'
 import { 
   ShoppingCart, 
   Search, 
@@ -18,14 +19,19 @@ import {
   FileText,
   Info,
   Mail,
-  Shield
+  Shield,
+  LogOut,
+  Settings,
+  Package
 } from 'lucide-react'
 import ModalAutenticacion from '../autenticacion/ModalAutenticacion'
 import ModalBusqueda from '../busqueda/ModalBusqueda'
+import MenuMovilModerno from './MenuMovilModerno'
 import './HeaderPrincipal.css'
 
 export default function HeaderPrincipal() {
   const navigate = useNavigate()
+  const { usuario, sesionIniciada, esAdmin, cerrarSesion } = useAuth()
   const [menuMovilAbierto, setMenuMovilAbierto] = useState(false)
   const [modalAutenticacionAbierto, setModalAutenticacionAbierto] = useState(false)
   const [modalBusquedaAbierto, setModalBusquedaAbierto] = useState(false)
@@ -33,16 +39,18 @@ export default function HeaderPrincipal() {
   const [sugerenciasAbiertas, setSugerenciasAbiertas] = useState(false)
   const [menuPaginasAbierto, setMenuPaginasAbierto] = useState(false)
   const [categoriasAbiertas, setCategoriasAbiertas] = useState(false)
+  const [menuUsuarioAbierto, setMenuUsuarioAbierto] = useState(false)
   const buscadorRef = useRef(null)
   const categoriasRef = useRef(null)
   const paginasRef = useRef(null)
+  const usuarioRef = useRef(null)
   const categoriasTimeoutRef = useRef(null)
   const paginasTimeoutRef = useRef(null)
+  const usuarioTimeoutRef = useRef(null)
 
   // Datos temporales (después conectaremos con Supabase)
   const cantidadCarrito = 3
   const cantidadFavoritos = 5
-  const usuarioLogueado = false
 
   const categoriasPrincipales = [
     { nombre: 'Ofertas Flash', icono: '🔥', destacado: true, ruta: '/ofertas' },
@@ -96,7 +104,6 @@ export default function HeaderPrincipal() {
   const seleccionarSugerencia = (sugerencia) => {
     setTerminoBusqueda(sugerencia)
     setSugerenciasAbiertas(false)
-    console.log('🔍 Búsqueda seleccionada:', sugerencia)
   }
 
   // Cerrar menús al hacer click fuera
@@ -112,6 +119,9 @@ export default function HeaderPrincipal() {
       if (!event.target.closest('.menu-enlace-dropdown')) {
         setMenuPaginasAbierto(false)
       }
+      if (!event.target.closest('.usuario-item')) {
+        setMenuUsuarioAbierto(false)
+      }
     }
 
     document.addEventListener('mousedown', manejarClickFuera)
@@ -123,6 +133,9 @@ export default function HeaderPrincipal() {
       }
       if (paginasTimeoutRef.current) {
         clearTimeout(paginasTimeoutRef.current)
+      }
+      if (usuarioTimeoutRef.current) {
+        clearTimeout(usuarioTimeoutRef.current)
       }
     }
   }, [])
@@ -170,19 +183,40 @@ export default function HeaderPrincipal() {
     }, 150) // 150ms de delay
   }
 
+  const abrirUsuario = () => {
+    if (usuarioTimeoutRef.current) {
+      clearTimeout(usuarioTimeoutRef.current)
+    }
+    setMenuUsuarioAbierto(true)
+  }
+
+  const cerrarUsuario = () => {
+    usuarioTimeoutRef.current = setTimeout(() => {
+      setMenuUsuarioAbierto(false)
+    }, 150) // 150ms de delay
+  }
+
   // Funciones para manejar navegación en Portals
   const manejarNavegacionCategoria = (ruta) => {
-    console.log('🚀 Navegando a categoría:', ruta)
     setCategoriasAbiertas(false)
     navigate(ruta)
-    console.log('✅ Navegación ejecutada a:', ruta)
   }
 
   const manejarNavegacionPagina = (ruta) => {
-    console.log('🚀 Navegando a página:', ruta)
     setMenuPaginasAbierto(false)
     navigate(ruta)
-    console.log('✅ Navegación ejecutada a:', ruta)
+  }
+
+  const manejarCerrarSesion = async () => {
+    try {
+      setMenuUsuarioAbierto(false)
+      const resultado = await cerrarSesion()
+      if (resultado.success) {
+        navigate('/')
+      }
+    } catch (error) {
+      // Error silencioso
+    }
   }
 
 
@@ -337,16 +371,32 @@ export default function HeaderPrincipal() {
             </div>
 
             {/* Usuario */}
-            <button 
-              onClick={() => setModalAutenticacionAbierto(true)}
-              className="accion-item usuario-item"
-            >
-              <User className="accion-icono" />
-              <div className="usuario-info">
-                <span>{usuarioLogueado ? 'Mi Cuenta' : 'Iniciar sesión/Registrar'}</span>
-                <small>Pedidos y cuenta</small>
+            {sesionIniciada ? (
+              <div 
+                ref={usuarioRef}
+                className="accion-item usuario-item usuario-logueado"
+                onMouseEnter={abrirUsuario}
+                onMouseLeave={cerrarUsuario}
+              >
+                <User className="accion-icono" />
+                <div className="usuario-info">
+                  <span>Hola, {usuario?.nombre?.split(' ')[0] || 'Usuario'}</span>
+                  <small>{esAdmin() ? 'Administrador' : 'Mi Cuenta'}</small>
+                </div>
+                <ChevronDown className={`usuario-dropdown-icono ${menuUsuarioAbierto ? 'rotado' : ''}`} />
               </div>
-            </button>
+            ) : (
+              <button 
+                onClick={() => setModalAutenticacionAbierto(true)}
+                className="accion-item usuario-item"
+              >
+                <User className="accion-icono" />
+                <div className="usuario-info">
+                  <span>Iniciar sesión/Registrar</span>
+                  <small>Pedidos y cuenta</small>
+                </div>
+              </button>
+            )}
 
             {/* Búsqueda móvil */}
             <button 
@@ -449,141 +499,17 @@ export default function HeaderPrincipal() {
         </div>
       </nav>
 
-      {/* Menú móvil desplegable */}
-      {menuMovilAbierto && (
-        <div className={`menu-movil-overlay ${menuMovilAbierto ? 'mostrar' : ''}`}>
-          <div className="menu-movil-contenido">
-            <div className="menu-movil-header">
-              <h3>Menú</h3>
-              <button 
-                onClick={() => setMenuMovilAbierto(false)}
-                className="cerrar-menu-movil"
-              >
-                <X />
-              </button>
-            </div>
-            
-            {/* Buscador móvil mejorado */}
-            <div className="menu-movil-busqueda">
-              <form onSubmit={manejarBusqueda} className="busqueda-movil-form">
-                <input
-                  type="text"
-                  value={terminoBusqueda}
-                  onChange={manejarCambioBusqueda}
-                  placeholder="Buscar productos..."
-                  className="menu-movil-input"
-                  autoComplete="off"
-                />
-                <button type="submit" className="menu-movil-buscar">
-                  <Search />
-                </button>
-              </form>
-              
-              {/* Sugerencias rápidas móvil */}
-              <div className="sugerencias-movil">
-                <span className="sugerencias-titulo">Búsquedas populares:</span>
-                <div className="sugerencias-tags-movil">
-                  {['iPhone', 'Samsung', 'Ropa', 'Zapatos'].map((tag, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        setTerminoBusqueda(tag)
-                        manejarBusqueda({ preventDefault: () => {} })
-                      }}
-                      className="sugerencia-tag-movil"
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Categorías principales móvil */}
-            <div className="menu-movil-seccion">
-              <h4 className="seccion-titulo">Categorías</h4>
-              <div className="menu-movil-categorias">
-                {categoriasPrincipales.map((categoria, index) => (
-                  <Link
-                    key={index}
-                    to={categoria.ruta}
-                    className="menu-movil-categoria"
-                    onClick={() => setMenuMovilAbierto(false)}
-                  >
-                    <span className="categoria-icono">{categoria.icono}</span>
-                    <span className="categoria-nombre">{categoria.nombre}</span>
-                    {categoria.destacado && <span className="categoria-badge">HOT</span>}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Páginas de la empresa móvil */}
-            <div className="menu-movil-seccion">
-              <h4 className="seccion-titulo">Páginas</h4>
-              <div className="menu-movil-paginas">
-                {paginasEmpresa.map((pagina, index) => (
-                  <Link
-                    key={index}
-                    to={pagina.ruta}
-                    className="menu-movil-pagina"
-                    onClick={() => setMenuMovilAbierto(false)}
-                  >
-                    {pagina.icono}
-                    <span>{pagina.nombre}</span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            <div className="menu-movil-acciones">
-              <button 
-                onClick={() => {
-                  setModalBusquedaAbierto(true)
-                  setMenuMovilAbierto(false)
-                }}
-                className="menu-movil-accion"
-              >
-                <Search />
-                <span>Buscar Productos</span>
-              </button>
-              <button 
-                onClick={() => {
-                  setModalAutenticacionAbierto(true)
-                  setMenuMovilAbierto(false)
-                }}
-                className="menu-movil-accion"
-              >
-                <User />
-                <span>Mi Cuenta</span>
-              </button>
-              <Link 
-                to="/favoritos" 
-                className="menu-movil-accion"
-                onClick={() => setMenuMovilAbierto(false)}
-              >
-                <Heart />
-                <span>Favoritos ({cantidadFavoritos})</span>
-              </Link>
-              <Link 
-                to="/carrito" 
-                className="menu-movil-accion"
-                onClick={() => setMenuMovilAbierto(false)}
-              >
-                <ShoppingCart />
-                <span>Carrito ({cantidadCarrito})</span>
-              </Link>
-            </div>
-
-            {/* Footer premium del menú móvil */}
-            <div className="menu-movil-footer">
-              <div className="menu-movil-footer-logo">🛍️</div>
-              <h4>ME LLEVO ESTO</h4>
-              <p>La tienda más vendedora del mercado.<br />¡Ofertas increíbles te esperan!</p>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Menú móvil moderno */}
+      <MenuMovilModerno 
+        abierto={menuMovilAbierto}
+        onCerrar={() => setMenuMovilAbierto(false)}
+        terminoBusqueda={terminoBusqueda}
+        onCambioBusqueda={manejarCambioBusqueda}
+        onBuscar={manejarBusqueda}
+        sesionIniciada={sesionIniciada}
+        cantidadCarrito={cantidadCarrito}
+        cantidadFavoritos={cantidadFavoritos}
+      />
 
       {/* Modal de autenticación */}
       <ModalAutenticacion 
@@ -648,6 +574,78 @@ export default function HeaderPrincipal() {
                     <span>{pagina.nombre}</span>
                   </button>
                 ))}
+              </div>,
+              document.body
+            )}
+
+            {menuUsuarioAbierto && sesionIniciada && createPortal(
+              <div 
+                className="usuario-dropdown"
+                style={{
+                  position: 'fixed',
+                  top: obtenerPosicionDropdown(usuarioRef).top,
+                  left: obtenerPosicionDropdown(usuarioRef).left,
+                  zIndex: 9999
+                }}
+                onMouseEnter={abrirUsuario}
+                onMouseLeave={cerrarUsuario}
+              >
+                <div className="usuario-dropdown-header">
+                  <div className="usuario-avatar">
+                    <User size={20} />
+                  </div>
+                  <div className="usuario-datos">
+                    <span className="usuario-nombre">{usuario?.nombre}</span>
+                    <span className="usuario-email">{usuario?.email}</span>
+                  </div>
+                </div>
+                
+                <div className="usuario-dropdown-divider"></div>
+                
+                <button
+                  className="usuario-dropdown-item"
+                  onMouseDown={() => {
+                    setMenuUsuarioAbierto(false)
+                    navigate('/perfil')
+                  }}
+                >
+                  <Settings size={16} />
+                  <span>Mi Perfil</span>
+                </button>
+                
+                <button
+                  className="usuario-dropdown-item"
+                  onMouseDown={() => {
+                    setMenuUsuarioAbierto(false)
+                    navigate('/pedidos')
+                  }}
+                >
+                  <Package size={16} />
+                  <span>Mis Pedidos</span>
+                </button>
+                
+                {esAdmin() && (
+                  <button
+                    className="usuario-dropdown-item admin-item"
+                    onMouseDown={() => {
+                      setMenuUsuarioAbierto(false)
+                      navigate('/admin')
+                    }}
+                  >
+                    <Shield size={16} />
+                    <span>Dashboard Admin</span>
+                  </button>
+                )}
+                
+                <div className="usuario-dropdown-divider"></div>
+                
+                <button
+                  className="usuario-dropdown-item logout-item"
+                  onMouseDown={manejarCerrarSesion}
+                >
+                  <LogOut size={16} />
+                  <span>Cerrar Sesión</span>
+                </button>
               </div>,
               document.body
             )}

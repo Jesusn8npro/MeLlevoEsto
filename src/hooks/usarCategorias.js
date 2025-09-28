@@ -44,3 +44,22 @@ export function usarCategorias() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
