@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { X, Eye, EyeOff, Mail, Lock, User, Phone } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contextos/ContextoAutenticacion'
+import { clienteSupabase } from '../../configuracion/supabase'
 import './ModalAutenticacion.css'
 
 export default function ModalAutenticacion({ abierto, onCerrar }) {
@@ -182,7 +183,6 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
     }
 
     try {
-      const { clienteSupabase } = await import('../../configuracion/supabase')
       const { error } = await clienteSupabase.auth.resetPasswordForEmail(emailRecuperar, {
         redirectTo: `${window.location.origin}/reset-password`
       })
@@ -202,7 +202,6 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
   const manejarGoogleLogin = async () => {
     setCargando(true)
     try {
-      const { clienteSupabase } = await import('../../configuracion/supabase')
       const { error } = await clienteSupabase.auth.signInWithOAuth({
         provider: 'google',
         options: {

@@ -11,6 +11,7 @@ import {
   AlertCircle,
   X
 } from 'lucide-react'
+import { clienteSupabase } from '../../configuracion/supabase'
 import './EstilosChatImagenesIA.css'
 
 const ChatImagenesIA = ({ 
@@ -163,7 +164,6 @@ Puedes pedirme:
 
   const subirImagenASupabase = async (archivo) => {
     try {
-      const { clienteSupabase } = await import('../../configuracion/supabase')
       const nombreArchivo = `chat-imagenes/${Date.now()}-${archivo.name}`
       
       const { data, error } = await clienteSupabase.storage

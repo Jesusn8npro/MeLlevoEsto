@@ -18,6 +18,7 @@ import {
   Video,
   Camera
 } from 'lucide-react'
+import { clienteSupabase } from '../../configuracion/supabase'
 import './EstilosCrearProductoIA.css'
 
 const CrearProductoIA = ({ 
@@ -369,9 +370,6 @@ const CrearProductoIA = ({
   // Funciones para manejar imágenes
   const subirImagen = async (archivo) => {
     try {
-      // Importar Supabase client
-      const { clienteSupabase } = await import('../../configuracion/supabase')
-      
       const nombreArchivo = `productos/${Date.now()}-${archivo.name}`
       
       const { data, error } = await clienteSupabase.storage
