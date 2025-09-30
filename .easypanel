@@ -1,0 +1,12 @@
+{
+  "build": {
+    "command": "npm run build"
+  },
+  "start": {
+    "command": "serve -s dist -l $PORT"
+  },
+  "env": {
+    "NODE_ENV": "production",
+    "PORT": "4173"
+  }
+}
