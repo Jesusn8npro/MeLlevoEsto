@@ -16,7 +16,7 @@ if (!claveAnonimaSupabase) {
 // Configuración de Supabase cargada correctamente
 
 // Crear cliente con configuración mejorada para RLS
-export const supabase = createClient(urlSupabase, claveAnonimaSupabase, {
+export const clienteSupabase = createClient(urlSupabase, claveAnonimaSupabase, {
   auth: {
     // Mantener sesión activa
     persistSession: true,
@@ -50,13 +50,10 @@ export const supabase = createClient(urlSupabase, claveAnonimaSupabase, {
   }
 })
 
-// También exportar como clienteSupabase para compatibilidad
-export const clienteSupabase = supabase
-
 // Función helper para verificar conexión
 export const verificarConexionSupabase = async () => {
   try {
-    const { data, error } = await supabase.from('usuarios').select('count').limit(1)
+    const { data, error } = await clienteSupabase.from('usuarios').select('count').limit(1)
     if (error) {
       console.error('❌ Error verificando conexión:', error)
       return false
@@ -75,7 +72,7 @@ export const debugSesionSupabase = async () => {
     console.log('🔍 === DEBUG SESIÓN SUPABASE COMPLETO ===')
     
     // 1. Verificar sesión actual
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    const { data: { session }, error: sessionError } = await clienteSupabase.auth.getSession()
     console.log('📡 Sesión actual:', {
       hasSession: !!session,
       hasUser: !!session?.user,
@@ -88,7 +85,7 @@ export const debugSesionSupabase = async () => {
     })
 
     // 2. Verificar usuario actual
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    const { data: { user }, error: userError } = await clienteSupabase.auth.getUser()
     console.log('👤 Usuario actual:', {
       hasUser: !!user,
       userId: user?.id,
@@ -102,7 +99,7 @@ export const debugSesionSupabase = async () => {
       console.log('🔐 Probando acceso RLS a tabla usuarios...')
       
       // Test 1: Lectura general (debería funcionar con usuarios_lectura_publica)
-      const { data: allUsers, error: allError } = await supabase
+      const { data: allUsers, error: allError } = await clienteSupabase
         .from('usuarios')
         .select('id, email, nombre, rol')
         .limit(3)
@@ -117,7 +114,7 @@ export const debugSesionSupabase = async () => {
       })
 
       // Test 2: Lectura específica del usuario actual
-      const { data: currentUser, error: currentError } = await supabase
+      const { data: currentUser, error: currentError } = await clienteSupabase
         .from('usuarios')
         .select('*')
         .eq('id', session.user.id)
@@ -138,7 +135,7 @@ export const debugSesionSupabase = async () => {
       })
 
       // Test 3: Probar con diferentes filtros
-      const { data: userByEmail, error: emailError } = await supabase
+      const { data: userByEmail, error: emailError } = await clienteSupabase
         .from('usuarios')
         .select('*')
         .eq('email', session.user.email)

@@ -195,8 +195,12 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
   const imagenesFinales = useMemo(() => {
     const imagenes = []
     
+    console.log('🖼️ Procesando imágenes del producto:', producto?.nombre)
+    console.log('📦 Producto completo:', producto)
+    
     // Agregar imágenes desde la tabla producto_imagenes si existen
     if (producto?.imagenes) {
+      console.log('✅ Producto tiene campo imagenes:', producto.imagenes)
       const camposImagenes = [
         'imagen_principal',
         'imagen_secundaria_1', 
@@ -208,18 +212,36 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
       camposImagenes.forEach(campo => {
         const imagen = producto.imagenes[campo]
         if (imagen && imagen.trim() !== '') {
+          console.log(`📸 Agregando imagen ${campo}:`, imagen)
           imagenes.push(imagen.trim())
         }
       })
     }
     
+    // También verificar si hay fotos_principales (nuevo formato)
+    if (producto?.fotos_principales && Array.isArray(producto.fotos_principales)) {
+      console.log('✅ Producto tiene fotos_principales:', producto.fotos_principales)
+      producto.fotos_principales.forEach(foto => {
+        if (foto && foto.trim() !== '') {
+          imagenes.push(foto.trim())
+        }
+      })
+    }
+    
+    console.log('🎯 Imágenes finales procesadas:', imagenes)
+    
     // Si no hay imágenes válidas, usar placeholders
-    return imagenes.length > 0 ? imagenes : [
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop"
-    ]
-  }, [producto?.imagenes])
+    if (imagenes.length === 0) {
+      console.log('⚠️ No se encontraron imágenes, usando placeholders')
+      return [
+        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=1200&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200&auto=format&fit=crop"
+      ]
+    }
+    
+    return imagenes
+  }, [producto?.imagenes, producto?.fotos_principales, producto?.nombre])
 
   // Calcular descuento con useMemo
   const descuento = useMemo(() => {

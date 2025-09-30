@@ -28,6 +28,8 @@ import Inventario from './paginas/admin/ecommerce/Inventario'
 import LandingProducto from './paginas/LandingProducto'
 import PlantillaTemu from './componentes/landing/plantillas/PlantillaTemu/PlantillaTemu'
 import TestImagenes from './paginas/TestImagenes'
+import ProductosDemo from './componentes/producto/ProductosDemo'
+import PaginaTienda from './paginas/ecommerce/PaginaTienda/PaginaTienda'
 // import MigrarImagenes from './paginas/MigrarImagenes' // Eliminado
 
 function App() {
@@ -99,6 +101,25 @@ function App() {
         
         {/* Test de Imágenes */}
         <Route path="/test-imagenes" element={<TestImagenes />} />
+        
+        {/* Demo de Productos Ultra Vendedores */}
+        <Route path="/productos-demo" element={<ProductosDemo />} />
+        
+        {/* Página Principal de la Tienda */}
+        <Route path="/tienda" element={
+          <>
+            <HeaderPrincipal />
+            <PaginaTienda />
+          </>
+        } />
+        
+        {/* Página de Tienda por Categoría - USA EL MISMO COMPONENTE */}
+        <Route path="/tienda/categoria/:slug" element={
+          <>
+            <HeaderPrincipal />
+            <PaginaTienda />
+          </>
+        } />
         
         {/* Migrar Imágenes - Eliminado */}
         

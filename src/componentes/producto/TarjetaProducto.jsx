@@ -1,12 +1,18 @@
-// Componente de tarjeta de producto
-export default function TarjetaProducto({ producto }) {
+import React from 'react'
+import TarjetaProductoVendedora from './TarjetaProductoVendedora'
+
+// Componente de tarjeta de producto - Wrapper que usa la versión vendedora
+export default function TarjetaProducto({ producto, ...props }) {
   return (
-    <div className="tarjeta-producto">
-      {/* Contenido de la tarjeta de producto */}
-      <h3>{producto?.nombre || 'Producto'}</h3>
-    </div>
+    <TarjetaProductoVendedora 
+      producto={producto} 
+      {...props}
+    />
   )
 }
+
+
+
 
 
 

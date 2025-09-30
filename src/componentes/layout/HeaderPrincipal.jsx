@@ -26,7 +26,6 @@ import {
 } from 'lucide-react'
 import ModalAutenticacion from '../autenticacion/ModalAutenticacion'
 import ModalBusqueda from '../busqueda/ModalBusqueda'
-import MenuMovilModerno from './MenuMovilModerno'
 import './HeaderPrincipal.css'
 
 export default function HeaderPrincipal() {
@@ -499,17 +498,141 @@ export default function HeaderPrincipal() {
         </div>
       </nav>
 
-      {/* Menú móvil moderno */}
-      <MenuMovilModerno 
-        abierto={menuMovilAbierto}
-        onCerrar={() => setMenuMovilAbierto(false)}
-        terminoBusqueda={terminoBusqueda}
-        onCambioBusqueda={manejarCambioBusqueda}
-        onBuscar={manejarBusqueda}
-        sesionIniciada={sesionIniciada}
-        cantidadCarrito={cantidadCarrito}
-        cantidadFavoritos={cantidadFavoritos}
-      />
+      {/* Menú móvil desplegable */}
+      {menuMovilAbierto && (
+        <div className={`menu-movil-overlay ${menuMovilAbierto ? 'mostrar' : ''}`}>
+          <div className="menu-movil-contenido">
+            <div className="menu-movil-header">
+              <h3>Menú</h3>
+              <button 
+                onClick={() => setMenuMovilAbierto(false)}
+                className="cerrar-menu-movil"
+              >
+                <X />
+              </button>
+            </div>
+            
+            {/* Buscador móvil mejorado */}
+            <div className="menu-movil-busqueda">
+              <form onSubmit={manejarBusqueda} className="busqueda-movil-form">
+                <input
+                  type="text"
+                  value={terminoBusqueda}
+                  onChange={manejarCambioBusqueda}
+                  placeholder="Buscar productos..."
+                  className="menu-movil-input"
+                  autoComplete="off"
+                />
+                <button type="submit" className="menu-movil-buscar">
+                  <Search />
+                </button>
+              </form>
+              
+              {/* Sugerencias rápidas móvil */}
+              <div className="sugerencias-movil">
+                <span className="sugerencias-titulo">Búsquedas populares:</span>
+                <div className="sugerencias-tags-movil">
+                  {['iPhone', 'Samsung', 'Ropa', 'Zapatos'].map((tag, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setTerminoBusqueda(tag)
+                        manejarBusqueda({ preventDefault: () => {} })
+                      }}
+                      className="sugerencia-tag-movil"
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Categorías principales móvil */}
+            <div className="menu-movil-seccion">
+              <h4 className="seccion-titulo">Categorías</h4>
+              <div className="menu-movil-categorias">
+                {categoriasPrincipales.map((categoria, index) => (
+                  <Link
+                    key={index}
+                    to={categoria.ruta}
+                    className="menu-movil-categoria"
+                    onClick={() => setMenuMovilAbierto(false)}
+                  >
+                    <span className="categoria-icono">{categoria.icono}</span>
+                    <span className="categoria-nombre">{categoria.nombre}</span>
+                    {categoria.destacado && <span className="categoria-badge">HOT</span>}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Páginas de la empresa móvil */}
+            <div className="menu-movil-seccion">
+              <h4 className="seccion-titulo">Páginas</h4>
+              <div className="menu-movil-paginas">
+                {paginasEmpresa.map((pagina, index) => (
+                  <Link
+                    key={index}
+                    to={pagina.ruta}
+                    className="menu-movil-pagina"
+                    onClick={() => setMenuMovilAbierto(false)}
+                  >
+                    {pagina.icono}
+                    <span>{pagina.nombre}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div className="menu-movil-acciones">
+              <button 
+                onClick={() => {
+                  setModalBusquedaAbierto(true)
+                  setMenuMovilAbierto(false)
+                }}
+                className="menu-movil-accion"
+              >
+                <Search />
+                <span>Buscar Productos</span>
+              </button>
+              <button 
+                onClick={() => {
+                  setModalAutenticacionAbierto(true)
+                  setMenuMovilAbierto(false)
+                }}
+                className="menu-movil-accion"
+              >
+                <User />
+                <span>Mi Cuenta</span>
+              </button>
+              <Link 
+                to="/favoritos" 
+                className="menu-movil-accion"
+                onClick={() => setMenuMovilAbierto(false)}
+              >
+                <Heart />
+                <span>Favoritos ({cantidadFavoritos})</span>
+              </Link>
+              <Link 
+                to="/carrito" 
+                className="menu-movil-accion"
+                onClick={() => setMenuMovilAbierto(false)}
+              >
+                <ShoppingCart />
+                <span>Carrito ({cantidadCarrito})</span>
+              </Link>
+            </div>
+
+            {/* Footer premium del menú móvil */}
+            <div className="menu-movil-footer">
+              <div className="menu-movil-footer-logo">🛍️</div>
+              <h4>ME LLEVO ESTO</h4>
+              <p>La tienda más vendedora del mercado.<br />¡Ofertas increíbles te esperan!</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de autenticación */}
       <ModalAutenticacion 

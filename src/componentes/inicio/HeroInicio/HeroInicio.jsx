@@ -31,3 +31,4 @@ const HeroInicio = () => {
 }
 
 export default HeroInicio
+

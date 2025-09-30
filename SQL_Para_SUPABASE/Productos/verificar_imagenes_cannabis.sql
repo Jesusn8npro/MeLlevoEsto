@@ -25,3 +25,4 @@ SELECT
 FROM productos p
 LEFT JOIN producto_imagenes pi ON p.id = pi.producto_id
 WHERE p.slug = 'playstation-5-edicion-lujo-vr-elite';
+

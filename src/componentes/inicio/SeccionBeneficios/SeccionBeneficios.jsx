@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import { Package, RotateCcw, Shield, Headphones, CreditCard } from 'lucide-react'
+import { Truck, Clock, RotateCcw, Headphones, Heart, ChevronLeft, ChevronRight } from 'lucide-react'
 import './SeccionBeneficios.css'
 
 /**
- * SeccionBeneficios - Sección de beneficios estilo XStore
+ * SeccionBeneficios - Sección de beneficios estilo WoodMart
  * 
- * Replica exactamente las 5 tarjetas de beneficios:
- * - Log in get up to 50% discounts
- * - Open new stores in your city
- * - Free fast express delivery with tracking
- * - Equipment loose and damage insurance
- * - Installment without overpayments
+ * Barra horizontal oscura con 5 beneficios:
+ * - Envío gratis rápido
+ * - Entrega al día siguiente  
+ * - Devoluciones gratuitas
+ * - Servicio al cliente experto
+ * - Marcas exclusivas
  */
 
 const SeccionBeneficios = () => {
   const [esMobile, setEsMobile] = useState(false)
+  const [indiceActual, setIndiceActual] = useState(0)
 
   // Detectar si es móvil
   useEffect(() => {
@@ -28,86 +29,145 @@ const SeccionBeneficios = () => {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  // Datos de los beneficios
+  // Auto-slider para móvil
+  useEffect(() => {
+    if (!esMobile) return
+
+    const interval = setInterval(() => {
+      setIndiceActual((prev) => (prev + 1) % 5) // Cicla entre los 5 beneficios
+    }, 3000) // Cambia cada 3 segundos
+
+    return () => clearInterval(interval)
+  }, [esMobile])
+
+  // Funciones de navegación manual
+  const siguienteBeneficio = () => {
+    setIndiceActual((prev) => (prev + 1) % 5)
+  }
+
+  const anteriorBeneficio = () => {
+    setIndiceActual((prev) => (prev - 1 + 5) % 5)
+  }
+
+  // Datos de los beneficios estilo WoodMart
   const beneficios = [
     {
       id: 1,
-      icono: <CreditCard size={24} />,
-      titulo: "Inicia sesión y obtén hasta",
-      subtitulo: "50% de descuentos",
-      descripcion: "Descuentos exclusivos para miembros registrados",
-      color: "#2196F3"
+      icono: <Truck size={24} />,
+      titulo: "Envío Gratis Rápido",
+      subtitulo: "En pedidos superiores a $50",
+      color: "#3498db"
     },
     {
       id: 2,
-      icono: <Package size={24} />,
-      titulo: "Abrimos nuevas tiendas",
-      subtitulo: "en tu ciudad",
-      descripcion: "Encuentra nuestras tiendas más cerca de ti",
-      color: "#4CAF50"
+      icono: <Clock size={24} />,
+      titulo: "Entrega al Día Siguiente",
+      subtitulo: "Gratis - gasta más de $99",
+      color: "#3498db"
     },
     {
       id: 3,
-      icono: <Package size={24} />,
-      titulo: "Envío rápido y gratuito",
-      subtitulo: "con seguimiento",
-      descripcion: "Entrega express con tracking en tiempo real",
-      color: "#FF9800"
+      icono: <RotateCcw size={24} />,
+      titulo: "Devoluciones Gratuitas",
+      subtitulo: "Todos los métodos de envío",
+      color: "#3498db"
     },
     {
       id: 4,
-      icono: <Shield size={24} />,
-      titulo: "Seguro contra daños",
-      subtitulo: "y pérdida de equipos",
-      descripcion: "Protección total para tus compras",
-      color: "#9C27B0"
+      icono: <Headphones size={24} />,
+      titulo: "Servicio al Cliente Experto",
+      subtitulo: "Elige chat o llámanos",
+      color: "#3498db"
     },
     {
       id: 5,
-      icono: <CreditCard size={24} />,
-      titulo: "Cuotas sin",
-      subtitulo: "sobrepagos",
-      descripcion: "Financia tus compras sin intereses adicionales",
-      color: "#F44336"
+      icono: <Heart size={24} />,
+      titulo: "Marcas Exclusivas",
+      subtitulo: "Más productos exclusivos",
+      color: "#3498db"
     }
   ]
 
-  // Filtrar beneficios según el dispositivo
-  const beneficiosMostrar = esMobile ? beneficios.slice(0, 3) : beneficios
-
   return (
     <section className="seccion-beneficios">
-      <div className="beneficios-contenedor">
-        {beneficiosMostrar.map((beneficio) => (
-          <div 
-            key={beneficio.id}
-            className="beneficio-tarjeta"
-          >
-            {/* Icono */}
-            <div 
-              className="beneficio-icono"
-              style={{ color: beneficio.color }}
+      <div className={`beneficios-contenedor ${esMobile ? 'beneficios-mobile' : ''}`}>
+        {esMobile ? (
+          // Versión móvil - Un beneficio a la vez con flechas
+          <div className="beneficio-slider-mobile">
+            {/* Flecha izquierda */}
+            <button 
+              className="beneficio-flecha beneficio-flecha-izq"
+              onClick={anteriorBeneficio}
+              aria-label="Beneficio anterior"
             >
-              {beneficio.icono}
+              <ChevronLeft size={20} />
+            </button>
+
+            {/* Contenido del beneficio */}
+            <div 
+              className="beneficio-tarjeta beneficio-mobile-activo"
+              key={beneficios[indiceActual].id}
+            >
+              {/* Icono a la izquierda */}
+              <div className="beneficio-icono">
+                {beneficios[indiceActual].icono}
+              </div>
+
+              {/* Contenido a la derecha */}
+              <div className="beneficio-contenido">
+                <div className="beneficio-titulo">
+                  {beneficios[indiceActual].titulo}
+                </div>
+                <div className="beneficio-subtitulo">
+                  {beneficios[indiceActual].subtitulo}
+                </div>
+              </div>
             </div>
 
-            {/* Contenido */}
-            <div className="beneficio-contenido">
-              <div className="beneficio-titulo">
-                {beneficio.titulo}
-              </div>
-              <div 
-                className="beneficio-subtitulo"
-                style={{ color: beneficio.color }}
-              >
-                {beneficio.subtitulo}
-              </div>
-              <div className="beneficio-descripcion">
-                {beneficio.descripcion}
-              </div>
+            {/* Flecha derecha */}
+            <button 
+              className="beneficio-flecha beneficio-flecha-der"
+              onClick={siguienteBeneficio}
+              aria-label="Siguiente beneficio"
+            >
+              <ChevronRight size={20} />
+            </button>
+            
+            {/* Indicadores de puntos */}
+            <div className="beneficios-indicadores">
+              {beneficios.map((_, index) => (
+                <div 
+                  key={index}
+                  className={`indicador ${index === indiceActual ? 'activo' : ''}`}
+                  onClick={() => setIndiceActual(index)}
+                />
+              ))}
             </div>
           </div>
-        ))}
+        ) : (
+          // Versión desktop - Todos los beneficios
+          beneficios.map((beneficio) => (
+            <div 
+              key={beneficio.id}
+              className="beneficio-tarjeta"
+            >
+              {/* Icono */}
+              <div className="beneficio-icono">
+                {beneficio.icono}
+              </div>
+
+              {/* Contenido */}
+              <div className="beneficio-contenido">
+                <div className="beneficio-titulo">
+                  {beneficio.titulo}
+                </div>
+                <div className="beneficio-subtitulo">
+                  {beneficio.subtitulo}
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </section>
   )

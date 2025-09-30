@@ -37,3 +37,4 @@ FROM productos p
 LEFT JOIN producto_imagenes pi ON p.id = pi.producto_id
 WHERE pi.imagen_principal IS NOT NULL
 LIMIT 10;
+

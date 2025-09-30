@@ -134,3 +134,4 @@ const SliderPrincipal = () => {
 }
 
 export default SliderPrincipal
+

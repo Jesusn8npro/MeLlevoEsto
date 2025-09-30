@@ -1,153 +1,200 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { supabase } from '../../../configuracion/supabase'
 import './SeccionCategorias.css'
 
 /**
- * SeccionCategorias - Sección de categorías populares
+ * SeccionCategorias - Sección de Categorías Populares
  * 
- * Características:
- * - Datos reales desde Supabase
- * - Slider horizontal con controles
+ * Replica exactamente el diseño de WoodMart:
+ * - Desktop: Grid de 7 categorías horizontales
+ * - Móvil: Slider con 2 categorías visibles + navegación
+ * - Imágenes de Unsplash para cada categoría
  * - Contador de productos por categoría
- * - Enlaces funcionales a páginas de categoría
- * - Diseño marketplace responsivo
  */
 
 const SeccionCategorias = () => {
-  const [categorias, setCategorias] = useState([])
-  const [cargando, setCargando] = useState(true)
-  const [scrollPosition, setScrollPosition] = useState(0)
+  const [esMobile, setEsMobile] = useState(false)
+  const [indiceActual, setIndiceActual] = useState(0)
+  
+  // Constantes para el slider
+  const CATEGORIAS_POR_VISTA = 2
+  const TOTAL_CATEGORIAS = 7
 
-  // Cargar categorías desde Supabase
+  // Detectar si es móvil
   useEffect(() => {
-    cargarCategorias()
+    const checkMobile = () => {
+      setEsMobile(window.innerWidth <= 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    
+    return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  const cargarCategorias = async () => {
-    try {
-      setCargando(true)
-      
-      // Obtener categorías con conteo de productos
-      const { data: categoriasData, error } = await supabase
-        .from('categorias')
-        .select(`
-          *,
-          productos!inner(id)
-        `)
-        .eq('activo', true)
-        .order('orden', { ascending: true })
+  // Datos de las categorías con imágenes de Unsplash
+  const categorias = [
+    {
+      id: 1,
+      nombre: "Apple iPhone",
+      productos: 8,
+      imagen: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=300&h=300&fit=crop&crop=center",
+      slug: "apple-iphone"
+    },
+    {
+      id: 2,
+      nombre: "Apple MacBook",
+      productos: 7,
+      imagen: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&h=300&fit=crop&crop=center",
+      slug: "apple-macbook"
+    },
+    {
+      id: 3,
+      nombre: "Motherboards",
+      productos: 8,
+      imagen: "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=300&h=300&fit=crop&crop=center",
+      slug: "motherboards"
+    },
+    {
+      id: 4,
+      nombre: "Mirrorless",
+      productos: 8,
+      imagen: "https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?w=300&h=300&fit=crop&crop=center",
+      slug: "mirrorless"
+    },
+    {
+      id: 5,
+      nombre: "Headsets",
+      productos: 8,
+      imagen: "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=300&h=300&fit=crop&crop=center",
+      slug: "headsets"
+    },
+    {
+      id: 6,
+      nombre: "Drones",
+      productos: 8,
+      imagen: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=300&h=300&fit=crop&crop=center",
+      slug: "drones"
+    },
+    {
+      id: 7,
+      nombre: "Apple iPad",
+      productos: 8,
+      imagen: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=300&h=300&fit=crop&crop=center",
+      slug: "apple-ipad"
+    }
+  ]
 
-      if (error) {
-        console.error('Error cargando categorías:', error)
-        return
+  // Navegación del slider móvil (de 2 en 2)
+  const siguienteSlide = () => {
+    setIndiceActual((prev) => {
+      const siguiente = prev + CATEGORIAS_POR_VISTA
+      // Si llegamos al final o nos pasamos, volvemos al inicio
+      if (siguiente >= TOTAL_CATEGORIAS) {
+        return 0
       }
-
-      // Procesar datos para incluir conteo
-      const categoriasConConteo = categoriasData?.map(categoria => ({
-        ...categoria,
-        totalProductos: categoria.productos?.length || 0
-      })) || []
-
-      setCategorias(categoriasConConteo)
-    } catch (error) {
-      console.error('Error:', error)
-    } finally {
-      setCargando(false)
-    }
+      return siguiente
+    })
   }
 
-  // Funciones de navegación del slider
-  const scrollLeft = () => {
-    const container = document.querySelector('.categorias-slider')
-    if (container) {
-      container.scrollBy({ left: -300, behavior: 'smooth' })
-    }
+  const anteriorSlide = () => {
+    setIndiceActual((prev) => {
+      const anterior = prev - CATEGORIAS_POR_VISTA
+      // Si estamos al inicio o nos pasamos, vamos al último grupo válido
+      if (anterior < 0) {
+        // Calcular el último índice válido (múltiplo de 2)
+        const ultimoIndice = Math.floor((TOTAL_CATEGORIAS - CATEGORIAS_POR_VISTA) / CATEGORIAS_POR_VISTA) * CATEGORIAS_POR_VISTA
+        return ultimoIndice
+      }
+      return anterior
+    })
   }
 
-  const scrollRight = () => {
-    const container = document.querySelector('.categorias-slider')
-    if (container) {
-      container.scrollBy({ left: 300, behavior: 'smooth' })
-    }
-  }
-
-  if (cargando) {
-    return (
-      <section className="seccion-categorias">
-        <div className="categorias-contenedor">
-          <div className="categorias-header">
-            <h2 className="categorias-titulo">Categorías Populares</h2>
-          </div>
-          <div className="categorias-loading">
-            <div className="loading-spinner"></div>
-            <p>Cargando categorías...</p>
-          </div>
-        </div>
-      </section>
-    )
+  // Manejar clic en categoría
+  const manejarClickCategoria = (categoria) => {
+    console.log('Navegando a categoría:', categoria.slug)
+    // Aquí iría la navegación a la página de categoría
   }
 
   return (
     <section className="seccion-categorias">
       <div className="categorias-contenedor">
-        {/* Header */}
-        <div className="categorias-header">
-          <h2 className="categorias-titulo">Categorías Populares</h2>
-          <Link to="/categorias" className="categorias-ver-todas">
-            Ver todas las categorías
-          </Link>
-        </div>
-
-        {/* Slider de categorías */}
-        <div className="categorias-slider-contenedor">
-          <button 
-            className="categorias-flecha categorias-flecha-izq"
-            onClick={scrollLeft}
-            aria-label="Categorías anteriores"
-          >
-            <ChevronLeft size={20} />
-          </button>
-
-          <div className="categorias-slider">
-            {categorias.map((categoria) => (
-              <Link
-                key={categoria.id}
-                to={`/categoria/${categoria.slug}`}
-                className="categoria-card"
+        <h2 className="categorias-titulo">Categorías Populares</h2>
+        
+        {esMobile ? (
+          // Versión móvil - Slider
+          <div className="categorias-slider-movil">
+            <button 
+              className="slider-btn slider-btn-izq"
+              onClick={anteriorSlide}
+              aria-label="Categoría anterior"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            
+            <div className="categorias-slider-contenedor">
+              <div 
+                className="categorias-slider-track"
+                style={{
+                  transform: `translateX(-${(indiceActual / TOTAL_CATEGORIAS) * 100}%)`
+                }}
               >
-                {/* Imagen de la categoría */}
-                <div className="categoria-imagen">
+                {categorias.map((categoria) => (
+                  <div 
+                    key={categoria.id}
+                    className="categoria-tarjeta-movil"
+                    onClick={() => manejarClickCategoria(categoria)}
+                  >
+                    <div className="categoria-imagen-contenedor">
+                      <img 
+                        src={categoria.imagen}
+                        alt={categoria.nombre}
+                        className="categoria-imagen"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="categoria-info">
+                      <h3 className="categoria-nombre">{categoria.nombre}</h3>
+                      <p className="categoria-productos">{categoria.productos} productos</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <button 
+              className="slider-btn slider-btn-der"
+              onClick={siguienteSlide}
+              aria-label="Siguiente categoría"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
+        ) : (
+          // Versión desktop - Grid
+          <div className="categorias-grid-desktop">
+            {categorias.map((categoria) => (
+              <div 
+                key={categoria.id}
+                className="categoria-tarjeta-desktop"
+                onClick={() => manejarClickCategoria(categoria)}
+              >
+                <div className="categoria-imagen-contenedor">
                   <img 
-                    src={categoria.imagen_url || '/images/categoria-default.jpg'} 
+                    src={categoria.imagen}
                     alt={categoria.nombre}
+                    className="categoria-imagen"
                     loading="lazy"
                   />
-                  {categoria.destacado && (
-                    <span className="categoria-badge">Popular</span>
-                  )}
                 </div>
-
-                {/* Información */}
                 <div className="categoria-info">
                   <h3 className="categoria-nombre">{categoria.nombre}</h3>
-                  <p className="categoria-productos">
-                    {categoria.totalProductos} producto{categoria.totalProductos !== 1 ? 's' : ''}
-                  </p>
+                  <p className="categoria-productos">{categoria.productos} productos</p>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
-
-          <button 
-            className="categorias-flecha categorias-flecha-der"
-            onClick={scrollRight}
-            aria-label="Categorías siguientes"
-          >
-            <ChevronRight size={20} />
-          </button>
-        </div>
+        )}
       </div>
     </section>
   )
