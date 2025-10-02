@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Estructura Favoritos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .success {
+            background: #28a745;
+        }
+        .danger {
+            background: #dc3545;
+        }
+        .info {
+            background: #17a2b8;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+        .estructura {
+            background: #e9ecef;
+            border: 2px solid #6c757d;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Estructura de Favoritos</h1>
+        <p>Este script analiza la estructura de datos de favoritos en localStorage.</p>
+        
+        <div>
+            <button onclick="verificarEstructura()">🔍 Verificar Estructura Actual</button>
+            <button onclick="crearFavoritosCorrectos()" class="success">✅ Crear Favoritos con Estructura Correcta</button>
+            <button onclick="limpiarFavoritos()" class="danger">🗑️ Limpiar Favoritos</button>
+            <button onclick="irAFavoritos()" class="info">👀 Ver Página de Favoritos</button>
+        </div>
+        
+        <div id="estructura" class="estructura"></div>
+        <div id="log" class="log"></div>
+    </div>
+
+    <script>
+        function log(mensaje) {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.textContent += `[${timestamp}] ${mensaje}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function mostrarEstructura(datos) {
+            const estructuraElement = document.getElementById('estructura');
+            estructuraElement.textContent = JSON.stringify(datos, null, 2);
+        }
+
+        function verificarEstructura() {
+            try {
+                const favoritos = localStorage.getItem('favoritos');
+                log('🔍 Verificando estructura de favoritos...');
+                
+                if (favoritos) {
+                    const favoritosArray = JSON.parse(favoritos);
+                    log(`📊 Cantidad de favoritos: ${favoritosArray.length}`);
+                    
+                    if (favoritosArray.length > 0) {
+                        log('📋 Estructura del primer favorito:');
+                        const primerFavorito = favoritosArray[0];
+                        
+                        // Mostrar todas las propiedades
+                        Object.keys(primerFavorito).forEach(key => {
+                            log(`  - ${key}: ${typeof primerFavorito[key]} = ${primerFavorito[key]}`);
+                        });
+                        
+                        // Verificar propiedades críticas
+                        if (primerFavorito.producto_id) {
+                            log(`✅ Tiene producto_id: ${primerFavorito.producto_id}`);
+                        } else {
+                            log(`❌ NO tiene producto_id`);
+                        }
+                        
+                        if (primerFavorito.id) {
+                            log(`✅ Tiene id: ${primerFavorito.id}`);
+                        } else {
+                            log(`❌ NO tiene id`);
+                        }
+                        
+                        mostrarEstructura(favoritosArray);
+                    } else {
+                        log('⚠️ Array de favoritos está vacío');
+                        mostrarEstructura([]);
+                    }
+                } else {
+                    log('⚠️ No hay favoritos en localStorage');
+                    mostrarEstructura(null);
+                }
+            } catch (error) {
+                log(`❌ Error al verificar estructura: ${error.message}`);
+            }
+        }
+
+        function crearFavoritosCorrectos() {
+            try {
+                const favoritosCorrectos = [
+                    {
+                        id: "fav_1",
+                        producto_id: 1,
+                        usuario_id: "temp-user",
+                        fecha_agregado: new Date().toISOString(),
+                        nombre: "Smartphone Samsung Galaxy S23",
+                        precio: 899.99,
+                        precio_oferta: null,
+                        imagen: "https://via.placeholder.com/300x300/007bff/ffffff?text=Samsung+S23",
+                        disponible: true,
+                        categoria: "Electrónicos",
+                        marca: "Samsung",
+                        descripcion: "Smartphone de última generación con cámara de 50MP"
+                    },
+                    {
+                        id: "fav_2",
+                        producto_id: 2,
+                        usuario_id: "temp-user",
+                        fecha_agregado: new Date().toISOString(),
+                        nombre: "Laptop Dell XPS 13",
+                        precio: 1299.99,
+                        precio_oferta: 1199.99,
+                        imagen: "https://via.placeholder.com/300x300/28a745/ffffff?text=Dell+XPS+13",
+                        disponible: true,
+                        categoria: "Computadoras",
+                        marca: "Dell",
+                        descripcion: "Laptop ultrabook con procesador Intel i7"
+                    },
+                    {
+                        id: "fav_3",
+                        producto_id: 3,
+                        usuario_id: "temp-user",
+                        fecha_agregado: new Date().toISOString(),
+                        nombre: "Auriculares Sony WH-1000XM4",
+                        precio: 349.99,
+                        precio_oferta: null,
+                        imagen: "https://via.placeholder.com/300x300/dc3545/ffffff?text=Sony+WH1000XM4",
+                        disponible: true,
+                        categoria: "Audio",
+                        marca: "Sony",
+                        descripcion: "Auriculares inalámbricos con cancelación de ruido"
+                    }
+                ];
+
+                localStorage.setItem('favoritos', JSON.stringify(favoritosCorrectos));
+                log(`✅ Se crearon ${favoritosCorrectos.length} favoritos con estructura correcta`);
+                
+                // Verificar inmediatamente
+                verificarEstructura();
+                
+            } catch (error) {
+                log(`❌ Error al crear favoritos: ${error.message}`);
+            }
+        }
+
+        function limpiarFavoritos() {
+            try {
+                localStorage.removeItem('favoritos');
+                log(`🗑️ Favoritos eliminados del localStorage`);
+                mostrarEstructura(null);
+            } catch (error) {
+                log(`❌ Error al limpiar favoritos: ${error.message}`);
+            }
+        }
+
+        function irAFavoritos() {
+            window.open('http://localhost:3001/favoritos', '_blank');
+            log(`🔗 Abriendo página de favoritos en nueva pestaña`);
+        }
+
+        // Verificar estado inicial
+        window.onload = function() {
+            log(`🚀 Script cargado - Verificando estructura inicial`);
+            verificarEstructura();
+        };
+    </script>
+</body>
+</html>

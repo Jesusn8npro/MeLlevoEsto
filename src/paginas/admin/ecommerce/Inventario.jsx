@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { clienteSupabase } from '../../../configuracion/supabase'
+import ImagenInteligente from '../../../componentes/ui/ImagenInteligente'
 import { 
   Search, 
   Filter, 
@@ -437,7 +438,7 @@ const Inventario = () => {
                       <div className="producto-info">
                         <div className="producto-imagen">
                           {item.productos?.imagenes?.[0] ? (
-                            <img 
+                            <ImagenInteligente 
                               src={item.productos.imagenes[0]} 
                               alt={item.productos.nombre}
                               className="imagen-miniatura"
@@ -532,7 +533,7 @@ const Inventario = () => {
               <div className="producto-seleccionado">
                 <div className="producto-imagen">
                   {productoSeleccionado.productos?.imagenes?.[0] ? (
-                    <img 
+                    <ImagenInteligente 
                       src={productoSeleccionado.productos.imagenes[0]} 
                       alt={productoSeleccionado.productos.nombre}
                     />

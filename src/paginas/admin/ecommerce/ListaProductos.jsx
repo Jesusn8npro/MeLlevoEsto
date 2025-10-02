@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { clienteSupabase } from '../../../configuracion/supabase'
 import { useAuth } from '../../../contextos/ContextoAutenticacion'
+import ImagenInteligente from '../../../componentes/ui/ImagenInteligente'
 import './EstilosCategoriasElegantes.css'
 import { 
   Search, 
@@ -457,7 +458,7 @@ const ListaProductos = () => {
                         <div className="producto-info">
                           <div className="producto-imagen">
                             {producto.fotos_principales?.[0] ? (
-                              <img 
+                              <ImagenInteligente 
                                 src={producto.fotos_principales[0]} 
                                 alt={producto.nombre}
                                 className="imagen-miniatura"

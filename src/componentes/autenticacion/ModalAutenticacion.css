@@ -1,4 +1,4 @@
-/* Modal de Autenticación - ME LLEVO ESTO */
+/* Modal de Autenticación - Diseño Moderno */
 
 .fondo-modal {
   position: fixed;
@@ -6,107 +6,186 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(5px);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(30, 30, 30, 0.9) 100%);
+  backdrop-filter: blur(12px);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(12px);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .modal-inicio-sesion {
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-  max-width: 450px;
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 24px;
+  box-shadow: 
+    0 32px 64px rgba(0, 0, 0, 0.3),
+    0 16px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  max-width: 480px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
-  animation: slideUp 0.3s ease-out;
+  animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .boton-cerrar-modal {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  background: none;
-  border: none;
+  top: 24px;
+  right: 24px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   cursor: pointer;
   color: #666;
-  transition: color 0.2s ease;
+  transition: all 0.3s ease;
   z-index: 10;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .boton-cerrar-modal:hover {
-  color: #333;
+  background: linear-gradient(135deg, #e53e3e 0%, #ff6b35 100%);
+  color: white;
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 8px 20px rgba(229, 62, 62, 0.3);
 }
 
 .logo-modal {
   text-align: center;
-  padding: 40px 40px 20px;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 50px 40px 30px;
+  border-bottom: 2px solid rgba(229, 62, 62, 0.1);
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(229, 62, 62, 0.05) 100%);
+}
+
+.logo-modal::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, #ff6b35 0%, #e53e3e 100%);
+  border-radius: 1px;
 }
 
 .logo-contenedor {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 12px;
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 .logo-texto {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 800;
-  color: #ff6b35;
+  background: linear-gradient(135deg, #ff6b35 0%, #e53e3e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin: 0;
   font-family: 'Inter', sans-serif;
+  letter-spacing: -1px;
 }
 
 .logo-dominio {
-  font-size: 20px;
+  font-size: 22px;
   color: #666;
-  font-weight: 400;
+  font-weight: 500;
+  opacity: 0.8;
 }
 
 .contenido-modal {
-  padding: 30px 40px 40px;
+  padding: 40px 45px 50px;
+  position: relative;
 }
 
 .titulo-modal {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-  color: #333;
-  margin: 0 0 10px 0;
+  background: linear-gradient(135deg, #333 0%, #555 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 15px 0;
   text-align: center;
+  letter-spacing: -0.5px;
 }
 
 .login-desc {
   color: #666;
   text-align: center;
-  margin: 0 0 30px 0;
-  line-height: 1.5;
-  font-size: 14px;
+  margin: 0 0 35px 0;
+  line-height: 1.6;
+  font-size: 15px;
+  opacity: 0.9;
 }
 
 .formulario-inicio-sesion {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 25px;
 }
 
 .campo-formulario {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  position: relative;
 }
 
 .campo-formulario label {
   font-weight: 600;
   color: #333;
-  font-size: 14px;
+  font-size: 15px;
+  margin-left: 4px;
+  transition: color 0.3s ease;
+}
+
+.campo-formulario:focus-within label {
+  color: #e53e3e;
 }
 
 .input-icono {
@@ -115,21 +194,54 @@
   align-items: center;
 }
 
+.input-icono::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(229, 62, 62, 0.1) 0%, rgba(255, 107, 53, 0.1) 100%);
+  border-radius: 16px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.input-icono:focus-within::before {
+  opacity: 1;
+}
+
 .input-icono input {
   width: 100%;
-  padding: 15px 45px 15px 15px;
+  padding: 18px 50px 18px 20px;
   border: 2px solid #e0e0e0;
-  border-radius: 12px;
+  border-radius: 16px;
   font-size: 16px;
-  transition: all 0.2s ease;
-  background: #fafafa;
+  transition: all 0.3s ease;
+  background: rgba(250, 250, 250, 0.8);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .input-icono input:focus {
   outline: none;
-  border-color: #ff6b35;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+  border-color: #e53e3e;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 
+    0 0 0 4px rgba(229, 62, 62, 0.15),
+    0 8px 30px rgba(229, 62, 62, 0.2);
+  transform: translateY(-2px);
+}
+
+.input-icono input::placeholder {
+  color: #adb5bd;
+  transition: color 0.3s ease;
+}
+
+.input-icono input:focus::placeholder {
+  color: #dee2e6;
 }
 
 .icono-input {
@@ -420,6 +532,8 @@
     min-width: auto;
   }
 }
+
+
 
 
 

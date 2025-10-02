@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { clienteSupabase } from '../../configuracion/supabase'
 import TarjetaProductoVendedora from './TarjetaProductoVendedora'
+import { convertirUrlGoogleDrive } from '../../utilidades/googleDrive'
 import { Loader, AlertCircle } from 'lucide-react'
 import './ProductosDemo.css'
 
@@ -59,25 +60,6 @@ const ProductosDemo = () => {
         // Si tiene producto_imagenes, procesarlas
         if (producto.producto_imagenes && producto.producto_imagenes.length > 0) {
           const imagenes = producto.producto_imagenes[0]
-          
-          // Función para convertir URLs de Google Drive
-          const convertirUrlGoogleDrive = (url) => {
-            if (!url) return null
-            
-            let fileId = null
-            if (url.includes('drive.google.com/file/d/')) {
-              const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)
-              fileId = match?.[1]
-            } else if (url.includes('drive.google.com/thumbnail?id=')) {
-              const match = url.match(/id=([a-zA-Z0-9_-]+)/)
-              fileId = match?.[1]
-            }
-            
-            if (fileId) {
-              return `https://lh3.googleusercontent.com/d/${fileId}=w1000?authuser=0`
-            }
-            return url
-          }
           
           // Agregar imágenes en orden de prioridad
           if (imagenes.imagen_principal) imagenesReales.push(convertirUrlGoogleDrive(imagenes.imagen_principal))

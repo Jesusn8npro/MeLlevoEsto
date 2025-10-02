@@ -1,10 +1,13 @@
 import { Routes, Route } from 'react-router-dom'
 import HeaderPrincipal from './componentes/layout/HeaderPrincipal'
+import FavoritosProvider from './contextos/FavoritosContext'
+import { CarritoProvider } from './contextos/CarritoContext'
 // import ProteccionAvanzada from './componentes/ProteccionAvanzada' // Comentado temporalmente
 import PaginaInicio from './paginas/ecommerce/PaginaInicio/PaginaInicio'
 import PaginaProducto from './paginas/ecommerce/PaginaProducto/PaginaProducto'
 import PaginaCategoria from './paginas/ecommerce/PaginaCategoria/PaginaCategoria'
 import PaginaCarrito from './paginas/ecommerce/PaginaCarrito/PaginaCarrito'
+import PaginaFavoritos from './paginas/ecommerce/PaginaFavoritos/PaginaFavoritos'
 import PaginaCheckout from './paginas/ecommerce/PaginaCheckout/PaginaCheckout'
 import PaginaLogin from './paginas/autenticacion/PaginaLogin/PaginaLogin'
 import PaginaRegistro from './paginas/autenticacion/PaginaRegistro/PaginaRegistro'
@@ -30,13 +33,16 @@ import PlantillaTemu from './componentes/landing/plantillas/PlantillaTemu/Planti
 import TestImagenes from './paginas/TestImagenes'
 import ProductosDemo from './componentes/producto/ProductosDemo'
 import PaginaTienda from './paginas/ecommerce/PaginaTienda/PaginaTienda'
+import NotificacionCarritoWrapper from './componentes/ui/NotificacionCarritoWrapper'
 // import MigrarImagenes from './paginas/MigrarImagenes' // Eliminado
 
 function App() {
   return (
-    <div className="app">
-      {/* <ProteccionAvanzada /> */}
-      <Routes>
+    <CarritoProvider>
+      <FavoritosProvider>
+        <div className="app">
+        {/* <ProteccionAvanzada /> */}
+        <Routes>
         {/* Admin Dashboard Real - Con autenticación */}
         <Route path="/admin" element={<DashboardAdmin />} />
         
@@ -156,6 +162,15 @@ function App() {
             <HeaderPrincipal />
             <main className="contenido-principal">
               <PaginaCarrito />
+            </main>
+          </>
+        } />
+        
+        <Route path="/favoritos" element={
+          <>
+            <HeaderPrincipal />
+            <main className="contenido-principal">
+              <PaginaFavoritos />
             </main>
           </>
         } />
@@ -329,15 +344,6 @@ function App() {
         } />
         
         {/* Páginas especiales */}
-        <Route path="/favoritos" element={
-          <>
-            <HeaderPrincipal />
-            <main className="contenido-principal">
-              <div>Favoritos (próximamente)</div>
-            </main>
-          </>
-        } />
-        
         <Route path="/blog" element={
           <>
             <HeaderPrincipal />
@@ -365,8 +371,11 @@ function App() {
             </main>
           </>
         } />
-      </Routes>
-    </div>
+        </Routes>
+        <NotificacionCarritoWrapper />
+        </div>
+      </FavoritosProvider>
+    </CarritoProvider>
   )
 }
 

@@ -18,6 +18,8 @@ import {
   ChevronRight,
   X
 } from 'lucide-react'
+import { useCarrito } from '../../../../../contextos/CarritoContext'
+import BotonCarritoAnimado from '../../../../../componentes/ui/BotonCarritoAnimado'
 // Eliminado ImagenConFallback - usaremos <img> directo
 import './HeroTemu.css'
 
@@ -163,6 +165,9 @@ function IndicadorModoSticky() {
 
 /* ============== COMPONENTE PRINCIPAL HERO TEMU ============== */
 const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
+  // Hook del carrito
+  const { agregarItem, alternarModal, mostrarNotificacion } = useCarrito()
+  
   // Estados del componente
   const [imagenSeleccionada, setImagenSeleccionada] = useState(0)
   const [cantidad, setCantidad] = useState(1)
@@ -310,9 +315,31 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
     }
   }
 
-  const manejarAgregarCarrito = () => {
-    // Lógica del carrito
-    // Aquí iría la lógica real del carrito
+  const manejarAgregarCarrito = async (producto, cantidad, variante) => {
+    if (!producto) return
+    
+    try {
+      console.log('🛒 Agregando producto desde HeroTemu al carrito:', producto)
+      
+      // Usar el producto completo tal como viene de la base de datos
+      const resultado = await agregarItem(producto, cantidad, variante)
+      
+      console.log('✅ Resultado de agregar desde HeroTemu:', resultado)
+      
+      if (resultado.success) {
+        // Abrir el modal del carrito para mostrar confirmación
+        alternarModal()
+        return resultado
+      } else {
+        // Mostrar error al usuario
+        mostrarNotificacion('error', 'Error al agregar', resultado.message || 'Error al agregar al carrito')
+        throw new Error(resultado.message || 'Error al agregar al carrito')
+      }
+    } catch (error) {
+      console.error('❌ Error al agregar desde HeroTemu:', error)
+      mostrarNotificacion('error', 'Error al agregar', 'Error al agregar al carrito. Por favor, inténtalo de nuevo.')
+      throw error
+    }
   }
 
   const manejarComprarAhora = () => {
@@ -578,13 +605,16 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
 
           {/* Botones de acción principales */}
           <div className="hero-temu-botones-accion">
-            <button 
-              onClick={manejarAgregarCarrito}
+            <BotonCarritoAnimado
+              producto={producto}
+              cantidad={cantidad}
+              variante={varianteSeleccionada}
               className="hero-temu-boton-carrito"
+              onAgregar={manejarAgregarCarrito}
+              onError={(error) => console.error('Error en botón animado:', error)}
             >
-              <ShoppingCart size={18} />
               Agregar al carrito
-            </button>
+            </BotonCarritoAnimado>
             
             <button 
               onClick={() => console.log('Pago contra entrega')}
@@ -745,16 +775,19 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
 
             {/* Botón de añadir al carrito en popup */}
             <div className="hero-temu-popup-acciones">
-              <button 
+              <BotonCarritoAnimado
+                producto={producto}
+                cantidad={cantidad}
+                variante={varianteSeleccionada}
                 className="hero-temu-popup-boton-carrito"
-                onClick={() => {
-                  manejarAgregarCarrito()
+                onAgregar={async (producto, cantidad, variante) => {
+                  await manejarAgregarCarrito(producto, cantidad, variante)
                   cerrarPopupGaleria()
                 }}
+                onError={(error) => console.error('Error en popup:', error)}
               >
-                <ShoppingCart size={20} />
                 Añadir al carrito
-              </button>
+              </BotonCarritoAnimado>
             </div>
 
             {/* Miniaturas en el popup (solo en desktop) */}

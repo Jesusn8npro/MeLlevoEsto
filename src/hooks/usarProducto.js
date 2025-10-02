@@ -77,34 +77,8 @@ export function usarProducto(slug) {
         if (data.producto_imagenes && data.producto_imagenes.length > 0) {
           const imagenesRaw = data.producto_imagenes[0] // Tomar el primer registro de imágenes
           
-          // CONVERTIR TODAS LAS URLs DE GOOGLE DRIVE AL FORMATO QUE SÍ FUNCIONA
-          const imagenesConvertidas = {}
-          Object.keys(imagenesRaw).forEach(key => {
-            const url = imagenesRaw[key]
-            if (url && typeof url === 'string') {
-              let fileId = null
-              
-              // Extraer ID de diferentes formatos de Google Drive
-              if (url.includes('drive.google.com/file/d/')) {
-                const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)
-                fileId = match?.[1]
-              } else if (url.includes('drive.google.com/thumbnail?id=')) {
-                const match = url.match(/id=([a-zA-Z0-9_-]+)/)
-                fileId = match?.[1]
-              }
-              
-              if (fileId) {
-                // USAR EL FORMATO QUE SÍ FUNCIONA: lh3.googleusercontent.com
-                imagenesConvertidas[key] = `https://lh3.googleusercontent.com/d/${fileId}=w1000?authuser=0`
-              } else {
-                // Si no es de Google Drive, dejar como está
-                imagenesConvertidas[key] = url
-              }
-            } else {
-              imagenesConvertidas[key] = url
-            }
-          })
-          data.imagenes = imagenesConvertidas
+          // Usar la utilidad centralizada para procesar las imágenes
+          data.imagenes = procesarImagenesProducto(imagenesRaw)
         } else {
           // Si no hay imágenes en la tabla producto_imagenes, crear objeto vacío
           data.imagenes = {}

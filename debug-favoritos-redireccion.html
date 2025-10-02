@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Favoritos - Redirección</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .favorito {
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .problema {
+            background: #ffebee;
+            border-color: #f44336;
+        }
+        .correcto {
+            background: #e8f5e8;
+            border-color: #4caf50;
+        }
+        .campo {
+            margin: 5px 0;
+        }
+        .label {
+            font-weight: bold;
+            color: #333;
+        }
+        .valor {
+            color: #666;
+            font-family: monospace;
+        }
+        .url-generada {
+            background: #fff3e0;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .btn {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #1976d2;
+        }
+        .btn-danger {
+            background: #f44336;
+        }
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Favoritos - Problema de Redirección</h1>
+        <p>Este debug te ayudará a identificar por qué los favoritos redirigen a producto/ID en lugar de producto/slug</p>
+        
+        <div style="margin: 20px 0;">
+            <button class="btn" onclick="cargarFavoritos()">🔄 Cargar Favoritos</button>
+            <button class="btn btn-danger" onclick="limpiarFavoritos()">🗑️ Limpiar Favoritos</button>
+            <button class="btn" onclick="agregarFavoritoTest()">➕ Agregar Favorito Test</button>
+        </div>
+
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        function cargarFavoritos() {
+            const favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
+            const resultado = document.getElementById('resultado');
+            
+            if (favoritos.length === 0) {
+                resultado.innerHTML = '<p>❌ No hay favoritos guardados en localStorage</p>';
+                return;
+            }
+
+            let html = `<h2>📋 Favoritos encontrados: ${favoritos.length}</h2>`;
+            
+            favoritos.forEach((favorito, index) => {
+                const tieneSlug = favorito.slug && favorito.slug !== favorito.producto_id && favorito.slug !== favorito.id;
+                const claseProblema = tieneSlug ? 'correcto' : 'problema';
+                
+                // Simular la lógica de convertirFavoritoAProducto
+                const slugFinal = favorito.slug || favorito.producto_id || favorito.id;
+                const urlGenerada = `/producto/${slugFinal}`;
+                
+                html += `
+                    <div class="favorito ${claseProblema}">
+                        <h3>Favorito #${index + 1}: ${favorito.nombre || 'Sin nombre'}</h3>
+                        
+                        <div class="campo">
+                            <span class="label">ID:</span>
+                            <span class="valor">${favorito.id || 'undefined'}</span>
+                        </div>
+                        
+                        <div class="campo">
+                            <span class="label">Producto ID:</span>
+                            <span class="valor">${favorito.producto_id || 'undefined'}</span>
+                        </div>
+                        
+                        <div class="campo">
+                            <span class="label">Slug:</span>
+                            <span class="valor">${favorito.slug || 'undefined'}</span>
+                        </div>
+                        
+                        <div class="url-generada">
+                            <strong>URL Generada:</strong> <code>${urlGenerada}</code>
+                            ${tieneSlug ? 
+                                '<span style="color: green;">✅ CORRECTO - Usa slug real</span>' : 
+                                '<span style="color: red;">❌ PROBLEMA - Usa ID como slug</span>'
+                            }
+                        </div>
+                        
+                        <details>
+                            <summary>Ver datos completos</summary>
+                            <pre style="background: #f0f0f0; padding: 10px; border-radius: 4px; overflow-x: auto;">${JSON.stringify(favorito, null, 2)}</pre>
+                        </details>
+                    </div>
+                `;
+            });
+            
+            resultado.innerHTML = html;
+        }
+
+        function limpiarFavoritos() {
+            if (confirm('¿Estás seguro de que quieres limpiar todos los favoritos?')) {
+                localStorage.removeItem('favoritos');
+                document.getElementById('resultado').innerHTML = '<p>✅ Favoritos limpiados</p>';
+            }
+        }
+
+        function agregarFavoritoTest() {
+            const favoritoTest = {
+                id: Date.now().toString(),
+                producto_id: "123",
+                usuario_id: "temp-user",
+                fecha_agregado: new Date().toISOString(),
+                nombre: "Producto Test",
+                precio: 50000,
+                precio_oferta: null,
+                imagen: "https://example.com/imagen.jpg",
+                slug: "producto-test-slug", // Slug correcto
+                producto_imagenes: null,
+                fotos_principales: [],
+                disponible: true
+            };
+
+            const favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
+            favoritos.push(favoritoTest);
+            localStorage.setItem('favoritos', JSON.stringify(favoritos));
+            
+            alert('✅ Favorito test agregado con slug correcto');
+            cargarFavoritos();
+        }
+
+        // Cargar automáticamente al abrir la página
+        window.onload = cargarFavoritos;
+    </script>
+</body>
+</html>

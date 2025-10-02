@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Heart, ShoppingCart, Eye, Star, Clock, Zap, Flame, Users, Truck, Shield, CreditCard, Ticket } from 'lucide-react'
+import { useFavoritos } from '../../contextos/FavoritosContext'
+import { useCarrito } from '../../contextos/CarritoContext'
+import ImagenInteligente from '../ui/ImagenInteligente'
+import BotonCarritoAnimado from '../ui/BotonCarritoAnimado'
 import './TarjetaProductoVendedora.css'
 
 /**
@@ -26,11 +30,15 @@ const TarjetaProductoVendedora = ({
   animaciones = true,
   vistaLista = false // Nueva prop para vista de lista
 }) => {
-  const [favorito, setFavorito] = useState(false)
+  const { esFavorito, alternarFavorito } = useFavoritos()
+  const { agregarItem, alternarModal, mostrarNotificacion } = useCarrito()
   const [tiempoRestante, setTiempoRestante] = useState(null)
   const [hover, setHover] = useState(false)
   const [imagenActual, setImagenActual] = useState(0)
   const [descripcionExpandida, setDescripcionExpandida] = useState(false)
+  
+  // Verificar si el producto es favorito
+  const favorito = esFavorito(producto?.id)
 
   // Calcular descuento
   const descuento = producto?.precio_original && producto?.precio 
@@ -78,14 +86,34 @@ const TarjetaProductoVendedora = ({
   const toggleFavorito = (e) => {
     e.preventDefault()
     e.stopPropagation()
-    setFavorito(!favorito)
+    alternarFavorito(producto)
   }
 
-  const agregarAlCarrito = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    // Aquí iría la lógica del carrito
-    console.log('Agregado al carrito:', producto?.nombre)
+  const manejarAgregarCarrito = async (producto, cantidad, variante) => {
+    if (!producto) return
+    
+    try {
+      console.log('🛒 Agregando producto al carrito:', producto)
+      
+      // Usar el producto completo tal como viene de la base de datos
+      const resultado = await agregarItem(producto, cantidad || 1, variante)
+      
+      console.log('✅ Resultado de agregar al carrito:', resultado)
+      
+      if (resultado.success) {
+        // Abrir el modal del carrito para mostrar confirmación
+        alternarModal()
+        return resultado
+      } else {
+        // Mostrar error al usuario
+        mostrarNotificacion('error', 'Error al agregar', resultado.message || 'Error al agregar al carrito')
+        throw new Error(resultado.message || 'Error al agregar al carrito')
+      }
+    } catch (error) {
+      console.error('❌ Error al agregar al carrito:', error)
+      mostrarNotificacion('error', 'Error al agregar', 'Error al agregar al carrito. Por favor, inténtalo de nuevo.')
+      throw error
+    }
   }
 
   // Efecto de cambio de imagen en hover más suave
@@ -116,11 +144,10 @@ const TarjetaProductoVendedora = ({
         <div className="lista-imagen-container">
           <Link to={`/producto/${producto.slug}`}>
             {producto.fotos_principales?.[0] ? (
-              <img 
+              <ImagenInteligente 
                 src={producto.fotos_principales[0]} 
                 alt={producto.nombre}
                 className="lista-imagen"
-                loading="lazy"
               />
             ) : (
               <div className="imagen-placeholder">
@@ -254,11 +281,10 @@ const TarjetaProductoVendedora = ({
       <div className="imagen-container">
         <Link to={`/producto/${producto.slug}`} className="imagen-link">
           {producto.fotos_principales?.[imagenActual] ? (
-            <img 
+            <ImagenInteligente 
               src={producto.fotos_principales[imagenActual]} 
               alt={producto.nombre}
               className="imagen-producto"
-              loading="lazy"
             />
           ) : (
             <div className="imagen-placeholder">
@@ -289,13 +315,15 @@ const TarjetaProductoVendedora = ({
               <Eye size={20} />
             </Link>
             
-            <button 
+            <BotonCarritoAnimado
+              producto={producto}
+              cantidad={1}
               className="accion-btn carrito"
-              onClick={agregarAlCarrito}
-              title="Agregar al carrito"
+              onAgregar={manejarAgregarCarrito}
+              onError={(error) => console.error('Error en overlay:', error)}
             >
               <ShoppingCart size={20} />
-            </button>
+            </BotonCarritoAnimado>
           </div>
         </Link>
 
@@ -389,13 +417,15 @@ const TarjetaProductoVendedora = ({
 
         {/* Botón de compra */}
         <div className="acciones-principales">
-          <button 
+          <BotonCarritoAnimado
+            producto={producto}
+            cantidad={1}
             className="btn-comprar"
-            onClick={agregarAlCarrito}
+            onAgregar={manejarAgregarCarrito}
+            onError={(error) => console.error('Error en botón principal:', error)}
           >
-            <ShoppingCart size={18} />
             ¡COMPRAR AHORA!
-          </button>
+          </BotonCarritoAnimado>
         </div>
 
         {/* Indicador de popularidad */}

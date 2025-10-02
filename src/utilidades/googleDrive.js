@@ -3,20 +3,11 @@
  */
 
 /**
- * Convierte una URL de Google Drive a una URL directa de imagen
- * @param {string} url - URL original de Google Drive
- * @returns {string} - URL directa para mostrar la imagen
+ * Función auxiliar para extraer el ID del archivo de diferentes formatos de URL de Google Drive
+ * @param {string} url - URL de Google Drive
+ * @returns {string|null} - ID del archivo o null si no se encuentra
  */
-export const convertirUrlGoogleDrive = (url) => {
-  if (!url || typeof url !== 'string') {
-    return url
-  }
-
-  // Si no es una URL de Google Drive, devolverla tal como está
-  if (!url.includes('drive.google.com')) {
-    return url
-  }
-
+const extraerIdArchivo = (url) => {
   let fileId = null
 
   // Extraer el ID del archivo de diferentes formatos de URL
@@ -34,22 +25,71 @@ export const convertirUrlGoogleDrive = (url) => {
     fileId = match?.[1]
   }
 
-  if (fileId) {
-    // MÚLTIPLES FORMATOS DE GOOGLE DRIVE PARA EVITAR CORS
-    const formatosGoogleDrive = [
-      `https://lh3.googleusercontent.com/d/${fileId}=w1200-h800-no`,
-      `https://drive.google.com/uc?export=view&id=${fileId}`,
-      `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200-h800`,
-      `https://docs.google.com/uc?export=view&id=${fileId}`
-    ]
-    
-    // Devolver el primer formato (más compatible)
-    console.log('🔄 Convirtiendo Google Drive URL:', formatosGoogleDrive[0])
-    return formatosGoogleDrive[0]
+  return fileId
+}
+
+/**
+ * Convierte una URL de Google Drive a una URL directa de imagen
+ * @param {string} url - URL original de Google Drive
+ * @returns {string} - URL directa para mostrar la imagen
+ */
+export const convertirUrlGoogleDrive = (url) => {
+  if (!url || typeof url !== 'string') {
+    console.warn('⚠️ URL inválida para convertir:', url)
+    return url
   }
 
-  // Si no se pudo extraer el ID, devolver la URL original
-  console.warn('No se pudo convertir la URL de Google Drive:', url)
+  // Si no es una URL de Google Drive, devolver tal como está
+  if (!url.includes('drive.google.com')) {
+    return url
+  }
+
+  try {
+    const fileId = extraerIdArchivo(url)
+    if (!fileId) {
+      console.warn('⚠️ No se pudo extraer el ID del archivo de:', url)
+      return url
+    }
+
+    // Usar el formato directo de Google Drive que funciona mejor
+    const urlConvertida = `https://drive.google.com/thumbnail?id=${fileId}&sz=w400-h400`
+    console.log('🔄 URL convertida:', url, '->', urlConvertida)
+    return urlConvertida
+  } catch (error) {
+    console.error('❌ Error convirtiendo URL de Google Drive:', error)
+    return url
+  }
+}
+
+/**
+ * Convierte una URL de Google Drive con formato alternativo para casos problemáticos
+ * @param {string} url - URL original de Google Drive
+ * @returns {string} - URL directa alternativa
+ */
+export const convertirUrlGoogleDriveAlternativo = (url) => {
+  if (!url || typeof url !== 'string') {
+    return url
+  }
+
+  if (!url.includes('drive.google.com')) {
+    return url
+  }
+
+  let fileId = null
+
+  if (url.includes('/file/d/')) {
+    const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)
+    fileId = match?.[1]
+  } else if (url.includes('id=')) {
+    const match = url.match(/id=([a-zA-Z0-9_-]+)/)
+    fileId = match?.[1]
+  }
+
+  if (fileId) {
+    // Formato alternativo usando lh3.googleusercontent.com
+    return `https://lh3.googleusercontent.com/d/${fileId}=w1200-h800-no`
+  }
+
   return url
 }
 
@@ -91,4 +131,41 @@ export const procesarImagenesProducto = (imagenes) => {
   })
 
   return imagenesConvertidas
+}
+
+/**
+ * Obtiene múltiples formatos de URL para una imagen de Google Drive
+ * Útil para debugging y encontrar el formato que funciona
+ * @param {string} url - URL original de Google Drive
+ * @returns {Object} - Objeto con diferentes formatos
+ */
+export const obtenerFormatosGoogleDrive = (url) => {
+  if (!url || typeof url !== 'string' || !url.includes('drive.google.com')) {
+    return { original: url }
+  }
+
+  let fileId = null
+
+  if (url.includes('/file/d/')) {
+    const match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/)
+    fileId = match?.[1]
+  } else if (url.includes('id=')) {
+    const match = url.match(/id=([a-zA-Z0-9_-]+)/)
+    fileId = match?.[1]
+  }
+
+  if (!fileId) {
+    return { original: url }
+  }
+
+  return {
+    original: url,
+    fileId: fileId,
+    ucExportView: `https://drive.google.com/uc?export=view&id=${fileId}`,
+    ucId: `https://drive.google.com/uc?id=${fileId}`,
+    lh3Basic: `https://lh3.googleusercontent.com/d/${fileId}`,
+    lh3WithSize: `https://lh3.googleusercontent.com/d/${fileId}=w1200-h800-no`,
+    thumbnail: `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`,
+    docsUc: `https://docs.google.com/uc?export=view&id=${fileId}`
+  }
 }

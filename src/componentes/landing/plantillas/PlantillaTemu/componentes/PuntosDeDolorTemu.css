@@ -560,6 +560,12 @@
   .puntos-dolor-temu-seccion {
     padding: 60px 0;
   }
+  /* ============================================
+   ITEMS DEL TIMELINE
+   ============================================ */
+.puntos-dolor-temu-item {
+  margin-bottom: 100px;
+}
   
   .puntos-dolor-temu-titulo {
     font-size: 32px;
