@@ -535,7 +535,7 @@ export const CarritoProvider = ({ children }) => {
         .select('*')
         .eq('categoria_id', categoriaId)
         .eq('activo', true)
-        .eq('disponible', true)
+        .gt('stock', 0)
         .limit(4)
 
       if (error) throw error

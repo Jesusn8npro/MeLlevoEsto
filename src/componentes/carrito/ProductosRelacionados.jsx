@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   Plus, 
@@ -9,14 +9,21 @@ import {
   Sparkles
 } from 'lucide-react'
 import { useCarrito } from '../../contextos/CarritoContext'
+import { usarProductos } from '../../hooks/usarProductos'
+import ImagenInteligente from '../ui/ImagenInteligente'
+import { obtenerImagenPlaceholder } from '../../utilidades/imagenesAlternativas'
 import BotonCarritoAnimado from '../ui/BotonCarritoAnimado'
 import './ProductosRelacionados.css'
 
 const ProductosRelacionados = ({ categoriaId, onCerrarModal }) => {
-  const [productos, setProductos] = useState([])
-  const [cargando, setCargando] = useState(true)
-  const [indiceActual, setIndiceActual] = useState(0)
-  const { agregarItem, alternarModal, mostrarNotificacion } = useCarrito()
+  const { agregarItem, alternarModal, mostrarNotificacion, items } = useCarrito()
+  const { productos, cargando } = usarProductos({
+    // Si quieres limitar por categoría, descomenta la línea siguiente
+    // categoria: categoriaId,
+    ordenar: { campo: 'creado_el', ascendente: false },
+    limite: 24
+  })
+  const [indiceActual, setIndiceActual] = React.useState(0)
 
   // Formatear precio
   const formatearPrecio = (precio) => {
@@ -27,78 +34,28 @@ const ProductosRelacionados = ({ categoriaId, onCerrarModal }) => {
     }).format(precio)
   }
 
-  // Cargar productos relacionados
-  useEffect(() => {
-    const cargarProductosRelacionados = async () => {
-      try {
-        setCargando(true)
-        
-        // Simulación de carga de productos relacionados
-        // En una implementación real, esto vendría de Supabase
-        const productosSimulados = [
-          {
-            id: 'prod-rel-1',
-            nombre: 'Producto Relacionado 1',
-            precio: 25000,
-            precio_original: 35000,
-            imagen_url: '/placeholder-product.jpg',
-            rating: 4.5,
-            total_resenas: 128,
-            categoria_id: categoriaId,
-            stock: 15,
-            envio_gratis: true
-          },
-          {
-            id: 'prod-rel-2',
-            nombre: 'Producto Relacionado 2',
-            precio: 18000,
-            imagen_url: '/placeholder-product.jpg',
-            rating: 4.2,
-            total_resenas: 89,
-            categoria_id: categoriaId,
-            stock: 8,
-            envio_gratis: false
-          },
-          {
-            id: 'prod-rel-3',
-            nombre: 'Producto Relacionado 3',
-            precio: 42000,
-            precio_original: 55000,
-            imagen_url: '/placeholder-product.jpg',
-            rating: 4.8,
-            total_resenas: 256,
-            categoria_id: categoriaId,
-            stock: 3,
-            envio_gratis: true
-          },
-          {
-            id: 'prod-rel-4',
-            nombre: 'Producto Relacionado 4',
-            precio: 32000,
-            imagen_url: '/placeholder-product.jpg',
-            rating: 4.3,
-            total_resenas: 167,
-            categoria_id: categoriaId,
-            stock: 12,
-            envio_gratis: true
-          }
-        ]
+  // Construir conjunto de IDs del carrito para excluir
+  const idsEnCarrito = useMemo(() => {
+    const ids = new Set()
+    items.forEach((item) => {
+      if (item.producto_id) ids.add(item.producto_id)
+      if (item.productos?.id) ids.add(item.productos.id)
+    })
+    return ids
+  }, [items])
 
-        // Simular delay de red
-        await new Promise(resolve => setTimeout(resolve, 800))
-        
-        setProductos(productosSimulados)
-      } catch (error) {
-        console.error('Error al cargar productos relacionados:', error)
-      } finally {
-        setCargando(false)
-      }
-    }
+  // Obtener imagen principal del producto
+  const obtenerImagenPrincipal = (producto) => {
+    const principal = producto?.producto_imagenes?.imagen_principal
+    const secundaria = producto?.producto_imagenes?.imagen_secundaria_1
+    const directa = producto?.imagen_url
+    return principal || secundaria || directa || obtenerImagenPlaceholder()
+  }
 
-    if (categoriaId) {
-      cargarProductosRelacionados()
-    }
-  }, [categoriaId])
+  // Filtrar productos para mostrar solo los que no están en el carrito
+  const productosFiltrados = useMemo(() => {
+    return (productos || []).filter((p) => !idsEnCarrito.has(p.id))
+  }, [productos, idsEnCarrito])
 
   // Manejar agregar al carrito
   const manejarAgregarCarrito = async (producto, cantidad, variante) => {
@@ -155,7 +112,7 @@ const ProductosRelacionados = ({ categoriaId, onCerrarModal }) => {
     )
   }
 
-  if (!productos.length) {
+  if (!productosFiltrados.length) {
     return null
   }
 
@@ -165,12 +122,12 @@ const ProductosRelacionados = ({ categoriaId, onCerrarModal }) => {
         <Sparkles className="icono-sparkles" />
         <h3>Productos que te pueden interesar</h3>
         <span className="productos-count">
-          {productos.length} productos
+          {productosFiltrados.length} productos
         </span>
       </div>
 
       <div className="productos-carrusel-container">
-        {productos.length > 2 && (
+        {productosFiltrados.length > 2 && (
           <button 
             className="carrusel-boton anterior"
             onClick={irAnterior}
@@ -188,7 +145,7 @@ const ProductosRelacionados = ({ categoriaId, onCerrarModal }) => {
               transition: 'transform 0.3s ease'
             }}
           >
-            {productos.map((producto) => {
+            {productosFiltrados.map((producto) => {
               const tieneDescuento = producto.precio_original && 
                 producto.precio_original > producto.precio
               const porcentajeDescuento = tieneDescuento ? 
@@ -198,8 +155,8 @@ const ProductosRelacionados = ({ categoriaId, onCerrarModal }) => {
                 <div key={producto.id} className="producto-relacionado">
                   <div className="producto-imagen-container">
                     <Link to={`/producto/${producto.id}`} onClick={onCerrarModal}>
-                      <img 
-                        src={producto.imagen_url} 
+                      <ImagenInteligente
+                        src={obtenerImagenPrincipal(producto)}
                         alt={producto.nombre}
                         className="producto-imagen"
                         loading="lazy"

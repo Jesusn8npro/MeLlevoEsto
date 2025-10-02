@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { obtenerImagenPlaceholder } from '../../utilidades/imagenesAlternativas'
 import { Link } from 'react-router-dom'
 import { 
   Plus, 
@@ -9,6 +10,7 @@ import {
   ShoppingCart,
   AlertCircle
 } from 'lucide-react'
+import ImagenInteligente from '../ui/ImagenInteligente'
 import './ItemCarrito.css'
 
 const ItemCarrito = ({ 
@@ -81,16 +83,30 @@ const ItemCarrito = ({
   const porcentajeDescuento = tieneDescuento ? 
     Math.round(((item.productos.precio_original - item.precio_unitario) / item.productos.precio_original) * 100) : 0
 
+  // Resolver imagen principal del producto (similar al mapeo en tienda)
+  const obtenerImagenPrincipal = (producto) => {
+    if (!producto) return obtenerImagenPlaceholder()
+    return (
+      producto?.producto_imagenes?.imagen_principal ||
+      (Array.isArray(producto?.fotos_principales) && producto.fotos_principales[0]) ||
+      producto?.imagen_principal ||
+      producto?.imagen_url ||
+      producto?.imagen ||
+      obtenerImagenPlaceholder()
+    )
+  }
+
+  const imagenPrincipal = obtenerImagenPrincipal(item.productos)
+
   return (
     <div className={`item-carrito ${compacto ? 'compacto' : ''}`}>
       {/* Imagen del producto */}
       <div className="item-imagen-container">
         <Link to={`/producto/${item.productos?.id}`}>
-          <img 
-            src={item.productos?.imagen_url || '/placeholder-product.jpg'} 
+          <ImagenInteligente 
+            src={imagenPrincipal}
             alt={item.productos?.nombre}
             className="item-imagen"
-            loading="lazy"
           />
         </Link>
         

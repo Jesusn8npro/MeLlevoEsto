@@ -29,13 +29,15 @@ export const extraerIdGoogleDrive = (url) => {
 
 // Múltiples formatos de Google Drive para probar
 export const obtenerFormatosGoogleDrive = (fileId) => {
+  // Orden priorizado: formatos uc (más estables), luego thumbnail y lh3
   return [
+    `https://drive.google.com/uc?export=view&id=${fileId}`,
+    `https://docs.google.com/uc?export=view&id=${fileId}`,
+    `https://drive.google.com/uc?id=${fileId}`,
     `https://drive.google.com/thumbnail?id=${fileId}&sz=w400-h400`,
     `https://drive.google.com/thumbnail?id=${fileId}&sz=w200-h200`,
     `https://lh3.googleusercontent.com/d/${fileId}=w400-h400`,
-    `https://lh3.googleusercontent.com/d/${fileId}`,
-    `https://drive.google.com/uc?export=view&id=${fileId}`,
-    `https://drive.google.com/uc?id=${fileId}`,
+    `https://lh3.googleusercontent.com/d/${fileId}`
   ]
 }
 
@@ -104,7 +106,8 @@ export const convertirImagenRapido = (url) => {
   }
   
   // Devolver el formato que más probabilidades tiene de funcionar
-  return `https://drive.google.com/thumbnail?id=${fileId}&sz=w400-h400`
+  // Priorizamos uc?export=view por estabilidad
+  return `https://drive.google.com/uc?export=view&id=${fileId}`
 }
 
 // Función para imagen placeholder cuando falla todo

@@ -14,7 +14,6 @@ import {
 } from 'lucide-react'
 import { useCarrito } from '../../contextos/CarritoContext'
 import ItemCarrito from './ItemCarrito'
-import ProductosRelacionados from './ProductosRelacionados'
 import './CarritoFlotante.css'
 
 const ModalCarrito = ({ abierto, onCerrar }) => {
@@ -151,13 +150,7 @@ const ModalCarrito = ({ abierto, onCerrar }) => {
                 ))}
               </div>
 
-              {/* Productos relacionados */}
-              {items.length > 0 && (
-                <ProductosRelacionados 
-                  categoriaId={items[0]?.productos?.categoria_id}
-                  onCerrarModal={manejarCierre}
-                />
-              )}
+              {/* Productos relacionados - no se muestran en el modal */}
 
               {/* Resumen de precios */}
               <div className="modal-carrito-resumen">

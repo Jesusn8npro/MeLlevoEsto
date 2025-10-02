@@ -30,15 +30,17 @@ const ImagenInteligente = ({
     setCargando(true)
     setIntentoActual(0)
 
-    // Preparar lista de URLs para probar
+    // Preparar lista de URLs para probar, empezando por conversión rápida si es Google Drive
     let urls = []
-    
     if (esUrlGoogleDrive(src)) {
       const fileId = extraerIdGoogleDrive(src)
       if (fileId) {
-        urls = obtenerFormatosGoogleDrive(fileId)
+        const formatos = obtenerFormatosGoogleDrive(fileId)
+        // Insertar primero la conversión rápida
+        const rapida = convertirImagenRapido(src)
+        urls = [rapida, ...formatos.filter(u => u !== rapida)]
       } else {
-        urls = [src]
+        urls = [convertirImagenRapido(src), src]
       }
     } else {
       urls = [src]
@@ -64,7 +66,7 @@ const ImagenInteligente = ({
       setError(true)
       setCargando(false)
       setUrlActual(obtenerImagenPlaceholder())
-      
+
       if (onError) {
         onError(new Error('No se pudo cargar ningún formato de imagen'))
       }

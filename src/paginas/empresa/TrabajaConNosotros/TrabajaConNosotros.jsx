@@ -1,25 +1,5 @@
 import { useState } from 'react'
-import { 
-  Users, 
-  Laptop, 
-  TrendingUp, 
-  Heart, 
-  Zap, 
-  Award, 
-  Globe,
-  Send,
-  CheckCircle,
-  Shield,
-  Clock,
-  Coffee,
-  Gift,
-  Star,
-  MessageSquare,
-  Mail,
-  FileText,
-  Download,
-  Upload
-} from 'lucide-react'
+import { Users, Briefcase, Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react'
 import './TrabajaConNosotros.css'
 
 export default function TrabajaConNosotros() {
@@ -27,146 +7,43 @@ export default function TrabajaConNosotros() {
     nombre: '',
     email: '',
     telefono: '',
+    cargo: '',
     experiencia: '',
-    motivo: '',
-    cv: null
+    mensaje: ''
   })
   const [enviado, setEnviado] = useState(false)
   const [enviando, setEnviando] = useState(false)
 
-  const ventajas = [
+  const oportunidades = [
     {
-      icono: Globe,
-      titulo: '100% Digital y Remoto',
-      descripcion: 'Trabaja desde donde quieras, cuando quieras. Flexibilidad total.',
-      destacado: true
+      cargo: 'Especialista en Ventas',
+      tipo: 'Tiempo completo',
+      descripcion: 'Gestión de clientes y cierre de ventas en productos digitales.'
     },
     {
-      icono: TrendingUp,
-      titulo: 'Crecimiento Profesional',
-      descripcion: 'Desarrolla tu carrera en una empresa que crece exponencialmente.',
-      destacado: true
+      cargo: 'Atención al Cliente',
+      tipo: 'Tiempo completo',
+      descripcion: 'Soporte y asesoría a clientes con excelencia en servicio.'
     },
     {
-      icono: Heart,
-      titulo: 'Ambiente Familiar',
-      descripcion: 'Somos un equipo unido que se apoya mutuamente.',
-      destacado: false
-    },
-    {
-      icono: Zap,
-      titulo: 'Innovación Constante',
-      descripcion: 'Trabajamos con las últimas tecnologías y metodologías.',
-      destacado: false
-    },
-    {
-      icono: Award,
-      titulo: 'Reconocimiento al Talento',
-      descripcion: 'Premiamos el esfuerzo y la excelencia en el trabajo.',
-      destacado: false
-    },
-    {
-      icono: Coffee,
-      titulo: 'Equilibrio Vida-Trabajo',
-      descripcion: 'Entendemos que la vida personal es igual de importante.',
-      destacado: false
+      cargo: 'Marketing Digital',
+      tipo: 'Medio tiempo',
+      descripcion: 'Gestión de campañas digitales y estrategias de crecimiento.'
     }
   ]
 
   const beneficios = [
-    {
-      icono: Gift,
-      titulo: 'Bonos por Rendimiento',
-      descripcion: 'Premios mensuales por cumplir y superar objetivos'
-    },
-    {
-      icono: Clock,
-      titulo: 'Horarios Flexibles',
-      descripcion: 'Adaptamos los horarios a tu estilo de vida'
-    },
-    {
-      icono: Laptop,
-      titulo: 'Equipo de Trabajo',
-      descripcion: 'Te proporcionamos todo lo necesario para trabajar'
-    },
-    {
-      icono: Star,
-      titulo: 'Desarrollo Profesional',
-      descripcion: 'Cursos, certificaciones y crecimiento continuo'
-    }
-  ]
-
-  const areas = [
-    {
-      titulo: 'Desarrollo Web',
-      descripcion: 'Frontend, Backend, Full Stack',
-      icono: Laptop,
-      color: '#3b82f6'
-    },
-    {
-      titulo: 'Marketing Digital',
-      descripcion: 'SEO, SEM, Redes Sociales',
-      icono: TrendingUp,
-      color: '#10b981'
-    },
-    {
-      titulo: 'Atención al Cliente',
-      descripcion: 'Soporte, Ventas, Experiencia',
-      icono: MessageSquare,
-      color: '#f59e0b'
-    },
-    {
-      titulo: 'Gestión de Proyectos',
-      descripcion: 'Coordinación, Planificación',
-      icono: Users,
-      color: '#8b5cf6'
-    },
-    {
-      titulo: 'Diseño UX/UI',
-      descripcion: 'Interfaces, Experiencia de Usuario',
-      icono: Heart,
-      color: '#ef4444'
-    },
-    {
-      titulo: 'Análisis de Datos',
-      descripcion: 'Analytics, Reportes, Insights',
-      icono: Award,
-      color: '#06b6d4'
-    }
-  ]
-
-  const testimonios = [
-    {
-      nombre: 'María González',
-      cargo: 'Desarrolladora Frontend',
-      testimonio: 'Llevo 8 meses aquí y es increíble. El ambiente es súper colaborativo, aprendo algo nuevo cada día y tengo total flexibilidad para trabajar desde casa.',
-      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=80&h=80&fit=crop&crop=face'
-    },
-    {
-      nombre: 'Carlos Ramírez',
-      cargo: 'Especialista en Marketing',
-      testimonio: 'La cultura digital de ME LLEVO ESTO es única. Me siento valorado, tengo autonomía para tomar decisiones y veo mi impacto directo en el crecimiento de la empresa.',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face'
-    },
-    {
-      nombre: 'Ana Martínez',
-      cargo: 'Coordinadora de Proyectos',
-      testimonio: 'Es un lugar donde realmente puedes crecer profesionalmente. El equipo es increíble, los proyectos son desafiantes y siempre hay oportunidades de aprender.',
-      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face'
-    }
+    'Trabajo remoto flexible',
+    'Crecimiento profesional',
+    'Ambiente colaborativo',
+    'Capacitación continua',
+    'Compensación competitiva'
   ]
 
   const manejarCambio = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
-    })
-  }
-
-  const manejarArchivo = (e) => {
-    setFormData({
-      ...formData,
-      cv: e.target.files[0]
     })
   }
 
@@ -183,176 +60,82 @@ export default function TrabajaConNosotros() {
       nombre: '', 
       email: '', 
       telefono: '', 
+      cargo: '', 
       experiencia: '', 
-      motivo: '', 
-      cv: null 
+      mensaje: ''
     })
   }
 
   return (
-    <div className="trabaja-page">
-      {/* Hero Section */}
-      <section className="trabaja-hero">
-        <div className="container">
+    <div className="trabaja-minimal">
+      <div className="trabaja-container">
+        {/* Hero Section */}
+        <section className="trabaja-hero">
           <div className="hero-content">
-            <div className="hero-badge">
-              <Users className="hero-badge-icon" />
-              <span>ÚNETE AL EQUIPO DIGITAL MÁS VENDEDOR</span>
-            </div>
-            <h1 className="hero-titulo">
-              <span className="hero-destacado">Trabaja con Nosotros</span>
+            <h1 className="hero-title">
+              Trabaja con <span className="hero-highlight">Nosotros</span>
             </h1>
-            <p className="hero-subtitulo">
-              ¡Únete al equipo digital más vendedor! Somos 100% digitales, remotos, flexibles y siempre en crecimiento.
+            <p className="hero-subtitle">
+              Únete a un equipo dinámico y en crecimiento. 
+              Buscamos talento apasionado por el servicio y la excelencia.
             </p>
-            <div className="hero-stats">
-              <div className="hero-stat">
-                <Users className="hero-stat-icon" />
-                <span>+50</span>
-                <span>Colaboradores</span>
-              </div>
-              <div className="hero-stat">
-                <Globe className="hero-stat-icon" />
-                <span>100%</span>
-                <span>Remoto</span>
-              </div>
-              <div className="hero-stat">
-                <TrendingUp className="hero-stat-icon" />
-                <span>+200%</span>
-                <span>Crecimiento</span>
-              </div>
-            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Ventajas Section */}
-      <section className="ventajas-section">
-        <div className="container">
-          <h2 className="section-titulo">
-            ¿Por qué trabajar en <span className="titulo-destacado">ME LLEVO ESTO</span>?
-          </h2>
-          <p className="section-subtitulo">
-            Somos diferentes porque valoramos el talento, la innovación y el bienestar de nuestro equipo
-          </p>
-          
-          <div className="ventajas-grid">
-            {ventajas.map((ventaja, index) => {
-              const Icono = ventaja.icono
-              return (
-                <div key={index} className={`ventaja-card ${ventaja.destacado ? 'destacado' : ''}`}>
-                  <div className="ventaja-icono">
-                    <Icono className="ventaja-icon" />
-                  </div>
-                  <h3 className="ventaja-titulo">{ventaja.titulo}</h3>
-                  <p className="ventaja-descripcion">{ventaja.descripcion}</p>
-                  {ventaja.destacado && (
-                    <span className="ventaja-badge">Exclusivo</span>
-                  )}
-                </div>
-              )
-            })}
+        {/* Oportunidades */}
+        <section className="oportunidades-section">
+          <div className="section-header">
+            <h2 className="section-title">Oportunidades Actuales</h2>
+            <p className="section-subtitle">Posiciones disponibles en nuestro equipo</p>
           </div>
-        </div>
-      </section>
-
-      {/* Beneficios Section */}
-      <section className="beneficios-section">
-        <div className="container">
-          <h2 className="section-titulo">
-            Beneficios que <span className="titulo-destacado">te encantarán</span>
-          </h2>
-          
-          <div className="beneficios-grid">
-            {beneficios.map((beneficio, index) => {
-              const Icono = beneficio.icono
-              return (
-                <div key={index} className="beneficio-card">
-                  <Icono className="beneficio-icon" />
-                  <h3 className="beneficio-titulo">{beneficio.titulo}</h3>
-                  <p className="beneficio-descripcion">{beneficio.descripcion}</p>
+          <div className="oportunidades-grid">
+            {oportunidades.map((oportunidad, index) => (
+              <div key={index} className="oportunidad-card">
+                <div className="oportunidad-header">
+                  <h3 className="oportunidad-cargo">{oportunidad.cargo}</h3>
+                  <span className="oportunidad-tipo">{oportunidad.tipo}</span>
                 </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Áreas de Trabajo */}
-      <section className="areas-section">
-        <div className="container">
-          <h2 className="section-titulo">
-            Áreas donde puedes <span className="titulo-destacado">desarrollarte</span>
-          </h2>
-          <p className="section-subtitulo">
-            Buscamos talento en diferentes áreas. Si no ves tu área, ¡escríbenos igual!
-          </p>
-          
-          <div className="areas-grid">
-            {areas.map((area, index) => {
-              const Icono = area.icono
-              return (
-                <div key={index} className="area-card">
-                  <div 
-                    className="area-icono"
-                    style={{ backgroundColor: area.color }}
-                  >
-                    <Icono className="area-icon" />
-                  </div>
-                  <h3 className="area-titulo">{area.titulo}</h3>
-                  <p className="area-descripcion">{area.descripcion}</p>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonios */}
-      <section className="testimonios-section">
-        <div className="container">
-          <h2 className="section-titulo">
-            Lo que dice nuestro <span className="titulo-destacado">equipo</span>
-          </h2>
-          <p className="section-subtitulo">
-            Conoce las experiencias reales de quienes ya forman parte de nuestro equipo
-          </p>
-          
-          <div className="testimonios-grid">
-            {testimonios.map((testimonio, index) => (
-              <div key={index} className="testimonio-card">
-                <div className="testimonio-header">
-                  <img src={testimonio.avatar} alt={testimonio.nombre} className="testimonio-avatar" />
-                  <div>
-                    <h3 className="testimonio-nombre">{testimonio.nombre}</h3>
-                    <p className="testimonio-cargo">{testimonio.cargo}</p>
-                  </div>
-                </div>
-                <p className="testimonio-texto">"{testimonio.testimonio}"</p>
+                <p className="oportunidad-descripcion">{oportunidad.descripcion}</p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Formulario de Aplicación */}
-      <section className="formulario-section">
-        <div className="container">
-          <div className="formulario-content">
+        {/* Beneficios */}
+        <section className="beneficios-section">
+          <div className="section-header">
+            <h2 className="section-title">Por qué Unirte</h2>
+            <p className="section-subtitle">Lo que ofrecemos a nuestro equipo</p>
+          </div>
+          <div className="beneficios-grid">
+            {beneficios.map((beneficio, index) => (
+              <div key={index} className="beneficio-item">
+                <CheckCircle className="beneficio-icon" size={20} />
+                <span className="beneficio-text">{beneficio}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Formulario */}
+        <section className="formulario-section">
+          <div className="formulario-container">
             <div className="formulario-header">
-              <h2 className="formulario-titulo">
-                ¿Listo para <span className="titulo-destacado">unirte</span>?
-              </h2>
-              <p className="formulario-subtitulo">
-                Completa el formulario y te contactaremos pronto
-              </p>
+              <h2 className="section-title">Aplica Ahora</h2>
+              <p className="section-subtitle">Completa el formulario y nos pondremos en contacto</p>
             </div>
-
-            {!enviado ? (
-              <form className="formulario" onSubmit={manejarEnvio}>
-                <div className="formulario-grid">
+            
+            {enviado ? (
+              <div className="mensaje-exito">
+                <CheckCircle className="exito-icon" size={48} />
+                <h3>¡Gracias por tu interés!</h3>
+                <p>Hemos recibido tu aplicación. Nos pondremos en contacto contigo pronto.</p>
+              </div>
+            ) : (
+              <form className="trabaja-form" onSubmit={manejarEnvio}>
+                <div className="form-grid">
                   <div className="form-group">
-                    <label htmlFor="nombre">Nombre Completo *</label>
+                    <label htmlFor="nombre">Nombre Completo</label>
                     <input
                       type="text"
                       id="nombre"
@@ -360,12 +143,12 @@ export default function TrabajaConNosotros() {
                       value={formData.nombre}
                       onChange={manejarCambio}
                       required
-                      placeholder="Tu nombre completo"
+                      className="form-input"
                     />
                   </div>
-
+                  
                   <div className="form-group">
-                    <label htmlFor="email">Email *</label>
+                    <label htmlFor="email">Correo Electrónico</label>
                     <input
                       type="email"
                       id="email"
@@ -373,10 +156,10 @@ export default function TrabajaConNosotros() {
                       value={formData.email}
                       onChange={manejarCambio}
                       required
-                      placeholder="tu@email.com"
+                      className="form-input"
                     />
                   </div>
-
+                  
                   <div className="form-group">
                     <label htmlFor="telefono">Teléfono</label>
                     <input
@@ -385,126 +168,111 @@ export default function TrabajaConNosotros() {
                       name="telefono"
                       value={formData.telefono}
                       onChange={manejarCambio}
-                      placeholder="+57 300 123 4567"
+                      required
+                      className="form-input"
                     />
                   </div>
-
+                  
                   <div className="form-group">
-                    <label htmlFor="experiencia">Área de Experiencia *</label>
+                    <label htmlFor="cargo">Cargo de Interés</label>
                     <select
-                      id="experiencia"
-                      name="experiencia"
-                      value={formData.experiencia}
+                      id="cargo"
+                      name="cargo"
+                      value={formData.cargo}
                       onChange={manejarCambio}
                       required
+                      className="form-input"
                     >
-                      <option value="">Selecciona tu área</option>
-                      <option value="desarrollo">Desarrollo Web</option>
-                      <option value="marketing">Marketing Digital</option>
-                      <option value="atencion">Atención al Cliente</option>
-                      <option value="gestion">Gestión de Proyectos</option>
-                      <option value="diseno">Diseño UX/UI</option>
-                      <option value="analisis">Análisis de Datos</option>
-                      <option value="otro">Otro</option>
+                      <option value="">Selecciona un cargo</option>
+                      {oportunidades.map((op, index) => (
+                        <option key={index} value={op.cargo}>{op.cargo}</option>
+                      ))}
                     </select>
                   </div>
-
-                  <div className="form-group form-group-full">
-                    <label htmlFor="motivo">¿Por qué quieres trabajar con nosotros? *</label>
-                    <textarea
-                      id="motivo"
-                      name="motivo"
-                      value={formData.motivo}
-                      onChange={manejarCambio}
-                      required
-                      rows="4"
-                      placeholder="Cuéntanos qué te motiva a unirte a nuestro equipo..."
-                    />
-                  </div>
-
-                  <div className="form-group form-group-full">
-                    <label htmlFor="cv">CV o LinkedIn (Opcional)</label>
-                    <div className="file-upload">
-                      <input
-                        type="file"
-                        id="cv"
-                        name="cv"
-                        onChange={manejarArchivo}
-                        accept=".pdf,.doc,.docx"
-                      />
-                      <label htmlFor="cv" className="file-label">
-                        <Upload className="upload-icon" />
-                        <span>{formData.cv ? formData.cv.name : 'Subir archivo'}</span>
-                      </label>
-                    </div>
-                  </div>
                 </div>
-
-                <div className="formulario-actions">
-                  <button 
-                    type="submit" 
-                    className="btn-enviar"
-                    disabled={enviando}
-                  >
-                    {enviando ? (
-                      <>
-                        <div className="spinner"></div>
-                        Enviando...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="btn-icon" />
-                        Enviar Aplicación
-                      </>
-                    )}
-                  </button>
-                  
-                  <div className="formulario-garantia">
-                    <Shield className="garantia-icon" />
-                    <span>Tus datos se manejan con absoluta confidencialidad</span>
-                  </div>
+                
+                <div className="form-group">
+                  <label htmlFor="experiencia">Experiencia Laboral</label>
+                  <textarea
+                    id="experiencia"
+                    name="experiencia"
+                    value={formData.experiencia}
+                    onChange={manejarCambio}
+                    required
+                    rows="4"
+                    className="form-textarea"
+                    placeholder="Describe tu experiencia laboral relevante..."
+                  />
                 </div>
-              </form>
-            ) : (
-              <div className="mensaje-exito">
-                <CheckCircle className="exito-icon" />
-                <h3>¡Aplicación enviada!</h3>
-                <p>Gracias por tu interés. Revisaremos tu perfil y te contactaremos pronto.</p>
+                
+                <div className="form-group">
+                  <label htmlFor="mensaje">Mensaje Adicional</label>
+                  <textarea
+                    id="mensaje"
+                    name="mensaje"
+                    value={formData.mensaje}
+                    onChange={manejarCambio}
+                    rows="3"
+                    className="form-textarea"
+                    placeholder="Cuéntanos por qué quieres unirte a nuestro equipo..."
+                  />
+                </div>
+                
                 <button 
-                  className="btn-secundario"
-                  onClick={() => setEnviado(false)}
+                  type="submit" 
+                  className="submit-button"
+                  disabled={enviando}
                 >
-                  Enviar otra aplicación
+                  {enviando ? (
+                    <>
+                      <div className="spinner"></div>
+                      Enviando...
+                    </>
+                  ) : (
+                    <>
+                      <Send size={20} />
+                      Enviar Aplicación
+                    </>
+                  )}
                 </button>
-              </div>
+              </form>
             )}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA Final */}
-      <section className="cta-section">
-        <div className="container">
-          <div className="cta-content">
-            <h2 className="cta-titulo">
-              ¿Tienes dudas sobre el <span className="cta-destacado">proceso</span>?
-            </h2>
-            <p className="cta-subtitulo">
-              Escríbenos y te explicamos todo sobre trabajar con nosotros
+        {/* Contacto */}
+        <section className="contacto-section">
+          <div className="contacto-card">
+            <h2 className="contacto-title">¿Tienes Preguntas?</h2>
+            <p className="contacto-text">
+              Estamos aquí para aclarar cualquier duda sobre las oportunidades laborales.
             </p>
-            <div className="cta-buttons">
-              <a href="https://wa.me/573012345678" className="btn-primario">
-                <MessageSquare className="btn-icon" />
-                Contactar por WhatsApp
-              </a>
-              <a href="mailto:trabajo@mellevoesto.com" className="btn-secundario">
-                <Mail className="btn-icon" />
-                Enviar Email
-              </a>
+            <div className="contacto-info">
+              <div className="contacto-item">
+                <Phone size={20} />
+                <span>WhatsApp: +57 321 489 2176</span>
+              </div>
+              <div className="contacto-item">
+                <Mail size={20} />
+                <span>talento@mellevolesto.com</span>
+              </div>
+              <div className="contacto-item">
+                <MapPin size={20} />
+                <span>Bogotá, Colombia</span>
+              </div>
             </div>
+            <a 
+              href="https://wa.me/573214892176" 
+              className="whatsapp-button"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Phone size={20} />
+              Contactar por WhatsApp
+            </a>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   )
 }

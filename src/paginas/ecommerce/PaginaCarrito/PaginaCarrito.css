@@ -3,6 +3,7 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   padding: 20px 0;
+  overflow-x: hidden; /* evita desbordes horizontales indeseados */
 }
 
 .contenedor-carrito {
@@ -63,6 +64,7 @@
   background: white;
   border-radius: 16px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* contiene elementos con posiciones absolutas */
 }
 
 .step {
@@ -119,7 +121,7 @@
   position: absolute;
   top: 25px;
   left: 75px;
-  right: -75px;
+  right: 75px; /* evita el desborde horizontal */
   height: 2px;
   background: #e5e7eb;
   z-index: -1;

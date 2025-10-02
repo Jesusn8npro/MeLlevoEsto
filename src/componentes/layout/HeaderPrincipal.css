@@ -1089,7 +1089,7 @@ button:active,
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
   
-  /* Menú móvil overlay - Diseño moderno y elegante */
+  /* Menú móvil overlay */
   .menu-movil-overlay {
     display: block;
     position: fixed;
@@ -1097,13 +1097,12 @@ button:active,
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.75);
+    background: rgba(0, 0, 0, 0.6);
     z-index: 9999;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(4px);
   }
   
   .menu-movil-overlay.activo {
@@ -1115,19 +1114,15 @@ button:active,
     position: absolute;
     top: 0;
     right: 0;
-    width: 380px;
-    max-width: 90vw;
+    width: 340px;
+    max-width: 85vw;
     height: 100%;
-    background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
+    background: #ffffff;
     transform: translateX(100%);
-    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     overflow-y: auto;
-    box-shadow: 
-      -8px 0 40px rgba(0, 0, 0, 0.15),
-      -2px 0 20px rgba(0, 0, 0, 0.1),
-      inset 1px 0 0 rgba(255, 255, 255, 0.8);
-    border-radius: 24px 0 0 24px;
-    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: -4px 0 30px rgba(0, 0, 0, 0.15);
+    border-radius: 20px 0 0 20px;
   }
   
   .menu-movil-overlay.activo .menu-movil-contenido {
@@ -1138,12 +1133,11 @@ button:active,
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 28px 24px;
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%);
+    padding: 24px 20px;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
     color: white;
     position: relative;
     overflow: hidden;
-    border-radius: 24px 0 0 0;
   }
   
   .menu-movil-header::before {
@@ -1153,89 +1147,62 @@ button:active,
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
-      radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-      linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
-    opacity: 1;
-  }
-  
-  .menu-movil-header::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
   }
   
   .menu-movil-header h3 {
     margin: 0;
     color: white;
-    font-size: 20px;
-    font-weight: 800;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-size: 17px;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     position: relative;
     z-index: 1;
-    letter-spacing: 0.5px;
   }
   
   .cerrar-menu {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
     border: none;
     color: white;
-    padding: 12px;
-    border-radius: 16px;
+    padding: 10px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease;
     position: relative;
     z-index: 1;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 
-      0 4px 12px rgba(0, 0, 0, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
   
   .cerrar-menu:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.08) rotate(90deg);
-    box-shadow: 
-      0 6px 20px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
   }
   
   .menu-movil-body {
-    padding: 32px 0 120px 0;
-    background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%);
+    padding: 24px 0 100px 0;
   }
   
   .menu-movil-seccion {
-    padding: 0 24px 32px 24px;
-    border-bottom: 1px solid rgba(229, 231, 235, 0.3);
+    padding: 0 20px 24px 20px;
+    border-bottom: 1px solid rgba(229, 231, 235, 0.5);
     position: relative;
-    margin-bottom: 8px;
   }
   
   .menu-movil-seccion:last-child {
     border-bottom: none;
-    margin-bottom: 0;
   }
   
   .seccion-titulo {
-    font-size: 12px;
-    font-weight: 900;
-    color: #6b7280;
-    margin: 0 0 20px 0;
+    font-size: 13px;
+    font-weight: 800;
+    color: #374151;
+    margin: 24px 0 16px 0;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 1px;
     position: relative;
-    padding-left: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    padding-left: 12px;
   }
   
   .seccion-titulo::before {
@@ -1244,195 +1211,31 @@ button:active,
     left: 0;
     top: 50%;
     transform: translateY(-50%);
-    width: 6px;
-    height: 20px;
+    width: 4px;
+    height: 16px;
     background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-    border-radius: 3px;
-    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+    border-radius: 2px;
   }
   
   .menu-movil-item {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 18px 16px;
+    gap: 15px;
+    padding: 16px 12px;
     color: #374151;
     text-decoration: none;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
-    border-radius: 16px;
-    margin-bottom: 6px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 12px;
+    margin-bottom: 4px;
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
     background: #ffffff;
-    border: 1px solid rgba(229, 231, 235, 0.5);
-    box-shadow: 
-      0 2px 8px rgba(0, 0, 0, 0.04),
-      0 1px 3px rgba(0, 0, 0, 0.06);
+    border: 1px solid transparent;
   }
   
   .menu-movil-item::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 0;
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%);
-    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 16px;
-  }
-  
-  .menu-movil-item::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  
-  .menu-movil-item:hover {
-    color: white;
-    transform: translateX(-6px) scale(1.02);
-    box-shadow: 
-      0 8px 25px rgba(249, 115, 22, 0.25),
-      0 4px 12px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    background: #ffffff;
-    border-color: rgba(249, 115, 22, 0.3);
-  }
-  
-  .menu-movil-item:hover::before {
-    width: 100%;
-  }
-  
-  .menu-movil-item:hover::after {
-    opacity: 1;
-  }
-  
-  .menu-movil-item > * {
-    position: relative;
-    z-index: 1;
-  }
-  
-  .menu-movil-item svg {
-    width: 22px;
-    height: 22px;
-    transition: all 0.3s ease;
-  }
-  
-  .menu-movil-item:hover svg {
-    transform: scale(1.1);
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-  }
-  
-  .chevron-derecha {
-    margin-left: auto;
-    color: #9ca3af;
-    transform: rotate(0deg);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 18px;
-    height: 18px;
-  }
-  
-  .menu-movil-item:hover .chevron-derecha {
-    color: rgba(255, 255, 255, 0.9);
-    transform: translateX(4px) scale(1.1);
-  }
-
-  /* Estilos modernos para categorías en el menú móvil */
-  .categorias-expandible {
-    background: rgba(249, 115, 22, 0.02);
-    border-radius: 16px;
-    border: 1px solid rgba(249, 115, 22, 0.1);
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  }
-  
-  .categorias-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 18px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background: linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, rgba(234, 88, 12, 0.03) 100%);
-    border-bottom: 1px solid rgba(249, 115, 22, 0.1);
-  }
-  
-  .categorias-header:hover {
-    background: linear-gradient(135deg, rgba(249, 115, 22, 0.08) 0%, rgba(234, 88, 12, 0.05) 100%);
-  }
-  
-  .categorias-titulo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 15px;
-    font-weight: 700;
-    color: #374151;
-  }
-  
-  .categorias-titulo svg {
-    color: #f97316;
-    width: 20px;
-    height: 20px;
-  }
-  
-  .categorias-chevron {
-    color: #6b7280;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 20px;
-    height: 20px;
-  }
-  
-  .categorias-chevron.rotado {
-    transform: rotate(180deg);
-    color: #f97316;
-  }
-  
-  .categorias-contenido {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    background: #ffffff;
-  }
-  
-  .categorias-contenido.abierto {
-    max-height: 400px;
-  }
-  
-  .categorias-lista {
-    padding: 12px;
-  }
-  
-  .menu-categoria-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    color: #374151;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: 12px;
-    margin-bottom: 6px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-    background: #f8fafc;
-    border: 1px solid rgba(229, 231, 235, 0.6);
-    cursor: pointer;
-    width: 100%;
-    text-align: left;
-  }
-  
-  .menu-categoria-item::before {
     content: '';
     position: absolute;
     left: 0;
@@ -1443,28 +1246,69 @@ button:active,
     transition: width 0.3s ease;
     border-radius: 12px;
   }
-
-  .menu-categoria-item:hover {
+  
+  .menu-movil-item:hover {
     color: white;
-    background: #f8fafc;
-    border-color: rgba(249, 115, 22, 0.2);
-    transform: translateX(4px) scale(1.02);
-    box-shadow: 
-      0 4px 12px rgba(249, 115, 22, 0.15),
-      0 2px 6px rgba(0, 0, 0, 0.08);
+    transform: translateX(-4px);
+    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.2);
+    background: #ffffff;
+    border-color: rgba(249, 115, 22, 0.1);
   }
   
-  .menu-categoria-item:hover::before {
+  .menu-movil-item:hover::before {
     width: 100%;
+  }
+  
+  .menu-movil-item > * {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .chevron-derecha {
+    margin-left: auto;
+    color: #9ca3af;
+    transform: rotate(90deg);
+    transition: all 0.3s ease;
+  }
+  
+  .menu-movil-item:hover .chevron-derecha {
+    color: rgba(255, 255, 255, 0.8);
+    transform: rotate(90deg) translateX(-2px);
+  }
+
+  /* Estilos para categorías en el menú móvil */
+  .menu-categoria-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    color: #374151;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 6px;
+    margin-bottom: 1px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #f1f3f4;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+  }
+
+  .menu-categoria-item:hover {
+    color: #f97316;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    border-color: #d1d5db;
+    transform: translateX(2px);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   }
 
   .menu-categoria-item:active {
-    transform: translateX(2px) scale(0.98);
-  }
-  
-  .menu-categoria-item > * {
-    position: relative;
-    z-index: 1;
+    transform: translateX(1px) scale(0.99);
+    background: #e2e8f0;
   }
 
   .categoria-icono {
@@ -1474,12 +1318,6 @@ button:active,
     align-items: center;
     justify-content: center;
     color: #f97316;
-    transition: all 0.3s ease;
-  }
-  
-  .menu-categoria-item:hover .categoria-icono {
-    color: rgba(255, 255, 255, 0.9);
-    transform: scale(1.1);
   }
 
   .categoria-info {
@@ -1491,7 +1329,6 @@ button:active,
 
   .categoria-nombre {
     font-weight: 600;
-    transition: color 0.3s ease;
     color: inherit;
   }
 

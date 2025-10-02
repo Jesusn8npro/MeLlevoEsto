@@ -38,6 +38,7 @@ import { useFavoritos } from '../../contextos/FavoritosContext'
 import { useAuth } from '../../contextos/ContextoAutenticacion'
 import { useCarrito } from '../../contextos/CarritoContext'
 import './HeaderPrincipal.css'
+import MenuMovilOverlay from './MenuMovilOverlay'
 
 const HeaderPrincipal = () => {
   const navigate = useNavigate()
@@ -526,178 +527,21 @@ const HeaderPrincipal = () => {
         </div>
       </nav>
 
-      {/* Menú móvil overlay */}
-      <div className={`menu-movil-overlay ${menuMovilAbierto ? 'activo' : ''}`}>
-        <div className="menu-movil-contenido">
-          <div className="menu-movil-header">
-            <h3>Menú</h3>
-            <button 
-              className="cerrar-menu"
-              onClick={() => setMenuMovilAbierto(false)}
-            >
-              <X size={20} />
-            </button>
-          </div>
-          
-          <div className="menu-movil-body">
-            {/* Sección de navegación principal */}
-            <div className="menu-movil-seccion">
-              <h4 className="seccion-titulo">Navegación</h4>
-              
-              <Link 
-                to="/" 
-                className="menu-movil-item"
-                onClick={() => setMenuMovilAbierto(false)}
-              >
-                <Home size={20} />
-                <span>Inicio</span>
-                <ChevronRight size={16} className="chevron-derecha" />
-              </Link>
-              
-              <Link 
-                to="/tienda" 
-                className="menu-movil-item"
-                onClick={() => setMenuMovilAbierto(false)}
-              >
-                <Store size={20} />
-                <span>Tienda</span>
-                <ChevronRight size={16} className="chevron-derecha" />
-              </Link>
-              
-              <button 
-                className="menu-movil-item"
-                onClick={() => setModalBusquedaAbierto(true)}
-              >
-                <Search size={20} />
-                <span>Buscar</span>
-                <ChevronRight size={16} className="chevron-derecha" />
-              </button>
-            </div>
-
-            {/* Sección de categorías */}
-            <div className="menu-movil-seccion">
-              <div className="categorias-expandible">
-                <div 
-                  className="categorias-header"
-                  onClick={() => setCategoriasAbiertas(!categoriasAbiertas)}
-                >
-                  <div className="categorias-titulo">
-                    <LayoutGrid size={20} />
-                    <span>Categorías</span>
-                  </div>
-                  <ChevronDown 
-                    size={20} 
-                    className={`categorias-chevron ${categoriasAbiertas ? 'rotado' : ''}`}
-                  />
-                </div>
-                
-                <div className={`categorias-contenido ${categoriasAbiertas ? 'abierto' : ''}`}>
-                  <div className="categorias-lista">
-                    {cargandoCategorias ? (
-                      <div className="menu-categoria-item">
-                        <Zap size={20} className="categoria-icono" />
-                        <div className="categoria-info">
-                          <span className="categoria-nombre">Cargando...</span>
-                        </div>
-                      </div>
-                    ) : categorias.length > 0 ? (
-                      categorias.map(categoria => (
-                        <div
-                          key={categoria.id}
-                          className="menu-categoria-item"
-                          onClick={() => manejarNavegacionCategoria(categoria)}
-                          role="button"
-                          tabIndex={0}
-                          onKeyPress={(e) => e.key === 'Enter' && manejarNavegacionCategoria(categoria)}
-                        >
-                          <div className="categoria-icono">
-                            {obtenerIconoCategoria(categoria)}
-                          </div>
-                          <div className="categoria-info">
-                            <span className="categoria-nombre">{categoria.nombre}</span>
-                            <span className="categoria-cantidad">{categoria.cantidad} productos</span>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="menu-categoria-item">
-                        <Tag size={20} className="categoria-icono" />
-                        <div className="categoria-info">
-                          <span className="categoria-nombre">No hay categorías</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Sección de cuenta */}
-            <div className="menu-movil-seccion">
-              <h4 className="seccion-titulo">Mi Cuenta</h4>
-              
-              <button 
-                className="menu-movil-item"
-                onClick={() => {
-                  setModalAutenticacionAbierto(true)
-                  setMenuMovilAbierto(false)
-                }}
-              >
-                <UserCircle size={20} />
-                <span>Iniciar Sesión</span>
-                <ChevronRight size={16} className="chevron-derecha" />
-              </button>
-              
-              <Link 
-                to="/favoritos" 
-                className="menu-movil-item"
-                onClick={() => setMenuMovilAbierto(false)}
-              >
-                <Heart size={20} />
-                <span>Favoritos</span>
-                <ChevronRight size={16} className="chevron-derecha" />
-              </Link>
-              
-              <button 
-                className="menu-movil-item"
-                onClick={() => {
-                  setMenuMovilAbierto(false);
-                  alternarModal();
-                }}
-              >
-                <ShoppingCart size={20} />
-                <span>Carrito {totalItems > 0 && `(${totalItems})`}</span>
-                <ChevronRight size={16} className="chevron-derecha" />
-              </button>
-            </div>
-
-            {/* Sección de páginas adicionales */}
-            <div className="menu-movil-seccion">
-              <h4 className="seccion-titulo">Más Páginas</h4>
-              
-              <Link 
-                to="/nosotros" 
-                className="menu-movil-item"
-                onClick={() => setMenuMovilAbierto(false)}
-              >
-                <Package size={20} />
-                <span>Nosotros</span>
-                <ChevronRight size={16} className="chevron-derecha" />
-              </Link>
-              
-              <Link 
-                to="/contacto" 
-                className="menu-movil-item"
-                onClick={() => setMenuMovilAbierto(false)}
-              >
-                <Package size={20} />
-                <span>Contacto</span>
-                <ChevronRight size={16} className="chevron-derecha" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Menú móvil overlay extraído a componente */}
+      <MenuMovilOverlay
+        abierto={menuMovilAbierto}
+        onCerrar={() => setMenuMovilAbierto(false)}
+        onAbrirBusqueda={() => setModalBusquedaAbierto(true)}
+        categorias={categorias}
+        cargandoCategorias={cargandoCategorias}
+        obtenerIconoCategoria={obtenerIconoCategoria}
+        onNavegarCategoria={manejarNavegacionCategoria}
+        onAbrirAutenticacion={() => setModalAutenticacionAbierto(true)}
+        totalItems={totalItems}
+        onAlternarCarrito={alternarModal}
+        sesionIniciada={sesionIniciada}
+        usuario={usuario}
+      />
 
       {/* Navegación Móvil Inferior */}
       <div className="navegacion-movil-inferior">
@@ -749,7 +593,7 @@ const HeaderPrincipal = () => {
         abierto={modalAutenticacionAbierto} 
         onCerrar={() => setModalAutenticacionAbierto(false)} 
       />
-      <ModalCarrito />
+      <ModalCarrito abierto={modalAbierto} onCerrar={alternarModal} />
     </header>
   )
 }

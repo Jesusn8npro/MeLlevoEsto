@@ -117,26 +117,55 @@ const PaginaFavoritos = () => {
     // Procesar imágenes directamente desde la vista_favoritos
     if (favorito.imagen_principal) {
       console.log(`📸 Agregando imagen_principal:`, favorito.imagen_principal)
-      imagenesReales.push(convertirUrlGoogleDrive(favorito.imagen_principal))
+      const imagenConvertida = convertirUrlGoogleDrive(favorito.imagen_principal)
+      if (imagenConvertida && imagenConvertida !== favorito.imagen_principal) {
+        imagenesReales.push(imagenConvertida)
+      } else {
+        imagenesReales.push(favorito.imagen_principal)
+      }
     }
     if (favorito.imagen_secundaria_1) {
       console.log(`📸 Agregando imagen_secundaria_1:`, favorito.imagen_secundaria_1)
-      imagenesReales.push(convertirUrlGoogleDrive(favorito.imagen_secundaria_1))
+      const imagenConvertida = convertirUrlGoogleDrive(favorito.imagen_secundaria_1)
+      if (imagenConvertida && imagenConvertida !== favorito.imagen_secundaria_1) {
+        imagenesReales.push(imagenConvertida)
+      } else {
+        imagenesReales.push(favorito.imagen_secundaria_1)
+      }
     }
     if (favorito.imagen_secundaria_2) {
       console.log(`📸 Agregando imagen_secundaria_2:`, favorito.imagen_secundaria_2)
-      imagenesReales.push(convertirUrlGoogleDrive(favorito.imagen_secundaria_2))
+      const imagenConvertida = convertirUrlGoogleDrive(favorito.imagen_secundaria_2)
+      if (imagenConvertida && imagenConvertida !== favorito.imagen_secundaria_2) {
+        imagenesReales.push(imagenConvertida)
+      } else {
+        imagenesReales.push(favorito.imagen_secundaria_2)
+      }
     }
     if (favorito.imagen_secundaria_3) {
       console.log(`📸 Agregando imagen_secundaria_3:`, favorito.imagen_secundaria_3)
-      imagenesReales.push(convertirUrlGoogleDrive(favorito.imagen_secundaria_3))
+      const imagenConvertida = convertirUrlGoogleDrive(favorito.imagen_secundaria_3)
+      if (imagenConvertida && imagenConvertida !== favorito.imagen_secundaria_3) {
+        imagenesReales.push(imagenConvertida)
+      } else {
+        imagenesReales.push(favorito.imagen_secundaria_3)
+      }
     }
     if (favorito.imagen_secundaria_4) {
       console.log(`📸 Agregando imagen_secundaria_4:`, favorito.imagen_secundaria_4)
-      imagenesReales.push(convertirUrlGoogleDrive(favorito.imagen_secundaria_4))
+      const imagenConvertida = convertirUrlGoogleDrive(favorito.imagen_secundaria_4)
+      if (imagenConvertida && imagenConvertida !== favorito.imagen_secundaria_4) {
+        imagenesReales.push(imagenConvertida)
+      } else {
+        imagenesReales.push(favorito.imagen_secundaria_4)
+      }
     }
     
     console.log(`🖼️ Favorito "${favorito.producto_nombre}" - Imágenes procesadas:`, imagenesReales)
+    
+    // Calcular descuento si no está presente
+    const descuento = favorito.descuento || (favorito.precio_original && favorito.precio ? 
+      Math.round(((favorito.precio_original - favorito.precio) / favorito.precio_original) * 100) : 0)
     
     // Retornar producto con el mismo formato que GridProductosVendedor
     const productoConvertido = {
@@ -144,8 +173,8 @@ const PaginaFavoritos = () => {
       nombre: favorito.producto_nombre || 'Producto sin nombre',
       precio: favorito.precio || 0,
       precio_original: favorito.precio_original,
-      descuento: favorito.descuento,
-      stock: favorito.stock,
+      descuento: descuento,
+      stock: favorito.stock || 0,
       fotos_principales: imagenesReales.length > 0 ? imagenesReales : [],
       slug: favorito.producto_slug || generarSlugDesdeNombre(favorito.producto_nombre, favorito.producto_id),
       disponible: favorito.producto_activo !== false,
@@ -245,10 +274,10 @@ const PaginaFavoritos = () => {
                 onChange={(e) => setOrdenamiento(e.target.value)}
                 className="selector-ordenamiento"
               >
-                <option value="reciente">Más recientes</option>
+                <option value="recientes">Más recientes</option>
                 <option value="nombre">Nombre A-Z</option>
-                <option value="precio-asc">Precio menor a mayor</option>
-                <option value="precio-desc">Precio mayor a menor</option>
+                <option value="precio_asc">Precio menor a mayor</option>
+                <option value="precio_desc">Precio mayor a menor</option>
               </select>
 
               <div className="controles-vista">
@@ -271,19 +300,31 @@ const PaginaFavoritos = () => {
 
 
           <div className={`favoritos-contenido ${vistaActual}`}>
-            {favoritosPaginados.map((favorito) => (
-              <TarjetaProductoVendedora
-                key={favorito.producto_id || favorito.id}
-                producto={convertirFavoritoAProducto(favorito)}
-                tamaño="normal"
-                mostrarDescuento={true}
-                mostrarUrgencia={true}
-                mostrarPruebaSocial={true}
-                mostrarBadges={true}
-                animaciones={true}
-                vistaLista={vistaActual === 'list'}
-              />
-            ))}
+            {favoritosPaginados.length === 0 ? (
+              <div className="favoritos-sin-resultados">
+                <Heart className="icono-sin-resultados" />
+                <h3>No se encontraron productos</h3>
+                <p>Intenta ajustar tu búsqueda o explorar más productos</p>
+              </div>
+            ) : (
+              favoritosPaginados.map((favorito) => {
+                const productoConvertido = convertirFavoritoAProducto(favorito)
+                console.log(`🎨 Renderizando producto convertido:`, productoConvertido)
+                return (
+                  <TarjetaProductoVendedora
+                    key={favorito.producto_id || favorito.id}
+                    producto={productoConvertido}
+                    tamaño="normal"
+                    mostrarDescuento={true}
+                    mostrarUrgencia={true}
+                    mostrarPruebaSocial={true}
+                    mostrarBadges={true}
+                    animaciones={true}
+                    vistaLista={vistaActual === 'list'}
+                  />
+                )
+              })
+            )}
           </div>
 
           {totalPaginas > 1 && (

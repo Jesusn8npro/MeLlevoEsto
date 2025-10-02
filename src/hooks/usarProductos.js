@@ -23,9 +23,15 @@ export function usarProductos(filtros = {}) {
             id,
             nombre,
             slug
+          ),
+          producto_imagenes (
+            imagen_principal,
+            imagen_secundaria_1
           )
         `)
         .eq('activo', true)
+        // Consideramos disponibles los productos con stock > 0
+        .gt('stock', 0)
 
       // Aplicar filtros
       if (filtros.categoria) {
@@ -48,7 +54,8 @@ export function usarProductos(filtros = {}) {
       if (filtros.ordenar) {
         consulta = consulta.order(filtros.ordenar.campo, { ascending: filtros.ordenar.ascendente })
       } else {
-        consulta = consulta.order('created_at', { ascending: false })
+        // La columna correcta según el esquema es 'creado_el'
+        consulta = consulta.order('creado_el', { ascending: false })
       }
 
       // Paginación

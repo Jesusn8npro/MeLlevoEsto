@@ -1,413 +1,148 @@
-/* Página 404 - ME LLEVO ESTO */
-
-.pagina-404 {
+/* Página 404 - Diseño Minimalista */
+.error-404-minimal {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  position: relative;
-  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  padding: 2rem;
 }
 
-.pagina-404::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.05)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-  opacity: 0.3;
-  animation: float 20s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
-}
-
-/* ===== HERO SECTION ===== */
-.hero-404 {
-  padding: 80px 20px;
+.container-404 {
   text-align: center;
-  position: relative;
-  z-index: 2;
+  max-width: 500px;
+  width: 100%;
 }
 
-.contenedor-404 {
-  max-width: 1200px;
-  margin: 0 auto;
+/* Número de error */
+.error-number {
+  margin-bottom: 2rem;
 }
 
-/* ===== NÚMEROS 404 ANIMADOS ===== */
-.numero-404 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 40px;
+.number {
+  font-size: 8rem;
+  font-weight: 200;
+  color: #1e293b;
+  line-height: 1;
+  letter-spacing: -0.02em;
 }
 
-.numero-animado {
-  font-size: clamp(80px, 15vw, 200px);
-  font-weight: 900;
-  color: white;
-  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  animation: bounce 2s ease-in-out infinite;
-  display: inline-block;
+/* Contenido */
+.error-content {
+  margin-bottom: 3rem;
 }
 
-.numero-4:nth-child(1) {
-  animation-delay: 0s;
-}
-
-.numero-0 {
-  animation-delay: 0.2s;
-  position: relative;
-}
-
-.numero-4:nth-child(3) {
-  animation-delay: 0.4s;
-}
-
-.emoji-404 {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: clamp(40px, 8vw, 100px);
-  animation: shake 1s ease-in-out infinite;
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-30px);
-  }
-  60% {
-    transform: translateY(-15px);
-  }
-}
-
-@keyframes shake {
-  0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
-  25% { transform: translate(-50%, -50%) rotate(-5deg); }
-  75% { transform: translate(-50%, -50%) rotate(5deg); }
-}
-
-/* ===== MENSAJE PRINCIPAL ===== */
-.mensaje-404 {
-  margin-bottom: 50px;
-}
-
-.titulo-404 {
-  font-size: clamp(32px, 6vw, 64px);
-  font-weight: 800;
-  color: white;
-  margin: 0 0 20px 0;
-  text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  animation: fadeInUp 1s ease-out;
-}
-
-.subtitulo-404 {
-  font-size: clamp(18px, 3vw, 24px);
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0 0 15px 0;
-  animation: fadeInUp 1s ease-out 0.2s both;
-}
-
-.descripcion-404 {
-  font-size: clamp(16px, 2.5vw, 20px);
-  color: rgba(255, 255, 255, 0.8);
-  margin: 0;
-  animation: fadeInUp 1s ease-out 0.4s both;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ===== BOTONES DE ACCIÓN ===== */
-.acciones-404 {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 60px;
-  flex-wrap: wrap;
-  animation: fadeInUp 1s ease-out 0.6s both;
-}
-
-.boton-principal,
-.boton-secundario {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 15px 30px;
-  border-radius: 50px;
-  font-size: 16px;
+.error-title {
+  font-size: 1.875rem;
   font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+}
+
+.error-message {
+  font-size: 1.125rem;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+/* Acciones */
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
   text-decoration: none;
+  transition: all 0.2s ease;
   border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+  font-size: 0.875rem;
 }
 
-.boton-principal {
-  background: linear-gradient(135deg, #e53e3e 0%, #ff6b35 100%);
+.btn-primary {
+  background: #0f172a;
   color: white;
-  box-shadow: 0 10px 30px rgba(229, 62, 62, 0.4);
 }
 
-.boton-principal::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  transition: left 0.5s ease;
+.btn-primary:hover {
+  background: #1e293b;
+  transform: translateY(-1px);
 }
 
-.boton-principal:hover::before {
-  left: 100%;
+.btn-secondary {
+  background: transparent;
+  color: #475569;
+  border: 1px solid #e2e8f0;
 }
 
-.boton-principal:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(229, 62, 62, 0.5);
+.btn-secondary:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
 }
 
-.boton-secundario {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
+/* WhatsApp Contact */
+.whatsapp-contact {
+  padding-top: 2rem;
+  border-top: 1px solid #e2e8f0;
 }
 
-.boton-secundario:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-3px);
+.contact-text {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0.75rem;
 }
 
-/* ===== SUGERENCIAS ===== */
-.sugerencias-404 {
-  animation: fadeInUp 1s ease-out 0.8s both;
-}
-
-.sugerencias-404 h3 {
-  font-size: clamp(20px, 4vw, 28px);
-  color: white;
-  margin: 0 0 30px 0;
-  font-weight: 700;
-}
-
-.grid-sugerencias {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.sugerencia-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  padding: 25px;
+.whatsapp-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #25d366;
   text-decoration: none;
-  color: white;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  position: relative;
-  overflow: hidden;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background: rgba(37, 211, 102, 0.1);
+  transition: all 0.2s ease;
 }
 
-.sugerencia-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
+.whatsapp-link:hover {
+  background: rgba(37, 211, 102, 0.2);
+  transform: translateY(-1px);
 }
 
-.sugerencia-card:hover::before {
-  opacity: 1;
-}
-
-.sugerencia-card:hover {
-  transform: translateY(-5px);
-  border-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-}
-
-.sugerencia-icono {
-  font-size: 40px;
-  flex-shrink: 0;
-}
-
-.sugerencia-contenido h4 {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 0 0 5px 0;
-}
-
-.sugerencia-contenido p {
-  font-size: 14px;
-  opacity: 0.8;
-  margin: 0;
-}
-
-/* ===== SECCIÓN DE BENEFICIOS ===== */
-.beneficios-404 {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  padding: 60px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.contenedor-beneficios {
-  max-width: 1200px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.beneficios-404 h3 {
-  font-size: clamp(24px, 5vw, 32px);
-  color: white;
-  margin: 0 0 40px 0;
-  font-weight: 700;
-}
-
-.grid-beneficios {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 30px;
-}
-
-.beneficio-item {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  background: rgba(255, 255, 255, 0.08);
-  padding: 25px;
-  border-radius: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-}
-
-.beneficio-item:hover {
-  background: rgba(255, 255, 255, 0.12);
-  transform: translateY(-3px);
-}
-
-.beneficio-icono {
-  font-size: 40px;
-  flex-shrink: 0;
-}
-
-.beneficio-texto {
-  text-align: left;
-}
-
-.beneficio-texto h4 {
-  font-size: 18px;
-  font-weight: 700;
-  color: white;
-  margin: 0 0 5px 0;
-}
-
-.beneficio-texto p {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.8);
-  margin: 0;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .hero-404 {
-    padding: 60px 15px;
+/* Responsive */
+@media (max-width: 640px) {
+  .number {
+    font-size: 6rem;
   }
   
-  .numero-404 {
-    gap: 10px;
-    margin-bottom: 30px;
+  .error-title {
+    font-size: 1.5rem;
   }
   
-  .acciones-404 {
+  .error-message {
+    font-size: 1rem;
+  }
+  
+  .error-actions {
     flex-direction: column;
     align-items: center;
-    gap: 15px;
   }
   
-  .boton-principal,
-  .boton-secundario {
+  .btn-primary,
+  .btn-secondary {
     width: 100%;
-    max-width: 300px;
     justify-content: center;
-  }
-  
-  .grid-sugerencias {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-  
-  .sugerencia-card {
-    padding: 20px;
-    flex-direction: column;
-    text-align: center;
-    gap: 10px;
-  }
-  
-  .beneficios-404 {
-    padding: 40px 15px;
-  }
-  
-  .grid-beneficios {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  
-  .beneficio-item {
-    flex-direction: column;
-    text-align: center;
-    gap: 15px;
-  }
-  
-  .beneficio-texto {
-    text-align: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .sugerencia-card {
-    padding: 15px;
-  }
-  
-  .beneficio-item {
-    padding: 20px;
-  }
-  
-  .numero-404 {
-    flex-direction: column;
-    gap: 0;
   }
 }
 

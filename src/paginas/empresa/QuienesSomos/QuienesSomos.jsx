@@ -1,255 +1,154 @@
-import {
-  Truck,
-  Shield,
-  Star,
-  Users,
-  Zap,
-  Heart,
-  Gift,
-  Clock,
-  Award,
-  TrendingUp,
-  Sparkles,
-  Crown,
-  Rocket
-} from 'lucide-react'
+import { Phone, Mail, MapPin, Users, Award, Heart } from 'lucide-react'
 import './QuienesSomos.css'
 
 export default function QuienesSomos() {
-  const beneficios = [
+  const valores = [
     {
-      icono: Truck,
-      titulo: 'Entrega Contra Pago',
-      descripcion: 'En Bogotá pagas cuando recibes tu pedido. Sin riesgos, sin complicaciones.',
-      destacado: true
-    },
-    {
-      icono: Clock,
-      titulo: 'Atención 24/7',
-      descripcion: 'Nuestro equipo está disponible las 24 horas para resolver cualquier duda.',
-      destacado: true
-    },
-    {
-      icono: Zap,
-      titulo: 'Respuesta Rápida',
-      descripcion: 'Respondemos en minutos, no en días. Tu tiempo es valioso.',
-      destacado: true
-    },
-    {
-      icono: Shield,
-      titulo: 'Compra Segura',
-      descripcion: 'Protegemos tus datos y garantizamos productos auténticos.',
-      destacado: false
-    },
-    {
-      icono: Gift,
-      titulo: 'Productos Innovadores',
-      descripcion: 'Las últimas tendencias y exclusividades, solo aquí.',
-      destacado: false
+      icono: Users,
+      titulo: 'Compromiso',
+      descripcion: 'Nos dedicamos a cada cliente con atención personalizada y servicio excepcional.'
     },
     {
       icono: Award,
-      titulo: 'Calidad Premium',
-      descripcion: 'Control de calidad en cada producto antes de llegar a ti.',
-      destacado: false
+      titulo: 'Calidad',
+      descripcion: 'Seleccionamos cuidadosamente cada producto para garantizar la mejor experiencia.'
+    },
+    {
+      icono: Heart,
+      titulo: 'Pasión',
+      descripcion: 'Amamos lo que hacemos y trabajamos cada día para superar expectativas.'
     }
   ]
 
-  const categorias = [
-    { nombre: 'Electrónicos', icono: '📱', productos: '500+' },
-    { nombre: 'Ropa y Moda', icono: '👕', productos: '300+' },
-    { nombre: 'Vehículos', icono: '🚗', productos: '200+' },
-    { nombre: 'Repuestos', icono: '🔧', productos: '150+' },
-    { nombre: 'Hogar', icono: '🏠', productos: '400+' },
-    { nombre: 'Deportes', icono: '⚽', productos: '100+' }
-  ]
-
-  const testimonios = [
+  const equipo = [
     {
-      nombre: 'María González',
-      ubicacion: 'Bogotá',
-      calificacion: 5,
-      comentario: '¡Increíble servicio! Compré mi iPhone y llegó al día siguiente. El pago contra entrega me dio mucha confianza.',
-      producto: 'iPhone 15 Pro'
+      nombre: 'Equipo Fundador',
+      rol: 'Visión y Estrategia',
+      descripcion: 'Profesionales con años de experiencia en comercio digital y atención al cliente.'
     },
     {
-      nombre: 'Carlos Ramírez',
-      ubicacion: 'Medellín',
-      calificacion: 5,
-      comentario: 'La atención 24/7 es genial. Resolvieron mi duda a las 2 AM y mi pedido llegó perfecto.',
-      producto: 'Samsung Galaxy S24'
+      nombre: 'Equipo de Ventas',
+      rol: 'Atención Personalizada',
+      descripcion: 'Especialistas comprometidos con encontrar la mejor solución para cada cliente.'
     },
     {
-      nombre: 'Ana Martínez',
-      ubicacion: 'Cali',
-      calificacion: 5,
-      comentario: 'Productos únicos que no encuentro en otras tiendas. La calidad es excelente y los precios justos.',
-      producto: 'Ropa Deportiva Nike'
+      nombre: 'Equipo de Soporte',
+      rol: 'Soporte 24/7',
+      descripcion: 'Siempre disponibles para resolver cualquier duda o inquietud de forma rápida.'
     }
-  ]
-
-  const estadisticas = [
-    { numero: '10K+', label: 'Clientes Felices', icono: Users },
-    { numero: '50K+', label: 'Productos Entregados', icono: Truck },
-    { numero: '4.9/5', label: 'Calificación Promedio', icono: Star },
-    { numero: '24/7', label: 'Soporte Disponible', icono: Clock }
   ]
 
   return (
-    <div className="qs-root">
-      {/* Hero Section */}
-      <section className="qs-hero">
-        <div className="qs-hero-bg"></div>
-        <div className="qs-hero-container">
-          <div className="qs-hero-info">
-            <div className="qs-hero-badge">
-              <Crown />
-              <span>#1 Marketplace de Colombia</span>
-            </div>
-            <h1>
-              <span>Somos</span>
-              <span className="qs-hero-brand"> ME LLEVO ESTO</span>
+    <div className="quienes-minimal">
+      <div className="quienes-container">
+        {/* Hero Section */}
+        <section className="quienes-hero">
+          <div className="quienes-hero-content">
+            <h1 className="quienes-title">
+              Sobre <span className="quienes-highlight">Nosotros</span>
             </h1>
-            <p>
-              Tu marketplace digital donde encuentras TODO lo que necesitas, con entrega contra pago en Bogotá y atención 24/7.
+            <p className="quienes-subtitle">
+              En Me Llevo Esto, conectamos personas con productos de calidad, 
+              brindando un servicio excepcional y experiencias memorables.
             </p>
-            <div className="qs-hero-stats">
-              {estadisticas.map((stat, i) => {
-                const Icon = stat.icono
-                return (
-                  <div className="qs-stat-card" key={i}>
-                    <div className="qs-stat-icon"><Icon /></div>
-                    <div className="qs-stat-num">{stat.numero}</div>
-                    <div className="qs-stat-label">{stat.label}</div>
+          </div>
+        </section>
+
+        {/* Misión y Visión */}
+        <section className="quienes-mision-vision">
+          <div className="mision-vision-grid">
+            <div className="mision-card">
+              <h2 className="section-title">Nuestra Misión</h2>
+              <p className="section-text">
+                Facilitar el acceso a productos de calidad con un servicio personalizado, 
+                rápido y confiable, creando valor para nuestros clientes y comunidad.
+              </p>
+            </div>
+            <div className="vision-card">
+              <h2 className="section-title">Nuestra Visión</h2>
+              <p className="section-text">
+                Ser la plataforma de comercio preferida en Colombia, reconocida por 
+                nuestra excelencia en servicio y compromiso con la satisfacción del cliente.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Valores */}
+        <section className="quienes-valores">
+          <div className="section-header">
+            <h2 className="section-title">Nuestros Valores</h2>
+            <p className="section-subtitle">Los principios que guían cada decisión</p>
+          </div>
+          <div className="valores-grid">
+            {valores.map((valor, index) => {
+              const Icon = valor.icono
+              return (
+                <div key={index} className="valor-card">
+                  <div className="valor-icon">
+                    <Icon size={32} />
                   </div>
-                )
-              })}
-            </div>
-          </div>
-          <div className="qs-hero-imgbox">
-            <img
-              src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop"
-              alt="Equipo ME LLEVO ESTO"
-              className="qs-hero-img"
-            />
-            <div className="qs-hero-imgbadge">
-              <Sparkles />
-              <span>Desde 2024</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Beneficios */}
-      <section className="qs-beneficios">
-        <div className="qs-section-title">
-          <h2>
-            ¿Por qué elegir <span className="qs-highlight">ME LLEVO ESTO</span>?
-          </h2>
-          <p>
-            Diferentes porque nos importas tú, no solo la venta.
-          </p>
-        </div>
-        <div className="qs-beneficios-grid">
-          {beneficios.map((b, i) => {
-            const Icon = b.icono
-            return (
-              <div className={`qs-beneficio-card${b.destacado ? " destacado" : ""}`} key={i}>
-                <div className="qs-beneficio-icon"><Icon /></div>
-                <div className="qs-beneficio-text">
-                  <h3>{b.titulo}</h3>
-                  <p>{b.descripcion}</p>
+                  <h3 className="valor-title">{valor.titulo}</h3>
+                  <p className="valor-description">{valor.descripcion}</p>
                 </div>
-                {b.destacado && (
-                  <span className="qs-beneficio-badge"><Rocket size={18} /> EXCLUSIVO</span>
-                )}
+              )
+            })}
+          </div>
+        </section>
+
+        {/* Equipo */}
+        <section className="quienes-equipo">
+          <div className="section-header">
+            <h2 className="section-title">Nuestro Equipo</h2>
+            <p className="section-subtitle">Profesionales dedicados a tu satisfacción</p>
+          </div>
+          <div className="equipo-grid">
+            {equipo.map((miembro, index) => (
+              <div key={index} className="equipo-card">
+                <div className="equipo-header">
+                  <h3 className="equipo-nombre">{miembro.nombre}</h3>
+                  <p className="equipo-rol">{miembro.rol}</p>
+                </div>
+                <p className="equipo-descripcion">{miembro.descripcion}</p>
               </div>
-            )
-          })}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
 
-      {/* Categorías */}
-      <section className="qs-categorias">
-        <div className="qs-section-title">
-          <h2>
-            <span className="qs-highlight">TODO</span> lo que necesitas
-          </h2>
-          <p>
-            Electrónicos, moda, hogar, repuestos y mucho más.
-          </p>
-        </div>
-        <div className="qs-categorias-grid">
-          {categorias.map((cat, i) => (
-            <div className="qs-categoria-card" key={i}>
-              <div className="qs-categoria-icon">{cat.icono}</div>
-              <div className="qs-categoria-title">{cat.nombre}</div>
-              <div className="qs-categoria-count">{cat.productos} productos</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Testimonios */}
-      <section className="qs-testimonios">
-        <div className="qs-section-title qs-test-titulo">
-          <h2>
-            Lo que dicen nuestros <span className="qs-highlight">clientes</span>
-          </h2>
-          <p>
-            Miles ya confían en nosotros. ¿Y tú?
-          </p>
-        </div>
-        <div className="qs-testimonios-grid">
-          {testimonios.map((t, i) => (
-            <div className="qs-testimonio-card" key={i}>
-              <div className="qs-testimonio-info">
-                <div className="qs-testimonio-avatar">
-                  <img
-                    src={`https://randomuser.me/api/portraits/lego/${i+2}.jpg`}
-                    alt={t.nombre}
-                  />
-                </div>
-                <div>
-                  <div className="qs-testimonio-nombre">{t.nombre}</div>
-                  <div className="qs-testimonio-ubicacion">{t.ubicacion}</div>
-                  <div className="qs-testimonio-stars">
-                    {[...Array(t.calificacion)].map((_, s) => <Star key={s} size={16} />)}
-                  </div>
-                </div>
+        {/* Contacto */}
+        <section className="quienes-contacto">
+          <div className="contacto-card">
+            <h2 className="contacto-title">¿Listo para comenzar?</h2>
+            <p className="contacto-text">
+              Estamos aquí para ayudarte. Contáctanos y descubre cómo podemos 
+              hacer tu experiencia de compra excepcional.
+            </p>
+            <div className="contacto-info">
+              <div className="contacto-item">
+                <Phone size={20} />
+                <span>WhatsApp: +57 321 489 2176</span>
               </div>
-              <div className="qs-testimonio-coment">"{t.comentario}"</div>
-              <div className="qs-testimonio-prod">Compró: <span>{t.producto}</span></div>
+              <div className="contacto-item">
+                <Mail size={20} />
+                <span>info@mellevolesto.com</span>
+              </div>
+              <div className="contacto-item">
+                <MapPin size={20} />
+                <span>Bogotá, Colombia</span>
+              </div>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="qs-cta">
-        <div className="qs-cta-content">
-          <h2>
-            ¿Listo para vivir la experiencia <span className="qs-highlight">ME LLEVO ESTO</span>?
-          </h2>
-          <p>
-            Únete a miles que ya confían en nosotros. ¡Compra fácil, seguro y rápido!
-          </p>
-          <div className="qs-cta-buttons">
-            <button className="qs-btn qs-btn-primary">
-              <Heart size={20} />
-              Explorar Productos
-            </button>
-            <button className="qs-btn qs-btn-secondary">
-              <Shield size={20} />
-              Atención Personalizada
-            </button>
+            <a 
+              href="https://wa.me/573214892176" 
+              className="whatsapp-button"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Phone size={20} />
+              Contactar por WhatsApp
+            </a>
           </div>
-          <div className="qs-cta-garantia">
-            <Shield size={24} />
-            <span>Compra 100% segura • Pago contra entrega en Bogotá</span>
-          </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   )
 }

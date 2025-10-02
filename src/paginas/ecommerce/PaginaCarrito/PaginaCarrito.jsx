@@ -25,7 +25,6 @@ import {
 import { useCarrito } from '../../../contextos/CarritoContext'
 import { useAuth } from '../../../contextos/ContextoAutenticacion'
 import ItemCarrito from '../../../componentes/carrito/ItemCarrito'
-import ProductosRelacionados from '../../../componentes/carrito/ProductosRelacionados'
 import './PaginaCarrito.css'
 
 const PaginaCarrito = () => {
@@ -184,10 +183,7 @@ const PaginaCarrito = () => {
                   ))}
                 </div>
 
-                {/* Productos relacionados */}
-                <ProductosRelacionados 
-                  categoriaId={items[0]?.productos?.categoria_id}
-                />
+                {/* Sección de productos relacionados eliminada por solicitud */}
               </div>
             )}
 
