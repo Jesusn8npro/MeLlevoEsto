@@ -19,6 +19,7 @@ import {
   X
 } from 'lucide-react'
 import { useCarrito } from '../../../../../contextos/CarritoContext'
+import { useFavoritos } from '../../../../../contextos/FavoritosContext'
 import BotonCarritoAnimado from '../../../../../componentes/ui/BotonCarritoAnimado'
 // Eliminado ImagenConFallback - usaremos <img> directo
 import './HeroTemu.css'
@@ -165,22 +166,42 @@ function IndicadorModoSticky() {
 
 /* ============== COMPONENTE PRINCIPAL HERO TEMU ============== */
 const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
-  // Hook del carrito
+  // Hooks del carrito y favoritos
   const { agregarItem, alternarModal, mostrarNotificacion } = useCarrito()
+  const { esFavorito, alternarFavorito } = useFavoritos()
   
   // Estados del componente
   const [imagenSeleccionada, setImagenSeleccionada] = useState(0)
   const [cantidad, setCantidad] = useState(1)
   const [varianteSeleccionada, setVarianteSeleccionada] = useState(null)
-  const [enFavoritos, setEnFavoritos] = useState(false)
   const [tiempoRestante, setTiempoRestante] = useState('04:15:08:52')
   const [descripcionExpandida, setDescripcionExpandida] = useState(false)
   const [popupGaleriaAbierto, setPopupGaleriaAbierto] = useState(false)
   const [mostrarFlechas, setMostrarFlechas] = useState(false)
+  
+  // Estados para el slider de miniaturas
+  const [esMobile, setEsMobile] = useState(false)
+  const sliderRef = useRef(null)
+  
+  // Estados para gestos táctiles en el popup
+  const [touchStart, setTouchStart] = useState(null)
+  const [touchEnd, setTouchEnd] = useState(null)
 
   // Configurar altura del header
   useEffect(() => {
     document.documentElement.style.setProperty("--header-h", "0px")
+  }, [])
+
+  // Detectar si es móvil
+  useEffect(() => {
+    const checkMobile = () => {
+      setEsMobile(window.innerWidth <= 800)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    
+    return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
   // Contador de tiempo dinámico
@@ -285,6 +306,25 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
   // Manejadores de eventos
   const manejarCambioImagen = (index) => {
     setImagenSeleccionada(index)
+    
+    // En móvil, hacer scroll automático para centrar la miniatura seleccionada
+    if (esMobile && sliderRef.current) {
+      const slider = sliderRef.current
+      const miniatura = slider.children[index]
+      
+      if (miniatura) {
+        const sliderRect = slider.getBoundingClientRect()
+        const miniaturaRect = miniatura.getBoundingClientRect()
+        
+        // Calcular la posición para centrar la miniatura
+        const scrollLeft = miniatura.offsetLeft - (sliderRect.width / 2) + (miniaturaRect.width / 2)
+        
+        slider.scrollTo({
+          left: scrollLeft,
+          behavior: 'smooth'
+        })
+      }
+    }
   }
 
   const manejarImagenAnterior = () => {
@@ -384,13 +424,22 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
               
               {/* Miniaturas verticales a la izquierda */}
               {imagenesFinales.length > 1 && (
-                <div className="hero-temu-miniaturas-verticales">
+                <div 
+                  ref={sliderRef}
+                  className="hero-temu-miniaturas-verticales"
+                  role="tablist"
+                  aria-label="Galería de imágenes del producto"
+                >
                   {imagenesFinales.map((imagen, index) => (
                       <button
                         key={index}
                         className={`hero-temu-miniatura-vertical ${index === imagenSeleccionada ? 'activa' : ''}`}
-                        onMouseEnter={() => manejarCambioImagen(index)}
+                        onMouseEnter={() => !esMobile && manejarCambioImagen(index)}
                         onClick={() => manejarCambioImagen(index)}
+                        role="tab"
+                        aria-selected={index === imagenSeleccionada}
+                        aria-label={`Ver imagen ${index + 1} de ${imagenesFinales.length}`}
+                        tabIndex={index === imagenSeleccionada ? 0 : -1}
                       >
                         <img
                           src={imagen}
@@ -409,6 +458,13 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                         />
                       </button>
                   ))}
+                  
+                  {/* Indicador de scroll solo en móvil */}
+                  {esMobile && imagenesFinales.length > 3 && (
+                    <div className="hero-temu-slider-indicador">
+                      {imagenSeleccionada + 1} / {imagenesFinales.length}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -445,13 +501,15 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                 
                 {/* Botón de favoritos */}
                 <button 
-                  className={`hero-temu-boton-favoritos ${enFavoritos ? 'activo' : ''}`}
+                  className={`hero-temu-boton-favoritos ${esFavorito(producto?.id) ? 'activo' : ''}`}
                   onClick={(e) => {
                     e.stopPropagation()
-                    setEnFavoritos(!enFavoritos)
+                    if (producto) {
+                      alternarFavorito(producto)
+                    }
                   }}
                 >
-                  <Heart size={20} fill={enFavoritos ? '#ff4757' : 'none'} />
+                  <Heart size={20} fill={esFavorito(producto?.id) ? '#ff4757' : 'none'} />
                 </button>
 
                 {/* Flechas de navegación en hover */}
@@ -747,29 +805,54 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
             </div>
 
             {/* Imagen principal del popup */}
-            <div className="hero-temu-popup-imagen-container">
+            <div 
+              className="hero-temu-popup-imagen-container"
+              onTouchStart={(e) => {
+                if (imagenesFinales.length <= 1) return;
+                const touch = e.touches[0];
+                setTouchStart(touch.clientX);
+              }}
+              onTouchMove={(e) => {
+                if (imagenesFinales.length <= 1) return;
+                const touch = e.touches[0];
+                setTouchEnd(touch.clientX);
+              }}
+              onTouchEnd={() => {
+                if (imagenesFinales.length <= 1 || !touchStart || !touchEnd) return;
+                const distance = touchStart - touchEnd;
+                const isLeftSwipe = distance > 50;
+                const isRightSwipe = distance < -50;
+
+                if (isLeftSwipe) {
+                  manejarImagenSiguiente();
+                }
+                if (isRightSwipe) {
+                  manejarImagenAnterior();
+                }
+                
+                setTouchStart(null);
+                setTouchEnd(null);
+              }}
+            >
               <img 
                 src={imagenesFinales[imagenSeleccionada]} 
                 alt={producto?.nombre || 'Producto'}
                 className="hero-temu-popup-imagen"
               />
-              
-              {/* Flechas de navegación */}
+
+              {/* Miniaturas en el popup - justo pegadas debajo de la imagen */}
               {imagenesFinales.length > 1 && (
-                <>
-                  <button 
-                    className="hero-temu-popup-flecha hero-temu-popup-flecha-izquierda"
-                    onClick={manejarImagenAnterior}
-                  >
-                    <ChevronLeft size={32} />
-                  </button>
-                  <button 
-                    className="hero-temu-popup-flecha hero-temu-popup-flecha-derecha"
-                    onClick={manejarImagenSiguiente}
-                  >
-                    <ChevronRight size={32} />
-                  </button>
-                </>
+                <div className="hero-temu-popup-miniaturas">
+                  {imagenesFinales.map((imagen, index) => (
+                    <button
+                      key={index}
+                      className={`hero-temu-popup-miniatura ${index === imagenSeleccionada ? 'activa' : ''}`}
+                      onClick={() => manejarCambioImagen(index)}
+                    >
+                      <img src={imagen} alt={`Vista ${index + 1}`} />
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
 
@@ -789,21 +872,6 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                 Añadir al carrito
               </BotonCarritoAnimado>
             </div>
-
-            {/* Miniaturas en el popup (solo en desktop) */}
-            {imagenesFinales.length > 1 && (
-              <div className="hero-temu-popup-miniaturas">
-                {imagenesFinales.map((imagen, index) => (
-                  <button
-                    key={index}
-                    className={`hero-temu-popup-miniatura ${index === imagenSeleccionada ? 'activa' : ''}`}
-                    onClick={() => manejarCambioImagen(index)}
-                  >
-                    <img src={imagen} alt={`Vista ${index + 1}`} />
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
         </div>
       )}

@@ -702,29 +702,41 @@ const HeaderPrincipal = () => {
       {/* Navegación Móvil Inferior */}
       <div className="navegacion-movil-inferior">
         <button className="nav-movil-item" onClick={alternarMenuMovil}>
-          <Menu size={20} />
+          <div className="nav-icono-contenedor">
+            <Menu size={22} />
+          </div>
           <span>Menú</span>
         </button>
+        
         <button className="nav-movil-item" onClick={() => setModalBusquedaAbierto(true)}>
-          <Search size={20} />
+          <div className="nav-icono-contenedor">
+            <Search size={22} />
+          </div>
           <span>Buscar</span>
         </button>
-        <Link to="/" className="nav-movil-item">
-          <Home size={20} />
-          <span>Inicio</span>
+        
+        <Link to="/tienda" className="nav-movil-item nav-movil-destacado">
+          <div className="nav-icono-contenedor-destacado">
+            <Store size={24} />
+          </div>
+          <span>Tienda</span>
         </Link>
+        
         <button className="nav-movil-item" onClick={alternarModal}>
-          <div className="carrito-contenedor">
-            <ShoppingCart size={20} />
+          <div className="nav-icono-contenedor carrito-contenedor-movil">
+            <ShoppingCart size={22} />
             {totalItems > 0 && (
-              <span className="carrito-contador">{totalItems}</span>
+              <span className="carrito-contador-movil">{totalItems}</span>
             )}
           </div>
-          <span>Mi Carrito</span>
+          <span>Carrito</span>
         </button>
-        <Link to="/perfil" className="nav-movil-item">
-          <User className="icono-usuario-movil" />
-          <span>Perfil</span>
+        
+        <Link to="/favoritos" className="nav-movil-item">
+          <div className="nav-icono-contenedor">
+            <Heart size={22} />
+          </div>
+          <span>Favoritos</span>
         </Link>
       </div>
 

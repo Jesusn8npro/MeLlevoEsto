@@ -948,6 +948,14 @@ html, body, #root {
   overflow: hidden;
 }
 
+/* Ajuste para móvil - contenedor más arriba */
+@media (max-width: 800px) {
+  .hero-temu-popup-contenido {
+    height: 85%;
+    margin-top: -5vh;
+  }
+}
+
 .hero-temu-popup-header {
   display: flex;
   justify-content: space-between;
@@ -1050,9 +1058,13 @@ html, body, #root {
 }
 
 .hero-temu-popup-miniaturas {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   gap: 8px;
-  padding: 16px 20px;
+  padding: 12px;
   background: rgba(0, 0, 0, 0.8);
   justify-content: center;
   flex-wrap: wrap;
@@ -1099,13 +1111,16 @@ html, body, #root {
 @media (max-width: 1200px) { 
   .hero-temu-contenido-principal { 
     grid-template-columns: 46% 1fr !important; 
-    gap: 2% !important;
+    gap: 1% !important;
     padding: 0 !important;
     margin: 0 !important;
   }
+    .hero-temu-columna-izquierda { 
+  max-width: 100%;
+}
   
   .hero-temu-contenedor {
-    padding: 10px 0 !important;
+    padding: 1px 0 !important;
   }
 
   /* Ajustes del banner para tablets */
@@ -1154,45 +1169,119 @@ html, body, #root {
 @media (max-width: 800px) {
   .hero-temu-contenedor {
     position: relative;
-    padding: 1px !important;
-    margin-top: -10px;
+    padding: 0 !important;
+    margin: 0;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
   }
   
   .hero-temu-contenido-principal {
     flex-direction: column;
+    gap: 0;
+    padding: 0;
+    margin: 0;
   }
   
-  .hero-temu-columna-izquierda,
-  .hero-temu-columna-derecha {
-    flex: none;
+  .hero-temu-columna-izquierda {
+    flex: 1;
+    width: 100%;
     max-width: 100%;
+    margin: 0;
+    padding: 0;
   }
   
   .hero-temu-columna-derecha {
-    min-height: auto;
+    flex: 1;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 15px;
   }
   
   /* Desactivar sticky en móvil */
   .hero-temu-galeria-sticky {
     position: static !important;
+    width: 100% !important;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
   }
   
   /* Miniaturas horizontales en móvil */
   .hero-temu-contenedor-galeria {
     flex-direction: column;
+    width: 100%;
+    gap: 0;
   }
   
+  .hero-temu-imagen-principal {
+    width: 100%;
+    aspect-ratio: 1/1;
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  /* Contenedor del slider de miniaturas */
   .hero-temu-miniaturas-verticales {
     flex-direction: row;
-    justify-content: center;
-    gap: 5px;
-    margin-top: -7px;
+    gap: 12px;
+    margin: 0;
     order: 2;
+    width: 100%;
+    padding: 15px 20px;
+    background: #f8f9fa;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  
+  /* Ocultar scrollbar en WebKit */
+  .hero-temu-miniaturas-verticales::-webkit-scrollbar {
+    display: none;
   }
 
   .hero-temu-miniatura-vertical {
     width: 80px;
     height: 80px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  
+  .hero-temu-miniatura-vertical:hover {
+    transform: scale(1.05);
+  }
+  
+  .hero-temu-miniatura-vertical.activa {
+    border-color: #ff4444;
+    box-shadow: 0 0 0 2px #ff4444;
+    transform: scale(1.1);
+  }
+  
+  /* Indicador de scroll para miniaturas */
+  .hero-temu-slider-indicador {
+    position: absolute;
+    bottom: 5px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .hero-temu-miniaturas-verticales:hover + .hero-temu-slider-indicador,
+  .hero-temu-miniaturas-verticales:focus + .hero-temu-slider-indicador {
+    opacity: 1;
   }
   
   /* Imagen de pagos responsive */

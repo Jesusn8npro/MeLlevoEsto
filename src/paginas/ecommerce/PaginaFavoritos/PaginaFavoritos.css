@@ -343,19 +343,28 @@
   padding: 0 2rem;
 }
 
+/* Grid compatible con TarjetaProductoVendedora */
 .favoritos-contenido.grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 2rem;
 }
 
+/* Lista compatible con TarjetaProductoVendedora */
 .favoritos-contenido.list {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-/* ===== TARJETAS DE FAVORITOS ===== */
+/* Asegurar que TarjetaProductoVendedora funcione correctamente */
+.favoritos-contenido .tarjeta-producto-vendedora {
+  width: 100%;
+  height: auto;
+}
+
+/* ===== TARJETAS DE FAVORITOS ANTIGUAS (COMENTADAS - AHORA USAMOS TarjetaProductoVendedora) ===== */
+/*
 .favorito-card {
   background: white;
   border-radius: 20px;
@@ -365,7 +374,9 @@
   border: 1px solid rgba(0, 0, 0, 0.05);
   position: relative;
 }
+*/
 
+/*
 .favorito-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
@@ -402,7 +413,9 @@
 .favorito-card:hover .favorito-overlay {
   opacity: 1;
 }
+*/
 
+/*
 .boton-ver-producto,
 .boton-eliminar-favorito {
   width: 2.5rem;
@@ -474,6 +487,7 @@
   display: flex;
   gap: 0.75rem;
 }
+*/
 
 .boton-ver-producto-completo,
 .boton-agregar-carrito {

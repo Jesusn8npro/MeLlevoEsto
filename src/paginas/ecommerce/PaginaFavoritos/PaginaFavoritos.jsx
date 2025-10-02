@@ -3,56 +3,79 @@ import { Link } from 'react-router-dom'
 import { Heart, Search, Grid, List, ShoppingCart, Eye, Trash2, Star } from 'lucide-react'
 import { useFavoritos } from '../../../contextos/FavoritosContext'
 import TarjetaProductoVendedora from '../../../componentes/producto/TarjetaProductoVendedora'
+import { convertirUrlGoogleDrive } from '../../../utilidades/googleDrive'
 import './PaginaFavoritos.css'
 
 const PaginaFavoritos = () => {
-  const { favoritos, cargando, quitarFavorito } = useFavoritos()
-  
+  const { favoritos, quitarFavorito, cargando } = useFavoritos()
   const [busqueda, setBusqueda] = useState('')
-  const [ordenamiento, setOrdenamiento] = useState('reciente')
+  const [ordenamiento, setOrdenamiento] = useState('recientes')
   const [vistaActual, setVistaActual] = useState('grid')
   const [paginaActual, setPaginaActual] = useState(1)
   const productosPorPagina = 12
 
+  // 🔍 LOGS DE DEBUGGING
+  console.log('🚀 PaginaFavoritos - Renderizando componente')
+  console.log('📦 Favoritos del contexto:', favoritos)
+  console.log('📊 Cantidad de favoritos:', favoritos?.length || 0)
+  console.log('🔍 Búsqueda actual:', busqueda)
+  console.log('📋 Ordenamiento actual:', ordenamiento)
+
   // Filtrar y ordenar favoritos
   const favoritosFiltrados = useMemo(() => {
-    let resultado = favoritos.filter(favorito =>
-      favorito && favorito.nombre && favorito.nombre.toLowerCase().includes(busqueda.toLowerCase())
+    console.log('🔄 Procesando filtros y ordenamiento...')
+    
+    if (!favoritos || favoritos.length === 0) {
+      console.log('❌ No hay favoritos para procesar')
+      return []
+    }
+    
+    console.log('✅ Favoritos disponibles para filtrar:', favoritos.length)
+    
+    // Filtrar por búsqueda
+    let filtrados = favoritos.filter(favorito =>
+      favorito.nombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
+      favorito.descripcion?.toLowerCase().includes(busqueda.toLowerCase())
     )
-
+    
+    console.log('🔍 Después del filtro de búsqueda:', filtrados.length)
+    
+    // Ordenar
     switch (ordenamiento) {
-      case 'precio-asc':
-        resultado.sort((a, b) => (a.precio || 0) - (b.precio || 0))
-        break
-      case 'precio-desc':
-        resultado.sort((a, b) => (b.precio || 0) - (a.precio || 0))
-        break
       case 'nombre':
-        resultado.sort((a, b) => {
-          const nombreA = a.nombre || ''
-          const nombreB = b.nombre || ''
-          return nombreA.localeCompare(nombreB)
-        })
+        filtrados.sort((a, b) => a.nombre?.localeCompare(b.nombre || ''))
         break
-      case 'reciente':
+      case 'precio_asc':
+        filtrados.sort((a, b) => (a.precio || 0) - (b.precio || 0))
+        break
+      case 'precio_desc':
+        filtrados.sort((a, b) => (b.precio || 0) - (a.precio || 0))
+        break
+      case 'recientes':
       default:
-        resultado.sort((a, b) => {
-          const fechaA = a.fecha_agregado ? new Date(a.fecha_agregado) : new Date(0)
-          const fechaB = b.fecha_agregado ? new Date(b.fecha_agregado) : new Date(0)
-          return fechaB - fechaA
-        })
+        filtrados.sort((a, b) => new Date(b.fecha_agregado || 0) - new Date(a.fecha_agregado || 0))
         break
     }
-
-    return resultado
+    
+    console.log('📋 Después del ordenamiento:', filtrados.length)
+    console.log('📋 Favoritos filtrados:', filtrados)
+    
+    return filtrados
   }, [favoritos, busqueda, ordenamiento])
 
   // Paginación
   const totalPaginas = Math.ceil(favoritosFiltrados.length / productosPorPagina)
-  const favoritosPaginados = favoritosFiltrados.slice(
-    (paginaActual - 1) * productosPorPagina,
-    paginaActual * productosPorPagina
-  )
+  const indiceInicio = (paginaActual - 1) * productosPorPagina
+  const indiceFin = indiceInicio + productosPorPagina
+  const favoritosPaginados = favoritosFiltrados.slice(indiceInicio, indiceFin)
+
+  console.log('📄 Paginación:')
+  console.log('  - Total páginas:', totalPaginas)
+  console.log('  - Página actual:', paginaActual)
+  console.log('  - Índice inicio:', indiceInicio)
+  console.log('  - Índice fin:', indiceFin)
+  console.log('  - Favoritos paginados:', favoritosPaginados.length)
+  console.log('  - Datos paginados:', favoritosPaginados)
 
   const manejarEliminarFavorito = (productoId) => {
     quitarFavorito(productoId)
@@ -85,49 +108,58 @@ const PaginaFavoritos = () => {
   }
 
   // Convertir favorito a formato de producto para TarjetaProductoVendedora
+  // Adaptado para la estructura de vista_favoritos
   const convertirFavoritoAProducto = (favorito) => {
-    // Replicar exactamente la lógica de procesamiento de imágenes de GridProductosVendedor
-    let imagenesReales = []
+    console.log(`🔄 Convirtiendo favorito a producto:`, favorito)
     
-    // Procesar producto_imagenes si está disponible (prioridad máxima)
-    if (favorito.producto_imagenes && favorito.producto_imagenes.length > 0) {
-      const imagenes = favorito.producto_imagenes[0] // Tomar el primer objeto de imágenes
-      
-      // Agregar imágenes en orden de prioridad (ImagenInteligente maneja la conversión automáticamente)
-      if (imagenes.imagen_principal) imagenesReales.push(imagenes.imagen_principal)
-      if (imagenes.imagen_secundaria_1) imagenesReales.push(imagenes.imagen_secundaria_1)
-      if (imagenes.imagen_secundaria_2) imagenesReales.push(imagenes.imagen_secundaria_2)
-      if (imagenes.imagen_secundaria_3) imagenesReales.push(imagenes.imagen_secundaria_3)
-      if (imagenes.imagen_secundaria_4) imagenesReales.push(imagenes.imagen_secundaria_4)
+    const imagenesReales = []
+    
+    // Procesar imágenes directamente desde la vista_favoritos
+    if (favorito.imagen_principal) {
+      console.log(`📸 Agregando imagen_principal:`, favorito.imagen_principal)
+      imagenesReales.push(convertirUrlGoogleDrive(favorito.imagen_principal))
+    }
+    if (favorito.imagen_secundaria_1) {
+      console.log(`📸 Agregando imagen_secundaria_1:`, favorito.imagen_secundaria_1)
+      imagenesReales.push(convertirUrlGoogleDrive(favorito.imagen_secundaria_1))
+    }
+    if (favorito.imagen_secundaria_2) {
+      console.log(`📸 Agregando imagen_secundaria_2:`, favorito.imagen_secundaria_2)
+      imagenesReales.push(convertirUrlGoogleDrive(favorito.imagen_secundaria_2))
+    }
+    if (favorito.imagen_secundaria_3) {
+      console.log(`📸 Agregando imagen_secundaria_3:`, favorito.imagen_secundaria_3)
+      imagenesReales.push(convertirUrlGoogleDrive(favorito.imagen_secundaria_3))
+    }
+    if (favorito.imagen_secundaria_4) {
+      console.log(`📸 Agregando imagen_secundaria_4:`, favorito.imagen_secundaria_4)
+      imagenesReales.push(convertirUrlGoogleDrive(favorito.imagen_secundaria_4))
     }
     
-    // Si no hay imágenes reales, usar fotos_principales del favorito
-    if (imagenesReales.length === 0 && favorito.fotos_principales && favorito.fotos_principales.length > 0) {
-      imagenesReales.push(...favorito.fotos_principales)
-    }
+    console.log(`🖼️ Favorito "${favorito.producto_nombre}" - Imágenes procesadas:`, imagenesReales)
     
-    // Si aún no hay imágenes, usar la imagen principal del favorito
-    if (imagenesReales.length === 0 && favorito.imagen) {
-      imagenesReales.push(favorito.imagen)
-    }
-    
-    console.log(`🖼️ Favorito "${favorito.nombre}" - Imágenes procesadas:`, imagenesReales.length)
-    
-    return {
-      id: favorito.producto_id || favorito.id,
-      nombre: favorito.nombre || 'Producto sin nombre',
+    // Retornar producto con el mismo formato que GridProductosVendedor
+    const productoConvertido = {
+      id: favorito.producto_id,
+      nombre: favorito.producto_nombre || 'Producto sin nombre',
       precio: favorito.precio || 0,
       precio_original: favorito.precio_original,
-      fotos_principales: imagenesReales.length > 0 ? imagenesReales : favorito.fotos_principales || [],
-      imagen_principal: imagenesReales[0] || null, // Primera imagen como principal
-      slug: favorito.slug || generarSlugDesdeNombre(favorito.nombre, favorito.producto_id || favorito.id), // Usar slug real o generar uno válido
-      disponible: favorito.activo !== false,
+      descuento: favorito.descuento,
+      stock: favorito.stock,
+      fotos_principales: imagenesReales.length > 0 ? imagenesReales : [],
+      slug: favorito.producto_slug || generarSlugDesdeNombre(favorito.producto_nombre, favorito.producto_id),
+      disponible: favorito.producto_activo !== false,
       descripcion: favorito.descripcion || 'Descripción no disponible',
       destacado: false,
-      // Agregar propiedades adicionales que puede necesitar TarjetaProductoVendedora
       ventajas: favorito.ventajas || [],
-      categoria: favorito.categoria || 'General'
+      categoria: favorito.categoria_nombre || 'General',
+      // Mantener datos del favorito
+      favorito_id: favorito.id,
+      fecha_agregado: favorito.fecha_agregado
     }
+    
+    console.log(`✅ Producto convertido:`, productoConvertido)
+    return productoConvertido
   }
 
   if (cargando) {
@@ -243,11 +275,11 @@ const PaginaFavoritos = () => {
               <TarjetaProductoVendedora
                 key={favorito.producto_id || favorito.id}
                 producto={convertirFavoritoAProducto(favorito)}
+                tamaño="normal"
                 mostrarDescuento={true}
-                mostrarUrgencia={false}
+                mostrarUrgencia={true}
                 mostrarPruebaSocial={true}
                 mostrarBadges={true}
-                tamaño="normal"
                 animaciones={true}
                 vistaLista={vistaActual === 'list'}
               />

@@ -26,8 +26,13 @@ const TIPOS_ACCION = {
 
 // Reducer para manejar el estado de favoritos
 const favoritosReducer = (estado, accion) => {
+  console.log('🔄 FavoritosReducer - Acción recibida:', accion.type)
+  console.log('📦 Payload:', accion.payload)
+  console.log('📊 Estado actual:', estado)
+  
   switch (accion.type) {
     case TIPOS_ACCION.CARGAR_FAVORITOS_INICIO:
+      console.log('⏳ Iniciando carga de favoritos...')
       return {
         ...estado,
         cargando: true,
@@ -35,6 +40,7 @@ const favoritosReducer = (estado, accion) => {
       }
 
     case TIPOS_ACCION.CARGAR_FAVORITOS_EXITO:
+      console.log('✅ Carga de favoritos exitosa. Cantidad:', accion.payload?.length || 0)
       return {
         ...estado,
         favoritos: accion.payload,
@@ -82,12 +88,15 @@ const favoritosReducer = (estado, accion) => {
       }
 
     case TIPOS_ACCION.SINCRONIZAR_INICIO:
+      console.log('🔄 Iniciando sincronización de favoritos...')
       return {
         ...estado,
         cargando: true
       }
 
     case TIPOS_ACCION.SINCRONIZAR_EXITO:
+      console.log('✅ Sincronización exitosa. Favoritos recibidos:', accion.payload?.length || 0)
+      console.log('📋 Favoritos sincronizados:', accion.payload)
       return {
         ...estado,
         favoritos: accion.payload,
@@ -97,6 +106,7 @@ const favoritosReducer = (estado, accion) => {
       }
 
     case TIPOS_ACCION.SINCRONIZAR_ERROR:
+      console.log('❌ Error en sincronización:', accion.payload)
       return {
         ...estado,
         cargando: false,
@@ -122,22 +132,36 @@ const FavoritosProvider = ({ children }) => {
 
   // Función para cargar favoritos desde la base de datos
   const cargarFavoritosDesdeDB = async () => {
-    if (!usuario?.id) return []
+    console.log('🔍 FavoritosContext - cargarFavoritosDesdeDB iniciado')
+    console.log('👤 Usuario ID:', usuario?.id)
+    
+    if (!usuario?.id) {
+      console.log('❌ No hay usuario logueado, retornando array vacío')
+      return []
+    }
 
     try {
+      console.log('📡 Consultando vista_favoritos en Supabase...')
       const { data, error } = await clienteSupabase
         .from('vista_favoritos')
         .select('*')
         .eq('usuario_id', usuario.id)
 
       if (error) {
-        console.error('Error al cargar favoritos desde DB:', error)
+        console.error('❌ Error al cargar favoritos desde DB:', error)
         return []
+      }
+
+      console.log('✅ Datos recibidos de vista_favoritos:', data)
+      console.log('📊 Cantidad de favoritos encontrados:', data?.length || 0)
+      
+      if (data && data.length > 0) {
+        console.log('📋 Primer favorito como ejemplo:', data[0])
       }
 
       return data || []
     } catch (error) {
-      console.error('Error al cargar favoritos desde DB:', error)
+      console.error('❌ Error al cargar favoritos desde DB:', error)
       return []
     }
   }
@@ -215,22 +239,32 @@ const FavoritosProvider = ({ children }) => {
 
   // Función para sincronizar favoritos (cargar desde DB o localStorage)
   const sincronizarFavoritos = async () => {
+    console.log('🔄 FavoritosContext - sincronizarFavoritos iniciado')
+    console.log('🔐 Sesión iniciada:', sesionIniciada)
+    console.log('👤 Usuario:', usuario?.id)
+    
     dispatch({ type: TIPOS_ACCION.SINCRONIZAR_INICIO })
 
     try {
       if (sesionIniciada && usuario?.id) {
+        console.log('📡 Usuario logueado: cargando desde base de datos')
         // Usuario logueado: cargar desde base de datos
         const favoritosDB = await cargarFavoritosDesdeDB()
+        console.log('✅ Favoritos cargados desde DB:', favoritosDB)
+        console.log('📊 Cantidad de favoritos DB:', favoritosDB?.length || 0)
+        
         dispatch({ 
           type: TIPOS_ACCION.SINCRONIZAR_EXITO, 
           payload: favoritosDB 
         })
+        console.log('✅ Dispatch SINCRONIZAR_EXITO ejecutado con:', favoritosDB?.length || 0, 'favoritos')
       } else {
+        console.log('💾 Usuario no logueado: cargando desde localStorage')
         // Usuario no logueado: cargar desde localStorage
         cargarFavoritosDesdeStorage()
       }
     } catch (error) {
-      console.error('Error al sincronizar favoritos:', error)
+      console.error('❌ Error al sincronizar favoritos:', error)
       dispatch({ 
         type: TIPOS_ACCION.SINCRONIZAR_ERROR, 
         payload: 'Error al sincronizar favoritos' 
