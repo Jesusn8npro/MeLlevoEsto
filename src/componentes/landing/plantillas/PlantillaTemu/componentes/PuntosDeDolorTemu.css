@@ -552,6 +552,86 @@
 }
 
 /* ============================================
+   MODAL DE IMAGEN - PUNTOS DE DOLOR
+   ============================================ */
+.puntos-dolor-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(2px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: puntos-dolor-modal-fade-in 0.2s ease;
+}
+
+.puntos-dolor-modal-contenido {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.puntos-dolor-modal-cerrar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border: none;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.puntos-dolor-modal-cerrar:active {
+  transform: scale(0.95);
+}
+
+.puntos-dolor-modal-imagen-container {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  padding: 0;
+  width: 95vw;
+  height: 90vh;
+}
+
+.puntos-dolor-modal-imagen {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+}
+
+@keyframes puntos-dolor-modal-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .puntos-dolor-modal-contenido {
+    width: 96vw;
+    height: 80vh;
+    border-radius: 10px;
+  }
+}
+
+/* ============================================
    RESPONSIVE DESIGN
    ============================================ */
 

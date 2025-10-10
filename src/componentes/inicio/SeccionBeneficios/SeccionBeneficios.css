@@ -14,9 +14,10 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 0;
-  background-color: #4a5568;
-  border-radius: 50px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  background-color: transparent; /* sin fondo gris */
+  border: none; /* eliminar borde del contenedor */
+  border-radius: 12px;
+  box-shadow: none; /* quitar sombra pesada */
   overflow: hidden;
 }
 
@@ -26,16 +27,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px;
-  padding: 20px 15px;
-  color: white !important;
+  gap: 18px; /* mayor separación */
+  padding: 22px 18px; /* mayor área táctil/visual */
+  color: #1f2937 !important; /* texto oscuro */
   text-align: center;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
+  border-right: 1px solid #e5e7eb; /* divisores sutiles */
+  transition: all 0.2s ease;
   cursor: pointer;
   border-radius: 0;
   position: relative;
   text-shadow: none;
+  background: transparent;
 }
 
 .beneficio-tarjeta:first-child {
@@ -50,17 +52,17 @@
 
 .beneficio-icono {
   flex-shrink: 0;
-  width: 24px;
-  height: 24px;
+  width: 28px; /* icono más grande */
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ff6b35;
+  color: #4b5563; /* icono neutro, sin acento naranja */
 }
 
 .beneficio-icono svg {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
 }
 
 .beneficio-contenido {
@@ -68,17 +70,17 @@
 }
 
 .beneficio-titulo {
-  font-size: 14px;
+  font-size: 15px; /* título más grande */
   font-weight: 600;
-  color: white !important;
+  color: #111827 !important; /* título oscuro */
   margin-bottom: 2px;
   line-height: 1.2;
   text-shadow: none;
 }
 
 .beneficio-subtitulo {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 13px; /* subtítulo más grande */
+  color: #6b7280 !important; /* gris legible */
   margin: 0;
   line-height: 1.1;
   text-shadow: none;
@@ -88,18 +90,10 @@
   display: none;
 }
 
-/* Asegurar que todos los elementos de texto sean blancos en desktop */
+/* Mantener herencia de color pero en esquema claro */
 .beneficio-tarjeta * {
   color: inherit !important;
   text-shadow: none !important;
-}
-
-.beneficio-tarjeta .beneficio-titulo {
-  color: white !important;
-}
-
-.beneficio-tarjeta .beneficio-subtitulo {
-  color: rgba(255, 255, 255, 0.7) !important;
 }
 
 /* ===== RESPONSIVE BREAKPOINTS ===== */
@@ -132,15 +126,21 @@
   
   .beneficios-contenedor.beneficios-mobile {
     display: block;
-    padding: 0 20px;
+    padding: 0 36px; /* más espacio interno para flechas, evitar solapamiento */
     position: relative;
+    border: none !important;            /* asegurar que no haya borde */
+    outline: none !important;           /* sin outline */
+    border-radius: 0 !important;        /* sin radios percibidos */
+    box-shadow: none !important;        /* sin sombra exterior */
+    background: transparent !important; /* sin fondo */
+    overflow: visible;                  /* permitir que la tarjeta se muestre sin recorte */
   }
   
   .beneficio-slider-mobile {
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: center; /* contenido centrado */
   }
   
   /* Flechas de navegación */
@@ -148,7 +148,7 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.2);
+    background: #f3f4f6; /* claro */
     border: none;
     border-radius: 50%;
     width: 40px;
@@ -159,16 +159,17 @@
     cursor: pointer;
     transition: all 0.3s ease;
     z-index: 2;
-    color: white;
+    color: #374151;
+    border: 1px solid #e5e7eb;
   }
   
   
   .beneficio-flecha-izq {
-    left: -20px;
+    left: -32px; /* mover más fuera del contenido */
   }
   
   .beneficio-flecha-der {
-    right: -20px;
+    right: -32px; /* mover más fuera del contenido */
   }
   
   .beneficio-mobile-activo {
@@ -176,27 +177,27 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    padding: 20px 25px;
-    border-radius: 50px;
-    border: none;
+    padding: 28px 34px; /* mucho más grande y cómodo en móvil */
+    border-radius: 16px;
+    border: none !important;            /* eliminar cualquier borde visible */
     animation: fadeIn 0.5s ease-in-out;
-    background-color: #4a5568;
+    background-color: #ffffff;          /* mantener claro pero sin borde */
     width: 100%;
     text-align: left;
   }
   
   .beneficio-mobile-activo .beneficio-icono {
-    width: 28px;
-    height: 28px;
+    width: 36px;   /* icono mucho más grande */
+    height: 36px;
     margin-bottom: 0;
-    margin-right: 15px;
+    margin-right: 18px;
     flex-shrink: 0;
-    color: #ff6b35;
+    color: #4b5563;
   }
   
   .beneficio-mobile-activo .beneficio-icono svg {
-    width: 28px;
-    height: 28px;
+    width: 36px;
+    height: 36px;
   }
   
   .beneficio-mobile-activo .beneficio-contenido {
@@ -205,17 +206,17 @@
   }
   
   .beneficio-mobile-activo .beneficio-titulo {
-    font-size: 15px;
-    margin-bottom: 3px;
-    font-weight: 600;
-    color: white;
-    line-height: 1.2;
+    font-size: 18px; /* título mucho más grande */
+    margin-bottom: 4px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1.25;
   }
   
   .beneficio-mobile-activo .beneficio-subtitulo {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 1.1;
+    font-size: 15px; /* subtítulo más grande */
+    color: #6b7280;
+    line-height: 1.2;
   }
   
   /* Indicadores de puntos */
@@ -264,42 +265,44 @@
   }
   
   .beneficios-contenedor.beneficios-mobile {
-    padding: 0 15px;
+    padding: 0 28px; /* algo más de espacio para flechas en móviles pequeños */
   }
   
   .beneficio-flecha {
-    width: 35px;
-    height: 35px;
+    width: 36px;
+    height: 36px;
   }
   
   .beneficio-flecha-izq {
-    left: -15px;
+    left: -24px; /* mantener fuera del contenido */
   }
   
   .beneficio-flecha-der {
-    right: -15px;
+    right: -24px; /* mantener fuera del contenido */
   }
   
   .beneficio-mobile-activo {
-    padding: 18px 20px;
+    padding: 24px 30px; /* aumentar tamaño en móviles pequeños */
+    border: none !important; /* sin borde también en móviles pequeños */
+    background-color: #ffffff;
   }
   
   .beneficio-mobile-activo .beneficio-titulo {
-    font-size: 14px;
+    font-size: 17px;
   }
   
   .beneficio-mobile-activo .beneficio-subtitulo {
-    font-size: 12px;
+    font-size: 14px;
   }
   
   .beneficio-mobile-activo .beneficio-icono {
-    width: 24px;
-    height: 24px;
-    margin-right: 12px;
+    width: 32px;
+    height: 32px;
+    margin-right: 14px;
   }
   
   .beneficio-mobile-activo .beneficio-icono svg {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
   }
 }

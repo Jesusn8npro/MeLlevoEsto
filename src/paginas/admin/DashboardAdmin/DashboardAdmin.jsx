@@ -33,36 +33,34 @@ const ContenidoDashboardAdmin = () => {
 
 export default function DashboardAdmin() {
   const navigate = useNavigate()
-  const { usuario, cargando, sesionIniciada, esAdmin, inicializado } = useAuth()
+  const { usuario, cargando, sesionInicializada, esAdmin } = useAuth()
   const [yaVerificado, setYaVerificado] = useState(false)
 
   useEffect(() => {
-    console.log('🎯 Dashboard - Estados:', { 
-      inicializado, 
-      cargando, 
-      sesionIniciada, 
-      tieneUsuario: !!usuario,
-      esAdminResult: usuario ? esAdmin() : 'no-user',
+    console.log('🔍 DashboardAdmin - Estado auth:', {
+      cargando,
+      sesionInicializada,
+      usuario: usuario?.id,
       yaVerificado
     })
-    
-    // SOLO verificar UNA VEZ cuando esté todo listo
-    if (inicializado && !cargando && !yaVerificado) {
+
+    // Solo verificar una vez cuando todo esté listo
+    if (!cargando && !yaVerificado) {
       verificarAcceso()
+      setYaVerificado(true)
     }
-  }, [inicializado, cargando, sesionIniciada, usuario, yaVerificado])
+  }, [cargando, sesionInicializada, usuario, yaVerificado])
 
   const verificarAcceso = () => {
     console.log('🔍 Verificando acceso UNA SOLA VEZ...', { 
-      inicializado, 
-      sesionIniciada, 
+      sesionInicializada, 
       usuario: !!usuario 
     })
     
     // Marcar como verificado para evitar loops
     setYaVerificado(true)
 
-    if (!sesionIniciada || !usuario) {
+    if (!sesionInicializada || !usuario) {
       console.log('🚪 No hay sesión o usuario, redirigiendo a login')
       navigate('/login')
       return
@@ -77,8 +75,8 @@ export default function DashboardAdmin() {
     console.log('✅ Acceso verificado correctamente - Usuario admin confirmado')
   }
 
-  // Mostrar loading mientras no esté inicializado o esté cargando
-  if (!inicializado || cargando) {
+  // Mostrar loading mientras esté cargando
+  if (cargando) {
     return (
       <div style={{ 
         display: 'flex', 
@@ -91,14 +89,14 @@ export default function DashboardAdmin() {
       }}>
         <div>Cargando dashboard...</div>
         <div style={{ fontSize: '14px', color: '#666' }}>
-          {!inicializado ? 'Inicializando autenticación...' : 'Verificando sesión...'}
+          Verificando sesión...
         </div>
       </div>
     )
   }
 
   // Si ya se inicializó pero no hay usuario/sesión, mostrar loading un momento más
-  if (inicializado && !cargando && (!usuario || !sesionIniciada) && !yaVerificado) {
+  if (!cargando && (!usuario || !sesionInicializada) && !yaVerificado) {
     return (
       <div style={{ 
         display: 'flex', 

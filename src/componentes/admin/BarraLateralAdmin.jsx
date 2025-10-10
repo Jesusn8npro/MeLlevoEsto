@@ -99,28 +99,29 @@ const BarraLateralAdmin = () => {
   )
 
   useEffect(() => {
-    let submenuCoincide = false
-    ;['principal', 'otros'].forEach((tipoMenu) => {
-      const items = tipoMenu === 'principal' ? elementosNavegacion : otrosElementos
-      items.forEach((nav, index) => {
-        if (nav.subItems) {
-          nav.subItems.forEach((subItem) => {
-            if (estaActivo(subItem.ruta)) {
-              // Solo abrir si no está ya abierto
-              if (!submenuAbierto || submenuAbierto.tipo !== tipoMenu || submenuAbierto.index !== index) {
-                alternarSubmenu(index, tipoMenu)
-              }
-              submenuCoincide = true
-            }
-          })
-        }
-      })
-    })
+    // No forzar la apertura basada en ruta si el usuario ya abrió un submenu manualmente.
+    if (submenuAbierto !== null) return
 
-    if (!submenuCoincide && submenuAbierto) {
-      setSubmenuAbierto(null)
+    let encontrado = false
+    const tipos = ['principal', 'otros']
+    for (const tipoMenu of tipos) {
+      const items = tipoMenu === 'principal' ? elementosNavegacion : otrosElementos
+      for (let index = 0; index < items.length; index++) {
+        const nav = items[index]
+        if (nav.subItems) {
+          for (const subItem of nav.subItems) {
+            if (estaActivo(subItem.ruta)) {
+              alternarSubmenu(index, tipoMenu)
+              encontrado = true
+              break
+            }
+          }
+        }
+        if (encontrado) break
+      }
+      if (encontrado) break
     }
-  }, [ubicacion, estaActivo, alternarSubmenu, submenuAbierto, setSubmenuAbierto])
+  }, [ubicacion.pathname, estaActivo, alternarSubmenu, submenuAbierto])
 
   useEffect(() => {
     if (submenuAbierto !== null) {

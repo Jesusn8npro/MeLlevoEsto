@@ -10,7 +10,7 @@ const EncabezadoAdmin = () => {
   const [notificacionesAbiertas, setNotificacionesAbiertas] = useState(false)
 
   const { movilAbierto, alternarBarraLateral, alternarBarraLateralMovil } = useBarraLateral()
-  const { usuario, cerrarSesion } = useAuth()
+  const { usuario, cerrarSesion, cerrarSesionTotal } = useAuth()
   const navigate = useNavigate()
 
   const manejarAlternar = () => {
@@ -27,9 +27,13 @@ const EncabezadoAdmin = () => {
 
   const manejarCerrarSesion = async () => {
     try {
-      const resultado = await cerrarSesion()
-      if (resultado.success) {
-        navigate('/')
+      if (typeof cerrarSesionTotal === 'function') {
+        await cerrarSesionTotal()
+      } else {
+        const resultado = await cerrarSesion()
+        if (resultado.success) {
+          navigate('/sesion-cerrada')
+        }
       }
     } catch (error) {
       console.error('Error al cerrar sesión:', error)

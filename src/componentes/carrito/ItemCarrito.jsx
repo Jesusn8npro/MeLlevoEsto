@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { obtenerImagenPlaceholder } from '../../utilidades/imagenesAlternativas'
+import { convertirUrlGoogleDrive } from '../../utilidades/googleDrive'
 import { Link } from 'react-router-dom'
 import { 
   Plus, 
@@ -83,17 +84,46 @@ const ItemCarrito = ({
   const porcentajeDescuento = tieneDescuento ? 
     Math.round(((item.productos.precio_original - item.precio_unitario) / item.productos.precio_original) * 100) : 0
 
-  // Resolver imagen principal del producto (similar al mapeo en tienda)
+  // Resolver imagen principal del producto usando objeto imagenes (convertido) y fallback
   const obtenerImagenPrincipal = (producto) => {
     if (!producto) return obtenerImagenPlaceholder()
-    return (
-      producto?.producto_imagenes?.imagen_principal ||
-      (Array.isArray(producto?.fotos_principales) && producto.fotos_principales[0]) ||
-      producto?.imagen_principal ||
-      producto?.imagen_url ||
-      producto?.imagen ||
-      obtenerImagenPlaceholder()
-    )
+
+    // Preferir el objeto 'imagenes' procesado por usarProducto (URLs convertidas)
+    const desdeImagenes = producto?.imagenes?.imagen_principal || producto?.imagenes?.imagen_secundaria_1
+
+    // Soporte para estructura devuelta por Supabase: producto_imagenes puede ser objeto o array
+    let desdeProductoImagenes = null
+    if (Array.isArray(producto?.producto_imagenes) && producto.producto_imagenes.length > 0) {
+      const primera = producto.producto_imagenes[0]
+      const raw = primera?.imagen_principal || primera?.imagen_secundaria_1
+      desdeProductoImagenes = raw ? convertirUrlGoogleDrive(raw) : null
+    } else if (producto?.producto_imagenes) {
+      const raw = producto.producto_imagenes?.imagen_principal || producto.producto_imagenes?.imagen_secundaria_1
+      desdeProductoImagenes = raw ? convertirUrlGoogleDrive(raw) : null
+    }
+
+    // Fallback adicional: cuando Supabase devuelve producto_imagenes al mismo nivel del item
+    if (!desdeProductoImagenes) {
+      if (Array.isArray(item?.producto_imagenes) && item.producto_imagenes.length > 0) {
+        const primera = item.producto_imagenes[0]
+        const raw = primera?.imagen_principal || primera?.imagen_secundaria_1
+        desdeProductoImagenes = raw ? convertirUrlGoogleDrive(raw) : null
+      } else if (item?.producto_imagenes) {
+        const raw = item.producto_imagenes?.imagen_principal || item.producto_imagenes?.imagen_secundaria_1
+        desdeProductoImagenes = raw ? convertirUrlGoogleDrive(raw) : null
+      }
+    }
+
+    // Fallback a fotos_principales (convertir si son de Google Drive)
+    const desdeArray = Array.isArray(producto?.fotos_principales) && producto.fotos_principales[0]
+      ? convertirUrlGoogleDrive(producto.fotos_principales[0])
+      : null
+
+    // Otros posibles campos directos
+    const otros = producto?.imagen_principal || producto?.imagen_url || producto?.imagen
+
+    const candidato = desdeImagenes || desdeProductoImagenes || desdeArray || otros
+    return candidato || obtenerImagenPlaceholder()
   }
 
   const imagenPrincipal = obtenerImagenPrincipal(item.productos)

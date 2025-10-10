@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { clienteSupabase } from '../../configuracion/supabase'
-import TarjetaProductoVendedora from './TarjetaProductoVendedora'
+import TarjetaProductoLujo from './TarjetaProductoLujo'
 import { convertirUrlGoogleDrive } from '../../utilidades/googleDrive'
 import { Filter, Grid, List, ChevronDown, Loader, AlertCircle, Zap, Flame, TrendingUp } from 'lucide-react'
 import './GridProductosVendedor.css'
@@ -183,6 +183,12 @@ const GridProductosVendedor = ({
       const { data, error: errorQuery, count } = await query
 
       if (errorQuery) {
+        console.error('❌ Error cargando productos (RLS/SELECT):', {
+          message: errorQuery.message,
+          code: errorQuery.code,
+          details: errorQuery.details,
+          hint: errorQuery.hint
+        })
         throw errorQuery
       }
 
@@ -467,16 +473,9 @@ const GridProductosVendedor = ({
         ) : (
           <>
             {productos.map((producto, index) => (
-              <TarjetaProductoVendedora
+              <TarjetaProductoLujo
                 key={producto.id}
                 producto={producto}
-                tamaño="normal"
-                mostrarDescuento={true}
-                mostrarUrgencia={true}
-                mostrarPruebaSocial={true}
-                mostrarBadges={true}
-                animaciones={true}
-                vistaLista={vistaActiva === 'lista'}
               />
             ))}
           </>

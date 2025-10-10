@@ -17,6 +17,7 @@ import {
   Mail,
   Search
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import './PreguntasFrecuentes.css'
 
 export default function PreguntasFrecuentes() {
@@ -290,10 +291,10 @@ export default function PreguntasFrecuentes() {
               <HelpCircle className="sin-resultados-icon" />
               <h3>No encontramos resultados</h3>
               <p>Intenta con otras palabras o contáctanos directamente</p>
-              <a href="/contacto" className="btn-contacto">
+              <Link to="/contacto" className="btn-contacto">
                 <MessageSquare className="btn-icon" />
                 Contactar Soporte
-              </a>
+              </Link>
             </div>
           )}
         </div>
@@ -345,14 +346,14 @@ export default function PreguntasFrecuentes() {
               Todas tus dudas resueltas, ahora puedes comprar tranquilo
             </p>
             <div className="cta-buttons">
-              <a href="/productos" className="btn-primario">
+              <Link to="/productos" className="btn-primario">
                 <Heart className="btn-icon" />
                 Explorar Productos
-              </a>
-              <a href="/contacto" className="btn-secundario">
+              </Link>
+              <Link to="/contacto" className="btn-secundario">
                 <MessageSquare className="btn-icon" />
                 Hacer Pregunta
-              </a>
+              </Link>
             </div>
           </div>
         </div>

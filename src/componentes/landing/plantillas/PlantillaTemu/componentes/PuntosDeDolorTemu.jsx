@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import ImagenInteligente from '../../../../../componentes/ui/ImagenInteligente'
 import './PuntosDeDolorTemu.css'
 
 /**
@@ -20,6 +21,18 @@ const PuntosDeDolorTemu = ({
 }) => {
   
   const timelineRef = useRef(null)
+  const [imagenModal, setImagenModal] = useState(null)
+
+  const abrirModalImagen = (url) => setImagenModal(url)
+  const cerrarModalImagen = () => setImagenModal(null)
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === 'Escape') cerrarModalImagen()
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
   
   // Datos por defecto ultra vendedores con imágenes
   const datosDefecto = {
@@ -136,12 +149,19 @@ const PuntosDeDolorTemu = ({
                 
                 {/* IMAGEN/GIF DEL PUNTO DE DOLOR */}
                 {punto.imagen && (
-                  <div className="puntos-dolor-temu-imagen-container">
-                    <img 
+                  <div 
+                    className="puntos-dolor-temu-imagen-container"
+                    onClick={() => abrirModalImagen(punto.imagen)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === 'Enter') abrirModalImagen(punto.imagen) }}
+                    aria-label={`Ver ${punto.nombre} en grande`}
+                  >
+                    <ImagenInteligente 
                       src={punto.imagen} 
                       alt={punto.nombre}
                       className="puntos-dolor-temu-imagen"
-                      loading="lazy"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   </div>
                 )}
@@ -177,6 +197,31 @@ const PuntosDeDolorTemu = ({
             </div>
           ))}
         </div>
+
+        {/* MODAL DE IMAGEN - SOLO PUNTOS DE DOLOR */}
+        {imagenModal && (
+          <div 
+            className="puntos-dolor-modal-overlay" 
+            onClick={cerrarModalImagen}
+            role="dialog" 
+            aria-modal="true"
+          >
+            <button 
+              className="puntos-dolor-modal-cerrar" 
+              onClick={cerrarModalImagen}
+              aria-label="Cerrar"
+            >
+              ✕
+            </button>
+            <img 
+              src={imagenModal} 
+              alt="Imagen en grande"
+              className="puntos-dolor-modal-imagen"
+              onClick={(e) => e.stopPropagation()}
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+          </div>
+        )}
 
         {/* CALL TO ACTION FINAL */}
         <div className="puntos-dolor-temu-cta">

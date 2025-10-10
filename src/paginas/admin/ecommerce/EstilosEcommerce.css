@@ -57,11 +57,11 @@
 }
 
 /* ===== HEADERS DE PÁGINAS ===== */
-.lista-productos-header,
-.agregar-producto-header,
-.categorias-header,
-.pedidos-header,
-.inventario-header {
+.disposicion-admin-principal .lista-productos-header,
+.disposicion-admin-principal .agregar-producto-header,
+.disposicion-admin-principal .categorias-header,
+.disposicion-admin-principal .pedidos-header,
+.disposicion-admin-principal .inventario-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -69,27 +69,23 @@
   padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--color-borde);
 }
-
-.header-info .titulo-pagina {
+.disposicion-admin-principal .header-info .titulo-pagina {
   font-size: 2rem;
   font-weight: 700;
   color: var(--color-texto);
   margin: 0 0 0.5rem 0;
 }
-
-.header-info .subtitulo-pagina {
+.disposicion-admin-principal .header-info .subtitulo-pagina {
   font-size: 1rem;
   color: var(--color-texto-secundario);
   margin: 0;
 }
-
-.header-acciones {
+.disposicion-admin-principal .header-acciones {
   display: flex;
   gap: 1rem;
   align-items: center;
 }
-
-.header-navegacion {
+.disposicion-admin-principal .header-navegacion {
   margin-bottom: 1rem;
 }
 
@@ -761,12 +757,11 @@
   .inventario {
     padding: 1rem;
   }
-
-  .lista-productos-header,
-  .agregar-producto-header,
-  .categorias-header,
-  .pedidos-header,
-  .inventario-header {
+  .disposicion-admin-principal .lista-productos-header,
+  .disposicion-admin-principal .agregar-producto-header,
+  .disposicion-admin-principal .categorias-header,
+  .disposicion-admin-principal .pedidos-header,
+  .disposicion-admin-principal .inventario-header {
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;

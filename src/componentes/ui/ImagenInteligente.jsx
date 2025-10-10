@@ -46,8 +46,18 @@ const ImagenInteligente = ({
       urls = [src]
     }
 
+    // Añadir pequeña cadena anti-caché para evitar respuestas cacheadas erróneas
+    const conCacheBust = (u) => {
+      try {
+        const separador = u.includes('?') ? '&' : '?'
+        return `${u}${separador}cb=${Date.now()}`
+      } catch {
+        return u
+      }
+    }
+
     setUrlsParaProbar(urls)
-    setUrlActual(urls[0])
+    setUrlActual(conCacheBust(urls[0]))
   }, [src])
 
   const manejarError = () => {
@@ -59,7 +69,9 @@ const ImagenInteligente = ({
     if (siguienteIntento < urlsParaProbar.length) {
       console.log(`🔄 Probando siguiente formato (${siguienteIntento + 1}/${urlsParaProbar.length}):`, urlsParaProbar[siguienteIntento])
       setIntentoActual(siguienteIntento)
-      setUrlActual(urlsParaProbar[siguienteIntento])
+      const siguiente = urlsParaProbar[siguienteIntento]
+      const separador = siguiente.includes('?') ? '&' : '?'
+      setUrlActual(`${siguiente}${separador}cb=${Date.now()}`)
     } else {
       // No hay más URLs para probar
       console.log('❌ Todos los formatos fallaron, usando placeholder')
@@ -91,7 +103,7 @@ const ImagenInteligente = ({
   }
 
   return (
-    <div style={{ position: 'relative', display: 'inline-block' }}>
+    <div style={{ position: 'relative', display: 'block', width: '100%', height: '100%' }}>
       <img
         src={urlActual}
         alt={alt}
@@ -99,6 +111,10 @@ const ImagenInteligente = ({
         className={className}
         onLoad={manejarCarga}
         onError={manejarError}
+        referrerPolicy="no-referrer"
+        crossOrigin="anonymous"
+        loading="lazy"
+        decoding="async"
         {...props}
       />
       

@@ -12,7 +12,6 @@ const BotonCarritoAnimado = ({
   onError = () => {}
 }) => {
   const [estado, setEstado] = useState('normal') // normal, agregando, agregado, error
-  const [tiempoRestante, setTiempoRestante] = useState(0)
 
   const manejarClick = async () => {
     if (estado === 'agregando' || estado === 'agregado') return
@@ -24,19 +23,6 @@ const BotonCarritoAnimado = ({
       
       // Mostrar estado de éxito
       setEstado('agregado')
-      setTiempoRestante(3)
-      
-      // Contador regresivo
-      const interval = setInterval(() => {
-        setTiempoRestante(prev => {
-          if (prev <= 1) {
-            clearInterval(interval)
-            setEstado('normal')
-            return 0
-          }
-          return prev - 1
-        })
-      }, 1000)
       
     } catch (error) {
       setEstado('error')
@@ -54,7 +40,7 @@ const BotonCarritoAnimado = ({
       case 'agregando':
         return 'Agregando...'
       case 'agregado':
-        return `¡Agregado! (${tiempoRestante}s)`
+        return 'Producto añadido'
       case 'error':
         return 'Error - Reintentar'
       default:

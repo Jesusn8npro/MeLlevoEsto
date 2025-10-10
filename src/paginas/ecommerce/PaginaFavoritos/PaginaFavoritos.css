@@ -727,3 +727,41 @@
     flex-direction: row;
   }
 }
+
+/* ===== MENSAJE SIN RESULTADOS ===== */
+.favoritos-sin-resultados {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  margin: 2rem 0;
+}
+
+.favoritos-sin-resultados .icono-sin-resultados {
+  width: 5rem;
+  height: 5rem;
+  color: #e2e8f0;
+  margin-bottom: 1.5rem;
+  stroke-width: 1.5;
+}
+
+.favoritos-sin-resultados h3 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+}
+
+.favoritos-sin-resultados p {
+  font-size: 1.1rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.6;
+}

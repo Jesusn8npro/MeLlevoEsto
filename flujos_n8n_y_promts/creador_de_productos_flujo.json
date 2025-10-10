@@ -30,8 +30,8 @@
       "name": "When Executed by Another Workflow",
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "position": [
-        1008,
-        880
+        736,
+        1488
       ]
     },
     {
@@ -81,11 +81,11 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1232,
-        880
+        1072,
+        1488
       ],
-      "id": "40f5add3-8273-4be1-a18b-de2ee36cb431",
-      "name": "Edit Fields4"
+      "id": "bb793823-5906-48cf-90db-cc05ad1a63d2",
+      "name": "Edit Fields"
     },
     {
       "parameters": {
@@ -98,11 +98,11 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.8,
       "position": [
-        1488,
-        880
+        1328,
+        1488
       ],
-      "id": "734eaf0a-fb93-4143-8711-635dd09ce9a3",
-      "name": "AI Agent2"
+      "id": "299bdf8e-1fa8-4323-ad0a-5a35be719244",
+      "name": "AI Agent"
     },
     {
       "parameters": {
@@ -116,11 +116,11 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        1248,
-        1184
+        1088,
+        1792
       ],
-      "id": "76ecefd4-b827-44d5-b76f-ea236b32ede6",
-      "name": "OpenAI Chat Model2",
+      "id": "3b767b44-918b-4d27-a641-006861b4b221",
+      "name": "OpenAI Chat Model",
       "credentials": {
         "openAiApi": {
           "id": "BF6TLMzAguxXUoJp",
@@ -131,16 +131,16 @@
     {
       "parameters": {
         "sessionIdType": "customKey",
-        "sessionKey": "={{ $('Edit Fields4').item.json.sesion_id }}"
+        "sessionKey": "={{ $('Edit Fields').item.json.sesion_id }}"
       },
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
       "position": [
-        1504,
-        1088
+        1344,
+        1776
       ],
-      "id": "08eb5c79-c31b-42c7-8999-e99803497d19",
-      "name": "Simple Memory2"
+      "id": "93900b67-b39f-43cd-9300-fd5b28a1a8be",
+      "name": "Simple Memory"
     },
     {
       "parameters": {
@@ -279,11 +279,11 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        1840,
-        880
+        1680,
+        1488
       ],
-      "id": "a15c847a-1000-4bfc-89fa-d24d413d5f28",
-      "name": "Edit Fields5"
+      "id": "3b4ac2c9-a658-484b-b8a3-703eafcfb287",
+      "name": "Edit Fields6"
     },
     {
       "parameters": {
@@ -388,15 +388,15 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        2048,
-        880
+        1888,
+        1488
       ],
-      "id": "fe6f7449-6d27-4d1d-9d1e-02a4caa5981e",
-      "name": "Create a row2",
+      "id": "ab87e9d0-074e-4684-b05a-e11a9583b7ec",
+      "name": "Create a row",
       "credentials": {
         "supabaseApi": {
           "id": "W8gqsCw5s1YHm5SZ",
-          "name": "Supabase- Correo ► JOSHUA"
+          "name": "Supabase Me LLEVO ESTO"
         }
       }
     },
@@ -407,7 +407,7 @@
           "fieldValues": [
             {
               "fieldId": "producto_id",
-              "fieldValue": "={{ $('Create a row2').item.json.id }}"
+              "fieldValue": "={{ $('Create a row').item.json.id }}"
             },
             {
               "fieldId": "estado",
@@ -423,32 +423,32 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        2256,
-        880
+        2096,
+        1488
       ],
-      "id": "4e4583b5-2e0b-4964-81e4-2abd4288e959",
-      "name": "Crear Registro Imágenes1",
+      "id": "4ac27fdd-7b12-4420-9ffe-b6e324bb2bf3",
+      "name": "Crear Registro Imágenes",
       "credentials": {
         "supabaseApi": {
           "id": "W8gqsCw5s1YHm5SZ",
-          "name": "Supabase- Correo ► JOSHUA"
+          "name": "Supabase Me LLEVO ESTO"
         }
       }
     },
     {
       "parameters": {
         "mode": "raw",
-        "jsonOutput": "={\n  \"success\": true,\n  \"mensaje\": \"¡Producto creado exitosamente!\",\n  \"producto_id\": \"{{ $('Create a row2').item.json.id }}\",\n  \"nombre\": \"{{ $('Create a row2').item.json.nombre }}\",\n  \"slug\": \"{{ $('Create a row2').item.json.slug }}\",\n  \"precio\": {{ $('Create a row2').item.json.precio }},\n  \"url_producto\": \"https://mellevesto.com/producto/{{ $('Create a row2').item.json.slug }}\",\n  \"estado_imagenes\": \"{{ $json.estado }}\",\n  \"total_imagenes\": {{ $json.total_imagenes_generadas }},\n  \"siguiente_paso\": \"Ahora puedes subir imágenes de referencia para generar todas las imágenes del producto automáticamente\"\n}",
+        "jsonOutput": "={\n  \"success\": true,\n  \"mensaje\": \"¡Producto creado exitosamente!\",\n  \"producto_id\": \"{{ $('Create a row').item.json.id }}\",\n  \"nombre\": \"{{ $('Create a row').item.json.nombre }}\",\n  \"slug\": \"{{ $('Create a row').item.json.slug }}\",\n  \"precio\": {{ $('Create a row').item.json.precio }},\n  \"url_producto\": \"https://mellevesto.com/producto/{{ $('Create a row').item.json.slug }}\",\n  \"estado_imagenes\": \"{{ $json.estado }}\",\n  \"total_imagenes\": {{ $json.total_imagenes_generadas }},\n  \"siguiente_paso\": \"Ahora puedes subir imágenes de referencia para generar todas las imágenes del producto automáticamente\"\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        2464,
-        880
+        2304,
+        1488
       ],
-      "id": "3cc234cd-6c27-4de9-b21a-be461fb849e9",
-      "name": "Respuesta Final1"
+      "id": "2b4c77a4-04c1-477f-8e82-04ec43be026b",
+      "name": "Respuesta Final"
     }
   ],
   "connections": {
@@ -456,84 +456,84 @@
       "main": [
         [
           {
-            "node": "Edit Fields4",
+            "node": "Edit Fields",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Edit Fields4": {
+    "Edit Fields": {
       "main": [
         [
           {
-            "node": "AI Agent2",
+            "node": "AI Agent",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "AI Agent2": {
+    "AI Agent": {
       "main": [
         [
           {
-            "node": "Edit Fields5",
+            "node": "Edit Fields6",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "OpenAI Chat Model2": {
+    "OpenAI Chat Model": {
       "ai_languageModel": [
         [
           {
-            "node": "AI Agent2",
+            "node": "AI Agent",
             "type": "ai_languageModel",
             "index": 0
           }
         ]
       ]
     },
-    "Simple Memory2": {
+    "Simple Memory": {
       "ai_memory": [
         [
           {
-            "node": "AI Agent2",
+            "node": "AI Agent",
             "type": "ai_memory",
             "index": 0
           }
         ]
       ]
     },
-    "Edit Fields5": {
+    "Edit Fields6": {
       "main": [
         [
           {
-            "node": "Create a row2",
+            "node": "Create a row",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Create a row2": {
+    "Create a row": {
       "main": [
         [
           {
-            "node": "Crear Registro Imágenes1",
+            "node": "Crear Registro Imágenes",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Crear Registro Imágenes1": {
+    "Crear Registro Imágenes": {
       "main": [
         [
           {
-            "node": "Respuesta Final1",
+            "node": "Respuesta Final",
             "type": "main",
             "index": 0
           }

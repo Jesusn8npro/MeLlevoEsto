@@ -39,12 +39,13 @@ import { useAuth } from '../../contextos/ContextoAutenticacion'
 import { useCarrito } from '../../contextos/CarritoContext'
 import './HeaderPrincipal.css'
 import MenuMovilOverlay from './MenuMovilOverlay'
+import SliderInformacion from './SliderInformacion'
 
 const HeaderPrincipal = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { favoritos } = useFavoritos()
-  const { usuario, sesionIniciada, cerrarSesion } = useAuth()
+const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
   const { totalItems, modalAbierto, alternarModal } = useCarrito()
   const [busqueda, setBusqueda] = useState('')
   const [menuMovilAbierto, setMenuMovilAbierto] = useState(false)
@@ -209,80 +210,66 @@ const HeaderPrincipal = () => {
   // Manejar cierre de sesión
   const manejarCerrarSesion = async () => {
     try {
-      await cerrarSesion()
+      if (typeof cerrarSesionTotal === 'function') {
+        await cerrarSesionTotal()
+      } else {
+        await cerrarSesion()
+        navigate('/sesion-cerrada')
+      }
       setMenuUsuarioAbierto(false)
-      navigate('/')
     } catch (error) {
       console.error('Error al cerrar sesión:', error)
     }
   }
 
+  // Detectar si estamos en área admin o cliente
+  const estaEnAdmin = location?.pathname?.startsWith('/admin')
+
   // Navegar a admin
   const navegarAAdmin = () => {
     setMenuUsuarioAbierto(false)
-    window.open('http://localhost:3001/admin', '_blank')
+    navigate('/admin')
   }
 
   // Navegar a productos admin
   const navegarAProductosAdmin = () => {
     setMenuUsuarioAbierto(false)
-    window.open('http://localhost:3001/admin/productos', '_blank')
+    navigate('/admin/productos')
   }
 
   // Navegar a agregar producto
   const navegarAAgregarProducto = () => {
     setMenuUsuarioAbierto(false)
-    window.open('http://localhost:3001/admin/productos/agregar', '_blank')
+    navigate('/admin/productos/agregar')
+  }
+
+  // Navegaciones cliente
+  const navegarAPerfil = () => {
+    setMenuUsuarioAbierto(false)
+    navigate('/perfil')
+  }
+
+  const navegarAFavoritos = () => {
+    setMenuUsuarioAbierto(false)
+    navigate('/favoritos')
   }
 
   return (
     <header className={`header-principal ${headerSticky ? 'sticky' : ''}`} ref={headerRef}>
-      {/* Barra Promocional Superior */}
-      <div className="barra-promocional">
-        <div className="contenedor-promocional">
-          <div className="promocion-contenido">
-            <span className="promocion-descuento">20%</span>
-            <div className="promocion-texto">
-              <span className="promocion-label">Descuento</span>
-              <span className="promocion-descripcion">En toda la tienda</span>
-            </div>
-            <div className="promocion-codigo">
-              <span className="codigo-label">Ingresa Código Promocional</span>
-              <span className="codigo-valor">Desc25</span>
-            </div>
-          </div>
-          <button className="boton-shop-now">Comprar Ahora</button>
-        </div>
-      </div>
+      {/* Barra Promocional Superior eliminada por solicitud */}
 
-      {/* Barra de Información Superior */}
-      <div className="barra-informacion">
-        <div className="contenedor-informacion">
-          <div className="info-izquierda">
-            <span className="bienvenida">¡Bienvenido a la Tienda Online ME LLEVO ESTO!</span>
-          </div>
-          <div className="info-derecha">
-            <Link to="/store-location" className="info-enlace">
-              <MapPin size={14} />
-              Ubicación de Tienda
-            </Link>
-            <Link to="/track-order" className="info-enlace">
-              <Package size={14} />
-              Rastrear Pedido
-            </Link>
-            <div className="selector-moneda">
-              <Globe size={14} />
-              <span>COP</span>
-              <ChevronDown size={12} />
-            </div>
-            <div className="selector-idioma">
-              <img src="/images/flags/co.png" alt="Español" className="bandera" />
-              <span>Español</span>
-              <ChevronDown size={12} />
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Barra de Información Superior - Componente encapsulado */}
+      <SliderInformacion
+        items={[
+          '✅ Contra entrega disponible',
+          '🛍️ Plataforma Multiproductos',
+          '🚚 Envío rápido a todo el país',
+          '💳 Pagos seguros 100%',
+          '📞 Atención al cliente 24/7',
+          '🔥 Ofertas nuevas cada día',
+        ]}
+        speed={35}
+      />
 
       {/* Header Principal */}
       <div className="header-contenido">
@@ -353,7 +340,17 @@ const HeaderPrincipal = () => {
                 )}
               </div>
             </button>
-            {sesionIniciada && usuario ? (
+            {!sesionInicializada ? (
+              <div className="usuario-logueado">
+                <button className="accion-item" disabled>
+                  <User className="icono-usuario-header" />
+                  <div className="usuario-info">
+                    <span className="usuario-texto">Cargando…</span>
+                    <span className="usuario-subtexto">Mi Cuenta</span>
+                  </div>
+                </button>
+              </div>
+            ) : sesionInicializada && usuario ? (
               <div className="usuario-logueado">
                 <button 
                   className="accion-item" 
@@ -362,7 +359,7 @@ const HeaderPrincipal = () => {
                   <User className="icono-usuario-header" />
                   <div className="usuario-info">
                     <span className="usuario-texto">
-                      {usuario.user_metadata?.nombre || usuario.email?.split('@')[0] || 'Usuario'}
+                      {usuario.nombre || usuario.email?.split('@')[0] || usuario.user_metadata?.nombre || 'Usuario'}
                     </span>
                     <span className="usuario-subtexto">Mi Cuenta</span>
                   </div>
@@ -371,19 +368,44 @@ const HeaderPrincipal = () => {
                 
                 {menuUsuarioAbierto && (
                   <div className="dropdown-usuario">
-                    <button className="dropdown-item" onClick={navegarAAdmin}>
-                      <Settings size={16} />
-                      Panel Admin
-                    </button>
-                    <button className="dropdown-item" onClick={navegarAProductosAdmin}>
-                      <ShoppingBag size={16} />
-                      Productos
-                    </button>
-                    <button className="dropdown-item" onClick={navegarAAgregarProducto}>
-                      <Package size={16} />
-                      Agregar Producto
-                    </button>
-                    <div className="dropdown-divider"></div>
+                    {esAdmin?.() ? (
+                      <>
+                        <button className="dropdown-item" onClick={navegarAAdmin}>
+                          <Settings size={16} />
+                          Panel Admin
+                        </button>
+                        <button className="dropdown-item" onClick={navegarAProductosAdmin}>
+                          <ShoppingBag size={16} />
+                          Productos
+                        </button>
+                        <button className="dropdown-item" onClick={navegarAAgregarProducto}>
+                          <Package size={16} />
+                          Agregar Producto
+                        </button>
+                        <div className="dropdown-divider"></div>
+                      </>
+                    ) : (
+                      <>
+                        <button className="dropdown-item" onClick={navegarAPerfil}>
+                          <UserCircle size={16} />
+                          Perfil
+                        </button>
+                        <button className="dropdown-item" onClick={navegarAFavoritos}>
+                          <Heart size={16} />
+                          Favoritos
+                        </button>
+                        {esAdmin?.() && (
+                          <>
+                            <div className="dropdown-divider"></div>
+                            <button className="dropdown-item" onClick={navegarAAdmin}>
+                              <Settings size={16} />
+                              Ir al Panel Admin
+                            </button>
+                          </>
+                        )}
+                        <div className="dropdown-divider"></div>
+                      </>
+                    )}
                     <button className="dropdown-item logout-item" onClick={manejarCerrarSesion}>
                       <LogOut size={16} />
                       Cerrar Sesión
@@ -399,6 +421,23 @@ const HeaderPrincipal = () => {
                   <span className="usuario-subtexto">Registrarse</span>
                 </div>
               </button>
+            )}
+
+            {import.meta.env.DEV && (
+              <div
+                title="Estado de autenticación (solo dev)"
+                style={{
+                  marginLeft: '8px',
+                  padding: '2px 6px',
+                  borderRadius: '12px',
+                  fontSize: '11px',
+                  background: sesionInicializada && usuario ? '#e6ffed' : '#ffecec',
+                  color: sesionInicializada && usuario ? '#1a7f37' : '#d93025',
+                  border: `1px solid ${sesionInicializada && usuario ? '#1a7f37' : '#d93025'}`
+                }}
+              >
+                auth: init={String(sesionInicializada)} user={usuario?.id || usuario?.email || 'null'}
+              </div>
             )}
           </div>
         </div>
@@ -539,7 +578,7 @@ const HeaderPrincipal = () => {
         onAbrirAutenticacion={() => setModalAutenticacionAbierto(true)}
         totalItems={totalItems}
         onAlternarCarrito={alternarModal}
-        sesionIniciada={sesionIniciada}
+        sesionInicializada={sesionInicializada}
         usuario={usuario}
       />
 

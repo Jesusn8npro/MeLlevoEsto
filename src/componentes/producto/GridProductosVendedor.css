@@ -281,6 +281,35 @@
   gap: 16px;
 }
 
+/* ====== Vista lista para Tarjeta Lujo ====== */
+.productos-grid.vista-lista .tarjeta-lujo {
+  display: flex;
+  flex-direction: row;
+  max-width: none;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: white;
+  transition: all 0.3s ease;
+}
+.productos-grid.vista-lista .tarjeta-lujo:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+.productos-grid.vista-lista .tarjeta-lujo .zona-imagen-lujo {
+  width: 160px;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+  margin-right: 16px;
+}
+.productos-grid.vista-lista .tarjeta-lujo .contenido-lujo {
+  flex: 1 1 auto;
+  padding: 4px 0;
+}
+.productos-grid.vista-lista .tarjeta-lujo .nombre-producto { font-size: 16px; }
+.productos-grid.vista-lista .tarjeta-lujo .precio-actual { font-size: 18px; }
+.productos-grid.vista-lista .tarjeta-lujo .precio-original { font-size: 13px; }
+
 .productos-grid.vista-lista .tarjeta-producto-vendedora {
   display: flex;
   flex-direction: row;
@@ -604,9 +633,9 @@
   }
   
   .productos-grid.vista-grid {
-    grid-template-columns: 1fr; /* Una sola columna en móvil */
-    gap: 16px; /* Gap más cómodo */
-    padding: 0 5px; /* Padding lateral para respirar */
+    grid-template-columns: repeat(2, 1fr); /* Dos columnas en móvil */
+    gap: 8px; /* Gap más compacto para caber mejor */
+    padding: 0 6px; /* Ligero padding lateral */
   }
   
   /* Vista lista en móvil - mantener horizontal */
@@ -614,6 +643,11 @@
     gap: 8px;
     padding: 0 5px; /* Padding lateral */
   }
+
+  /* Ajustes móvil para Tarjeta Lujo en vista lista */
+  .productos-grid.vista-lista .tarjeta-lujo .zona-imagen-lujo { width: 100px; margin-right: 12px; }
+  .productos-grid.vista-lista .tarjeta-lujo .nombre-producto { font-size: 14px; }
+  .productos-grid.vista-lista .tarjeta-lujo .precio-actual { font-size: 16px; }
 
   
   .productos-grid.vista-lista .imagen-container {
@@ -653,7 +687,7 @@
   }
   
   .productos-grid.vista-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr); /* Mantener dos columnas también en pantallas pequeñas */
   }
   
   .btn-cargar-mas {
@@ -672,14 +706,18 @@
 }
 
 /* Animaciones de entrada */
-.tarjeta-producto-vendedora {
-  animation: fadeInUp 0.5s ease forwards;
-}
-
+.tarjeta-producto-vendedora { animation: fadeInUp 0.5s ease forwards; }
 .tarjeta-producto-vendedora:nth-child(1) { animation-delay: 0.1s; }
 .tarjeta-producto-vendedora:nth-child(2) { animation-delay: 0.2s; }
 .tarjeta-producto-vendedora:nth-child(3) { animation-delay: 0.3s; }
 .tarjeta-producto-vendedora:nth-child(4) { animation-delay: 0.4s; }
+
+/* Animaciones para Tarjeta Lujo */
+.tarjeta-lujo { animation: fadeInUp 0.5s ease forwards; }
+.tarjeta-lujo:nth-child(1) { animation-delay: 0.1s; }
+.tarjeta-lujo:nth-child(2) { animation-delay: 0.2s; }
+.tarjeta-lujo:nth-child(3) { animation-delay: 0.3s; }
+.tarjeta-lujo:nth-child(4) { animation-delay: 0.4s; }
 
 @keyframes fadeInUp {
   from {

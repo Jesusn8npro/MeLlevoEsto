@@ -181,15 +181,26 @@ export const useCarrito = () => {
 // Proveedor del contexto
 export const CarritoProvider = ({ children }) => {
   const [estado, dispatch] = useReducer(carritoReducer, estadoInicial)
-  const { usuario, sesionIniciada } = useAuth()
+  const { usuario, sesionInicializada } = useAuth()
+
+  // Helper: obtener/crear un sessionId consistente desde localStorage
+  const obtenerSessionIdCarrito = () => {
+    try {
+      let sid = window.localStorage.getItem('carrito_session_id')
+      if (!sid) {
+        sid = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        window.localStorage.setItem('carrito_session_id', sid)
+      }
+      return sid
+    } catch (_) {
+      // Fallback si localStorage falla
+      return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    }
+  }
 
   // Generar o recuperar session ID
   useEffect(() => {
-    let sessionId = localStorage.getItem('carrito_session_id')
-    if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-      localStorage.setItem('carrito_session_id', sessionId)
-    }
+    const sessionId = obtenerSessionIdCarrito()
     dispatch({ type: TIPOS_ACCION.ESTABLECER_SESSION_ID, payload: sessionId })
   }, [])
 
@@ -231,19 +242,20 @@ export const CarritoProvider = ({ children }) => {
 
       // Filtrar por usuario o session
       console.log('🔍 cargarCarrito - Verificando filtros:', {
-        sesionIniciada,
+        sesionInicializada,
         usuario,
         hasUsuario: !!usuario,
         usuarioId: usuario?.id,
         sessionId: estado.sessionId
       })
       
-      if (sesionIniciada && usuario) {
+      if (sesionInicializada && usuario) {
         console.log('🔍 Filtrando por usuario_id:', usuario.id)
         query = query.eq('usuario_id', usuario.id)
       } else {
-        console.log('🔍 Filtrando por session_id:', estado.sessionId)
-        query = query.eq('session_id', estado.sessionId)
+        const sid = estado.sessionId || obtenerSessionIdCarrito()
+        console.log('🔍 Filtrando por session_id:', sid)
+        query = query.eq('session_id', sid)
       }
 
       const { data, error } = await query.order('creado_el', { ascending: false })
@@ -330,12 +342,38 @@ export const CarritoProvider = ({ children }) => {
         throw new Error(`Stock insuficiente. Solo quedan ${producto.stock || 0} unidades disponibles`)
       }
 
+      // Verificar sesión directamente desde Supabase para evitar condiciones de carrera
+      let usuarioIdFinal = null
+      let autenticado = false
+      try {
+        const { data: { session } } = await clienteSupabase.auth.getSession()
+        if (session?.user) {
+          autenticado = true
+          usuarioIdFinal = session.user.id
+        }
+      } catch (_) {
+        // Ignorar errores de lectura de sesión, usaremos contexto
+      }
+
+      // Fallback al contexto si no pudimos obtener sesión directa
+      if (!autenticado && sesionInicializada && usuario?.id) {
+        autenticado = true
+        usuarioIdFinal = usuario.id
+      }
+
+      // Si es invitado, asegurar session_id
+      const sid = !autenticado ? (estado.sessionId || obtenerSessionIdCarrito()) : null
+      if (!autenticado && !sid) {
+        console.warn('⚠️ No se pudo determinar session_id para invitado')
+      }
+
       const nuevoItem = {
         producto_id: producto.id,
         cantidad,
         precio_unitario: producto.precio,
-        usuario_id: sesionIniciada && usuario ? usuario.id : null,
-        session_id: !sesionIniciada ? estado.sessionId : null
+        usuario_id: autenticado ? usuarioIdFinal : null,
+        // Asegurar que siempre enviamos session_id en modo invitado
+        session_id: sid
       }
 
       // Guardar en Supabase
@@ -359,7 +397,19 @@ export const CarritoProvider = ({ children }) => {
           )
         `)
 
-      if (error) throw error
+      if (error) {
+        console.error('❌ RLS/Insert error detalles:', {
+          message: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint,
+          nuevoItem,
+          sesionInicializada,
+          usuarioId: usuarioIdFinal || usuario?.id,
+          sessionIdUsada: sid
+        })
+        throw error
+      }
 
       // Actualizar estado local
       dispatch({ 
@@ -388,7 +438,7 @@ export const CarritoProvider = ({ children }) => {
         usuario: usuario,
         hasUsuario: !!usuario,
         usuarioId: usuario?.id,
-        sesionIniciada
+        sesionInicializada
       })
       
       if (nuevaCantidad <= 0) {
@@ -474,7 +524,7 @@ export const CarritoProvider = ({ children }) => {
     try {
       let query = clienteSupabase.from('carrito').delete()
 
-      if (sesionIniciada && usuario) {
+      if (sesionInicializada && usuario) {
         query = query.eq('usuario_id', usuario.id)
       } else {
         query = query.eq('session_id', estado.sessionId)
@@ -497,24 +547,44 @@ export const CarritoProvider = ({ children }) => {
   // Función para migrar carrito de sesión a usuario
   const migrarCarritoAUsuario = async (usuarioId) => {
     try {
-      console.log('🔄 migrarCarritoAUsuario llamada con:', {
-        usuarioId,
-        hasUsuarioId: !!usuarioId,
-        sessionId: estado.sessionId
-      })
-      
-      const { error } = await clienteSupabase
-        .from('carrito')
-        .update({ 
-          usuario_id: usuarioId,
-          session_id: null 
+      if (import.meta.env.VITE_DEBUG === 'true') {
+        console.log('🔄 migrarCarritoAUsuario llamada con:', {
+          usuarioId,
+          hasUsuarioId: !!usuarioId,
+          sessionId: estado.sessionId
         })
-        .eq('session_id', estado.sessionId)
+      }
 
-      if (error) throw error
+      // Intentar migración vía RPC (segura con SECURITY DEFINER)
+      let rpcError = null
+      try {
+        const { data: migrados, error } = await clienteSupabase.rpc('migrar_carrito_a_usuario', {
+          p_session_id: estado.sessionId,
+          p_usuario_id: usuarioId
+        })
+        rpcError = error || null
+        if (!error && import.meta.env.VITE_DEBUG === 'true') {
+          console.log('✅ RPC migrar_carrito_a_usuario ejecutada. Registros afectados:', migrados)
+        }
+      } catch (e) {
+        rpcError = e
+      }
 
-      console.log('✅ Carrito migrado exitosamente, recargando...')
-      // Recargar carrito
+      // Fallback: si RPC no existe o falla, intentar UPDATE directo (respetando RLS)
+      if (rpcError) {
+        const { error } = await clienteSupabase
+          .from('carrito')
+          .update({ 
+            usuario_id: usuarioId,
+            session_id: null 
+          })
+          .eq('session_id', estado.sessionId)
+        if (error) throw error
+      }
+
+      if (import.meta.env.VITE_DEBUG === 'true') {
+        console.log('✅ Carrito migrado exitosamente, recargando...')
+      }
       await cargarCarrito()
 
     } catch (error) {
@@ -550,18 +620,18 @@ export const CarritoProvider = ({ children }) => {
   // Migrar carrito cuando el usuario inicie sesión
   useEffect(() => {
     console.log('🔄 useEffect migrarCarrito:', {
-      sesionIniciada,
+      sesionInicializada,
       usuario,
       hasUsuario: !!usuario,
       usuarioId: usuario?.id,
       sessionId: estado.sessionId
     })
     
-    if (sesionIniciada && usuario && estado.sessionId) {
+    if (sesionInicializada && usuario && estado.sessionId) {
       console.log('🔄 Llamando migrarCarritoAUsuario con usuario.id:', usuario.id)
       migrarCarritoAUsuario(usuario.id)
     }
-  }, [sesionIniciada, usuario])
+  }, [sesionInicializada, usuario])
 
   // Función para mostrar notificación
   const mostrarNotificacion = (tipo, titulo, mensaje) => {

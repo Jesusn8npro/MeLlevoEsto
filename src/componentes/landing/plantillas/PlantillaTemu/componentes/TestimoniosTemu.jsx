@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import ImagenInteligente from '../../../../../componentes/ui/ImagenInteligente'
 import './TestimoniosTemu.css'
 
 /**
@@ -251,10 +252,11 @@ const TestimoniosTemu = ({
             {/* HEADER DEL TESTIMONIO */}
             <div className="testimonios-temu-testimonio-header">
               <div className="testimonios-temu-avatar-container">
-                <img 
+                <ImagenInteligente 
                   src={testimonio.imagen} 
                   alt={testimonio.nombre}
                   className="testimonios-temu-avatar"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
                 {testimonio.verificado && (
                   <div className="testimonios-temu-verificado">
@@ -285,10 +287,11 @@ const TestimoniosTemu = ({
             {/* IMAGEN DEL PRODUCTO EN USO */}
             {testimonio.imagenProducto && (
               <div className="testimonios-temu-imagen-producto">
-                <img 
+                <ImagenInteligente 
                   src={testimonio.imagenProducto} 
                   alt="Cliente usando el producto"
                   className="testimonios-temu-producto-img"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
                 <div className="testimonios-temu-producto-overlay">
                   <span className="testimonios-temu-zoom-icon">🔍</span>
@@ -366,10 +369,11 @@ const TestimoniosTemu = ({
             </button>
             
             <div className="testimonios-temu-modal-header">
-              <img 
+              <ImagenInteligente 
                 src={testimonioActivo.imagen} 
                 alt={testimonioActivo.nombre}
                 className="testimonios-temu-modal-avatar"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
               <div>
                 <h3>{testimonioActivo.nombre}</h3>
@@ -383,10 +387,11 @@ const TestimoniosTemu = ({
             </div>
 
             {testimonioActivo.imagenProducto && (
-              <img 
+              <ImagenInteligente 
                 src={testimonioActivo.imagenProducto} 
                 alt="Producto en uso"
                 className="testimonios-temu-modal-imagen"
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
               />
             )}
 

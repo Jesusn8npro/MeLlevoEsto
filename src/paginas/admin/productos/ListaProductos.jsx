@@ -4,6 +4,7 @@ import { clienteSupabase } from '../../../configuracion/supabase'
 import { useAuth } from '../../../contextos/ContextoAutenticacion'
 import ImagenInteligente from '../../../componentes/ui/ImagenInteligente'
 import './EstilosCategoriasElegantes.css'
+import './ListaProductos.css'
 import { 
   Search, 
   Filter, 
@@ -19,7 +20,7 @@ import {
 } from 'lucide-react'
 
 const ListaProductos = () => {
-  const { usuario, sesionIniciada, inicializado, cargando: cargandoAuth } = useAuth()
+  const { usuario, sesionInicializada, cargando: cargandoAuth } = useAuth()
   const [productos, setProductos] = useState([])
   const [categorias, setCategorias] = useState([])
   const [cargando, setCargando] = useState(true)
@@ -41,11 +42,10 @@ const ListaProductos = () => {
 
   // SIMPLIFICADO: Solo cargar cuando auth esté listo
   useEffect(() => {
-    if (inicializado) {
-      console.log('🔄 Auth inicializado, cargando datos...', { 
-        inicializado, 
-        usuario: usuario?.email,
-        sesionIniciada 
+    if (!cargandoAuth) {
+      console.log('🔄 Auth listo, cargando datos...', {
+        sesionInicializada,
+        usuario: usuario?.id
       })
       
       // Cargar inmediatamente sin delays
@@ -53,7 +53,7 @@ const ListaProductos = () => {
       cargarCategorias()
       cargarEstadisticas()
     }
-  }, [inicializado, paginaActual, busqueda, filtroCategoria, filtroEstado])
+  }, [cargandoAuth, paginaActual, busqueda, filtroCategoria, filtroEstado])
 
   // NUEVO: Detectar recarga de página y forzar recarga de datos
   useEffect(() => {
@@ -85,8 +85,7 @@ const ListaProductos = () => {
       
       console.log('🔍 Cargando productos con categorías...', {
         usuario: usuario?.email,
-        sesionIniciada,
-        inicializado,
+        sesionInicializada,
         timestamp: new Date().toISOString()
       })
 

@@ -476,6 +476,11 @@
   overflow-y: auto;
 }
 
+/* ===== Aislamiento de contexto para evitar colisiones de z-index/estilos ===== */
+.disposicion-admin {
+  isolation: isolate; /* Crea nuevo contexto de apilamiento para proteger el encabezado */
+}
+
 /* ===== ENCABEZADO ===== */
 .encabezado-admin {
   position: sticky;
@@ -486,6 +491,17 @@
   border-color: var(--color-gris-200);
   z-index: 99999;
   border-bottom: 1px solid var(--color-borde);
+}
+
+/* Reforzar especificidad para mantener el estilo del header en todas las páginas */
+.disposicion-admin .encabezado-admin,
+.disposicion-admin .encabezado-admin * {
+  box-sizing: border-box;
+}
+
+.disposicion-admin .encabezado-admin-izquierda,
+.disposicion-admin .encabezado-admin-derecha {
+  background: transparent;
 }
 
 .encabezado-admin-contenedor {

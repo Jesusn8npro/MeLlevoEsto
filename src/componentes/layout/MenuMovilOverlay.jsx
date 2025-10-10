@@ -29,7 +29,7 @@ const MenuMovilOverlay = ({
   onAbrirAutenticacion,
   totalItems,
   onAlternarCarrito,
-  sesionIniciada,
+  sesionInicializada,
   usuario
 }) => {
   const [categoriasAbiertas, setCategoriasAbiertas] = useState(true)
@@ -58,7 +58,7 @@ const MenuMovilOverlay = ({
 
         {/* Usuario / Login */}
         <div className="overlay-user">
-          {sesionIniciada ? (
+          {sesionInicializada ? (
             <div className="overlay-user-row">
               <div className="overlay-avatar" aria-hidden="true">{usuario?.email?.[0]?.toUpperCase() || 'U'}</div>
               <div className="overlay-user-info">

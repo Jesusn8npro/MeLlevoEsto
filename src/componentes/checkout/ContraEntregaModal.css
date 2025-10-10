@@ -1,0 +1,275 @@
+.cod-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: cod-fade-in 180ms ease-out;
+}
+
+.cod-modal {
+  width: 86%;
+  max-width: 520px;
+  max-height: 86vh;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  position: relative;
+  padding: 18px 18px 10px 18px;
+  overflow-y: auto;
+  animation: cod-slide-up 220ms ease-out;
+}
+.cod-cerrar-anim { animation: cod-close-down 320ms ease-in forwards; }
+.cod-modal::-webkit-scrollbar { width: 8px; }
+.cod-modal::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 8px; }
+.cod-modal::-webkit-scrollbar-thumb:hover { background: #d4d4d8; }
+
+.cod-cerrar {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  background: #f5f5f5;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.cod-header h3 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+/* Banner de Pago Contra Entrega */
+.cod-cod-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #0ea5e9, #2563eb);
+  color: #e5e7eb;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 4px 10px rgba(2,132,199,0.25);
+  margin-bottom: 12px;
+}
+.cod-cod-left { display: flex; align-items: center; gap: 6px; }
+.cod-cod-right { font-size: 12px; opacity: 0.9; }
+
+.cod-ofertas {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.cod-oferta {
+  display: flex;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: linear-gradient(180deg, #f9fafb, #ffffff);
+  cursor: pointer;
+}
+
+.cod-oferta input { margin-top: 4px; }
+
+.cod-oferta-contenido {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.cod-oferta-titulo {
+  font-weight: 700;
+}
+
+.cod-oferta-subtitulo {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 12px;
+  background: #fef3c7;
+  color: #92400e;
+  padding: 3px 6px;
+  border-radius: 6px;
+}
+
+.cod-oferta-precio {
+  font-weight: 700;
+}
+
+.cod-oferta.seleccionada {
+  border-color: #22c55e;
+  background: #f0fdf4;
+}
+
+.cod-resumen {
+  border-top: 1px dashed #e5e7eb;
+  border-bottom: 1px dashed #e5e7eb;
+  padding: 8px 0;
+  margin: 8px 0 12px 0;
+  background: linear-gradient(180deg, #fafafa, #ffffff);
+  border-radius: 10px;
+}
+
+.cod-resumen-linea {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.cod-envio-gratis { color: #16a34a; font-weight: 700; }
+.cod-total .cod-precio-total { font-weight: 800; }
+
+.cod-form-nota {
+  color: #b91c1c;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.cod-form { display: flex; flex-direction: column; gap: 10px; }
+.cod-section-title { font-size: 13px; font-weight: 800; color: #1f2937; margin: 2px 2px; }
+.cod-form-scroll { max-height: 62vh; overflow-y: auto; padding-right: 6px; }
+.cod-form-scroll::-webkit-scrollbar { width: 8px; }
+.cod-form-scroll::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 8px; }
+.cod-form-scroll::-webkit-scrollbar-thumb:hover { background: #d4d4d8; }
+.cod-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cod-campo { display: flex; flex-direction: column; gap: 4px; }
+.cod-campo label { font-size: 12px; font-weight: 600; }
+.cod-campo input, .cod-campo select {
+  height: 40px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+.cod-ayuda { color: #ef4444; font-size: 11px; }
+.cod-error { color: #ef4444; font-size: 12px; }
+
+/* Mensaje de bienvenida */
+.cod-bienvenida {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  color: #0c4a6e;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 12px;
+}
+
+/* Confirmación de compra */
+.cod-confirmacion {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+}
+.cod-confirmacion-header { display:flex; align-items:center; gap:8px; font-size:14px; }
+.cod-confirmacion-mensaje { font-size:13px; color:#334155; }
+.cod-confirmacion-detalles { display:flex; flex-direction:column; gap:4px; background:#f9fafb; border:1px dashed #e5e7eb; border-radius:10px; padding:8px; }
+.cod-confirmacion-acciones { display:flex; gap:8px; align-items:center; }
+.cod-cta-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  border-radius: 12px;
+  border: none;
+  background: #22c55e;
+  color: #fff;
+  font-weight: 800;
+  padding: 0 16px;
+  cursor: pointer;
+}
+.cod-cta-whatsapp:hover { filter: brightness(1.05); }
+.cod-cta-secundario {
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #111827;
+  font-weight: 700;
+  padding: 0 14px;
+  cursor: pointer;
+}
+
+.cod-upsell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.cod-upsell-badge {
+  font-size: 12px;
+  font-weight: 700;
+  color: #b45309;
+}
+
+.cod-cta-principal {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 50px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(90deg, #cf9f3d 0%, #f0c150 50%, #cf9f3d 100%);
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.12);
+}
+.cod-cta-principal:hover { filter: brightness(1.04); }
+.cod-cta-principal .cod-cta-arrow { animation: cod-arrow 1400ms ease-in-out infinite; }
+/* Nota aclaratoria de Contra Entrega */
+.cod-cod-note { display:flex; align-items:center; gap:6px; font-size:12px; color:#334155; margin:6px 2px 10px 2px; }
+
+.cod-sellos { display: grid; place-items: center; padding: 12px 0 8px 0; }
+.cod-sellos-img { width: 88%; max-width: 520px; }
+
+.cod-plataforma { margin: 6px 0 4px 0; text-align: center; }
+.cod-cta-plataforma {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 48px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(90deg, #b48a54, #d9a74f);
+  color: #fff;
+  font-weight: 800;
+  padding: 0 16px;
+  cursor: pointer;
+}
+.cod-cta-plataforma:hover { filter: brightness(1.05); }
+.cod-cta-plataforma .cod-hand { animation: cod-pulse 1300ms ease-in-out infinite; }
+.cod-plataforma-desc { font-size: 12px; color: #4b5563; margin: 8px 0; }
+.cod-logos-pago-wrap { display: grid; place-items: center; }
+.cod-logos-pago { width: 92%; max-width: 560px; border-radius: 8px; }
+
+@media (max-width: 640px) {
+  .cod-modal { width: 90%; max-width: 480px; padding: 14px; }
+  .cod-grid-2 { grid-template-columns: 1fr; }
+  .cod-sellos-img, .cod-logos-pago { width: 100%; }
+}
+
+/* Animaciones */
+@keyframes cod-fade-in { from { opacity: 0 } to { opacity: 1 } }
+@keyframes cod-slide-up { from { transform: translateY(8px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+@keyframes cod-arrow { 0%, 100% { transform: translateX(0) } 50% { transform: translateX(4px) } }
+@keyframes cod-pulse { 0%, 100% { transform: scale(1) } 50% { transform: scale(1.08) } }
+@keyframes cod-close-down { from { transform: translateY(0); opacity:1 } to { transform: translateY(8px); opacity:0 } }

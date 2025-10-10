@@ -1,0 +1,218 @@
+[
+  {
+    "schemaname": "public",
+    "tablename": "blog_comentarios",
+    "policyname": "Comentarios aprobados para lectura",
+    "cmd": "SELECT",
+    "roles": "{public}",
+    "qual": "(aprobado = true)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "blog_comentarios",
+    "policyname": "Usuarios pueden comentar",
+    "cmd": "INSERT",
+    "roles": "{public}",
+    "qual": null,
+    "with_check": "((auth.uid() IS NOT NULL) AND (usuario_id = auth.uid()))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "carrito",
+    "policyname": "carrito_sesion_gestion",
+    "cmd": "ALL",
+    "roles": "{public}",
+    "qual": "((auth.uid() IS NULL) AND (session_id IS NOT NULL))",
+    "with_check": "((auth.uid() IS NULL) AND (session_id IS NOT NULL))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "carrito",
+    "policyname": "carrito_usuario_gestion",
+    "cmd": "ALL",
+    "roles": "{authenticated}",
+    "qual": "(auth.uid() = usuario_id)",
+    "with_check": "(auth.uid() = usuario_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "categoria_atributos",
+    "policyname": "Atributos públicos para lectura",
+    "cmd": "SELECT",
+    "roles": "{public}",
+    "qual": "(activo = true)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "configuracion_tienda",
+    "policyname": "admins_gestionan_toda_config",
+    "cmd": "ALL",
+    "roles": "{public}",
+    "qual": "(EXISTS ( SELECT 1\n   FROM usuarios\n  WHERE ((usuarios.id = auth.uid()) AND ((usuarios.rol)::text = 'admin'::text))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "configuracion_tienda",
+    "policyname": "todos_pueden_ver_config_publica",
+    "cmd": "SELECT",
+    "roles": "{public}",
+    "qual": "(((clave)::text !~~ 'admin_%'::text) AND ((clave)::text !~~ 'secret_%'::text))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "favoritos",
+    "policyname": "Los usuarios pueden actualizar sus propios favoritos",
+    "cmd": "UPDATE",
+    "roles": "{public}",
+    "qual": "(auth.uid() = usuario_id)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "favoritos",
+    "policyname": "Los usuarios pueden agregar favoritos",
+    "cmd": "INSERT",
+    "roles": "{public}",
+    "qual": null,
+    "with_check": "(auth.uid() = usuario_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "favoritos",
+    "policyname": "Los usuarios pueden eliminar sus propios favoritos",
+    "cmd": "DELETE",
+    "roles": "{public}",
+    "qual": "(auth.uid() = usuario_id)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "favoritos",
+    "policyname": "Los usuarios pueden ver sus propios favoritos",
+    "cmd": "SELECT",
+    "roles": "{public}",
+    "qual": "(auth.uid() = usuario_id)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "pedido_items",
+    "policyname": "pedido_items_insercion_propietario",
+    "cmd": "INSERT",
+    "roles": "{public}",
+    "qual": null,
+    "with_check": "(EXISTS ( SELECT 1\n   FROM pedidos p\n  WHERE ((p.id = pedido_items.pedido_id) AND (p.usuario_id = auth.uid()))))"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "pedido_items",
+    "policyname": "pedido_items_lectura_propietario",
+    "cmd": "SELECT",
+    "roles": "{public}",
+    "qual": "(EXISTS ( SELECT 1\n   FROM pedidos p\n  WHERE ((p.id = pedido_items.pedido_id) AND (p.usuario_id = auth.uid()))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "pedidos",
+    "policyname": "pedidos_actualizacion_propietario",
+    "cmd": "UPDATE",
+    "roles": "{public}",
+    "qual": "(usuario_id = auth.uid())",
+    "with_check": "(usuario_id = auth.uid())"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "pedidos",
+    "policyname": "pedidos_admin_completo",
+    "cmd": "ALL",
+    "roles": "{public}",
+    "qual": "(EXISTS ( SELECT 1\n   FROM usuarios\n  WHERE ((usuarios.id = auth.uid()) AND ((usuarios.rol)::text = 'admin'::text))))",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "pedidos",
+    "policyname": "pedidos_insercion_propietario",
+    "cmd": "INSERT",
+    "roles": "{public}",
+    "qual": null,
+    "with_check": "(usuario_id = auth.uid())"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "pedidos",
+    "policyname": "pedidos_lectura_propietario",
+    "cmd": "SELECT",
+    "roles": "{public}",
+    "qual": "(usuario_id = auth.uid())",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "pedidos",
+    "policyname": "pedidos_usuario_crear",
+    "cmd": "INSERT",
+    "roles": "{authenticated}",
+    "qual": null,
+    "with_check": "(auth.uid() = usuario_id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "pedidos",
+    "policyname": "pedidos_usuario_lectura",
+    "cmd": "SELECT",
+    "roles": "{authenticated}",
+    "qual": "(auth.uid() = usuario_id)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "producto_atributos",
+    "policyname": "Valores de atributos públicos",
+    "cmd": "SELECT",
+    "roles": "{public}",
+    "qual": "true",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "usuarios",
+    "policyname": "insercion_triggers",
+    "cmd": "INSERT",
+    "roles": "{public}",
+    "qual": null,
+    "with_check": "true"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "usuarios",
+    "policyname": "usuarios_insert_propietario",
+    "cmd": "INSERT",
+    "roles": "{authenticated}",
+    "qual": null,
+    "with_check": "(auth.uid() = id)"
+  },
+  {
+    "schemaname": "public",
+    "tablename": "usuarios",
+    "policyname": "usuarios_select_propietario",
+    "cmd": "SELECT",
+    "roles": "{authenticated}",
+    "qual": "(auth.uid() = id)",
+    "with_check": null
+  },
+  {
+    "schemaname": "public",
+    "tablename": "usuarios",
+    "policyname": "usuarios_update_propietario",
+    "cmd": "UPDATE",
+    "roles": "{authenticated}",
+    "qual": "(auth.uid() = id)",
+    "with_check": "(auth.uid() = id)"
+  }
+]

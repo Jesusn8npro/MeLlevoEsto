@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react'
+import ImagenInteligente from '../../../../../componentes/ui/ImagenInteligente'
 import './CaracteristicasTemu.css'
 
 /**
@@ -146,10 +147,11 @@ const CaracteristicasTemu = ({
         {/* COLUMNA CENTRO - PRODUCTO */}
         <div className="caracteristicas-temu-columna caracteristicas-temu-producto">
           <div className="caracteristicas-temu-imagen-container caracteristicas-temu-item">
-            <img 
+            <ImagenInteligente 
               src={imagenCaracteristicas} 
               alt="Producto principal"
               className="caracteristicas-temu-imagen"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
             <div className="caracteristicas-temu-imagen-overlay">
               <div className="caracteristicas-temu-badge-calidad">

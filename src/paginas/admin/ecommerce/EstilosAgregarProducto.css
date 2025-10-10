@@ -54,7 +54,7 @@
   text-align: center;
 }
 
-.titulo-pagina {
+.agregar-producto .titulo-pagina {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,13 +71,13 @@
   color: var(--color-primario);
 }
 
-.subtitulo-pagina {
+.agregar-producto .subtitulo-pagina {
   font-size: 1.1rem;
   color: var(--color-texto-secundario);
   margin: 0;
 }
 
-.header-acciones {
+.agregar-producto .header-acciones {
   display: flex;
   justify-content: center;
   gap: 1rem;
@@ -85,9 +85,9 @@
 }
 
 /* ===== BOTONES ===== */
-.boton-secundario,
-.boton-vista-previa,
-.boton-primario {
+.agregar-producto .boton-secundario,
+.agregar-producto .boton-vista-previa,
+.agregar-producto .boton-primario {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -101,46 +101,46 @@
   text-decoration: none;
 }
 
-.boton-secundario {
+.agregar-producto .boton-secundario {
   background-color: var(--color-fondo-secundario);
   color: var(--color-texto-secundario);
   border: 1px solid var(--color-borde);
 }
 
-.boton-secundario:hover {
+.agregar-producto .boton-secundario:hover {
   background-color: var(--color-hover);
   color: var(--color-texto-primario);
 }
 
-.boton-vista-previa {
+.agregar-producto .boton-vista-previa {
   background-color: #3b82f6;
   color: white;
 }
 
-.boton-vista-previa:hover {
+.agregar-producto .boton-vista-previa:hover {
   background-color: #2563eb;
   transform: translateY(-1px);
 }
 
-.boton-vista-previa:disabled {
+.agregar-producto .boton-vista-previa:disabled {
   background-color: #9ca3af;
   cursor: not-allowed;
   transform: none;
 }
 
-.boton-primario {
+.agregar-producto .boton-primario {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
-.boton-primario:hover {
+.agregar-producto .boton-primario:hover {
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
 }
 
-.boton-primario:disabled {
+.agregar-producto .boton-primario:disabled {
   background: #9ca3af;
   cursor: not-allowed;
   transform: none;
@@ -579,14 +579,14 @@
     padding: 1rem;
   }
   
-  .header-acciones {
+  .agregar-producto .header-acciones {
     flex-direction: column;
     align-items: center;
   }
   
-  .boton-secundario,
-  .boton-vista-previa,
-  .boton-primario {
+  .agregar-producto .boton-secundario,
+  .agregar-producto .boton-vista-previa,
+  .agregar-producto .boton-primario {
     width: 100%;
     max-width: 300px;
     justify-content: center;
@@ -598,7 +598,7 @@
     grid-template-columns: 1fr;
   }
   
-  .titulo-pagina {
+  .agregar-producto .titulo-pagina {
     font-size: 2rem;
     flex-direction: column;
     gap: 0.5rem;
@@ -627,17 +627,17 @@
     padding: 1rem;
   }
   
-  .titulo-pagina {
+  .agregar-producto .titulo-pagina {
     font-size: 1.75rem;
   }
   
-  .header-acciones {
+  .agregar-producto .header-acciones {
     gap: 0.75rem;
   }
   
-  .boton-secundario,
-  .boton-vista-previa,
-  .boton-primario {
+  .agregar-producto .boton-secundario,
+  .agregar-producto .boton-vista-previa,
+  .agregar-producto .boton-primario {
     padding: 0.75rem 1.25rem;
     font-size: 0.9rem;
   }

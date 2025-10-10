@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import HeaderPrincipal from './componentes/layout/HeaderPrincipal'
+import RutaAdmin from './componentes/autenticacion/RutaAdmin'
 import FavoritosProvider from './contextos/FavoritosContext'
 import { CarritoProvider } from './contextos/CarritoContext'
 // import ProteccionAvanzada from './componentes/ProteccionAvanzada' // Comentado temporalmente
@@ -12,22 +13,27 @@ import PaginaCheckout from './paginas/ecommerce/PaginaCheckout/PaginaCheckout'
 import PaginaLogin from './paginas/autenticacion/PaginaLogin/PaginaLogin'
 import PaginaRegistro from './paginas/autenticacion/PaginaRegistro/PaginaRegistro'
 import PaginaPerfil from './paginas/autenticacion/PaginaPerfil/PaginaPerfil'
+import PaginaRestablecerContrasena from './paginas/autenticacion/PaginaResetPassword/PaginaResetPassword'
+import PaginaSesionCerrada from './paginas/autenticacion/PaginaSesionCerrada/PaginaSesionCerrada'
 import PaginaNoEncontrada from './paginas/sistema/PaginaNoEncontrada/PaginaNoEncontrada'
 import Contacto from './paginas/empresa/Contacto/Contacto'
 import QuienesSomos from './paginas/empresa/QuienesSomos/QuienesSomos'
 import TerminosCondiciones from './paginas/legal/TerminosCondiciones/TerminosCondiciones'
 import PoliticaPrivacidad from './paginas/legal/PoliticaPrivacidad/PoliticaPrivacidad'
+import PruebaDeProducto from './paginas/ecommerce/PruebaDeProducto/PruebaDeProducto'
 import PreguntasFrecuentes from './paginas/legal/PreguntasFrecuentes/PreguntasFrecuentes'
 import TrabajaConNosotros from './paginas/empresa/TrabajaConNosotros/TrabajaConNosotros'
 import DashboardAdmin from './paginas/admin/DashboardAdmin/DashboardAdmin'
 import AdminTest from './paginas/admin/AdminTest/AdminTest'
 import DisposicionAdmin from './componentes/admin/DisposicionAdmin'
-import ListaProductos from './paginas/admin/ecommerce/ListaProductos'
+import ListaProductos from './paginas/admin/productos/ListaProductos'
+import GestionProductos from './paginas/admin/GestionProductos/GestionProductos'
 import AgregarProducto from './paginas/admin/ecommerce/AgregarProducto'
 import EditarProducto from './paginas/admin/ecommerce/EditarProducto'
 import Categorias from './paginas/admin/ecommerce/Categorias'
 import Pedidos from './paginas/admin/ecommerce/Pedidos'
 import Inventario from './paginas/admin/ecommerce/Inventario'
+import GenericaAdmin from './paginas/admin/GenericaAdmin'
 import LandingProducto from './paginas/LandingProducto'
 import PlantillaTemu from './componentes/landing/plantillas/PlantillaTemu/PlantillaTemu'
 import TestImagenes from './paginas/TestImagenes'
@@ -43,39 +49,162 @@ function App() {
         <div className="app">
         {/* <ProteccionAvanzada /> */}
         <Routes>
-        {/* Admin Dashboard Real - Con autenticación */}
-        <Route path="/admin" element={<DashboardAdmin />} />
+        {/* Admin Dashboard Real - Protegido por autenticación y rol */}
+        <Route path="/admin" element={
+          <RutaAdmin>
+            <DashboardAdmin />
+          </RutaAdmin>
+        } />
         
-        {/* Rutas de E-commerce Admin - Con layout de admin y autenticación */}
+        {/* Rutas de E-commerce Admin - Protegidas y con layout */}
+        <Route path="/admin/gestion-productos" element={
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <GestionProductos />
+            </DisposicionAdmin>
+          </RutaAdmin>
+        } />
         <Route path="/admin/productos" element={
-          <DisposicionAdmin>
-            <ListaProductos />
-          </DisposicionAdmin>
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <ListaProductos />
+            </DisposicionAdmin>
+          </RutaAdmin>
         } />
         <Route path="/admin/productos/agregar" element={
-          <DisposicionAdmin>
-            <AgregarProducto />
-          </DisposicionAdmin>
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <AgregarProducto />
+            </DisposicionAdmin>
+          </RutaAdmin>
         } />
         <Route path="/admin/productos/editar/:slug" element={
-          <DisposicionAdmin>
-            <EditarProducto />
-          </DisposicionAdmin>
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <EditarProducto />
+            </DisposicionAdmin>
+          </RutaAdmin>
         } />
         <Route path="/admin/categorias" element={
-          <DisposicionAdmin>
-            <Categorias />
-          </DisposicionAdmin>
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <Categorias />
+            </DisposicionAdmin>
+          </RutaAdmin>
         } />
         <Route path="/admin/pedidos" element={
-          <DisposicionAdmin>
-            <Pedidos />
-          </DisposicionAdmin>
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <Pedidos />
+            </DisposicionAdmin>
+          </RutaAdmin>
         } />
         <Route path="/admin/inventario" element={
-          <DisposicionAdmin>
-            <Inventario />
-          </DisposicionAdmin>
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <Inventario />
+            </DisposicionAdmin>
+          </RutaAdmin>
+        } />
+
+        {/* Rutas admin adicionales para navegación completa del sidebar */}
+        <Route path="/admin/calendario" element={
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <GenericaAdmin titulo="Calendario" descripcion="Vista de calendario (pendiente)." />
+            </DisposicionAdmin>
+          </RutaAdmin>
+        } />
+        <Route path="/admin/perfil" element={
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <GenericaAdmin titulo="Perfil de Usuario" descripcion="Gestión de perfil (pendiente)." />
+            </DisposicionAdmin>
+          </RutaAdmin>
+        } />
+        <Route path="/admin/elementos-formulario" element={
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <GenericaAdmin titulo="Elementos de Formulario" descripcion="Componentes de formularios (pendiente)." />
+            </DisposicionAdmin>
+          </RutaAdmin>
+        } />
+        <Route path="/admin/tablas-basicas" element={
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <GenericaAdmin titulo="Tablas Básicas" descripcion="Ejemplos de tablas (pendiente)." />
+            </DisposicionAdmin>
+          </RutaAdmin>
+        } />
+        <Route path="/admin/grafico-lineas" element={
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <GenericaAdmin titulo="Gráfico de Líneas" descripcion="Demo de gráfico de líneas (pendiente)." />
+            </DisposicionAdmin>
+          </RutaAdmin>
+        } />
+        <Route path="/admin/grafico-barras" element={
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <GenericaAdmin titulo="Gráfico de Barras" descripcion="Demo de gráfico de barras (pendiente)." />
+            </DisposicionAdmin>
+          </RutaAdmin>
+        } />
+        <Route path="/admin/alertas" element={
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <GenericaAdmin titulo="Alertas" descripcion="Componentes de alerta (pendiente)." />
+            </DisposicionAdmin>
+          </RutaAdmin>
+        } />
+        <Route path="/admin/avatares" element={
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <GenericaAdmin titulo="Avatares" descripcion="Componentes de avatar (pendiente)." />
+            </DisposicionAdmin>
+          </RutaAdmin>
+        } />
+        <Route path="/admin/insignias" element={
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <GenericaAdmin titulo="Insignias" descripcion="Componentes de insignias (pendiente)." />
+            </DisposicionAdmin>
+          </RutaAdmin>
+        } />
+        <Route path="/admin/botones" element={
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <GenericaAdmin titulo="Botones" descripcion="Componentes de botones (pendiente)." />
+            </DisposicionAdmin>
+          </RutaAdmin>
+        } />
+        <Route path="/admin/imagenes" element={
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <GenericaAdmin titulo="Imágenes" descripcion="Componentes de imágenes (pendiente)." />
+            </DisposicionAdmin>
+          </RutaAdmin>
+        } />
+        <Route path="/admin/videos" element={
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <GenericaAdmin titulo="Videos" descripcion="Componentes de video (pendiente)." />
+            </DisposicionAdmin>
+          </RutaAdmin>
+        } />
+        <Route path="/admin/iniciar-sesion" element={
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <GenericaAdmin titulo="Iniciar Sesión" descripcion="Pantalla de login demostrativa (pendiente)." />
+            </DisposicionAdmin>
+          </RutaAdmin>
+        } />
+        <Route path="/admin/registrarse" element={
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <GenericaAdmin titulo="Registrarse" descripcion="Pantalla de registro demostrativa (pendiente)." />
+            </DisposicionAdmin>
+          </RutaAdmin>
         } />
         
         {/* Admin Test - Solo para desarrollo */}
@@ -147,6 +276,16 @@ function App() {
             </main>
           </>
         } />
+
+        {/* Página de prueba para el nuevo componente premium */}
+        <Route path="/prueba-de-producto" element={
+          <>
+            <HeaderPrincipal />
+            <main className="contenido-principal">
+              <PruebaDeProducto />
+            </main>
+          </>
+        } />
         
         <Route path="/categoria/:slug" element={
           <>
@@ -203,7 +342,7 @@ function App() {
           </>
         } />
         
-        <Route path="/perfil" element={
+        <Route path="/perfil/*" element={
           <>
             <HeaderPrincipal />
             <main className="contenido-principal">
@@ -211,9 +350,26 @@ function App() {
             </main>
           </>
         } />
+
+        <Route path="/restablecer-contrasena" element={
+          <>
+            <HeaderPrincipal />
+            <main className="contenido-principal">
+              <PaginaRestablecerContrasena />
+            </main>
+          </>
+        } />
         
-        {/* Admin */}
-        <Route path="/admin" element={<DashboardAdmin />} />
+        <Route path="/sesion-cerrada" element={
+          <>
+            <HeaderPrincipal />
+            <main className="contenido-principal">
+              <PaginaSesionCerrada />
+            </main>
+          </>
+        } />
+        
+        {/* Admin duplicado eliminado; ruta principal ya protegida arriba */}
         
         {/* Páginas de empresa */}
         <Route path="/contacto" element={

@@ -21,8 +21,11 @@ import {
 import { useCarrito } from '../../../../../contextos/CarritoContext'
 import { useFavoritos } from '../../../../../contextos/FavoritosContext'
 import BotonCarritoAnimado from '../../../../../componentes/ui/BotonCarritoAnimado'
+import ImagenInteligente from '../../../../../componentes/ui/ImagenInteligente'
+import { convertirUrlGoogleDrive, convertirArrayUrlsGoogleDrive, procesarImagenesProducto } from '../../../../../utilidades/googleDrive'
 // Eliminado ImagenConFallback - usaremos <img> directo
 import './HeroTemu.css'
+import ContraEntregaModal from '../../../../../componentes/checkout/ContraEntregaModal'
 
 // Función local para formatear precios en pesos colombianos
 const formatearPrecioCOP = (precio) => {
@@ -178,6 +181,7 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
   const [descripcionExpandida, setDescripcionExpandida] = useState(false)
   const [popupGaleriaAbierto, setPopupGaleriaAbierto] = useState(false)
   const [mostrarFlechas, setMostrarFlechas] = useState(false)
+  const [modalContraEntregaAbierto, setModalContraEntregaAbierto] = useState(false)
   
   // Estados para el slider de miniaturas
   const [esMobile, setEsMobile] = useState(false)
@@ -224,9 +228,10 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
     console.log('🖼️ Procesando imágenes del producto:', producto?.nombre)
     console.log('📦 Producto completo:', producto)
     
-    // Agregar imágenes desde la tabla producto_imagenes si existen
+    // Agregar imágenes desde el objeto producto.imagenes (convertidas)
     if (producto?.imagenes) {
       console.log('✅ Producto tiene campo imagenes:', producto.imagenes)
+      const imagenesProcesadas = procesarImagenesProducto(producto.imagenes)
       const camposImagenes = [
         'imagen_principal',
         'imagen_secundaria_1', 
@@ -234,11 +239,11 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
         'imagen_secundaria_3',
         'imagen_secundaria_4'
       ]
-      
+
       camposImagenes.forEach(campo => {
-        const imagen = producto.imagenes[campo]
+        const imagen = imagenesProcesadas[campo]
         if (imagen && imagen.trim() !== '') {
-          console.log(`📸 Agregando imagen ${campo}:`, imagen)
+          console.log(`📸 Agregando imagen convertida ${campo}:`, imagen)
           imagenes.push(imagen.trim())
         }
       })
@@ -247,7 +252,8 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
     // También verificar si hay fotos_principales (nuevo formato)
     if (producto?.fotos_principales && Array.isArray(producto.fotos_principales)) {
       console.log('✅ Producto tiene fotos_principales:', producto.fotos_principales)
-      producto.fotos_principales.forEach(foto => {
+      const convertidas = convertirArrayUrlsGoogleDrive(producto.fotos_principales)
+      convertidas.forEach(foto => {
         if (foto && foto.trim() !== '') {
           imagenes.push(foto.trim())
         }
@@ -441,15 +447,10 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                         aria-label={`Ver imagen ${index + 1} de ${imagenesFinales.length}`}
                         tabIndex={index === imagenSeleccionada ? 0 : -1}
                       >
-                        <img
+                        <ImagenInteligente
                           src={imagen}
                           alt={`Vista ${index + 1}`}
-                          onError={() => {
-                            // Error cargando miniatura
-                          }}
-                          onLoad={() => {
-                            // Miniatura cargada exitosamente
-                          }}
+                          className=""
                           style={{
                             width: '100%',
                             height: '100%',
@@ -475,16 +476,10 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                 onMouseLeave={() => setMostrarFlechas(false)}
                 onClick={abrirPopupGaleria}
               >
-                <img
+                <ImagenInteligente
                   src={imagenesFinales[imagenSeleccionada]}
                   alt={producto?.nombre || 'Producto'}
                   className="hero-temu-imagen-principal-img"
-                  onError={() => {
-                    // Error cargando imagen principal
-                  }}
-                  onLoad={() => {
-                    // Imagen principal cargada
-                  }}
                   style={{
                     width: '100%',
                     height: '100%',
@@ -675,7 +670,7 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
             </BotonCarritoAnimado>
             
             <button 
-              onClick={() => console.log('Pago contra entrega')}
+              onClick={() => setModalContraEntregaAbierto(true)}
               className="hero-temu-boton-contra-entrega"
             >
               <Truck size={18} />
@@ -834,7 +829,7 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                 setTouchEnd(null);
               }}
             >
-              <img 
+              <ImagenInteligente 
                 src={imagenesFinales[imagenSeleccionada]} 
                 alt={producto?.nombre || 'Producto'}
                 className="hero-temu-popup-imagen"
@@ -849,7 +844,11 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                       className={`hero-temu-popup-miniatura ${index === imagenSeleccionada ? 'activa' : ''}`}
                       onClick={() => manejarCambioImagen(index)}
                     >
-                      <img src={imagen} alt={`Vista ${index + 1}`} />
+                      <ImagenInteligente 
+                        src={imagen} 
+                        alt={`Vista ${index + 1}`} 
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
                     </button>
                   ))}
                 </div>
@@ -875,6 +874,16 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
           </div>
         </div>
       )}
+
+      {/* Modal Contra Entrega */}
+      <ContraEntregaModal
+        abierto={modalContraEntregaAbierto}
+        onCerrar={() => setModalContraEntregaAbierto(false)}
+        producto={producto}
+        onConfirmar={(payload) => {
+          console.log('Pedido COD creado localmente:', payload)
+        }}
+      />
     </div>
   )
 }

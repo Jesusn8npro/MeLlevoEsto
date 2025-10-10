@@ -161,13 +161,14 @@ button:active,
 
 /* ===== BARRA DE INFORMACIÓN SUPERIOR ===== */
 .barra-informacion {
-  background: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
+  background: #ff6a00; /* Estilo TEMU */
+  border-bottom: 1px solid #e55a2b;
   height: 40px;
-  display: flex;
-  align-items: center;
+  display: block;
+  position: relative;
   font-size: 13px;
-  color: #666;
+  color: #fff;
+  overflow: hidden;
 }
 
 .contenedor-informacion {
@@ -182,7 +183,7 @@ button:active,
 
 .info-izquierda .bienvenida {
   font-weight: 500;
-  color: #333;
+  color: #fff;
 }
 
 .info-derecha {
@@ -195,7 +196,7 @@ button:active,
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #666;
+  color: #fff;
   text-decoration: none;
   transition: color 0.3s ease;
 }

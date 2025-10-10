@@ -124,7 +124,7 @@ const FavoritosContext = createContext()
 // Provider del contexto
 const FavoritosProvider = ({ children }) => {
   const [estado, dispatch] = useReducer(favoritosReducer, estadoInicial)
-  const { usuario, sesionIniciada } = useAuth()
+  const { usuario, sesionInicializada } = useAuth()
 
   // =====================================================
   // FUNCIONES PARA BASE DE DATOS
@@ -153,13 +153,29 @@ const FavoritosProvider = ({ children }) => {
       }
 
       console.log('✅ Datos recibidos de vista_favoritos:', data)
-      console.log('📊 Cantidad de favoritos encontrados:', data?.length || 0)
+      console.log('📊 Cantidad de favoritos encontrados (crudos):', data?.length || 0)
       
-      if (data && data.length > 0) {
-        console.log('📋 Primer favorito como ejemplo:', data[0])
+      // Eliminar duplicados por producto_id, conservando el más reciente
+      const ordenados = [...(data || [])].sort((a, b) => {
+        const fa = new Date(a?.created_at || a?.fecha_agregado || 0)
+        const fb = new Date(b?.created_at || b?.fecha_agregado || 0)
+        return fb - fa
+      })
+      const mapa = new Map()
+      for (const item of ordenados) {
+        const key = item.producto_id || item.id
+        if (!mapa.has(key)) {
+          mapa.set(key, item)
+        }
+      }
+      const sinDuplicados = Array.from(mapa.values())
+      
+      console.log('📊 Cantidad de favoritos tras dedupe:', sinDuplicados.length)
+      if (sinDuplicados.length > 0) {
+        console.log('📋 Favorito ejemplo tras dedupe:', sinDuplicados[0])
       }
 
-      return data || []
+      return sinDuplicados
     } catch (error) {
       console.error('❌ Error al cargar favoritos desde DB:', error)
       return []
@@ -240,13 +256,13 @@ const FavoritosProvider = ({ children }) => {
   // Función para sincronizar favoritos (cargar desde DB o localStorage)
   const sincronizarFavoritos = async () => {
     console.log('🔄 FavoritosContext - sincronizarFavoritos iniciado')
-    console.log('🔐 Sesión iniciada:', sesionIniciada)
+    console.log('🔐 Sesión iniciada:', sesionInicializada)
     console.log('👤 Usuario:', usuario?.id)
     
     dispatch({ type: TIPOS_ACCION.SINCRONIZAR_INICIO })
 
     try {
-      if (sesionIniciada && usuario?.id) {
+      if (sesionInicializada && usuario?.id) {
         console.log('📡 Usuario logueado: cargando desde base de datos')
         // Usuario logueado: cargar desde base de datos
         const favoritosDB = await cargarFavoritosDesdeDB()
@@ -318,7 +334,7 @@ const FavoritosProvider = ({ children }) => {
         return false
       }
 
-      if (sesionIniciada && usuario?.id) {
+      if (sesionInicializada && usuario?.id) {
         // Usuario logueado: agregar a la base de datos
         const exito = await agregarFavoritoDB(producto.id)
         if (exito) {
@@ -359,7 +375,7 @@ const FavoritosProvider = ({ children }) => {
   // Función para quitar un producto de favoritos (HÍBRIDA)
   const quitarFavorito = async (productoId) => {
     try {
-      if (sesionIniciada && usuario?.id) {
+      if (sesionInicializada && usuario?.id) {
         // Usuario logueado: quitar de la base de datos
         const exito = await quitarFavoritoDB(productoId)
         if (exito) {
@@ -396,7 +412,7 @@ const FavoritosProvider = ({ children }) => {
 
   // Función unificada para cargar favoritos
   const cargarFavoritos = async () => {
-    if (sesionIniciada && usuario?.id) {
+    if (sesionInicializada && usuario?.id) {
       await sincronizarFavoritos()
     } else {
       cargarFavoritosDesdeStorage()
@@ -435,25 +451,25 @@ const FavoritosProvider = ({ children }) => {
   // Cargar favoritos al inicializar o cuando cambie el estado de sesión
   useEffect(() => {
     cargarFavoritos()
-  }, [sesionIniciada, usuario?.id])
+  }, [sesionInicializada, usuario?.id])
 
   // Migrar favoritos cuando el usuario se loguee
   useEffect(() => {
-    if (sesionIniciada && usuario?.id) {
+    if (sesionInicializada && usuario?.id) {
       // Verificar si hay favoritos en localStorage para migrar
       const favoritosLocal = localStorage.getItem('favoritos')
       if (favoritosLocal) {
         migrarFavoritosADB()
       }
     }
-  }, [sesionIniciada, usuario?.id])
+  }, [sesionInicializada, usuario?.id])
 
   // Guardar favoritos en localStorage cuando cambien (solo para usuarios no logueados)
   useEffect(() => {
-    if (!sesionIniciada && estado.favoritos.length > 0) {
+    if (!sesionInicializada && estado.favoritos.length > 0) {
       localStorage.setItem('favoritos', JSON.stringify(estado.favoritos))
     }
-  }, [estado.favoritos, sesionIniciada])
+  }, [estado.favoritos, sesionInicializada])
 
   // Valor del contexto
   const valor = {

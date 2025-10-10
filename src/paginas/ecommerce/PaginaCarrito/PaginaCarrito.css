@@ -135,14 +135,14 @@
 .carrito-contenido {
   display: grid;
   grid-template-columns: 1fr 400px;
-  gap: 30px;
+  gap: 20px; /* reducir gap para coherencia con miniaturas más grandes */
   align-items: start;
 }
 
 .carrito-principal {
   background: white;
   border-radius: 16px;
-  padding: 30px;
+  padding: 20px; /* más compacto para acomodar miniaturas */
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
@@ -381,7 +381,7 @@
 .resumen-pedido {
   background: white;
   border-radius: 16px;
-  padding: 24px;
+  padding: 18px; /* más compacto */
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 

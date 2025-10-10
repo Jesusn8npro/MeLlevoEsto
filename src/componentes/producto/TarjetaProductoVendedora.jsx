@@ -68,13 +68,47 @@ const TarjetaProductoVendedora = ({
   // Generar stock aleatorio para urgencia
   const stockUrgente = Math.floor(Math.random() * 5) + 1
   const ventasRecientes = Math.floor(Math.random() * 500) + 50
+  const leerNumeroVentas = () => {
+    const candidatos = [
+      producto?.numero_de_ventas,
+      producto?.ventas_totales,
+      producto?.total_ventas,
+      producto?.ventas,
+      producto?.vendidos
+    ]
+    const valor = candidatos.find((v) => v !== undefined && v !== null)
+    if (valor === undefined || valor === null) return null
+    if (typeof valor === 'number') return valor
+    if (typeof valor === 'string') {
+      const limpio = valor.replace(/[^\d.-]/g, '')
+      const num = Number(limpio)
+      return Number.isNaN(num) ? null : num
+    }
+    return null
+  }
+  const numeroVentasReal = leerNumeroVentas()
+  const formatearAbreviado = (n) => {
+    const num = Number(n)
+    if (!num || num < 0) return null
+    if (num >= 1_000_000) {
+      return `${(num / 1_000_000).toFixed(num % 1_000_000 === 0 ? 0 : 1)}M`
+    }
+    if (num >= 10_000) {
+      return `${Math.round(num / 1_000)}k`
+    }
+    if (num >= 1_000) {
+      return `${(num / 1_000).toFixed(1)}k`
+    }
+    return new Intl.NumberFormat('es-CO').format(num)
+  }
+  const ventasTexto = formatearAbreviado(numeroVentasReal ?? ventasRecientes)
 
   // Determinar badges estilo Temu
   const badges = []
   if (descuento > 50) badges.push({ texto: 'MEGA OFERTA', tipo: 'mega-oferta' })
   if (descuento > 30) badges.push({ texto: `${descuento}% OFF`, tipo: 'descuento' })
   if (stockUrgente <= 3) badges.push({ texto: 'SOLO QUEDAN 9', tipo: 'urgencia' })
-  if (ventasRecientes > 300) badges.push({ texto: 'Vendedor estrella', tipo: 'vendedor-estrella' })
+  if ((numeroVentasReal ?? ventasRecientes) > 300) badges.push({ texto: 'Vendedor estrella', tipo: 'vendedor-estrella' })
   if (producto?.destacado) badges.push({ texto: 'Ahorro extra', tipo: 'ahorro-extra' })
   
   // Badges adicionales estilo Temu
@@ -360,7 +394,7 @@ const TarjetaProductoVendedora = ({
             </div>
             <div className="ventas-recientes">
               <Users size={12} />
-              <span>{ventasRecientes} ventas</span>
+              <span>{ventasTexto} ventas</span>
             </div>
           </div>
         )}

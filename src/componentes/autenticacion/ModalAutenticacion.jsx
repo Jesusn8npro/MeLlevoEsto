@@ -8,7 +8,7 @@ import './ModalAutenticacion.css'
 export default function ModalAutenticacion({ abierto, onCerrar }) {
   const [cargando, setCargando] = useState(false)
   const navigate = useNavigate()
-  const { iniciarSesion, registrarse } = useAuth()
+  const { iniciarSesion, registrarse, sesionInicializada, obtenerRutaRedireccion, usuario } = useAuth()
   
   // Estados del modal
   const [vistaRegistro, setVistaRegistro] = useState(false)
@@ -65,6 +65,13 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
     }
   }, [abierto])
 
+  // Cerrar automáticamente sólo si el usuario está autenticado (incluye OAuth)
+  useEffect(() => {
+    if (abierto && usuario) {
+      onCerrar()
+    }
+  }, [abierto, usuario])
+
   // Prevenir scroll del body
   useEffect(() => {
     if (abierto) {
@@ -110,16 +117,18 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
     try {
       const resultado = await iniciarSesion(email, contrasena)
       
-      if (!resultado.success) {
+      if (resultado.error) {
         setError(resultado.error)
         setCargando(false)
       } else {
         // Cerrar modal inmediatamente
         onCerrar()
         
-        // Esperar un poco más para que el contexto se actualice completamente
+        // Esperar un poco para que el contexto se actualice completamente
         setTimeout(() => {
-          navigate('/admin')
+          const rutaRedireccion = obtenerRutaRedireccion()
+          console.log('🚀 Redirigiendo a:', rutaRedireccion)
+          navigate(rutaRedireccion)
         }, 500)
       }
     } catch (error) {
@@ -160,9 +169,11 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
         // Cerrar modal inmediatamente
         onCerrar()
         
-        // Esperar un poco más para que el contexto se actualice completamente
+        // Esperar un poco para que el contexto se actualice completamente
         setTimeout(() => {
-          navigate('/admin')
+          const rutaRedireccion = obtenerRutaRedireccion()
+          console.log('🚀 Redirigiendo después del registro a:', rutaRedireccion)
+          navigate(rutaRedireccion)
         }, 500)
       }
     } catch (error) {
@@ -184,7 +195,7 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
 
     try {
       const { error } = await clienteSupabase.auth.resetPasswordForEmail(emailRecuperar, {
-        redirectTo: `${window.location.origin}/reset-password`
+        redirectTo: `${window.location.origin}/restablecer-contrasena`
       })
       
       if (error) {

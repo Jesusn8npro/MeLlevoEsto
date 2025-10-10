@@ -1,198 +1,253 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { clienteSupabase, debugSesionSupabase } from '../configuracion/supabase'
+import { clienteSupabase } from '../configuracion/supabase'
 
 const ContextoAutenticacion = createContext({})
-
-export const useAuth = () => {
-  const context = useContext(ContextoAutenticacion)
-  if (!context) {
-    throw new Error('useAuth debe usarse dentro de un ProveedorAutenticacion')
-  }
-  return context
-}
 
 export const ProveedorAutenticacion = ({ children }) => {
   const [usuario, setUsuario] = useState(null)
   const [cargando, setCargando] = useState(true)
-  const [sesionIniciada, setSesionIniciada] = useState(false)
-  const [inicializado, setInicializado] = useState(false)
+  const [sesionInicializada, setSesionInicializada] = useState(false)
 
+  // Función para obtener datos del usuario desde la base de datos
+  const obtenerDatosUsuario = async (userId) => {
+    try {
+      const { data, error } = await clienteSupabase
+        .from('usuarios')
+        .select('*')
+        .eq('id', userId)
+        .single()
+
+      if (error) {
+        console.error('Error obteniendo datos del usuario:', error)
+        return null
+      }
+
+      return data
+    } catch (error) {
+      console.error('Error en obtenerDatosUsuario:', error)
+      return null
+    }
+  }
+
+  // Función para manejar cambios de autenticación
+  const manejarCambioAuth = async (event, session) => {
+    console.log('🔄 Cambio de autenticación:', event, session?.user?.email)
+
+    if (session?.user) {
+      // 1) Hidratar inmediatamente con datos básicos del auth (evita parpadeo)
+      const usuarioBasico = {
+        id: session.user.id,
+        email: session.user.email,
+        nombre:
+          session.user.user_metadata?.nombre ||
+          session.user.user_metadata?.full_name ||
+          (session.user.email ? session.user.email.split('@')[0] : 'Usuario')
+      }
+
+      setUsuario(usuarioBasico)
+      setCargando(false)
+      setSesionInicializada(true)
+
+      // 2) Cargar datos completos en segundo plano y actualizar sin bloquear UI
+      ;(async () => {
+        try {
+          const datosUsuario = await obtenerDatosUsuario(session.user.id)
+          if (datosUsuario) {
+            setUsuario({
+              ...datosUsuario,
+              email: session.user.email,
+              nombre:
+                datosUsuario.nombre ||
+                usuarioBasico.nombre
+            })
+            console.log('✅ Usuario enriquecido desde BD:', datosUsuario.email)
+          }
+        } catch (error) {
+          console.warn('⚠️ No se pudo enriquecer usuario, usando datos básicos:', error)
+        }
+      })()
+    } else {
+      // Usuario no autenticado
+      setUsuario(null)
+      setCargando(false)
+      setSesionInicializada(true)
+      console.log('🚪 Usuario desautenticado')
+    }
+  }
+
+  // Inicializar autenticación
   useEffect(() => {
-    let montado = true
-
-    // NUEVO: Verificar sesión INMEDIATAMENTE al cargar
-    const inicializarAuth = async () => {
-      console.log('🚀 === INICIANDO CONTEXTO DE AUTENTICACIÓN ===')
-      
+    console.log('🚀 Inicializando autenticación...')
+    let unsubscribe
+    const init = async () => {
       try {
-        // PASO 1: Obtener sesión actual INMEDIATAMENTE
-        console.log('📡 Obteniendo sesión actual...')
-        const { data: { session }, error } = await clienteSupabase.auth.getSession()
-        
-        console.log('📡 Sesión obtenida:', {
-          hasSession: !!session,
-          hasUser: !!session?.user,
-          userEmail: session?.user?.email,
-          error: error?.message
-        })
-
-        if (session?.user && montado) {
-          // HAY SESIÓN - Establecer usuario inmediatamente
-          const usuarioFallback = {
-            id: session.user.id,
-            email: session.user.email,
-            nombre: session.user.user_metadata?.nombre || session.user.email.split('@')[0],
-            rol: session.user.email === 'shalom@gmail.com' ? 'admin' : 'cliente'
-          }
-
-          setUsuario(usuarioFallback)
-          setSesionIniciada(true)
-          setCargando(false)
-          setInicializado(true)
-          
-          console.log('✅ Usuario establecido inmediatamente:', usuarioFallback)
-        } else if (montado) {
-          // NO HAY SESIÓN
-          console.log('🚫 No hay sesión activa')
-          setUsuario(null)
-          setSesionIniciada(false)
-          setCargando(false)
-          setInicializado(true)
-        }
+        // 1) Hidratar sesión desde localStorage de forma inmediata
+        const { data: { session } } = await clienteSupabase.auth.getSession()
+        await manejarCambioAuth('INITIAL_SESSION', session)
       } catch (error) {
-        console.error('💥 Error obteniendo sesión inicial:', error)
-        if (montado) {
-          setUsuario(null)
-          setSesionIniciada(false)
-          setCargando(false)
-          setInicializado(true)
-        }
-      }
-    }
-
-    // Función para manejar cambios de autenticación
-    const manejarCambioAuth = async (evento, sesion) => {
-      if (!montado) return
-
-      console.log('🔄 Cambio de estado de auth:', evento, !!sesion?.user)
-
-      switch (evento) {
-        case 'SIGNED_IN':
-          if (sesion?.user) {
-            const usuarioFallback = {
-              id: sesion.user.id,
-              email: sesion.user.email,
-              nombre: sesion.user.user_metadata?.nombre || sesion.user.email.split('@')[0],
-              rol: sesion.user.email === 'shalom@gmail.com' ? 'admin' : 'cliente'
-            }
-
-            setUsuario(usuarioFallback)
-            setSesionIniciada(true)
-            setCargando(false)
-            setInicializado(true)
-            
-            console.log('✅ Usuario logueado:', usuarioFallback)
-          }
-          break
-
-        case 'SIGNED_OUT':
-          console.log('🚫 Usuario deslogueado')
-          setUsuario(null)
-          setSesionIniciada(false)
-          setCargando(false)
-          setInicializado(true)
-          break
-
-        case 'TOKEN_REFRESHED':
-          console.log('🔄 Token refrescado')
-          // No hacer nada, mantener estado actual
-          break
-
-        default:
-          console.log('🔄 Evento de auth:', evento)
-      }
-    }
-
-    // EJECUTAR INICIALIZACIÓN INMEDIATA
-    inicializarAuth()
-
-    // Configurar listener para cambios futuros
-    const { data: { subscription } } = clienteSupabase.auth.onAuthStateChange(manejarCambioAuth)
-
-    // Timeout de seguridad (más corto)
-    setTimeout(() => {
-      if (montado && !inicializado) {
-        console.log('⏰ Timeout de seguridad - forzando inicialización')
+        console.error('Error obteniendo sesión inicial:', error)
         setCargando(false)
-        setInicializado(true)
+        setSesionInicializada(true)
       }
-    }, 1000) // Solo 1 segundo
 
+      // 2) Suscribirse a cambios de autenticación
+      const { data: { subscription } } = clienteSupabase.auth.onAuthStateChange(manejarCambioAuth)
+      unsubscribe = () => subscription.unsubscribe()
+    }
+
+    init()
+
+    // Cleanup
     return () => {
-      montado = false
-      subscription?.unsubscribe()
+      if (typeof unsubscribe === 'function') unsubscribe()
     }
   }, [])
 
-  // Función para iniciar sesión
+  // Función de login
   const iniciarSesion = async (email, password) => {
     try {
       setCargando(true)
+      console.log('🔐 Intentando iniciar sesión:', email)
+
       const { data, error } = await clienteSupabase.auth.signInWithPassword({
         email,
         password
       })
 
       if (error) {
-        throw error
+        console.error('❌ Error en login:', error.message)
+        setCargando(false)
+        return { error: error.message }
       }
 
-      return { success: true, data }
-    } catch (error) {
-      console.error('Error iniciando sesión:', error)
-      return { success: false, error: error.message }
-    } finally {
+      console.log('✅ Login exitoso:', data.user.email)
       setCargando(false)
+      return { data }
+    } catch (error) {
+      console.error('💥 Error inesperado en login:', error)
+      setCargando(false)
+      return { error: 'Error inesperado al iniciar sesión' }
     }
   }
 
-  // Función para cerrar sesión
-  const cerrarSesion = async () => {
+  // Función de registro
+  const registrarse = async (email, password, nombre) => {
     try {
       setCargando(true)
+      console.log('📝 Intentando registrar usuario:', email)
+
+      const { data, error } = await clienteSupabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            nombre: nombre
+          }
+        }
+      })
+
+      if (error) {
+        console.error('❌ Error en registro:', error.message)
+        setCargando(false)
+        return { error: error.message }
+      }
+
+      console.log('✅ Registro exitoso:', data.user.email)
+      setCargando(false)
+      return { data }
+    } catch (error) {
+      console.error('💥 Error inesperado en registro:', error)
+      setCargando(false)
+      return { error: 'Error inesperado al registrarse' }
+    }
+  }
+
+  // Función de logout
+  const cerrarSesion = async () => {
+    try {
+      console.log('🚪 Cerrando sesión...')
       const { error } = await clienteSupabase.auth.signOut()
       
       if (error) {
-        throw error
+        console.error('❌ Error cerrando sesión:', error.message)
+        return { error: error.message }
       }
 
+      console.log('✅ Sesión cerrada exitosamente')
       return { success: true }
     } catch (error) {
-      console.error('Error cerrando sesión:', error)
-      return { success: false, error: error.message }
-    } finally {
-      setCargando(false)
+      console.error('💥 Error inesperado cerrando sesión:', error)
+      return { error: 'Error inesperado al cerrar sesión' }
     }
   }
 
-  // Función para verificar si es admin
-  const esAdmin = () => {
-    return usuario?.rol === 'admin'
+  // Función para reenviar verificación de email
+  const reenviarVerificacionEmail = async (email) => {
+    try {
+      console.log('📧 Reenviando verificación de email:', email)
+      
+      const { error } = await clienteSupabase.auth.resend({
+        type: 'signup',
+        email: email
+      })
+
+      if (error) {
+        console.error('❌ Error reenviando verificación:', error.message)
+        return { error: error.message }
+      }
+
+      console.log('✅ Verificación reenviada exitosamente')
+      return { success: true }
+    } catch (error) {
+      console.error('💥 Error inesperado reenviando verificación:', error)
+      return { error: 'Error inesperado al reenviar verificación' }
+    }
   }
 
-  const value = {
+  // Función para determinar si el usuario es admin
+  const esAdmin = () => {
+    if (!usuario) return false
+    return usuario.rol === 'admin'
+  }
+
+  // Función para obtener la ruta de redirección basada en el rol
+  const obtenerRutaRedireccion = () => {
+    if (!usuario) return '/'
+    
+    if (esAdmin()) {
+      console.log('🔑 Usuario admin detectado - redirigiendo a /admin')
+      return '/admin'
+    } else {
+      console.log('👤 Usuario cliente detectado - redirigiendo a /perfil')
+      return '/perfil'
+    }
+  }
+
+  const valor = {
     usuario,
     cargando,
-    sesionIniciada,
-    inicializado,
+    sesionInicializada,
     iniciarSesion,
+    registrarse,
     cerrarSesion,
-    esAdmin
+    reenviarVerificacionEmail,
+    esAdmin,
+    obtenerRutaRedireccion
   }
 
   return (
-    <ContextoAutenticacion.Provider value={value}>
+    <ContextoAutenticacion.Provider value={valor}>
       {children}
     </ContextoAutenticacion.Provider>
   )
 }
+
+export const useAuth = () => {
+  const contexto = useContext(ContextoAutenticacion)
+  if (contexto === undefined) {
+    throw new Error('useAuth debe ser usado dentro de un ProveedorAutenticacion')
+  }
+  return contexto
+}
+
+export default ContextoAutenticacion
