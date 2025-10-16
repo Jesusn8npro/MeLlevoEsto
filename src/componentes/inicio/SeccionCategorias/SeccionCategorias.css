@@ -1,0 +1,266 @@
+/* ===== SECCIÓN CATEGORÍAS POPULARES ===== */
+
+.seccion-categorias {
+  padding: 60px 0;
+  background-color: #ffffff;
+}
+
+.categorias-contenedor {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.categorias-titulo {
+  font-size: 28px;
+  font-weight: 600;
+  color: #2c3e50;
+  text-align: left;
+  margin-bottom: 40px;
+  letter-spacing: -0.5px;
+}
+
+/* ===== VERSIÓN DESKTOP - GRID ===== */
+
+.categorias-grid-desktop {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 20px;
+}
+
+.categoria-tarjeta-desktop {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+  position: relative;
+  overflow: hidden;
+}
+
+.categoria-tarjeta-desktop:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-color: #e0e0e0;
+}
+
+.categoria-imagen-contenedor {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 15px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: #f8f9fa;
+}
+
+.categoria-imagen {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.categoria-tarjeta-desktop:hover .categoria-imagen {
+  transform: scale(1.1);
+}
+
+.categoria-info {
+  text-align: center;
+}
+
+.categoria-nombre {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 5px;
+  line-height: 1.3;
+}
+
+.categoria-productos {
+  font-size: 12px;
+  color: #7f8c8d;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* ===== VERSIÓN MÓVIL - SLIDER ===== */
+
+.categorias-slider-movil {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.slider-btn {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.slider-btn:hover {
+  background: #f8f9fa;
+  border-color: #d0d0d0;
+  transform: scale(1.05);
+}
+
+.slider-btn svg {
+  color: #2c3e50;
+}
+
+.categorias-slider-contenedor {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.categorias-slider-track {
+  display: flex;
+  transition: transform 0.3s ease;
+  width: 350%; /* 7 categorías */
+}
+
+.categoria-tarjeta-movil {
+  width: calc(100% / 7); /* Cada tarjeta es 1/7 del track */
+  flex-shrink: 0;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+.categoria-tarjeta-movil .categoria-imagen-contenedor {
+  width: 100%;
+  height: 100px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+}
+
+.categoria-tarjeta-movil .categoria-info {
+  text-align: center;
+  padding: 0 5px;
+}
+
+.categoria-tarjeta-movil .categoria-nombre {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+.categoria-tarjeta-movil .categoria-productos {
+  font-size: 11px;
+  color: #7f8c8d;
+  margin: 0;
+}
+
+/* ===== RESPONSIVE BREAKPOINTS ===== */
+
+/* Tablets grandes */
+@media (max-width: 1024px) {
+  .categorias-grid-desktop {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+  }
+  
+  .categoria-imagen-contenedor {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .categoria-nombre {
+    font-size: 13px;
+  }
+  
+  .categoria-productos {
+    font-size: 11px;
+  }
+}
+
+/* Tablets medianos */
+@media (max-width: 900px) {
+  .categorias-grid-desktop {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .categorias-titulo {
+    font-size: 24px;
+    margin-bottom: 30px;
+  }
+}
+
+/* Móviles y tablets pequeños */
+@media (max-width: 768px) {
+  .seccion-categorias {
+    padding: 40px 0;
+  }
+  
+  .categorias-contenedor {
+    padding: 0 15px;
+  }
+  
+  .categorias-titulo {
+    font-size: 22px;
+    margin-bottom: 25px;
+  }
+  
+  /* Ocultar grid desktop en móvil */
+  .categorias-grid-desktop {
+    display: none;
+  }
+  
+  /* Mostrar slider en móvil */
+  .categorias-slider-movil {
+    display: flex;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .categorias-slider-movil {
+    gap: 10px;
+  }
+  
+  .slider-btn {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .slider-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .categoria-tarjeta-movil .categoria-imagen-contenedor {
+    height: 100px;
+  }
+  
+  .categoria-tarjeta-movil .categoria-nombre {
+    font-size: 12px;
+  }
+  
+  .categoria-tarjeta-movil .categoria-productos {
+    font-size: 10px;
+  }
+}
+
+/* Ocultar slider en desktop */
+@media (min-width: 769px) {
+  .categorias-slider-movil {
+    display: none;
+  }
+}

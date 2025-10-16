@@ -1,0 +1,1120 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "producto_id"
+            },
+            {
+              "name": "accion"
+            },
+            {
+              "name": "nombre_producto"
+            },
+            {
+              "name": "slug"
+            },
+            {
+              "name": "de_que_trata"
+            },
+            {
+              "name": "diferenciacion"
+            },
+            {
+              "name": "ganchos"
+            },
+            {
+              "name": "beneficios"
+            },
+            {
+              "name": "ventajas"
+            },
+            {
+              "name": "precio",
+              "type": "number"
+            },
+            {
+              "name": "precio_original",
+              "type": "number"
+            },
+            {
+              "name": "descuento",
+              "type": "number"
+            },
+            {
+              "name": "estado"
+            },
+            {
+              "name": "categoria_id"
+            },
+            {
+              "name": "stock",
+              "type": "number"
+            },
+            {
+              "name": "stock_minimo",
+              "type": "number"
+            },
+            {
+              "name": "landing_tipo"
+            },
+            {
+              "name": "destacado",
+              "type": "boolean"
+            },
+            {
+              "name": "activo",
+              "type": "boolean"
+            },
+            {
+              "name": "peso",
+              "type": "number"
+            },
+            {
+              "name": "dimensiones"
+            },
+            {
+              "name": "marca"
+            },
+            {
+              "name": "modelo"
+            },
+            {
+              "name": "color"
+            },
+            {
+              "name": "talla"
+            },
+            {
+              "name": "material"
+            },
+            {
+              "name": "garantia_meses",
+              "type": "number"
+            },
+            {
+              "name": "origen_pais"
+            },
+            {
+              "name": "palabras_clave"
+            },
+            {
+              "name": "meta_title"
+            },
+            {
+              "name": "meta_description"
+            },
+            {
+              "name": "banner_animado"
+            },
+            {
+              "name": "puntos_dolor"
+            },
+            {
+              "name": "caracteristicas"
+            },
+            {
+              "name": "testimonios"
+            },
+            {
+              "name": "faq"
+            },
+            {
+              "name": "garantias"
+            },
+            {
+              "name": "cta_final"
+            },
+            {
+              "name": "imagen_principal"
+            },
+            {
+              "name": "imagen_secundaria_1"
+            },
+            {
+              "name": "imagen_secundaria_2"
+            },
+            {
+              "name": "imagen_secundaria_3"
+            },
+            {
+              "name": "imagen_secundaria_4"
+            },
+            {
+              "name": "imagen_punto_dolor_1"
+            },
+            {
+              "name": "imagen_punto_dolor_2"
+            },
+            {
+              "name": "imagen_punto_dolor_3"
+            },
+            {
+              "name": "imagen_punto_dolor_4"
+            },
+            {
+              "name": "imagen_solucion_1"
+            },
+            {
+              "name": "imagen_solucion_2"
+            },
+            {
+              "name": "imagen_solucion_3"
+            },
+            {
+              "name": "imagen_solucion_4"
+            },
+            {
+              "name": "imagen_testimonio_persona_1"
+            },
+            {
+              "name": "imagen_testimonio_persona_2"
+            },
+            {
+              "name": "imagen_testimonio_persona_3"
+            },
+            {
+              "name": "imagen_testimonio_persona_4"
+            },
+            {
+              "name": "imagen_testimonio_persona_5"
+            },
+            {
+              "name": "imagen_testimonio_persona_6"
+            },
+            {
+              "name": "imagen_testimonio_producto_1"
+            },
+            {
+              "name": "imagen_testimonio_producto_2"
+            },
+            {
+              "name": "imagen_testimonio_producto_3"
+            },
+            {
+              "name": "imagen_testimonio_producto_4"
+            },
+            {
+              "name": "imagen_testimonio_producto_5"
+            },
+            {
+              "name": "imagen_testimonio_producto_6"
+            },
+            {
+              "name": "imagen_caracteristicas"
+            },
+            {
+              "name": "imagen_garantias"
+            },
+            {
+              "name": "imagen_cta_final"
+            }
+          ]
+        }
+      },
+      "id": "f765e619-7d2b-49a9-beac-87cfca010704",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -1744,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"success\": true,\n  \"message\": \"¡Producto actualizado exitosamente!\",\n  \"producto_id\": \"{{ $json.producto_id }}\",\n  \"accion\": \"{{ $('Edit Fields1').item.json.accion }}\",\n  \"nombre_actualizado\": \"{{ $json.nombre_producto }}\",\n  \"precio_actualizado\": \"{{ $json.precio }}\",\n  \"timestamp\": \"{{ new Date().toISOString() }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -560,
+        112
+      ],
+      "id": "7790a3ce-4d8e-452b-84ca-51cb4597d937",
+      "name": "Resultado Final1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "2328913a-11ed-4cfb-91b9-1f1ca642cbc5",
+              "leftValue": "={{ $json.accion }}",
+              "rightValue": "actualizar_imagenes",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1280,
+        112
+      ],
+      "id": "aef2479c-794f-4a0c-8c9c-92c816b540cf",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "productos",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.producto_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "nombre",
+              "fieldValue": "={{ $json.nombre_producto }}"
+            },
+            {
+              "fieldId": "slug",
+              "fieldValue": "={{ $json.slug }}"
+            },
+            {
+              "fieldId": "descripcion",
+              "fieldValue": "={{ $json.de_que_trata }}"
+            },
+            {
+              "fieldId": "ganchos",
+              "fieldValue": "={{ $json.ganchos ? $json.ganchos.split(' | ') : null }}"
+            },
+            {
+              "fieldId": "beneficios",
+              "fieldValue": "={{ $json.beneficios ? $json.beneficios.split(', ') : null }}"
+            },
+            {
+              "fieldId": "ventajas",
+              "fieldValue": "={{ $json.ventajas ? $json.ventajas.split('; ') : null }}"
+            },
+            {
+              "fieldId": "precio_original",
+              "fieldValue": "={{ $json.precio_original }}"
+            },
+            {
+              "fieldId": "descuento",
+              "fieldValue": "={{ $json.descuento }}"
+            },
+            {
+              "fieldId": "estado",
+              "fieldValue": "nuevo"
+            },
+            {
+              "fieldId": "categoria_id",
+              "fieldValue": "={{ $json.categoria_id && $json.categoria_id.trim() !== '' ? $json.categoria_id : null }}"
+            },
+            {
+              "fieldId": "stock",
+              "fieldValue": "={{ $json.stock }}"
+            },
+            {
+              "fieldId": "stock_minimo",
+              "fieldValue": "={{ $json.stock_minimo }}"
+            },
+            {
+              "fieldId": "landing_tipo",
+              "fieldValue": "={{ $json.landing_tipo }}"
+            },
+            {
+              "fieldId": "destacado",
+              "fieldValue": "={{ $json.destacado }}"
+            },
+            {
+              "fieldId": "activo",
+              "fieldValue": "={{ $json.activo }}"
+            },
+            {
+              "fieldId": "peso",
+              "fieldValue": "={{ $json.peso }}"
+            },
+            {
+              "fieldId": "dimensiones",
+              "fieldValue": "={{ $json.dimensiones }}"
+            },
+            {
+              "fieldId": "marca",
+              "fieldValue": "={{ $json.marca }}"
+            },
+            {
+              "fieldId": "modelo",
+              "fieldValue": "={{ $json.modelo }}"
+            },
+            {
+              "fieldId": "color",
+              "fieldValue": "={{ $json.color }}"
+            },
+            {
+              "fieldId": "talla",
+              "fieldValue": "={{ $json.talla }}"
+            },
+            {
+              "fieldId": "material",
+              "fieldValue": "={{ $json.material }}"
+            },
+            {
+              "fieldId": "garantia_meses",
+              "fieldValue": "={{ $json.garantia_meses }}"
+            },
+            {
+              "fieldId": "origen_pais",
+              "fieldValue": "={{ $json.origen_pais }}"
+            },
+            {
+              "fieldId": "palabras_clave",
+              "fieldValue": "={{ $json.palabras_clave ? $json.palabras_clave.split(',').map(item => item.trim()) : null }}"
+            },
+            {
+              "fieldId": "meta_title",
+              "fieldValue": "={{ $json.meta_title }}"
+            },
+            {
+              "fieldId": "meta_description",
+              "fieldValue": "={{ $json.meta_description }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        224
+      ],
+      "id": "b9c12909-b44a-457b-9632-990cd0a39b1a",
+      "name": "Actualizar Producto",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "producto_imagenes",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "producto_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.producto_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "imagen_principal",
+              "fieldValue": "={{ $json.imagen_principal }}"
+            },
+            {
+              "fieldId": "imagen_secundaria_1",
+              "fieldValue": "={{ $json.imagen_secundaria_1 }}"
+            },
+            {
+              "fieldId": "imagen_secundaria_2",
+              "fieldValue": "={{ $json.imagen_secundaria_2 }}"
+            },
+            {
+              "fieldId": "imagen_secundaria_3",
+              "fieldValue": "={{ $json.imagen_secundaria_3 }}"
+            },
+            {
+              "fieldId": "imagen_secundaria_4",
+              "fieldValue": "={{ $json.imagen_secundaria_4 }}"
+            },
+            {
+              "fieldId": "imagen_punto_dolor_1",
+              "fieldValue": "={{ $json.imagen_punto_dolor_1 }}"
+            },
+            {
+              "fieldId": "imagen_punto_dolor_2",
+              "fieldValue": "={{ $json.imagen_punto_dolor_2 }}"
+            },
+            {
+              "fieldId": "imagen_punto_dolor_3",
+              "fieldValue": "={{ $json.imagen_punto_dolor_3 }}"
+            },
+            {
+              "fieldId": "imagen_punto_dolor_4",
+              "fieldValue": "={{ $json.imagen_punto_dolor_4 }}"
+            },
+            {
+              "fieldId": "imagen_solucion_1",
+              "fieldValue": "={{ $json.imagen_solucion_1 }}"
+            },
+            {
+              "fieldId": "imagen_solucion_2",
+              "fieldValue": "={{ $json.imagen_solucion_2 }}"
+            },
+            {
+              "fieldId": "imagen_solucion_3",
+              "fieldValue": "={{ $json.imagen_solucion_3 }}"
+            },
+            {
+              "fieldId": "imagen_solucion_4",
+              "fieldValue": "={{ $json.imagen_solucion_4 }}"
+            },
+            {
+              "fieldId": "imagen_testimonio_persona_1",
+              "fieldValue": "={{ $json.imagen_testimonio_persona_1 }}"
+            },
+            {
+              "fieldId": "imagen_testimonio_persona_2",
+              "fieldValue": "={{ $json.imagen_testimonio_persona_2 }}"
+            },
+            {
+              "fieldId": "imagen_testimonio_persona_3",
+              "fieldValue": "={{ $json.imagen_testimonio_persona_3 }}"
+            },
+            {
+              "fieldId": "imagen_testimonio_persona_4",
+              "fieldValue": "={{ $json.imagen_testimonio_persona_4 }}"
+            },
+            {
+              "fieldId": "imagen_testimonio_persona_5",
+              "fieldValue": "={{ $json.imagen_testimonio_persona_5 }}"
+            },
+            {
+              "fieldId": "imagen_testimonio_persona_6",
+              "fieldValue": "={{ $json.imagen_testimonio_persona_6 }}"
+            },
+            {
+              "fieldId": "imagen_testimonio_producto_1",
+              "fieldValue": "={{ $json.imagen_testimonio_producto_1 }}"
+            },
+            {
+              "fieldId": "imagen_testimonio_producto_2",
+              "fieldValue": "={{ $json.imagen_testimonio_producto_2 }}"
+            },
+            {
+              "fieldId": "imagen_testimonio_producto_3",
+              "fieldValue": "={{ $json.imagen_testimonio_producto_3 }}"
+            },
+            {
+              "fieldId": "imagen_testimonio_producto_4",
+              "fieldValue": "={{ $json.imagen_testimonio_producto_4 }}"
+            },
+            {
+              "fieldId": "imagen_testimonio_producto_5",
+              "fieldValue": "={{ $json.imagen_testimonio_producto_5 }}"
+            },
+            {
+              "fieldId": "imagen_testimonio_producto_6",
+              "fieldValue": "={{ $json.imagen_testimonio_producto_6 }}"
+            },
+            {
+              "fieldId": "imagen_caracteristicas",
+              "fieldValue": "={{ $json.imagen_caracteristicas }}"
+            },
+            {
+              "fieldId": "imagen_garantias",
+              "fieldValue": "={{ $json.imagen_garantias }}"
+            },
+            {
+              "fieldId": "imagen_cta_final",
+              "fieldValue": "={{ $json.imagen_cta_final }}"
+            },
+            {
+              "fieldId": "estado",
+              "fieldValue": "actualizado"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        0
+      ],
+      "id": "9613d2fc-08d1-4125-891e-9d2da3fd5dac",
+      "name": "Actualizar Imágenes",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "producto_id",
+              "name": "producto_id",
+              "value": "={{ $json.producto_id }}",
+              "type": "string"
+            },
+            {
+              "id": "accion",
+              "name": "accion",
+              "value": "={{ $json.accion }}",
+              "type": "string"
+            },
+            {
+              "id": "nombre_producto",
+              "name": "nombre_producto",
+              "value": "={{ $json.nombre_producto }}",
+              "type": "string"
+            },
+            {
+              "id": "slug",
+              "name": "slug",
+              "value": "={{ $json.slug }}",
+              "type": "string"
+            },
+            {
+              "id": "de_que_trata",
+              "name": "de_que_trata",
+              "value": "={{ $json.de_que_trata }}",
+              "type": "string"
+            },
+            {
+              "id": "diferenciacion",
+              "name": "diferenciacion",
+              "value": "={{ $json.diferenciacion }}",
+              "type": "string"
+            },
+            {
+              "id": "ganchos",
+              "name": "ganchos",
+              "value": "={{ $json.ganchos }}",
+              "type": "string"
+            },
+            {
+              "id": "beneficios",
+              "name": "beneficios",
+              "value": "={{ $json.beneficios }}",
+              "type": "string"
+            },
+            {
+              "id": "ventajas",
+              "name": "ventajas",
+              "value": "={{ $json.ventajas }}",
+              "type": "string"
+            },
+            {
+              "id": "precio",
+              "name": "precio",
+              "value": "={{ $json.precio }}",
+              "type": "number"
+            },
+            {
+              "id": "precio_original",
+              "name": "precio_original",
+              "value": "={{ $json.precio_original }}",
+              "type": "number"
+            },
+            {
+              "id": "descuento",
+              "name": "descuento",
+              "value": "={{ $json.descuento }}",
+              "type": "number"
+            },
+            {
+              "id": "estado",
+              "name": "estado",
+              "value": "={{ $json.estado }}",
+              "type": "string"
+            },
+            {
+              "id": "categoria_id",
+              "name": "categoria_id",
+              "value": "={{ $json.categoria_id }}",
+              "type": "string"
+            },
+            {
+              "id": "stock",
+              "name": "stock",
+              "value": "={{ $json.stock }}",
+              "type": "number"
+            },
+            {
+              "id": "stock_minimo",
+              "name": "stock_minimo",
+              "value": "={{ $json.stock_minimo }}",
+              "type": "number"
+            },
+            {
+              "id": "landing_tipo",
+              "name": "landing_tipo",
+              "value": "={{ $json.landing_tipo }}",
+              "type": "string"
+            },
+            {
+              "id": "destacado",
+              "name": "destacado",
+              "value": "={{ $json.destacado }}",
+              "type": "boolean"
+            },
+            {
+              "id": "activo",
+              "name": "activo",
+              "value": "={{ $json.activo }}",
+              "type": "boolean"
+            },
+            {
+              "id": "peso",
+              "name": "peso",
+              "value": "={{ $json.peso }}",
+              "type": "number"
+            },
+            {
+              "id": "dimensiones",
+              "name": "dimensiones",
+              "value": "={{ $json.dimensiones }}",
+              "type": "string"
+            },
+            {
+              "id": "marca",
+              "name": "marca",
+              "value": "={{ $json.marca }}",
+              "type": "string"
+            },
+            {
+              "id": "modelo",
+              "name": "modelo",
+              "value": "={{ $json.modelo }}",
+              "type": "string"
+            },
+            {
+              "id": "color",
+              "name": "color",
+              "value": "={{ $json.color }}",
+              "type": "string"
+            },
+            {
+              "id": "talla",
+              "name": "talla",
+              "value": "={{ $json.talla }}",
+              "type": "string"
+            },
+            {
+              "id": "material",
+              "name": "material",
+              "value": "={{ $json.material }}",
+              "type": "string"
+            },
+            {
+              "id": "garantia_meses",
+              "name": "garantia_meses",
+              "value": "={{ $json.garantia_meses }}",
+              "type": "number"
+            },
+            {
+              "id": "origen_pais",
+              "name": "origen_pais",
+              "value": "={{ $json.origen_pais }}",
+              "type": "string"
+            },
+            {
+              "id": "palabras_clave",
+              "name": "palabras_clave",
+              "value": "={{ $json.palabras_clave }}",
+              "type": "string"
+            },
+            {
+              "id": "meta_title",
+              "name": "meta_title",
+              "value": "={{ $json.meta_title }}",
+              "type": "string"
+            },
+            {
+              "id": "meta_description",
+              "name": "meta_description",
+              "value": "={{ $json.meta_description }}",
+              "type": "string"
+            },
+            {
+              "id": "banner_animado",
+              "name": "banner_animado",
+              "value": "={{ $json.banner_animado }}",
+              "type": "string"
+            },
+            {
+              "id": "puntos_dolor",
+              "name": "puntos_dolor",
+              "value": "={{ $json.puntos_dolor }}",
+              "type": "string"
+            },
+            {
+              "id": "caracteristicas",
+              "name": "caracteristicas",
+              "value": "={{ $json.caracteristicas }}",
+              "type": "string"
+            },
+            {
+              "id": "testimonios",
+              "name": "testimonios",
+              "value": "={{ $json.testimonios }}",
+              "type": "string"
+            },
+            {
+              "id": "faq",
+              "name": "faq",
+              "value": "={{ $json.faq }}",
+              "type": "string"
+            },
+            {
+              "id": "garantias",
+              "name": "garantias",
+              "value": "={{ $json.garantias }}",
+              "type": "string"
+            },
+            {
+              "id": "cta_final",
+              "name": "cta_final",
+              "value": "={{ $json.cta_final }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_principal",
+              "name": "imagen_principal",
+              "value": "={{ $json.imagen_principal }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_secundaria_1",
+              "name": "imagen_secundaria_1",
+              "value": "={{ $json.imagen_secundaria_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_secundaria_2",
+              "name": "imagen_secundaria_2",
+              "value": "={{ $json.imagen_secundaria_2 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_secundaria_3",
+              "name": "imagen_secundaria_3",
+              "value": "={{ $json.imagen_secundaria_3 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_secundaria_4",
+              "name": "imagen_secundaria_4",
+              "value": "={{ $json.imagen_secundaria_4 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_punto_dolor_1",
+              "name": "imagen_punto_dolor_1",
+              "value": "={{ $json.imagen_punto_dolor_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_punto_dolor_2",
+              "name": "imagen_punto_dolor_2",
+              "value": "={{ $json.imagen_punto_dolor_2 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_punto_dolor_3",
+              "name": "imagen_punto_dolor_3",
+              "value": "={{ $json.imagen_punto_dolor_3 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_punto_dolor_4",
+              "name": "imagen_punto_dolor_4",
+              "value": "={{ $json.imagen_punto_dolor_4 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_solucion_1",
+              "name": "imagen_solucion_1",
+              "value": "={{ $json.imagen_solucion_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_solucion_2",
+              "name": "imagen_solucion_2",
+              "value": "={{ $json.imagen_solucion_2 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_solucion_3",
+              "name": "imagen_solucion_3",
+              "value": "={{ $json.imagen_solucion_3 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_solucion_4",
+              "name": "imagen_solucion_4",
+              "value": "={{ $json.imagen_solucion_4 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_testimonio_persona_1",
+              "name": "imagen_testimonio_persona_1",
+              "value": "={{ $json.imagen_testimonio_persona_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_testimonio_persona_2",
+              "name": "imagen_testimonio_persona_2",
+              "value": "={{ $json.imagen_testimonio_persona_2 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_testimonio_persona_3",
+              "name": "imagen_testimonio_persona_3",
+              "value": "={{ $json.imagen_testimonio_persona_3 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_testimonio_persona_4",
+              "name": "imagen_testimonio_persona_4",
+              "value": "={{ $json.imagen_testimonio_persona_4 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_testimonio_persona_5",
+              "name": "imagen_testimonio_persona_5",
+              "value": "={{ $json.imagen_testimonio_persona_5 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_testimonio_persona_6",
+              "name": "imagen_testimonio_persona_6",
+              "value": "={{ $json.imagen_testimonio_persona_6 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_testimonio_producto_1",
+              "name": "imagen_testimonio_producto_1",
+              "value": "={{ $json.imagen_testimonio_producto_1 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_testimonio_producto_2",
+              "name": "imagen_testimonio_producto_2",
+              "value": "={{ $json.imagen_testimonio_producto_2 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_testimonio_producto_3",
+              "name": "imagen_testimonio_producto_3",
+              "value": "={{ $json.imagen_testimonio_producto_3 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_testimonio_producto_4",
+              "name": "imagen_testimonio_producto_4",
+              "value": "={{ $json.imagen_testimonio_producto_4 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_testimonio_producto_5",
+              "name": "imagen_testimonio_producto_5",
+              "value": "={{ $json.imagen_testimonio_producto_5 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_testimonio_producto_6",
+              "name": "imagen_testimonio_producto_6",
+              "value": "={{ $json.imagen_testimonio_producto_6 }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_caracteristicas",
+              "name": "imagen_caracteristicas",
+              "value": "={{ $json.imagen_caracteristicas }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_garantias",
+              "name": "imagen_garantias",
+              "value": "={{ $json.imagen_garantias }}",
+              "type": "string"
+            },
+            {
+              "id": "imagen_cta_final",
+              "name": "imagen_cta_final",
+              "value": "={{ $json.imagen_cta_final }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1488,
+        112
+      ],
+      "id": "1644993f-dcf0-45cd-a884-9d75fd49cdc8",
+      "name": "Edit Fields1"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Actualizar Imágenes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar Producto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar Producto": {
+      "main": [
+        [
+          {
+            "node": "Resultado Final1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar Imágenes": {
+      "main": [
+        [
+          {
+            "node": "Resultado Final1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "producto_id": "1306b39b-1ef6-45f0-b343-dd39fb899fbe",
+        "accion": "Actualizar Producto",
+        "nombre_producto": "Freidora Ninja Portátil 2-en-1 — La que cocina sola 🔥🍟",
+        "slug": "freidora-ninja-portatil",
+        "de_que_trata": "Freidora-horno portátil recargable 2-en-1: cocina crujiente sin enchufes, ideal para camping y casa.",
+        "diferenciacion": "Batería recargable integrada + modo horno y freidora; resultados tipo restaurante en cualquier lugar.",
+        "ganchos": "🔥 ¡HOY O NUNCA! Envío GRATIS y stock limitado | ⚡ Cocina sin enchufe: batería recargable | 🍗 Crujiente COMO RESTAURANTE en minutos | 🚨 Últimas unidades, se acaban YA | ✅ Garantía 2 años",
+        "beneficios": "Cocina crujiente sin cables, portátil para viajes, controles digitales, ahorra tiempo y dinero.",
+        "ventajas": "Única 2-en-1 recargable en Colombia; diseño premium; soporte 24/7; resultados profesionales.",
+        "precio": 489000,
+        "precio_original": 1630000,
+        "descuento": 0,
+        "estado": "nuevo",
+        "categoria_id": "976d85fe-f4f1-4e19-8c19-fdfb940a0860",
+        "stock": 10,
+        "stock_minimo": 5,
+        "landing_tipo": "temu",
+        "destacado": false,
+        "activo": true,
+        "peso": 3000,
+        "dimensiones": "",
+        "marca": "NINJA",
+        "modelo": "NINJA Recargable",
+        "color": "Negro",
+        "talla": "",
+        "material": "Acero y plástico premium",
+        "garantia_meses": 12,
+        "origen_pais": "Colombia",
+        "palabras_clave": "freidora-portatil,freidora-recargable,ninja,horno-2-en-1,freidora-colombia",
+        "meta_title": "Freidora Ninja Portátil 2-en-1 — Cocina sin enchufe | ME LLEVO ESTO",
+        "meta_description": "Freidora-horno portátil recargable 2-en-1. Cocina crujiente sin enchufe. Envío GRATIS y garantía 2 años.",
+        "banner_animado": "",
+        "puntos_dolor": "¿Cansado de comidas aceitosas, hornos lentos o depender de enchufes? Esta freidora te da libertad, ahorras plata y disfrutas crujiente al instante.",
+        "caracteristicas": "Batería recargable, controles digitales, modo horno y freidora, diseño portátil.",
+        "testimonios": "Miles ya la usan y recomiendan.",
+        "faq": "Preguntas frecuentes actualizadas.",
+        "garantias": "🛡️ Garantía 2 años o devolución total.",
+        "cta_final": "¡QUIERO MI FREIDORA AHORA! Envío GRATIS 24-48h. Oferta limitada.",
+        "imagen_principal": "https://i.pinimg.com/736x/61/0c/10/610c1083db733ad1615d51eb5f82661f.jpg",
+        "imagen_secundaria_1": "",
+        "imagen_secundaria_2": "",
+        "imagen_secundaria_3": "",
+        "imagen_secundaria_4": "",
+        "imagen_punto_dolor_1": "",
+        "imagen_punto_dolor_2": "",
+        "imagen_punto_dolor_3": "",
+        "imagen_punto_dolor_4": "",
+        "imagen_solucion_1": "",
+        "imagen_solucion_2": "",
+        "imagen_solucion_3": "",
+        "imagen_solucion_4": "",
+        "imagen_testimonio_persona_1": "",
+        "imagen_testimonio_persona_2": "",
+        "imagen_testimonio_persona_3": "",
+        "imagen_testimonio_persona_4": "",
+        "imagen_testimonio_persona_5": "",
+        "imagen_testimonio_persona_6": "",
+        "imagen_testimonio_producto_1": "",
+        "imagen_testimonio_producto_2": "",
+        "imagen_testimonio_producto_3": "",
+        "imagen_testimonio_producto_4": "",
+        "imagen_testimonio_producto_5": "",
+        "imagen_testimonio_producto_6": "",
+        "imagen_caracteristicas": "",
+        "imagen_garantias": "",
+        "imagen_cta_final": ""
+      }
+    ]
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8000b702e0a3d9ac6d70099a2751603316de4028cd14af0949776a26efecb219"
+  }
+}

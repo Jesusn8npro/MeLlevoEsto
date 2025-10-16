@@ -1,0 +1,157 @@
+.tp-lujo-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* Sin espacio vertical entre secciones para estilo Temu */
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 0px;
+  box-shadow: 0 8px 24px rgba(20, 20, 20, 0.06);
+  overflow: hidden;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+.tp-lujo-card:hover { transform: translateY(-3px); box-shadow: 0 14px 32px rgba(20,20,20,0.12); }
+
+.tp-lujo-badges { position: absolute; top: 10px; left: 10px; display: flex; gap: 6px; z-index: 3; }
+.tp-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; backdrop-filter: saturate(180%) blur(6px); }
+.tp-badge-descuento { background: #fff3; color: #d84040; border: 1px solid #f4c4c4; background-color: #fff; }
+.tp-badge-hot { background: #ffe7d6; color: #c05a00; border: 1px solid #ffd1a8; }
+.tp-badge-estado { background: #eef1f7; color: #354052; border: 1px solid #d9dee7; }
+
+.tp-lujo-media { position: relative; display: block; aspect-ratio: 1 / 1; overflow: hidden; }
+.tp-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tp-img-principal { position: absolute; inset: 0; opacity: 1; transition: opacity 220ms ease, transform 220ms ease; }
+.tp-img-secundaria { position: absolute; inset: 0; opacity: 0; transition: opacity 220ms ease, transform 220ms ease; }
+.tp-lujo-card:hover .tp-img-principal { opacity: 0; transform: scale(1.02); }
+.tp-lujo-card:hover .tp-img-secundaria { opacity: 1; transform: scale(1.02); }
+
+.tp-actions { position: absolute; right: 10px; top: 10px; display: flex; flex-direction: column; gap: 8px; z-index: 4; }
+.tp-action { width: 34px; height: 34px; border-radius: 999px; display: grid; place-items: center; background: rgba(255,255,255,0.9); border: 1px solid rgba(0,0,0,0.06); color: #333; box-shadow: 0 4px 12px rgba(20,20,20,0.08); opacity: 0; transform: translateY(-6px); transition: all 180ms ease; }
+.tp-lujo-card:hover .tp-action { opacity: 1; transform: translateY(0); }
+.tp-action:hover { background: #fff; }
+
+.tp-lujo-content { padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.tp-titulo-row { display: flex; align-items: flex-start; gap: 6px; min-height: 38px; }
+.tp-nombre { flex: 1; font-size: 14px; font-weight: 700; color: #1c1f26; margin: 0; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tp-mega-banner { display: inline-block; white-space: normal; align-self: flex-start; flex-shrink: 0; padding: 4px 0; border-radius: 0; font-size: 11px; font-weight: 800; color: #fff; background: linear-gradient(90deg, #ff5a1f, #ff7a00); box-shadow: 0 4px 10px rgba(255, 122, 0, 0.25); border: 1px solid rgba(255, 122, 0, 0.5); text-align: center; min-width: 68px; line-height: 1.05; }
+.tp-mega-banner .tp-mega-line { display: block; }
+
+/* Responsive: en móvil el banner va en su propia línea arriba del título */
+@media (max-width: 480px) {
+  .tp-titulo-row { flex-direction: row; align-items: center; gap: 6px; min-height: unset; order: 0; }
+  /* Reubicar rating inmediatamente debajo del título en móvil */
+  .tp-rating { order: 1; margin-top: 0; }
+  .tp-precio { order: 2; }
+  .tp-info-secundaria { order: 3; }
+  .tp-info-dinamica { order: 4; }
+}
+
+.tp-meta { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #54657e; }
+.tp-rating { display: inline-flex; align-items: center; gap: 3px; margin-top: 4px; font-size: 11px; }
+.tp-star { color: #ff7a00; }
+.tp-rating-count { color: #8b98a9; margin-left: 2px; }
+.tp-rating-reviews { color: #8b98a9; margin-left: 2px; }
+.tp-ventas { color: #4f7d3a; font-weight: 600; }
+
+/* Ajustes responsivos para el bloque de rating */
+@media (max-width: 480px) {
+  .tp-rating { gap: 2px; }
+  .tp-star { width: 18px; height: 18px; color: #ff7a00; }
+  .tp-rating-count, .tp-rating-reviews { display: none; }
+  .tp-ventas-inline { display: inline; margin-left: 6px; font-size: 11px; color: #6c757d; }
+}
+
+.tp-precio { display: flex; align-items: baseline; gap: 6px; }
+.tp-precio-actual { color: #111; font-weight: 800; font-size: 18px; }
+.tp-precio-original { color: #a0a8b3; text-decoration: line-through; font-size: 13px; }
+
+/* Ventas al final del contenedor de precio */
+.tp-ventas-footer {
+  margin-left: auto;
+  font-size: 12px;
+  color: #6c757d;
+  font-weight: 600;
+}
+
+/* Info secundaria: ahorro y stock */
+.tp-info-secundaria {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px; /* más compacto, estilo Temu */
+  color: #54657e;
+  gap: 4px; /* reduce separación */
+}
+.tp-ahorro { color: #1f8b4c; font-weight: 700; }
+.tp-stock { color: #6c757d; }
+
+/* Contenedor dinámico tipo slider vertical */
+.tp-info-dinamica {
+  position: relative;
+  overflow: visible;
+  border: none; /* borde gris eliminado */
+  background: #ffffff; /* Fondo blanco solicitado */
+  color: #1c1f26;
+  border-radius: 8px;
+  padding: 2px 6px; /* aún más compacto */
+  margin-top: 4px;
+  font-weight: 500;
+  font-size: 11px; /* texto más pequeño para usar menos espacio */
+}
+.tp-info-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 22px; /* más compacto sin cortes al cambiar */
+}
+.tp-info-icon { color: #8b98a9; flex-shrink: 0; }
+/* Destacado en verde para 'Más comprados' */
+.mc-destacado { color: #1f8b4c; font-weight: 700; }
+/* Animación de entrada suave para el cambio de información */
+@keyframes tp-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: tp-fade-in 240ms ease both; }
+/* Badge combinado: ahorro a la izquierda (naranja) y contador a la derecha (blanco) */
+.tp-ahorro-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  border: 1px solid #ff9d00;
+  border-radius: 6px; /* menor radio para look compacto */
+  overflow: hidden;
+  font-weight: 600; /* menos pesado que 700 */
+}
+.tp-ahorro-badge .ab-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #ff7a00;
+  color: #fff;
+  padding: 1px 5px; /* mucho más compacto en móvil */
+}
+.tp-ahorro-badge .ab-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #ffffff;
+  color: #ff7a00;
+  padding: 1px 5px; /* mucho más compacto en móvil */
+  border-left: 1px solid #ffd1a8;
+}
+.tp-ahorro-badge .ab-time { font-variant-numeric: tabular-nums; font-size: 11px; }
+
+.tp-escasez { font-size: 12px; color: #c05a00; background: #fff5eb; border: 1px solid #ffd8b4; border-radius: 8px; padding: 6px 8px; font-weight: 600; }
+
+/* Compactación agresiva del ahorro + contador en móvil */
+@media (max-width: 480px) {
+  .tp-info-secundaria { font-size: 9px; gap: 1px; }
+  .tp-ahorro-badge { min-height: 16px; border-radius: 3px; line-height: 1; }
+  .tp-ahorro-badge .ab-left, .tp-ahorro-badge .ab-right { padding: 0 3px; gap: 2px; }
+  .tp-ahorro-badge .ab-right { border-left: 0; }
+  .tp-ahorro-badge .ab-time { font-size: 9px; }
+  .tp-ahorro-badge svg { width: 9px; height: 9px; }
+  /* Ocultar icono de alerta para ahorrar espacio */
+  .tp-ahorro-badge .ab-right .lucide-alert-circle { display: none; }
+}

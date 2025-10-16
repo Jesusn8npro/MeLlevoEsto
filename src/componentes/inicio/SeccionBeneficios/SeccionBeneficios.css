@@ -1,0 +1,308 @@
+/* ===== SECCIÓN BENEFICIOS ESTILO WOODMART ===== */
+
+.seccion-beneficios {
+  width: 100%;
+  padding: 40px 0;
+  background-color: transparent;
+  margin: 0;
+}
+
+.beneficios-contenedor {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  background-color: transparent; /* sin fondo gris */
+  border: none; /* eliminar borde del contenedor */
+  border-radius: 12px;
+  box-shadow: none; /* quitar sombra pesada */
+  overflow: hidden;
+}
+
+/* ===== TARJETAS DE BENEFICIOS ===== */
+
+.beneficio-tarjeta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px; /* mayor separación */
+  padding: 22px 18px; /* mayor área táctil/visual */
+  color: #1f2937 !important; /* texto oscuro */
+  text-align: center;
+  border-right: 1px solid #e5e7eb; /* divisores sutiles */
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border-radius: 0;
+  position: relative;
+  text-shadow: none;
+  background: transparent;
+}
+
+.beneficio-tarjeta:first-child {
+  border-radius: 12px 0 0 12px;
+}
+
+.beneficio-tarjeta:last-child {
+  border-right: none;
+  border-radius: 0 12px 12px 0;
+}
+
+
+.beneficio-icono {
+  flex-shrink: 0;
+  width: 28px; /* icono más grande */
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4b5563; /* icono neutro, sin acento naranja */
+}
+
+.beneficio-icono svg {
+  width: 28px;
+  height: 28px;
+}
+
+.beneficio-contenido {
+  text-align: left;
+}
+
+.beneficio-titulo {
+  font-size: 15px; /* título más grande */
+  font-weight: 600;
+  color: #111827 !important; /* título oscuro */
+  margin-bottom: 2px;
+  line-height: 1.2;
+  text-shadow: none;
+}
+
+.beneficio-subtitulo {
+  font-size: 13px; /* subtítulo más grande */
+  color: #6b7280 !important; /* gris legible */
+  margin: 0;
+  line-height: 1.1;
+  text-shadow: none;
+}
+
+.beneficio-descripcion {
+  display: none;
+}
+
+/* Mantener herencia de color pero en esquema claro */
+.beneficio-tarjeta * {
+  color: inherit !important;
+  text-shadow: none !important;
+}
+
+/* ===== RESPONSIVE BREAKPOINTS ===== */
+
+/* Tablets */
+@media (max-width: 900px) {
+  .beneficios-contenedor {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .beneficio-tarjeta {
+    padding: 12px 8px;
+    gap: 10px;
+  }
+  
+  .beneficio-titulo {
+    font-size: 13px;
+  }
+  
+  .beneficio-subtitulo {
+    font-size: 11px;
+  }
+}
+
+/* Móviles */
+@media (max-width: 768px) {
+  .seccion-beneficios {
+    padding: 30px 0;
+  }
+  
+  .beneficios-contenedor.beneficios-mobile {
+    display: block;
+    padding: 0 36px; /* más espacio interno para flechas, evitar solapamiento */
+    position: relative;
+    border: none !important;            /* asegurar que no haya borde */
+    outline: none !important;           /* sin outline */
+    border-radius: 0 !important;        /* sin radios percibidos */
+    box-shadow: none !important;        /* sin sombra exterior */
+    background: transparent !important; /* sin fondo */
+    overflow: visible;                  /* permitir que la tarjeta se muestre sin recorte */
+  }
+  
+  .beneficio-slider-mobile {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* contenido centrado */
+  }
+  
+  /* Flechas de navegación */
+  .beneficio-flecha {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #f3f4f6; /* claro */
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 2;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+  }
+  
+  
+  .beneficio-flecha-izq {
+    left: -32px; /* mover más fuera del contenido */
+  }
+  
+  .beneficio-flecha-der {
+    right: -32px; /* mover más fuera del contenido */
+  }
+  
+  .beneficio-mobile-activo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 28px 34px; /* mucho más grande y cómodo en móvil */
+    border-radius: 16px;
+    border: none !important;            /* eliminar cualquier borde visible */
+    animation: fadeIn 0.5s ease-in-out;
+    background-color: #ffffff;          /* mantener claro pero sin borde */
+    width: 100%;
+    text-align: left;
+  }
+  
+  .beneficio-mobile-activo .beneficio-icono {
+    width: 36px;   /* icono mucho más grande */
+    height: 36px;
+    margin-bottom: 0;
+    margin-right: 18px;
+    flex-shrink: 0;
+    color: #4b5563;
+  }
+  
+  .beneficio-mobile-activo .beneficio-icono svg {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .beneficio-mobile-activo .beneficio-contenido {
+    text-align: left;
+    flex: 1;
+  }
+  
+  .beneficio-mobile-activo .beneficio-titulo {
+    font-size: 18px; /* título mucho más grande */
+    margin-bottom: 4px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1.25;
+  }
+  
+  .beneficio-mobile-activo .beneficio-subtitulo {
+    font-size: 15px; /* subtítulo más grande */
+    color: #6b7280;
+    line-height: 1.2;
+  }
+  
+  /* Indicadores de puntos */
+  .beneficios-indicadores {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 15px;
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .indicador {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .indicador.activo {
+    background-color: #ff6b35;
+    transform: scale(1.3);
+  }
+  
+  /* Animación de fade */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .seccion-beneficios {
+    padding: 25px 0;
+  }
+  
+  .beneficios-contenedor.beneficios-mobile {
+    padding: 0 28px; /* algo más de espacio para flechas en móviles pequeños */
+  }
+  
+  .beneficio-flecha {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .beneficio-flecha-izq {
+    left: -24px; /* mantener fuera del contenido */
+  }
+  
+  .beneficio-flecha-der {
+    right: -24px; /* mantener fuera del contenido */
+  }
+  
+  .beneficio-mobile-activo {
+    padding: 24px 30px; /* aumentar tamaño en móviles pequeños */
+    border: none !important; /* sin borde también en móviles pequeños */
+    background-color: #ffffff;
+  }
+  
+  .beneficio-mobile-activo .beneficio-titulo {
+    font-size: 17px;
+  }
+  
+  .beneficio-mobile-activo .beneficio-subtitulo {
+    font-size: 14px;
+  }
+  
+  .beneficio-mobile-activo .beneficio-icono {
+    width: 32px;
+    height: 32px;
+    margin-right: 14px;
+  }
+  
+  .beneficio-mobile-activo .beneficio-icono svg {
+    width: 32px;
+    height: 32px;
+  }
+}

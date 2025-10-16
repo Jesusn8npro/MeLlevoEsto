@@ -1,0 +1,293 @@
+/* Estilos del Modal de Carrito - Alineados con clases JSX */
+
+/* Overlay y backdrop */
+.modal-carrito-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.modal-carrito-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+/* Panel del carrito (drawer a la derecha) */
+.modal-carrito {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 360px; /* más delgado */
+  max-width: 88vw;
+  background: #fff;
+  box-shadow: -10px 0 25px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  z-index: 1001;
+  animation: slideInRight 0.28s ease-out;
+  border-top-left-radius: 14px;
+  border-bottom-left-radius: 14px;
+}
+
+.modal-carrito.saliendo {
+  animation: slideOutRight 0.24s ease-in forwards;
+}
+
+/* Header */
+.modal-carrito-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eceef1;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+}
+
+.modal-carrito-titulo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-carrito-contador {
+  background: #111827;
+  color: #fff;
+  font-size: 12px;
+  border-radius: 9999px;
+  padding: 2px 8px;
+}
+
+.modal-carrito-cerrar {
+  border: none;
+  background: transparent;
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.modal-carrito-cerrar:hover {
+  background: #f3f4f6;
+}
+
+/* Contenido scrollable */
+.modal-carrito-contenido {
+  padding: 12px 14px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Imagen del producto más grande dentro del modal */
+.modal-carrito .item-carrito.compacto {
+  gap: 16px;
+  padding: 14px 12px;
+}
+
+.modal-carrito .item-carrito.compacto .item-imagen {
+  width: 140px;
+  height: 140px;
+}
+
+@media (max-width: 480px) {
+  .modal-carrito .item-carrito.compacto .item-imagen {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+/* Estado vacío */
+.modal-carrito-vacio {
+  text-align: left;
+}
+
+.carrito-vacio-icono {
+  color: #9ca3af;
+  margin-bottom: 8px;
+}
+
+.modal-carrito-beneficios {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 16px;
+}
+
+.beneficio-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+
+.boton-explorar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #3b82f6;
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+}
+
+.boton-explorar:hover {
+  background: #2563eb;
+}
+
+/* Lista de items */
+.modal-carrito-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Resumen */
+.modal-carrito-resumen {
+  margin-top: 8px;
+  border-top: 1px solid #eceef1;
+  padding-top: 10px;
+}
+
+.resumen-linea {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.mensaje-envio-gratis {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #065f46;
+  background: #ecfdf5;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.envio-gratis {
+  color: #059669;
+  font-weight: 600;
+}
+
+.resumen-total {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+/* Footer */
+.modal-carrito-footer {
+  border-top: 1px solid #eceef1;
+  padding: 10px 12px; /* compacto */
+}
+
+.footer-acciones {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.boton-limpiar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #e5e7eb; /* sutil borde para consistencia */
+  background: #f9fafb;
+  color: #b91c1c;
+  cursor: pointer;
+  padding: 8px 10px; /* reducir padding */
+  border-radius: 8px; /* radio más pequeño */
+  font-size: 0.85rem; /* tipografía más compacta */
+}
+
+.footer-botones-principales {
+  display: flex;
+  gap: 8px; /* menos separación */
+}
+
+.boton-ver-carrito {
+  text-decoration: none;
+  background: #f1f5f9;
+  color: #111827;
+  padding: 8px 12px; /* reducir padding */
+  border-radius: 8px; /* radio más pequeño */
+  font-size: 0.9rem; /* texto ligeramente más pequeño */
+}
+
+.boton-checkout {
+  text-decoration: none;
+  background: #111827;
+  color: #fff;
+  padding: 8px 12px; /* reducir padding */
+  border-radius: 8px; /* radio más pequeño */
+  font-size: 0.9rem; /* texto ligeramente más pequeño */
+}
+
+.footer-confianza {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+  color: #374151;
+}
+
+.confianza-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+/* Animaciones */
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOutRight {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .modal-carrito {
+    width: 88vw; /* un poco más delgado en móvil */
+    max-width: 88vw;
+  }
+
+  .modal-carrito-footer {
+    padding: 8px 10px; /* aún más compacto en móviles pequeños */
+  }
+
+  .boton-limpiar,
+  .boton-ver-carrito,
+  .boton-checkout {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Scrollbar */
+.modal-carrito-contenido::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-carrito-contenido::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.modal-carrito::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.modal-carrito::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
