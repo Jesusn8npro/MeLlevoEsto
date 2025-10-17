@@ -718,6 +718,16 @@ button:active,
 
 /* ===== RESPONSIVE DESIGN - MÓVIL (413px - 767px) ===== */
 @media (max-width: 767px) and (min-width: 250px) {
+  /* Ocultar header cuando el chat está abierto */
+  .header-principal.chat-abierto {
+    display: none;
+  }
+  
+  /* Ocultar navegación móvil inferior cuando el chat está abierto */
+  .navegacion-movil-inferior.chat-abierto {
+    display: none;
+  }
+  
   /* Barra promocional simplificada */
   .barra-promocional {
     height: 50px;

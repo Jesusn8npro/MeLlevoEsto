@@ -1,6 +1,6 @@
 /* ===== Estilos EncabezadoAdmin (scoped) ===== */
 
-.admin-theme .encabezado-admin { position: sticky; top: 0; display: flex; width: 100%; background-color: var(--color-fondo); border-color: var(--color-gris-200); z-index: 99999; border-bottom: 1px solid var(--color-borde); }
+.admin-theme .encabezado-admin { position: sticky; top: 0; display: flex; width: 100%; background-color: var(--color-fondo); border-color: var(--color-gris-200); z-index: 1000; border-bottom: 1px solid var(--color-borde); }
 .admin-theme .encabezado-admin-izquierda, .admin-theme .encabezado-admin-derecha { background: transparent; }
 .admin-theme .encabezado-admin, .admin-theme .encabezado-admin * { box-sizing: border-box; }
 

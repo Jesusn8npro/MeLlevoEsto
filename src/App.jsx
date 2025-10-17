@@ -3,6 +3,7 @@ import HeaderPrincipal from './componentes/layout/HeaderPrincipal'
 import RutaAdmin from './componentes/autenticacion/RutaAdmin'
 import FavoritosProvider from './contextos/FavoritosContext'
 import { CarritoProvider } from './contextos/CarritoContext'
+import { ChatProvider } from './contextos/ChatContext'
 // import ProteccionAvanzada from './componentes/ProteccionAvanzada' // Comentado temporalmente
 import PaginaInicio from './paginas/ecommerce/PaginaInicio/PaginaInicio'
 import PaginaProducto from './paginas/ecommerce/PaginaProducto/PaginaProducto'
@@ -34,6 +35,7 @@ import Categorias from './paginas/admin/Categorias/Categorias'
 import Pedidos from './paginas/admin/Pedidos/Pedidos'
 import Inventario from './paginas/admin/Inventario/Inventario'
 import Usuarios from './paginas/admin/Usuarios/Usuarios'
+import AdminChats from './paginas/admin/ManejoDeChats/AdminChats'
 import GenericaAdmin from './paginas/admin/GenericaAdmin'
 import CalendarioTareas from './paginas/admin/calendario_tareas/CalendarioTareas'
 import TableroTareas from './paginas/admin/calendario_tareas/TableroTareas'
@@ -43,13 +45,17 @@ import TestImagenes from './paginas/TestImagenes'
 import ProductosDemo from './componentes/producto/ProductosDemo'
 import PaginaTienda from './paginas/ecommerce/PaginaTienda/PaginaTienda'
 import NotificacionCarritoWrapper from './componentes/ui/NotificacionCarritoWrapper'
+import ChatEnVivo from './componentes/chat/ChatEnVivo'
 // import MigrarImagenes from './paginas/MigrarImagenes' // Eliminado
 
 function App() {
   return (
-    <CarritoProvider>
-      <FavoritosProvider>
+    <ChatProvider>
+      <CarritoProvider>
+        <FavoritosProvider>
         <div className="app">
+        {/* Chat flotante visible en toda la aplicación */}
+        <ChatEnVivo />
         {/* <ProteccionAvanzada /> */}
         <Routes>
         {/* Admin Dashboard Real - Protegido por autenticación y rol */}
@@ -120,6 +126,13 @@ function App() {
           <RutaAdmin>
             <DisposicionAdmin>
               <Usuarios />
+            </DisposicionAdmin>
+          </RutaAdmin>
+        } />
+        <Route path="/admin/chats" element={
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <AdminChats />
             </DisposicionAdmin>
           </RutaAdmin>
         } />
@@ -563,6 +576,7 @@ function App() {
         </div>
       </FavoritosProvider>
     </CarritoProvider>
+  </ChatProvider>
   )
 }
 

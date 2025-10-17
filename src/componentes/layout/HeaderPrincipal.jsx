@@ -37,6 +37,7 @@ import ModalCarrito from '../carrito/CarritoFlotante'
 import { useFavoritos } from '../../contextos/FavoritosContext'
 import { useAuth } from '../../contextos/ContextoAutenticacion'
 import { useCarrito } from '../../contextos/CarritoContext'
+import { useChat } from '../../contextos/ChatContext'
 import './HeaderPrincipal.css'
 import MenuMovilOverlay from './MenuMovilOverlay'
 import SliderInformacion from './SliderInformacion'
@@ -47,6 +48,7 @@ const HeaderPrincipal = () => {
   const { favoritos } = useFavoritos()
 const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
   const { totalItems, modalAbierto, alternarModal } = useCarrito()
+  const { chatAbierto } = useChat()
   const [busqueda, setBusqueda] = useState('')
   const [menuMovilAbierto, setMenuMovilAbierto] = useState(false)
   const [departamentosAbierto, setDepartamentosAbierto] = useState(false)
@@ -252,7 +254,7 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
   }
 
   return (
-    <header className={`header-principal ${headerSticky ? 'sticky' : ''}`} ref={headerRef}>
+    <header className={`header-principal ${headerSticky ? 'sticky' : ''} ${chatAbierto ? 'chat-abierto' : ''}`} ref={headerRef}>
       {/* Barra Promocional Superior eliminada por solicitud */}
 
       {/* Barra de Información Superior - Componente encapsulado */}
@@ -565,7 +567,7 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
       />
 
       {/* Navegación Móvil Inferior */}
-      <div className="navegacion-movil-inferior">
+      <div className={`navegacion-movil-inferior ${chatAbierto ? 'chat-abierto' : ''}`}>
         <button className="nav-movil-item" onClick={alternarMenuMovil}>
           <div className="nav-icono-contenedor">
             <Menu size={22} />

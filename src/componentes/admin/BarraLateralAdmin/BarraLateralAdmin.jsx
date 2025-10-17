@@ -12,7 +12,8 @@ import {
   BoxCubeIcon,
   PlugInIcon,
   ChevronDownIcon,
-  HorizontalDotsIcon
+  HorizontalDotsIcon,
+  ChatIcon
 } from '../iconos/IconosAdmin'
 import WidgetBarraLateral from './WidgetBarraLateral'
 import './BarraLateralAdmin.css'
@@ -47,6 +48,11 @@ const elementosNavegacion = [
     icono: <UserCircleIcon />,
     nombre: 'USUARIOS',
     ruta: '/admin/usuarios',
+  },
+  {
+    icono: <ChatIcon />,
+    nombre: 'CHATS',
+    ruta: '/admin/chats',
   },
   {
     nombre: 'Formularios',

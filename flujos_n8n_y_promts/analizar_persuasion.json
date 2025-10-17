@@ -1,0 +1,65 @@
+{
+  "parameters": {
+    "tableId": "leads_chat",
+    "operation": "upsert",
+    "fieldsUi": {
+      "fieldValues": [
+        {
+          "fieldId": "chat_id",
+          "fieldValue": "={{ $('Procesar Datos Entrada').item.json.chat_id }}"
+        },
+        {
+          "fieldId": "tecnicas_persuasion",
+          "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fieldValues0_Field_Value', ``, 'string') }}"
+        },
+        {
+          "fieldId": "nivel_interes",
+          "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fieldValues1_Field_Value', `5`, 'number') }}"
+        },
+        {
+          "fieldId": "probabilidad_compra",
+          "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fieldValues2_Field_Value', `50`, 'number') }}"
+        },
+        {
+          "fieldId": "principales_objeciones",
+          "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fieldValues3_Field_Value', ``, 'string') }}"
+        },
+        {
+          "fieldId": "miedos_cliente",
+          "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fieldValues4_Field_Value', ``, 'string') }}"
+        },
+        {
+          "fieldId": "urgencia_compra",
+          "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fieldValues5_Field_Value', `baja`, 'string') }}"
+        },
+        {
+          "fieldId": "valor_potencial",
+          "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fieldValues6_Field_Value', `0`, 'number') }}"
+        },
+        {
+          "fieldId": "notas_adicionales",
+          "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fieldValues7_Field_Value', `Análisis de persuasión automático`, 'string') }}"
+        },
+        {
+          "fieldId": "ultima_actualizacion",
+          "fieldValue": "={{ new Date().toISOString() }}"
+        }
+      ]
+    },
+    "onConflict": "chat_id"
+  },
+  "type": "n8n-nodes-base.supabaseTool",
+  "typeVersion": 1,
+  "position": [
+    2200,
+    700
+  ],
+  "id": "analizar-persuasion-tool",
+  "name": "analizar_persuasion",
+  "credentials": {
+    "supabaseApi": {
+      "id": "W8gqsCw5s1YHm5SZ",
+      "name": "Supabase Me LLEVO ESTO"
+    }
+  }
+}
