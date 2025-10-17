@@ -3,7 +3,7 @@
     "command": "npm run build"
   },
   "start": {
-    "command": "serve -s dist -l 4173"
+    "command": "npm run preview"
   },
   "env": {
     "NODE_ENV": "production",

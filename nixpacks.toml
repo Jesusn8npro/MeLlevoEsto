@@ -7,4 +7,4 @@ PORT = "4173"
 cmd = "npm run build"
 
 [phases.start]
-cmd = "serve -s dist -l 4173"
+cmd = "serve -s dist -l tcp://0.0.0.0:$PORT"
