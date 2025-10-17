@@ -22,7 +22,7 @@ import {
   Camera,
   Loader
 } from 'lucide-react'
-import './formularioproducto.css'
+import './FormularioProducto.css'
 import { formatearPrecioCOP } from '../../../../utilidades/formatoPrecio'
 import CrearProductoIA from './CrearProductoIA/CrearProductoIA'
 import ChatImagenesIA from './ChatImagenesIA/ChatImagenesIA'
