@@ -3,7 +3,7 @@
     "command": "npm run build"
   },
   "start": {
-    "command": "serve -s dist -l $PORT"
+    "command": "serve -s dist -l 4173"
   },
   "env": {
     "NODE_ENV": "production",

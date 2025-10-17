@@ -1,1 +1,1 @@
-web: serve -s dist -l $PORT
+web: serve -s dist -l 4173
