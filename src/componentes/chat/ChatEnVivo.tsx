@@ -165,7 +165,7 @@ export default function ChatEnVivo() {
   }
   
   // Webhook URL de n8n (usar el mismo del componente original)
-const WEBHOOK_URL = 'https://velostrategix-n8n.lnrubg.easypanel.host/webhook-test/chat_web_mellevoesto'
+const WEBHOOK_URL = 'https://velostrategix-n8n.lnrubg.easypanel.host/webhook/chat_web_mellevoesto'
 
   // Mapear registro de Supabase a estructura de Mensaje
   const mapRegistroAMensaje = (registro: any): Mensaje | null => {
