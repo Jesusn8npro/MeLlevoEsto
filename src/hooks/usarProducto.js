@@ -22,6 +22,7 @@ export function usarProducto(slug) {
         .from('productos')
         .select(`
           *,
+          promociones,
           categorias (
             id,
             nombre,
@@ -36,24 +37,14 @@ export function usarProducto(slug) {
             imagen_secundaria_4,
             imagen_punto_dolor_1,
             imagen_punto_dolor_2,
-            imagen_punto_dolor_3,
-            imagen_punto_dolor_4,
             imagen_solucion_1,
             imagen_solucion_2,
-            imagen_solucion_3,
-            imagen_solucion_4,
             imagen_testimonio_persona_1,
             imagen_testimonio_persona_2,
             imagen_testimonio_persona_3,
-            imagen_testimonio_persona_4,
-            imagen_testimonio_persona_5,
-            imagen_testimonio_persona_6,
             imagen_testimonio_producto_1,
             imagen_testimonio_producto_2,
             imagen_testimonio_producto_3,
-            imagen_testimonio_producto_4,
-            imagen_testimonio_producto_5,
-            imagen_testimonio_producto_6,
             imagen_caracteristicas,
             imagen_garantias,
             imagen_cta_final,
@@ -71,6 +62,10 @@ export function usarProducto(slug) {
 
       // Procesar los datos para incluir las imágenes correctamente
       if (data) {
+        console.log('🎯 PRODUCTO CARGADO DESDE SUPABASE:', data.nombre)
+        console.log('📦 DATOS COMPLETOS DEL PRODUCTO:', data)
+        console.log('🎁 PROMOCIONES DEL PRODUCTO:', data.promociones)
+        
         // Procesar imágenes del producto
         
         // Si hay datos de producto_imagenes, los agregamos al objeto producto

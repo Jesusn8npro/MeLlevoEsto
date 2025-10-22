@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import { clienteSupabase } from '../configuracion/supabase'
 
 const ContextoAutenticacion = createContext({})
@@ -7,9 +7,13 @@ export const ProveedorAutenticacion = ({ children }) => {
   const [usuario, setUsuario] = useState(null)
   const [cargando, setCargando] = useState(true)
   const [sesionInicializada, setSesionInicializada] = useState(false)
+  
+  // CACHE: Referencias para evitar re-inicializaciones innecesarias
+  const authInitialized = useRef(false)
+  const lastAuthState = useRef(null)
 
-  // Función para obtener datos del usuario desde la base de datos
-  const obtenerDatosUsuario = async (userId) => {
+  // Función optimizada para obtener datos del usuario desde la base de datos
+  const obtenerDatosUsuario = useCallback(async (userId) => {
     try {
       const { data, error } = await clienteSupabase
         .from('usuarios')
@@ -27,80 +31,113 @@ export const ProveedorAutenticacion = ({ children }) => {
       console.error('Error en obtenerDatosUsuario:', error)
       return null
     }
-  }
+  }, [])
 
-  // Función para manejar cambios de autenticación
-  const manejarCambioAuth = async (event, session) => {
+  // Función optimizada para manejar cambios de autenticación
+  const manejarCambioAuth = useCallback(async (event, session) => {
+    // CACHE: Evitar procesamiento duplicado del mismo estado
+    const currentAuthState = session?.user?.id || 'no-session'
+    if (lastAuthState.current === currentAuthState && authInitialized.current) {
+      console.log('🔄 Estado de auth sin cambios, omitiendo procesamiento')
+      return
+    }
+    
     console.log('🔄 Cambio de autenticación:', event, session?.user?.email)
+    lastAuthState.current = currentAuthState
 
     if (session?.user) {
-      // 1) Hidratar inmediatamente con datos básicos del auth (evita parpadeo)
-      const usuarioBasico = {
-        id: session.user.id,
-        email: session.user.email,
-        nombre:
-          session.user.user_metadata?.nombre ||
-          session.user.user_metadata?.full_name ||
-          (session.user.email ? session.user.email.split('@')[0] : 'Usuario')
-      }
+      try {
+        // Verificar si el token es válido antes de proceder
+        const { data: { user }, error } = await clienteSupabase.auth.getUser()
+        
+        if (error) {
+          console.error('❌ Error verificando token:', error.message)
+          // Si hay error de token inválido, cerrar sesión
+          if (error.message.includes('Invalid Refresh Token') || error.message.includes('refresh_token_not_found')) {
+            console.log('🔄 Token inválido detectado, cerrando sesión...')
+            await clienteSupabase.auth.signOut()
+            setUsuario(null)
+            setCargando(false)
+            setSesionInicializada(true)
+            return
+          }
+        }
 
-      setUsuario(usuarioBasico)
-      setCargando(false)
-      setSesionInicializada(true)
+        // Crear usuario básico inmediatamente para evitar parpadeos
+        const usuarioBasico = {
+          id: session.user.id,
+          email: session.user.email,
+          nombre:
+            session.user.user_metadata?.nombre ||
+            session.user.user_metadata?.full_name ||
+            (session.user.email ? session.user.email.split('@')[0] : 'Usuario'),
+          rol: session.user.email === 'shalom@gmail.com' ? 'admin' : 'cliente' // Rol por defecto
+        }
 
-      // 2) Cargar datos completos en segundo plano y actualizar sin bloquear UI
-      ;(async () => {
+        // NAVEGACIÓN FLUIDA: Actualizar estado inmediatamente
+        setUsuario(usuarioBasico)
+        setCargando(false)
+        setSesionInicializada(true)
+        authInitialized.current = true
+
+        // Cargar datos completos en segundo plano sin bloquear la UI
         try {
           const datosUsuario = await obtenerDatosUsuario(session.user.id)
           if (datosUsuario) {
-            setUsuario({
+            setUsuario(prevUsuario => ({
               ...datosUsuario,
               email: session.user.email,
-              nombre:
-                datosUsuario.nombre ||
-                usuarioBasico.nombre
-            })
+              nombre: datosUsuario.nombre || prevUsuario.nombre,
+              rol: datosUsuario.rol || prevUsuario.rol
+            }))
             console.log('✅ Usuario enriquecido desde BD:', datosUsuario.email)
-            // Si el rol no está definido en BD, asignar por defecto 'cliente' para evitar loaders indefinidos
-            setUsuario(prev => ({ ...prev, rol: typeof datosUsuario.rol !== 'undefined' ? datosUsuario.rol : 'cliente' }))
-          }
-          // Si no hay datos en BD, establecer rol por defecto 'cliente' para evitar espera infinita
-          if (!datosUsuario) {
-            setUsuario(prev => ({ ...prev, rol: 'cliente' }))
           }
         } catch (error) {
-          console.warn('⚠️ No se pudo enriquecer usuario, usando datos básicos:', error)
-          // Asegurar rol por defecto cuando falla el enriquecimiento
-          setUsuario(prev => ({ ...prev, rol: 'cliente' }))
+          console.error('Error cargando datos completos del usuario:', error)
+          // Mantener usuario básico si falla la carga de BD
         }
-      })()
+      } catch (error) {
+        console.error('💥 Error procesando usuario:', error)
+        setUsuario(null)
+        setCargando(false)
+        setSesionInicializada(true)
+        authInitialized.current = true
+      }
     } else {
-      // Usuario no autenticado
+      // No hay sesión
       setUsuario(null)
       setCargando(false)
       setSesionInicializada(true)
-      console.log('🚪 Usuario desautenticado')
+      authInitialized.current = true
     }
-  }
+  }, [obtenerDatosUsuario])
 
-  // Inicializar autenticación
+  // Inicializar autenticación una sola vez
   useEffect(() => {
+    // CACHE: Evitar re-inicialización si ya está inicializado
+    if (authInitialized.current) {
+      console.log('🔄 Auth ya inicializado, omitiendo re-inicialización')
+      return
+    }
+
     console.log('🚀 Inicializando autenticación...')
     let unsubscribe
+
     const init = async () => {
       try {
-        // 1) Hidratar sesión desde localStorage de forma inmediata
+        // Obtener sesión inicial
         const { data: { session } } = await clienteSupabase.auth.getSession()
         await manejarCambioAuth('INITIAL_SESSION', session)
+
+        // Suscribirse a cambios de autenticación
+        const { data: { subscription } } = clienteSupabase.auth.onAuthStateChange(manejarCambioAuth)
+        unsubscribe = () => subscription.unsubscribe()
       } catch (error) {
         console.error('Error obteniendo sesión inicial:', error)
         setCargando(false)
         setSesionInicializada(true)
+        authInitialized.current = true
       }
-
-      // 2) Suscribirse a cambios de autenticación
-      const { data: { subscription } } = clienteSupabase.auth.onAuthStateChange(manejarCambioAuth)
-      unsubscribe = () => subscription.unsubscribe()
     }
 
     init()
@@ -109,10 +146,10 @@ export const ProveedorAutenticacion = ({ children }) => {
     return () => {
       if (typeof unsubscribe === 'function') unsubscribe()
     }
-  }, [])
+  }, [manejarCambioAuth])
 
-  // Función de login
-  const iniciarSesion = async (email, password) => {
+  // Función de login optimizada
+  const iniciarSesion = useCallback(async (email, password) => {
     try {
       setCargando(true)
       console.log('🔐 Intentando iniciar sesión:', email)
@@ -129,17 +166,17 @@ export const ProveedorAutenticacion = ({ children }) => {
       }
 
       console.log('✅ Login exitoso:', data.user.email)
-      setCargando(false)
+      // No necesitamos setCargando(false) aquí porque manejarCambioAuth lo hará
       return { data }
     } catch (error) {
       console.error('💥 Error inesperado en login:', error)
       setCargando(false)
       return { error: 'Error inesperado al iniciar sesión' }
     }
-  }
+  }, [])
 
-  // Función de registro
-  const registrarse = async (email, password, nombre) => {
+  // Función de registro optimizada
+  const registrarse = useCallback(async (email, password, nombre) => {
     try {
       setCargando(true)
       console.log('📝 Intentando registrar usuario:', email)
@@ -161,90 +198,87 @@ export const ProveedorAutenticacion = ({ children }) => {
       }
 
       console.log('✅ Registro exitoso:', data.user.email)
-      setCargando(false)
+      // No necesitamos setCargando(false) aquí porque manejarCambioAuth lo hará
       return { data }
     } catch (error) {
       console.error('💥 Error inesperado en registro:', error)
       setCargando(false)
       return { error: 'Error inesperado al registrarse' }
     }
-  }
+  }, [])
 
-  // Función de logout
-  const cerrarSesion = async () => {
+  // Función de cierre de sesión optimizada
+  const cerrarSesion = useCallback(async () => {
     try {
+      setCargando(true)
       console.log('🚪 Cerrando sesión...')
+
       const { error } = await clienteSupabase.auth.signOut()
-      
+
       if (error) {
         console.error('❌ Error cerrando sesión:', error.message)
+        setCargando(false)
         return { error: error.message }
       }
 
       console.log('✅ Sesión cerrada exitosamente')
+      // Reset cache
+      authInitialized.current = false
+      lastAuthState.current = null
+      // manejarCambioAuth se encargará de limpiar el estado
       return { success: true }
     } catch (error) {
       console.error('💥 Error inesperado cerrando sesión:', error)
+      setCargando(false)
       return { error: 'Error inesperado al cerrar sesión' }
     }
-  }
+  }, [])
 
-  // Función para reenviar verificación de email
-  const reenviarVerificacionEmail = async (email) => {
-    try {
-      console.log('📧 Reenviando verificación de email:', email)
-      
-      const { error } = await clienteSupabase.auth.resend({
-        type: 'signup',
-        email: email
-      })
-
-      if (error) {
-        console.error('❌ Error reenviando verificación:', error.message)
-        return { error: error.message }
-      }
-
-      console.log('✅ Verificación reenviada exitosamente')
-      return { success: true }
-    } catch (error) {
-      console.error('💥 Error inesperado reenviando verificación:', error)
-      return { error: 'Error inesperado al reenviar verificación' }
-    }
-  }
-
-  // Función para determinar si el usuario es admin
-  const esAdmin = () => {
-    if (!usuario) return false
-    return usuario.rol === 'admin'
-  }
-
-  // Función para obtener la ruta de redirección basada en el rol
-  const obtenerRutaRedireccion = () => {
+  // Funciones de utilidad optimizadas
+  const esAdmin = useCallback(() => usuario?.rol === 'admin', [usuario?.rol])
+  const esCliente = useCallback(() => usuario?.rol === 'cliente', [usuario?.rol])
+  const estaAutenticado = useCallback(() => !!usuario && sesionInicializada, [usuario, sesionInicializada])
+  
+  // Función para obtener la ruta de redirección después del login
+  const obtenerRutaRedireccion = useCallback(() => {
     if (!usuario) return '/'
     
-    if (esAdmin()) {
-      console.log('🔑 Usuario admin detectado - redirigiendo a /admin')
+    // Si es admin, redirigir al dashboard de admin
+    if (usuario.rol === 'admin') {
       return '/admin'
-    } else {
-      console.log('👤 Usuario cliente detectado - redirigiendo a /perfil')
-      return '/perfil'
     }
-  }
+    
+    // Si es cliente, redirigir al perfil o página principal
+    return '/perfil'
+  }, [usuario])
 
-  const valor = {
+  // Memoizar el valor del contexto para evitar re-renders innecesarios
+  const valorContexto = useMemo(() => ({
     usuario,
     cargando,
     sesionInicializada,
     iniciarSesion,
     registrarse,
     cerrarSesion,
-    reenviarVerificacionEmail,
     esAdmin,
+    esCliente,
+    estaAutenticado,
     obtenerRutaRedireccion
-  }
+  }), [
+    usuario,
+    cargando,
+    sesionInicializada,
+    iniciarSesion,
+    registrarse,
+    cerrarSesion,
+    esAdmin,
+    esCliente,
+    estaAutenticado,
+    obtenerRutaRedireccion
+  ])
 
   return (
-    <ContextoAutenticacion.Provider value={valor}>
+    <ContextoAutenticacion.Provider value={valorContexto}>
       {children}
     </ContextoAutenticacion.Provider>
   )

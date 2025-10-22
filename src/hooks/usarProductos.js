@@ -30,7 +30,7 @@ export function usarProductos(filtros = {}) {
           )
         `)
         .eq('activo', true)
-        // Consideramos disponibles los productos con stock > 0
+        // Solo productos con stock disponible en tienda pública
         .gt('stock', 0)
 
       // Aplicar filtros

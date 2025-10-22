@@ -55,28 +55,7 @@ const ListaProductos = () => {
     }
   }, [cargandoAuth, paginaActual, busqueda, filtroCategoria, filtroEstado])
 
-  // NUEVO: Detectar recarga de página y forzar recarga de datos
-  useEffect(() => {
-    const manejarRecarga = () => {
-      console.log('🔄 Página recargada, limpiando estado...')
-      setProductos([])
-      setCategorias([])
-      setError(null)
-    }
 
-    // Detectar si la página se recargó
-    if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
-      console.log('🔄 RECARGA DETECTADA - Forzando limpieza de estado')
-      manejarRecarga()
-    }
-
-    // Listener para futuras recargas
-    window.addEventListener('beforeunload', manejarRecarga)
-    
-    return () => {
-      window.removeEventListener('beforeunload', manejarRecarga)
-    }
-  }, [])
 
   const cargarProductos = async () => {
     try {

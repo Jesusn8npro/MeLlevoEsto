@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useEffect } from 'react'
+import { createContext, useState, useContext, useEffect, useMemo, useCallback } from 'react'
 
 const ContextoTema = createContext(undefined)
 
@@ -34,12 +34,18 @@ export const ProveedorTema = ({ children }) => {
     }
   }, [tema, estaInicializado])
 
-  const alternarTema = () => {
+  const alternarTema = useCallback(() => {
     setTema((temaAnterior) => (temaAnterior === 'light' ? 'dark' : 'light'))
-  }
+  }, [])
+
+  // Valor del contexto optimizado con useMemo
+  const valor = useMemo(() => ({
+    tema,
+    alternarTema
+  }), [tema, alternarTema])
 
   return (
-    <ContextoTema.Provider value={{ tema, alternarTema }}>
+    <ContextoTema.Provider value={valor}>
       {children}
     </ContextoTema.Provider>
   )

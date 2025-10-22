@@ -78,6 +78,7 @@ const PlantillaTemu = ({ producto, config, reviews, notificaciones }) => {
         ctaData={producto?.cta_final}
         mostrarTimer={true}
         mostrarStock={true}
+        producto={producto}
       />
 
     </>

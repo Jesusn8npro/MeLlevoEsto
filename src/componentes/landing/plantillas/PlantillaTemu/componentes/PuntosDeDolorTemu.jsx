@@ -2,18 +2,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import ImagenInteligente from '../../../../../componentes/ui/ImagenInteligente'
 import './PuntosDeDolorTemu.css'
 
-/**
- * PuntosDeDolorTemu - Sección de puntos de dolor estilo timeline vertical
- * 
- * Características:
- * - Timeline vertical con línea conectora
- * - Bloques alternados izquierda/derecha
- * - Animaciones al hacer scroll
- * - Totalmente responsivo
- * - Preparado para Supabase
- * - Todo en español
- */
-
 const PuntosDeDolorTemu = ({ 
   puntosDeDolorData = null,
   mostrarAnimaciones = true,
@@ -34,7 +22,6 @@ const PuntosDeDolorTemu = ({
     return () => window.removeEventListener('keydown', handler)
   }, [])
   
-  // Datos por defecto ultra vendedores con imágenes
   const datosDefecto = {
     titulo: "¿Te sientes identificado con estos problemas diarios?",
     subtitulo: "Miles de personas sufren estos inconvenientes cada día. ¡Tú no tienes que ser una de ellas!",
@@ -80,13 +67,22 @@ const PuntosDeDolorTemu = ({
 
   const datos = puntosDeDolorData || datosDefecto
   
-  // Mapear imágenes desde la nueva tabla producto_imagenes
-  const timelineConImagenes = datos.timeline.map((punto, index) => ({
-    ...punto,
-    imagen: producto?.imagenes?.[`imagen_punto_dolor_${index + 1}`] || punto.imagen
-  }))
+  const timelineConImagenes = datos.timeline.slice(0, 4).map((punto, index) => {
+    let campoImagen
+    if (index < 2) {
+      campoImagen = `imagen_punto_dolor_${index + 1}`
+    } else {
+      campoImagen = `imagen_solucion_${index - 1}`
+    }
+    
+    const imagenDesdeDB = producto?.imagenes?.[campoImagen]
+    
+    return {
+      ...punto,
+      imagen: imagenDesdeDB || punto.imagen
+    }
+  })
 
-  // Animaciones al hacer scroll
   useEffect(() => {
     if (!mostrarAnimaciones) return
 
@@ -114,7 +110,6 @@ const PuntosDeDolorTemu = ({
     <section className="puntos-dolor-temu-seccion">
       <div className="puntos-dolor-temu-contenedor">
         
-        {/* HEADER DE LA SECCIÓN */}
         <div className="puntos-dolor-temu-header">
           <h2 className="puntos-dolor-temu-titulo">
             {datos.titulo}
@@ -124,10 +119,8 @@ const PuntosDeDolorTemu = ({
           </p>
         </div>
 
-        {/* TIMELINE VERTICAL */}
         <div className="puntos-dolor-temu-timeline" ref={timelineRef}>
           
-          {/* LÍNEA CENTRAL */}
           <div className="puntos-dolor-temu-linea-central"></div>
 
           {timelineConImagenes.map((punto, index) => (
@@ -137,17 +130,14 @@ const PuntosDeDolorTemu = ({
               style={{ animationDelay: `${index * 0.2}s` }}
             >
               
-              {/* PUNTO CONECTOR */}
               <div className="puntos-dolor-temu-punto">
                 <span className="puntos-dolor-temu-icono">
                   {punto.icono}
                 </span>
               </div>
 
-              {/* CONTENIDO DEL BLOQUE */}
               <div className="puntos-dolor-temu-contenido">
                 
-                {/* IMAGEN/GIF DEL PUNTO DE DOLOR */}
                 {punto.imagen && (
                   <div 
                     className="puntos-dolor-temu-imagen-container"
@@ -166,7 +156,6 @@ const PuntosDeDolorTemu = ({
                   </div>
                 )}
                 
-                {/* PROBLEMA */}
                 <div className="puntos-dolor-temu-problema">
                   <h3 className="puntos-dolor-temu-nombre">
                     {punto.nombre}
@@ -176,17 +165,15 @@ const PuntosDeDolorTemu = ({
                   </p>
                 </div>
 
-                {/* FLECHA SEPARADORA */}
                 <div className="puntos-dolor-temu-flecha">
                   <span className="puntos-dolor-temu-flecha-icono">
                     ➜
                   </span>
                   <span className="puntos-dolor-temu-flecha-texto">
-                    NUESTRA SOLUCIÓN
+                    {punto.textoBoton || 'NUESTRA SOLUCIÓN'}
                   </span>
                 </div>
 
-                {/* SOLUCIÓN */}
                 <div className="puntos-dolor-temu-solucion">
                   <p className="puntos-dolor-temu-solucion-texto">
                     ✅ {punto.solucion}
@@ -198,7 +185,6 @@ const PuntosDeDolorTemu = ({
           ))}
         </div>
 
-        {/* MODAL DE IMAGEN - SOLO PUNTOS DE DOLOR */}
         {imagenModal && (
           <div 
             className="puntos-dolor-modal-overlay" 
@@ -206,24 +192,29 @@ const PuntosDeDolorTemu = ({
             role="dialog" 
             aria-modal="true"
           >
-            <button 
-              className="puntos-dolor-modal-cerrar" 
-              onClick={cerrarModalImagen}
-              aria-label="Cerrar"
-            >
-              ✕
-            </button>
-            <img 
-              src={imagenModal} 
-              alt="Imagen en grande"
-              className="puntos-dolor-modal-imagen"
+            <div 
+              className="puntos-dolor-modal-contenido"
               onClick={(e) => e.stopPropagation()}
-              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-            />
+            >
+              <button 
+                className="puntos-dolor-modal-cerrar" 
+                onClick={cerrarModalImagen}
+                aria-label="Cerrar"
+              >
+                ✕
+              </button>
+              <div className="puntos-dolor-modal-imagen-container">
+                <img 
+                  src={imagenModal} 
+                  alt="Imagen en grande"
+                  className="puntos-dolor-modal-imagen"
+                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                />
+              </div>
+            </div>
           </div>
         )}
 
-        {/* CALL TO ACTION FINAL */}
         <div className="puntos-dolor-temu-cta">
           <h3 className="puntos-dolor-temu-cta-titulo">
             ¡No sufras más estos problemas!

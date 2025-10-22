@@ -78,12 +78,12 @@ html, body, #root {
 .hero-temu-miniatura-vertical {
   width: 60px;
   height: 60px;
-  border: 2px solid transparent;
+  border: none;
   border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
-  background: #f0f0f0;
-  transition: all 0.2s ease;
+  background: transparent;
+  /* Transición eliminada para cambio instantáneo */
   padding: 0;
 }
 
@@ -109,7 +109,7 @@ html, body, #root {
   flex: 1;
   aspect-ratio: 1/1; 
   border-radius: 10px; 
-  background: #f0f0f0; 
+  background: transparent; 
   position: relative;
   cursor: pointer;
   overflow: hidden;
@@ -120,7 +120,7 @@ html, body, #root {
   height: 100%; 
   object-fit: cover; 
   border-radius: 10px;
-  transition: transform 0.3s ease;
+  /* Transición eliminada para cambio instantáneo de imágenes */
 }
 
 .hero-temu-imagen-principal:hover .hero-temu-imagen-principal-img {
@@ -258,7 +258,7 @@ html, body, #root {
   box-shadow: 
     inset 0 1px 0 rgba(255, 255, 255, 0.5),
     inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-  animation: hero-temu-etiqueta-glow 2s ease-in-out infinite alternate;
+  animation: hero-temu-etiqueta-glow 2s ease-in-out infinite;
 }
 
 .hero-temu-beneficios-container {
@@ -488,6 +488,86 @@ html, body, #root {
 .hero-temu-seccion-precios-vendedora {
   margin: 12px 0;
   padding: 0 10px;
+  position: relative;
+}
+
+/* ETIQUETA VENDIDO */
+.hero-temu-etiqueta-vendido {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  z-index: 10;
+  background: linear-gradient(135deg, #FF4444 0%, #CC0000 50%, #8B0000 100%);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 
+    0 8px 25px rgba(255, 68, 68, 0.6),
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: rotate(12deg);
+  animation: hero-temu-vendido-pulse 2s ease-in-out infinite;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.hero-temu-vendido-contenido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: white;
+  text-align: center;
+}
+
+.hero-temu-vendido-icono {
+  font-size: 16px;
+  animation: hero-temu-vendido-fire 1.5s ease-in-out infinite;
+}
+
+.hero-temu-vendido-texto {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-temu-vendido-subtext {
+  font-size: 9px;
+  font-weight: 600;
+  opacity: 0.9;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.hero-temu-vendido-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.2) 50%, transparent 70%);
+  animation: hero-temu-vendido-shine 3s ease-in-out infinite;
+  border-radius: 12px;
+}
+
+@keyframes hero-temu-vendido-pulse {
+  0%, 100% { 
+    transform: rotate(12deg) scale(1); 
+    box-shadow: 0 8px 25px rgba(255, 68, 68, 0.6), 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  50% { 
+    transform: rotate(12deg) scale(1.05); 
+    box-shadow: 0 12px 35px rgba(255, 68, 68, 0.8), 0 6px 16px rgba(0, 0, 0, 0.4);
+  }
+}
+
+@keyframes hero-temu-vendido-fire {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.1) rotate(-5deg); }
+  75% { transform: scale(1.1) rotate(5deg); }
+}
+
+@keyframes hero-temu-vendido-shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 .hero-temu-precio-principal-container {
@@ -495,6 +575,12 @@ html, body, #root {
   align-items: baseline;
   gap: 12px;
   margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+
+.hero-temu-precio-principal-container.vendido {
+  opacity: 0.6;
+  filter: grayscale(50%);
 }
 
 .hero-temu-precio-actual-grande {
@@ -687,6 +773,58 @@ html, body, #root {
 .hero-temu-boton-pagar-plataforma:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* BOTONES VENDIDO */
+.hero-temu-botones-vendido {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  grid-column: 1 / -1; /* Ocupa toda la fila */
+}
+
+.hero-temu-boton-vendido {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 16px 20px;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: not-allowed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.hero-temu-boton-notificar {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 20px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+}
+
+.hero-temu-boton-notificar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(23, 162, 184, 0.4);
+  background: linear-gradient(135deg, #1c7ed6 0%, #1971c2 100%);
 }
 
 /* IMAGEN DE MÉTODOS DE PAGO */
@@ -928,7 +1066,8 @@ html, body, #root {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.80);
+  backdrop-filter: blur(8px);
   z-index: 9999;
   display: flex;
   align-items: center;
@@ -938,21 +1077,22 @@ html, body, #root {
 
 .hero-temu-popup-contenido {
   position: relative;
-  width: 90%;
-  max-width: 800px;
-  height: 90%;
+  width: 100vw;
+  max-width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #000;
-  border-radius: 12px;
+  border-radius: 0;
   overflow: hidden;
+  box-shadow: none;
 }
 
 /* Ajuste para móvil - contenedor más arriba */
 @media (max-width: 800px) {
   .hero-temu-popup-contenido {
-    height: 85%;
-    margin-top: -5vh;
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
   }
 }
 
@@ -961,7 +1101,7 @@ html, body, #root {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background: rgba(0, 0, 0, 0.8);
+  background: transparent;
   color: white;
 }
 
@@ -971,18 +1111,50 @@ html, body, #root {
   color: white;
 }
 
-.hero-temu-popup-cerrar {
-  background: none;
-  border: none;
+.hero-temu-popup-botones {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.hero-temu-popup-compartir {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
   color: white;
   cursor: pointer;
   padding: 8px;
   border-radius: 50%;
-  transition: background 0.2s ease;
+  /* Transición eliminada para cambio instantáneo */
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-temu-popup-compartir:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.hero-temu-popup-cerrar {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  /* Transición eliminada para cambio instantáneo */
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero-temu-popup-cerrar:hover {
   background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .hero-temu-popup-imagen-container {
@@ -991,14 +1163,19 @@ html, body, #root {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #000;
+  background: transparent;
+  padding: 20px;
+  min-height: 0;
 }
 
 .hero-temu-popup-imagen {
+  width: 100%;
+  height: 100%;
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .hero-temu-popup-flecha {
@@ -1029,15 +1206,15 @@ html, body, #root {
 
 .hero-temu-popup-acciones {
   padding: 16px 20px;
-  background: rgba(0, 0, 0, 0.8);
+  background: transparent;
   display: flex;
   justify-content: center;
 }
 
 .hero-temu-popup-boton-carrito {
-  background: #ff4444;
+  background: #ff6b35; /* Color naranja */
   color: white;
-  border: none;
+  border: 2px solid #ff6b35; /* Borde naranja */
   border-radius: 25px;
   padding: 12px 24px;
   font-size: 16px;
@@ -1046,57 +1223,20 @@ html, body, #root {
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s ease;
+  /* Transición eliminada para cambio instantáneo */
   min-width: 200px;
   justify-content: center;
 }
 
 .hero-temu-popup-boton-carrito:hover {
-  background: #cc0000;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 68, 68, 0.4);
+  background: #e55a2b; /* Naranja más oscuro en hover */
+  border-color: #e55a2b;
+  /* Eliminado transform para cambio instantáneo */
 }
 
-.hero-temu-popup-miniaturas {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  gap: 8px;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.8);
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.hero-temu-popup-miniatura {
-  width: 60px;
-  height: 60px;
-  border: 2px solid transparent;
-  border-radius: 8px;
-  overflow: hidden;
-  cursor: pointer;
-  background: #f0f0f0;
-  transition: all 0.2s ease;
-  padding: 0;
-}
-
-.hero-temu-popup-miniatura:hover {
-  border-color: #0ea5e9;
-  transform: scale(1.05);
-}
-
-.hero-temu-popup-miniatura.activa {
-  border-color: #0ea5e9;
-  box-shadow: 0 0 0 1px #0ea5e9;
-}
-
-.hero-temu-popup-miniatura img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+/* Eliminar estilos antiguos de miniaturas */
+/* .hero-temu-popup-miniaturas - ELIMINADO */
+/* .hero-temu-popup-miniatura - ELIMINADO */
 
 @keyframes hero-temu-popup-aparecer {
   from { opacity: 0; }
@@ -1104,8 +1244,202 @@ html, body, #root {
 }
 
 /* ============================================
-   RESPONSIVE DESIGN
+   POPUP GALERÍA - LAYOUTS RESPONSIVE
    ============================================ */
+
+/* Layout Desktop - Miniaturas al lado */
+.hero-temu-popup-layout-desktop {
+  display: none; /* Oculto por defecto */
+  flex: 1;
+  gap: 20px;
+  padding: 20px;
+  min-height: 0;
+}
+
+.hero-temu-popup-miniaturas-desktop {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 120px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.hero-temu-popup-miniatura-desktop {
+  width: 100px;
+  height: 100px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: transparent;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.hero-temu-popup-miniatura-desktop:hover {
+  border-color: #0ea5e9;
+}
+
+.hero-temu-popup-miniatura-desktop.activa {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 1px #0ea5e9;
+}
+
+.hero-temu-popup-miniatura-desktop img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Layout Móvil - Miniaturas abajo */
+.hero-temu-popup-layout-mobile {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.hero-temu-popup-imagen-container-mobile {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  padding: 20px;
+  min-height: 0;
+}
+
+.hero-temu-popup-miniaturas-mobile {
+  display: flex;
+  gap: 8px;
+  padding: 16px 20px;
+  background: transparent;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.hero-temu-popup-miniatura-mobile {
+  width: 80px;
+  height: 80px;
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: transparent;
+  /* Transición eliminada para cambio instantáneo */
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.hero-temu-popup-miniatura-mobile:hover {
+  border-color: #0ea5e9;
+}
+
+.hero-temu-popup-miniatura-mobile.activa {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 1px #0ea5e9;
+}
+
+.hero-temu-popup-miniatura-mobile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Media Queries para mostrar/ocultar layouts */
+@media (min-width: 800px) {
+  .hero-temu-popup-layout-desktop {
+    display: flex;
+  }
+  
+  .hero-temu-popup-layout-mobile {
+    display: none;
+  }
+}
+
+@media (max-width: 799px) {
+  .hero-temu-popup-layout-desktop {
+    display: none;
+  }
+  
+  .hero-temu-popup-layout-mobile {
+    display: flex;
+  }
+}
+
+/* MÓVIL - Eliminar fondos blancos problemáticos */
+@media (max-width: 800px) {
+  /* Galería principal sin fondo blanco en móvil */
+  .hero-temu-galeria-sticky {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  
+  /* Contenedor de galería sin fondo */
+  .hero-temu-contenedor-galeria {
+    background: transparent !important;
+  }
+  
+  /* Imagen principal sin fondos blancos */
+  .hero-temu-imagen-principal {
+    background: transparent !important;
+  }
+  
+  /* Botón de favoritos con fondo semi-transparente en móvil */
+  .hero-temu-boton-favoritos {
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(10px);
+  }
+  
+  /* Miniaturas sin fondos blancos */
+  .hero-temu-miniatura-vertical {
+    background: transparent !important;
+  }
+  
+  /* Popup de galería - asegurar fondo oscuro */
+  .hero-temu-popup-galeria {
+    background: rgba(0, 0, 0, 0.95) !important;
+  }
+  
+  .hero-temu-popup-contenido {
+    background: transparent !important;
+  }
+  
+  .hero-temu-popup-imagen-container {
+    background: transparent !important;
+  }
+  
+  /* Miniaturas del popup con fondo semi-transparente */
+  .hero-temu-popup-miniatura {
+    background: rgba(240, 240, 240, 0.1) !important;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  }
+  
+  .hero-temu-popup-miniatura.activa {
+    background: rgba(14, 165, 233, 0.2) !important;
+    border-color: #0ea5e9 !important;
+  }
+  
+  /* Secciones de contenido con fondos más sutiles en móvil */
+  .hero-temu-seccion-descripcion {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(233, 236, 239, 0.1) !important;
+  }
+  
+  .hero-temu-especificaciones-tecnicas {
+    background: rgba(255, 255, 255, 0.02) !important;
+  }
+  
+  .hero-temu-beneficio-item {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(233, 236, 239, 0.1) !important;
+  }
+}
 
 /* TABLETS (hasta 1200px) */
 @media (max-width: 1200px) { 
@@ -1233,7 +1567,7 @@ html, body, #root {
     background: #f8f9fa;
     overflow-x: auto;
     overflow-y: hidden;
-    scroll-behavior: smooth;
+    scroll-behavior: auto; /* Cambio instantáneo sin animación */
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE/Edge */
@@ -1249,7 +1583,7 @@ html, body, #root {
     height: 80px;
     flex-shrink: 0;
     border-radius: 12px;
-    transition: all 0.3s ease;
+    /* Transición eliminada para cambio instantáneo en móvil */
     position: relative;
   }
   
@@ -1276,7 +1610,7 @@ html, body, #root {
     font-weight: 500;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    /* Transición eliminada para cambio instantáneo */
   }
   
   .hero-temu-miniaturas-verticales:hover + .hero-temu-slider-indicador,
@@ -1293,5 +1627,24 @@ html, body, #root {
   .hero-temu-imagen-pagos {
     max-width: 350px;
     border-radius: 8px;
+  }
+
+  /* Ajustes del modal para móvil */
+  .hero-temu-popup-miniatura {
+    width: 80px;
+    height: 80px;
+    border: 2px solid transparent;
+  }
+
+  .hero-temu-popup-cerrar {
+    width: 50px;
+    height: 50px;
+    padding: 12px;
+  }
+
+  .hero-temu-popup-miniaturas {
+    bottom: 70px;
+    gap: 12px;
+    padding: 12px 16px;
   }
 }

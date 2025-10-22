@@ -28,8 +28,8 @@ import DashboardAdmin from './paginas/admin/DashboardAdmin/DashboardAdmin'
 import DisposicionAdmin from './componentes/admin/DisposicionAdmin/DisposicionAdmin'
 import ListaProductos from './paginas/admin/productos/ListaProductos'
 import GestionProductos from './paginas/admin/GestionProductos/GestionProductos'
-import AgregarProducto from './paginas/admin/PaginaAgregarProductos/AgregarProducto'
-import CreadorDeProductos from './paginas/admin/PaginaCreadorProductos/CreadorDeProductos'
+
+import CreadorProductosPR from './paginas/admin/CreadorDeProductosPR/CreadorProductosPR'
 import EditarProducto from './paginas/admin/PaginaEditarProducto/EditarProducto'
 import Categorias from './paginas/admin/Categorias/Categorias'
 import Pedidos from './paginas/admin/Pedidos/Pedidos'
@@ -80,17 +80,11 @@ function App() {
             </DisposicionAdmin>
           </RutaAdmin>
         } />
-        <Route path="/admin/productos/agregar" element={
+
+        <Route path="/admin/productos/creador-pr" element={
           <RutaAdmin>
             <DisposicionAdmin>
-              <AgregarProducto />
-            </DisposicionAdmin>
-          </RutaAdmin>
-        } />
-        <Route path="/admin/productos/creador" element={
-          <RutaAdmin>
-            <DisposicionAdmin>
-              <CreadorDeProductos />
+              <CreadorProductosPR />
             </DisposicionAdmin>
           </RutaAdmin>
         } />

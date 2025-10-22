@@ -149,7 +149,11 @@
   background: #fff;
 }
 
-.overlay-item:hover { background: #fafafa; }
+.overlay-item:hover { 
+  background: transparent !important; 
+  transform: translateX(4px);
+  color: #f97316;
+}
 
 .overlay-item-chevron { margin-left: auto; color: #c0c0c0; }
 

@@ -1,20 +1,12 @@
 import React, { useState, useEffect } from 'react'
+import ImagenInteligente from '../../../../ui/ImagenInteligente'
 import './CTAFinalTemu.css'
-
-/**
- * CTAFinalTemu - CTA final con urgencia y escasez
- * 
- * Características:
- * - Timer de urgencia
- * - Contador de stock
- * - Botón principal destacado
- * - Diseño simple pero efectivo
- */
 
 const CTAFinalTemu = ({ 
   ctaData = null,
   mostrarTimer = true,
-  mostrarStock = true 
+  mostrarStock = true,
+  producto = null
 }) => {
   
   const [tiempoRestante, setTiempoRestante] = useState({
@@ -25,7 +17,6 @@ const CTAFinalTemu = ({
   
   const [stockRestante, setStockRestante] = useState(7)
   
-  // Datos por defecto
   const datosDefecto = {
     titulo: "¡ÚLTIMA OPORTUNIDAD!",
     subtitulo: "No dejes pasar esta oferta única. Miles ya han transformado su vida.",
@@ -40,7 +31,6 @@ const CTAFinalTemu = ({
 
   const datos = ctaData || datosDefecto
 
-  // Timer countdown
   useEffect(() => {
     if (!mostrarTimer) return
 
@@ -66,7 +56,6 @@ const CTAFinalTemu = ({
     return () => clearInterval(interval)
   }, [mostrarTimer])
 
-  // Simulador de stock decreciente
   useEffect(() => {
     if (!mostrarStock) return
 
@@ -75,7 +64,7 @@ const CTAFinalTemu = ({
         const nuevoStock = prev - Math.floor(Math.random() * 2)
         return nuevoStock > 2 ? nuevoStock : Math.floor(Math.random() * 5) + 3
       })
-    }, 30000) // Cada 30 segundos
+    }, 30000)
 
     return () => clearInterval(interval)
   }, [mostrarStock])
@@ -89,7 +78,6 @@ const CTAFinalTemu = ({
       
       <div className="cta-final-temu-contenedor">
         
-        {/* HEADER CON URGENCIA */}
         <div className="cta-final-temu-header">
           <div className="cta-final-temu-badge-urgencia">
             {datos.urgencia}
@@ -104,7 +92,6 @@ const CTAFinalTemu = ({
           </p>
         </div>
 
-        {/* TIMER DE CUENTA REGRESIVA */}
         {mostrarTimer && (
           <div className="cta-final-temu-timer">
             <div className="cta-final-temu-timer-titulo">
@@ -135,7 +122,6 @@ const CTAFinalTemu = ({
           </div>
         )}
 
-        {/* PRECIOS */}
         <div className="cta-final-temu-precios">
           <div className="cta-final-temu-descuento">
             {datos.descuento}
@@ -148,7 +134,17 @@ const CTAFinalTemu = ({
           </div>
         </div>
 
-        {/* STOCK LIMITADO */}
+        {producto?.imagenes?.imagen_cta_final && (
+          <div className="cta-final-temu-imagen-container">
+            <ImagenInteligente
+              src={producto.imagenes.imagen_cta_final}
+              alt="Llamada a la acción final"
+              className="cta-final-temu-imagen"
+              loading="lazy"
+            />
+          </div>
+        )}
+
         {mostrarStock && (
           <div className="cta-final-temu-stock">
             <div className="cta-final-temu-stock-texto">
@@ -163,14 +159,12 @@ const CTAFinalTemu = ({
           </div>
         )}
 
-        {/* BOTÓN PRINCIPAL */}
         <div className="cta-final-temu-boton-container">
           <button className="cta-final-temu-boton">
             {datos.botonTexto}
           </button>
         </div>
 
-        {/* GARANTÍAS FINALES */}
         <div className="cta-final-temu-garantias">
           <div className="cta-final-temu-garantia-item">
             {datos.garantia}

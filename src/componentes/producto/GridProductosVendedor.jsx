@@ -88,6 +88,7 @@ const GridProductosVendedor = ({
           )
         `, { count: 'exact' })
         .eq('activo', true)
+        .gt('stock', 0) // Solo productos con stock disponible en tienda pública
 
       // Aplicar filtros externos (desde PaginaTienda)
       if (filtrosExternos) {

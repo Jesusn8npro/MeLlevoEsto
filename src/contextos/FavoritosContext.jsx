@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react'
+import React, { createContext, useContext, useReducer, useEffect, useMemo, useCallback } from 'react'
 import { clienteSupabase } from '../configuracion/supabase'
 import { useAuth } from './ContextoAutenticacion'
 
@@ -169,7 +169,7 @@ const FavoritosProvider = ({ children }) => {
 
       console.log('🖼️ Cargando imágenes de productos asociados...')
       const { data: imagenes, error: errorImagenes } = await clienteSupabase
-        .from('tabla_producto_imagenes')
+        .from('producto_imagenes')
         .select('producto_id, imagen_principal, imagen_secundaria_1, imagen_secundaria_2, imagen_secundaria_3, imagen_secundaria_4')
         .in('producto_id', ids)
 
@@ -314,8 +314,45 @@ const FavoritosProvider = ({ children }) => {
     }
   }
 
+  // =====================================================
+  // FUNCIONES PARA LOCALSTORAGE (EXISTENTES)
+  // =====================================================
+
+  // Función para cargar favoritos desde localStorage
+  const cargarFavoritosDesdeStorage = useCallback(() => {
+    try {
+      dispatch({ type: TIPOS_ACCION.CARGAR_FAVORITOS_INICIO })
+      
+      const favoritosGuardados = localStorage.getItem('favoritos')
+      
+      if (favoritosGuardados) {
+        const favoritos = JSON.parse(favoritosGuardados)
+        dispatch({ 
+          type: TIPOS_ACCION.CARGAR_FAVORITOS_EXITO, 
+          payload: favoritos 
+        })
+      } else {
+        dispatch({ 
+          type: TIPOS_ACCION.CARGAR_FAVORITOS_EXITO, 
+          payload: [] 
+        })
+      }
+    } catch (error) {
+      console.warn('Error al cargar favoritos:', error)
+      dispatch({ 
+        type: TIPOS_ACCION.CARGAR_FAVORITOS_ERROR, 
+        payload: 'Error al cargar favoritos' 
+      })
+    }
+  }, [])
+
+  // Función para verificar si un producto está en favoritos
+  const esFavorito = useCallback((productoId) => {
+    return estado.favoritos.some(favorito => favorito.producto_id === productoId)
+  }, [estado.favoritos])
+
   // Función para sincronizar favoritos (cargar desde DB o localStorage)
-  const sincronizarFavoritos = async () => {
+  const sincronizarFavoritos = useCallback(async () => {
     console.log('🔄 FavoritosContext - sincronizarFavoritos iniciado')
     console.log('🔐 Sesión iniciada:', sesionInicializada)
     console.log('👤 Usuario:', usuario?.id)
@@ -347,47 +384,10 @@ const FavoritosProvider = ({ children }) => {
         payload: 'Error al sincronizar favoritos' 
       })
     }
-  }
-
-  // =====================================================
-  // FUNCIONES PARA LOCALSTORAGE (EXISTENTES)
-  // =====================================================
-
-  // Función para cargar favoritos desde localStorage
-  const cargarFavoritosDesdeStorage = () => {
-    try {
-      dispatch({ type: TIPOS_ACCION.CARGAR_FAVORITOS_INICIO })
-      
-      const favoritosGuardados = localStorage.getItem('favoritos')
-      
-      if (favoritosGuardados) {
-        const favoritos = JSON.parse(favoritosGuardados)
-        dispatch({ 
-          type: TIPOS_ACCION.CARGAR_FAVORITOS_EXITO, 
-          payload: favoritos 
-        })
-      } else {
-        dispatch({ 
-          type: TIPOS_ACCION.CARGAR_FAVORITOS_EXITO, 
-          payload: [] 
-        })
-      }
-    } catch (error) {
-      console.warn('Error al cargar favoritos:', error)
-      dispatch({ 
-        type: TIPOS_ACCION.CARGAR_FAVORITOS_ERROR, 
-        payload: 'Error al cargar favoritos' 
-      })
-    }
-  }
-
-  // Función para verificar si un producto está en favoritos
-  const esFavorito = (productoId) => {
-    return estado.favoritos.some(favorito => favorito.producto_id === productoId)
-  }
+  }, [sesionInicializada, usuario?.id, cargarFavoritosDesdeStorage])
 
   // Función para agregar un producto a favoritos (HÍBRIDA)
-  const agregarFavorito = async (producto) => {
+  const agregarFavorito = useCallback(async (producto) => {
     try {
       // Verificar si ya está en favoritos
       if (esFavorito(producto.id)) {
@@ -431,10 +431,10 @@ const FavoritosProvider = ({ children }) => {
       console.warn('Error al agregar favorito:', error)
       return false
     }
-  }
+  }, [esFavorito, sesionInicializada, usuario?.id, sincronizarFavoritos])
 
   // Función para quitar un producto de favoritos (HÍBRIDA)
-  const quitarFavorito = async (productoId) => {
+  const quitarFavorito = useCallback(async (productoId) => {
     try {
       if (sesionInicializada && usuario?.id) {
         // Usuario logueado: quitar de la base de datos
@@ -469,45 +469,45 @@ const FavoritosProvider = ({ children }) => {
       console.warn('Error al quitar favorito:', error)
       return false
     }
-  }
+  }, [sesionInicializada, usuario?.id, estado.favoritos, sincronizarFavoritos])
 
   // Función unificada para cargar favoritos
-  const cargarFavoritos = async () => {
+  const cargarFavoritos = useCallback(async () => {
     if (sesionInicializada && usuario?.id) {
       await sincronizarFavoritos()
     } else {
       cargarFavoritosDesdeStorage()
     }
-  }
+  }, [sesionInicializada, usuario?.id, sincronizarFavoritos, cargarFavoritosDesdeStorage])
 
   // Función para alternar favorito (agregar/quitar)
-  const alternarFavorito = async (producto) => {
+  const alternarFavorito = useCallback(async (producto) => {
     if (esFavorito(producto.id)) {
       return await quitarFavorito(producto.id)
     } else {
       return await agregarFavorito(producto)
     }
-  }
+  }, [esFavorito, quitarFavorito, agregarFavorito])
 
   // Función para limpiar todos los favoritos
-  const limpiarFavoritos = () => {
+  const limpiarFavoritos = useCallback(() => {
     dispatch({ type: TIPOS_ACCION.LIMPIAR_FAVORITOS })
     localStorage.removeItem('favoritos')
-  }
+  }, [])
 
   // Función para manejar el cierre de sesión
-  const manejarCierreSesion = () => {
+  const manejarCierreSesion = useCallback(() => {
     // Limpiar favoritos del estado
     dispatch({ type: TIPOS_ACCION.LIMPIAR_FAVORITOS })
     // No limpiar localStorage para mantener favoritos locales
-  }
+  }, [])
 
   // Función para obtener favoritos por página (para paginación)
-  const obtenerFavoritosPaginados = (pagina = 1, limite = 12) => {
+  const obtenerFavoritosPaginados = useCallback((pagina = 1, limite = 12) => {
     const inicio = (pagina - 1) * limite
     const fin = inicio + limite
     return estado.favoritos.slice(inicio, fin)
-  }
+  }, [estado.favoritos])
 
   // Cargar favoritos al inicializar o cuando cambie el estado de sesión
   useEffect(() => {
@@ -532,8 +532,8 @@ const FavoritosProvider = ({ children }) => {
     }
   }, [estado.favoritos, sesionInicializada])
 
-  // Valor del contexto
-  const valor = {
+  // Valor del contexto optimizado con useMemo
+  const valor = useMemo(() => ({
     // Estado
     favoritos: estado.favoritos,
     cargando: estado.cargando,
@@ -551,7 +551,7 @@ const FavoritosProvider = ({ children }) => {
     cargarFavoritos,
     manejarCierreSesion,
     sincronizarFavoritos
-  }
+  }), [estado, esFavorito, agregarFavorito, quitarFavorito, alternarFavorito, limpiarFavoritos, obtenerFavoritosPaginados, cargarFavoritosDesdeStorage, cargarFavoritos, manejarCierreSesion, sincronizarFavoritos])
 
   return (
     <FavoritosContext.Provider value={valor}>

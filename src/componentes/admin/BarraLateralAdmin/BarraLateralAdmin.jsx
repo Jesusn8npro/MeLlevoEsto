@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useBarraLateral } from '../../../contextos/ContextoBarraLateral'
 import {
@@ -26,11 +26,11 @@ const elementosNavegacion = [
   },
   {
     icono: <BoxCubeIcon />,
-    nombre: 'Ecommerce',
+    nombre: 'Tienda',
     subItems: [
       { nombre: 'Productos', ruta: '/admin/productos', pro: false },
-      { nombre: 'Creador de productos', ruta: '/admin/productos/creador', pro: false },
-      { nombre: 'Agregar Producto', ruta: '/admin/productos/agregar', pro: false },
+      { nombre: 'Gestión de Productos', ruta: '/admin/gestion-productos', pro: false },
+      { nombre: 'Crear productos', ruta: '/admin/productos/creador-pr', pro: false },
       { nombre: 'Categorías', ruta: '/admin/categorias', pro: false },
       { nombre: 'Pedidos', ruta: '/admin/pedidos', pro: false },
       { nombre: 'Inventario', ruta: '/admin/inventario', pro: false },
@@ -46,12 +46,12 @@ const elementosNavegacion = [
   },
   {
     icono: <UserCircleIcon />,
-    nombre: 'USUARIOS',
+    nombre: 'Usuarios',
     ruta: '/admin/usuarios',
   },
   {
     icono: <ChatIcon />,
-    nombre: 'CHATS',
+    nombre: 'Manejo de Leads',
     ruta: '/admin/chats',
   },
   {
@@ -104,16 +104,16 @@ const BarraLateralAdmin = () => {
   const [alturaSubmenu, setAlturaSubmenu] = useState({})
   const refsSubmenu = useRef({})
 
+  // Memoizar la función estaActivo para evitar re-renders innecesarios
   const estaActivo = useCallback(
     (ruta) => ubicacion.pathname === ruta,
     [ubicacion.pathname]
   )
 
-  useEffect(() => {
-    // No forzar la apertura basada en ruta si el usuario ya abrió un submenu manualmente.
-    if (submenuAbierto !== null) return
+  // Optimizar la detección de submenu activo con useMemo
+  const submenuActivoDetectado = useMemo(() => {
+    if (submenuAbierto !== null) return null
 
-    let encontrado = false
     const tipos = ['principal', 'otros']
     for (const tipoMenu of tipos) {
       const items = tipoMenu === 'principal' ? elementosNavegacion : otrosElementos
@@ -122,35 +122,45 @@ const BarraLateralAdmin = () => {
         if (nav.subItems) {
           for (const subItem of nav.subItems) {
             if (estaActivo(subItem.ruta)) {
-              alternarSubmenu(index, tipoMenu)
-              encontrado = true
-              break
+              return { index, tipoMenu }
             }
           }
         }
-        if (encontrado) break
       }
-      if (encontrado) break
     }
-  }, [ubicacion.pathname, estaActivo, alternarSubmenu, submenuAbierto])
+    return null
+  }, [ubicacion.pathname, estaActivo, submenuAbierto])
 
+  // Efecto optimizado para abrir submenu solo cuando sea necesario
+  useEffect(() => {
+    if (submenuActivoDetectado && submenuAbierto === null) {
+      alternarSubmenu(submenuActivoDetectado.index, submenuActivoDetectado.tipoMenu)
+    }
+  }, [submenuActivoDetectado, alternarSubmenu, submenuAbierto])
+
+  // Efecto optimizado para calcular alturas de submenu
   useEffect(() => {
     if (submenuAbierto !== null) {
       const clave = `${submenuAbierto.tipo}-${submenuAbierto.index}`
-      if (refsSubmenu.current[clave]) {
-        setAlturaSubmenu((prevAlturas) => ({
-          ...prevAlturas,
-          [clave]: refsSubmenu.current[clave]?.scrollHeight || 0,
-        }))
+      const elemento = refsSubmenu.current[clave]
+      if (elemento) {
+        // Usar requestAnimationFrame para optimizar el cálculo de altura
+        requestAnimationFrame(() => {
+          setAlturaSubmenu((prevAlturas) => ({
+            ...prevAlturas,
+            [clave]: elemento.scrollHeight || 0,
+          }))
+        })
       }
     }
   }, [submenuAbierto])
 
-  const manejarAlternarSubmenu = (index, tipoMenu) => {
+  const manejarAlternarSubmenu = useCallback((index, tipoMenu) => {
     alternarSubmenu(index, tipoMenu)
-  }
+  }, [alternarSubmenu])
 
-  const renderizarElementosMenu = (items, tipoMenu) => (
+  // Memoizar la función de renderizado para evitar re-renders innecesarios
+  const renderizarElementosMenu = useCallback((items, tipoMenu) => (
     <ul className="barra-lateral-menu-lista">
       {items.map((nav, index) => (
         <li key={nav.nombre}>
@@ -223,7 +233,7 @@ const BarraLateralAdmin = () => {
               style={{
                 height:
                   submenuAbierto && submenuAbierto.tipo === tipoMenu && submenuAbierto.index === index
-                    ? `${(refsSubmenu.current[`${tipoMenu}-${index}`]?.scrollHeight || 0)}px`
+                    ? `${alturaSubmenu[`${tipoMenu}-${index}`] || 0}px`
                     : '0px',
               }}
             >
@@ -248,7 +258,7 @@ const BarraLateralAdmin = () => {
                                 : 'barra-lateral-submenu-insignia-inactiva'
                             }`}
                           >
-                            nuevo
+                            NEW
                           </span>
                         )}
                         {subItem.pro && (
@@ -259,7 +269,7 @@ const BarraLateralAdmin = () => {
                                 : 'barra-lateral-submenu-insignia-inactiva'
                             }`}
                           >
-                            pro
+                            PRO
                           </span>
                         )}
                       </span>
@@ -272,9 +282,10 @@ const BarraLateralAdmin = () => {
         </li>
       ))}
     </ul>
-  )
+  ), [estaExpandida, estaEnHover, movilAbierto, submenuAbierto, estaActivo, manejarAlternarSubmenu, alturaSubmenu])
 
-  return (
+  // Memoizar el componente completo para evitar re-renders innecesarios
+  return useMemo(() => (
     <aside
       className={`barra-lateral-admin ${
         estaExpandida || movilAbierto
@@ -340,7 +351,7 @@ const BarraLateralAdmin = () => {
         )}
       </div>
     </aside>
-  )
+  ), [estaExpandida, movilAbierto, estaEnHover, setEstaEnHover, renderizarElementosMenu])
 }
 
 export default BarraLateralAdmin

@@ -2,18 +2,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import ImagenInteligente from '../../../../../componentes/ui/ImagenInteligente'
 import './TestimoniosTemu.css'
 
-/**
- * TestimoniosTemu - Sección de testimonios HIJUEPUTAMENTE PODEROSA
- * 
- * Características:
- * - Grid masonry de testimonios con fotos reales
- * - Animaciones ultra vendedoras
- * - Contador de clientes satisfechos
- * - Efectos de hover malparidos
- * - Preparado para Supabase
- * - Todo en español y súper convincente
- */
-
 const TestimoniosTemu = ({ 
   testimoniosData = null,
   mostrarAnimaciones = true,
@@ -26,7 +14,6 @@ const TestimoniosTemu = ({
   const [mostrarTodos, setMostrarTodos] = useState(false)
   const sectionRef = useRef(null)
   
-  // Datos ficticios ULTRA VENDEDORES
   const testimoniosFicticios = {
     titulo: "¡+15.847 CLIENTES YA TRANSFORMARON SU VIDA!",
     subtitulo: "Lee lo que dicen nuestros clientes reales sobre su experiencia",
@@ -55,7 +42,7 @@ const TestimoniosTemu = ({
         ubicacion: "Medellín, Colombia",
         rating: 5,
         fecha: "Hace 1 semana",
-        comentario: "Hermano, esto es una BESTIALIDAD. Llevo 2 semanas usándolo y la diferencia es BRUTAL. Mi esposa dice que parezco otra persona. ¡Gracias!",
+        comentario: "Excelente producto. Llevo 2 semanas usándolo y la diferencia es notable. Mi esposa dice que parezco otra persona. ¡Gracias!",
         imagen: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
         imagenProducto: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop",
         verificado: true,
@@ -68,7 +55,7 @@ const TestimoniosTemu = ({
         ubicacion: "Cali, Colombia",
         rating: 5,
         fecha: "Hace 3 días",
-        comentario: "¡DIOS MÍO! Esto cambió mi vida completamente. Antes sufría todos los días, ahora soy otra persona. Lo recomiendo con los ojos cerrados.",
+        comentario: "¡Increíble! Esto cambió mi vida completamente. Antes sufría todos los días, ahora soy otra persona. Lo recomiendo completamente.",
         imagen: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
         imagenProducto: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=300&h=200&fit=crop",
         verificado: true,
@@ -81,7 +68,7 @@ const TestimoniosTemu = ({
         ubicacion: "Barranquilla, Colombia",
         rating: 5,
         fecha: "Hace 5 días",
-        comentario: "Marica, esto es LO MÁXIMO. Pensé que era mentira pero NO. Funciona de verdad. Ya pedí 3 más para mi familia. ¡BRUTAL!",
+        comentario: "Excelente producto. Pensé que era mentira pero funciona de verdad. Ya pedí 3 más para mi familia. ¡Recomendado!",
         imagen: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
         imagenProducto: "https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=300&h=200&fit=crop",
         verificado: true,
@@ -107,7 +94,7 @@ const TestimoniosTemu = ({
         ubicacion: "Cartagena, Colombia",
         rating: 5,
         fecha: "Hace 4 días",
-        comentario: "Esto es una CHIMBA total. No creía en estos productos pero este SÍ FUNCIONA. Ya llevo 1 mes y los resultados son IMPRESIONANTES.",
+        comentario: "Excelente producto. No creía en estos productos pero este sí funciona. Ya llevo 1 mes y los resultados son impresionantes.",
         imagen: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
         imagenProducto: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop",
         verificado: true,
@@ -119,7 +106,6 @@ const TestimoniosTemu = ({
 
   const datos = testimoniosData || testimoniosFicticios
 
-  // Contador animado de clientes
   useEffect(() => {
     if (!mostrarContador) return
     
@@ -141,7 +127,6 @@ const TestimoniosTemu = ({
     return () => clearInterval(timer)
   }, [mostrarContador, datos.estadisticas.totalClientes])
 
-  // Animaciones al hacer scroll
   useEffect(() => {
     if (!mostrarAnimaciones) return
 
@@ -149,7 +134,7 @@ const TestimoniosTemu = ({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('testimonios-temu-item-visible')
+            entry.target.classList.add('temu-testimonials-ultra-item-visible')
           }
         })
       },
@@ -159,7 +144,7 @@ const TestimoniosTemu = ({
       }
     )
 
-    const items = sectionRef.current?.querySelectorAll('.testimonios-temu-testimonio')
+    const items = sectionRef.current?.querySelectorAll('.temu-testimonials-ultra-card')
     items?.forEach((item) => observer.observe(item))
 
     return () => observer.disconnect()
@@ -181,140 +166,131 @@ const TestimoniosTemu = ({
     setMostrarTodos(!mostrarTodos)
   }
 
-  // Mapear imágenes desde la nueva tabla producto_imagenes
-  const testimoniosConImagenes = datos.testimonios.map((testimonio, index) => ({
+  const testimoniosConImagenes = datos.testimonios.slice(0, 3).map((testimonio, index) => ({
     ...testimonio,
     imagen: producto?.imagenes?.[`imagen_testimonio_persona_${index + 1}`] || testimonio.imagen,
     imagenProducto: producto?.imagenes?.[`imagen_testimonio_producto_${index + 1}`] || testimonio.imagenProducto
   }))
 
-  // Mostrar solo los primeros 3 testimonios inicialmente
   const testimoniosAMostrar = mostrarTodos ? testimoniosConImagenes : testimoniosConImagenes.slice(0, 3)
 
   return (
-    <section className="testimonios-temu-seccion" ref={sectionRef}>
+    <section className="temu-testimonials-ultra-section" ref={sectionRef}>
       
-      {/* HEADER ULTRA VENDEDOR */}
-      <div className="testimonios-temu-header">
-        <div className="testimonios-temu-badge-viral">
+      <div className="temu-testimonials-ultra-header">
+        <div className="temu-testimonials-ultra-badge-viral">
           🔥 VIRAL EN REDES SOCIALES 🔥
         </div>
         
-        <h2 className="testimonios-temu-titulo">
+        <h2 className="temu-testimonials-ultra-titulo">
           {datos.titulo}
         </h2>
         
-        <p className="testimonios-temu-subtitulo">
+        <p className="temu-testimonials-ultra-subtitulo">
           {datos.subtitulo}
         </p>
 
-        {/* ESTADÍSTICAS IMPACTANTES */}
-        <div className="testimonios-temu-estadisticas">
-          <div className="testimonios-temu-stat">
-            <div className="testimonios-temu-stat-numero">
+        <div className="temu-testimonials-ultra-estadisticas">
+          <div className="temu-testimonials-ultra-stat">
+            <div className="temu-testimonials-ultra-stat-numero">
               +{formatearNumero(contadorClientes)}
             </div>
-            <div className="testimonios-temu-stat-texto">
+            <div className="temu-testimonials-ultra-stat-texto">
               Clientes Satisfechos
             </div>
           </div>
           
-          <div className="testimonios-temu-stat">
-            <div className="testimonios-temu-stat-numero">
+          <div className="temu-testimonials-ultra-stat">
+            <div className="temu-testimonials-ultra-stat-numero">
               {datos.estadisticas.satisfaccion}⭐
             </div>
-            <div className="testimonios-temu-stat-texto">
+            <div className="temu-testimonials-ultra-stat-texto">
               Calificación Promedio
             </div>
           </div>
           
-          <div className="testimonios-temu-stat">
-            <div className="testimonios-temu-stat-numero">
+          <div className="temu-testimonials-ultra-stat">
+            <div className="temu-testimonials-ultra-stat-numero">
               {datos.estadisticas.recomiendan}%
             </div>
-            <div className="testimonios-temu-stat-texto">
+            <div className="temu-testimonials-ultra-stat-texto">
               Lo Recomiendan
             </div>
           </div>
         </div>
       </div>
 
-      {/* GRID DE TESTIMONIOS MASONRY */}
-      <div className="testimonios-temu-grid">
+      <div className="temu-testimonials-ultra-grid">
         {testimoniosAMostrar.map((testimonio, index) => (
           <div 
             key={testimonio.id}
-            className="testimonios-temu-testimonio"
+            className="temu-testimonials-ultra-card"
             style={{ animationDelay: `${index * 0.1}s` }}
             onClick={() => abrirTestimonio(testimonio)}
           >
             
-            {/* HEADER DEL TESTIMONIO */}
-            <div className="testimonios-temu-testimonio-header">
-              <div className="testimonios-temu-avatar-container">
+            <div className="temu-testimonials-ultra-card-header">
+              <div className="temu-testimonials-ultra-avatar-wrapper">
                 <ImagenInteligente 
                   src={testimonio.imagen} 
                   alt={testimonio.nombre}
-                  className="testimonios-temu-avatar"
+                  className="temu-testimonials-ultra-person-avatar"
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
                 {testimonio.verificado && (
-                  <div className="testimonios-temu-verificado">
+                  <div className="temu-testimonials-ultra-verified-badge">
                     ✓
                   </div>
                 )}
               </div>
               
-              <div className="testimonios-temu-info">
-                <h4 className="testimonios-temu-nombre">
+              <div className="temu-testimonials-ultra-person-info">
+                <h4 className="temu-testimonials-ultra-person-name">
                   {testimonio.nombre}
                 </h4>
-                <p className="testimonios-temu-ubicacion">
+                <p className="temu-testimonials-ultra-person-location">
                   📍 {testimonio.ubicacion}
                 </p>
-                <div className="testimonios-temu-fecha">
+                <div className="temu-testimonials-ultra-person-date">
                   {testimonio.fecha}
                 </div>
               </div>
 
-              <div className="testimonios-temu-rating">
+              <div className="temu-testimonials-ultra-rating-stars">
                 {[...Array(testimonio.rating)].map((_, i) => (
-                  <span key={i} className="testimonios-temu-estrella">⭐</span>
+                  <span key={i} className="temu-testimonials-ultra-star">⭐</span>
                 ))}
               </div>
             </div>
 
-            {/* IMAGEN DEL PRODUCTO EN USO */}
             {testimonio.imagenProducto && (
-              <div className="testimonios-temu-imagen-producto">
+              <div className="temu-testimonials-ultra-product-image-container">
                 <ImagenInteligente 
                   src={testimonio.imagenProducto} 
                   alt="Cliente usando el producto"
-                  className="testimonios-temu-producto-img"
+                  className="temu-testimonials-ultra-product-image"
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
-                <div className="testimonios-temu-producto-overlay">
-                  <span className="testimonios-temu-zoom-icon">🔍</span>
+                <div className="temu-testimonials-ultra-product-overlay">
+                  <span className="temu-testimonials-ultra-zoom-icon">🔍</span>
                 </div>
               </div>
             )}
 
-            {/* COMENTARIO */}
-            <div className="testimonios-temu-comentario">
-              <p className="testimonios-temu-texto">
-                "{testimonio.comentario}"
+            <div className="temu-testimonials-ultra-comment-section">
+              <p className="temu-testimonials-ultra-comment-text">
+                {testimonio.comentario}
               </p>
             </div>
 
-            {/* FOOTER CON BADGES */}
-            <div className="testimonios-temu-footer">
+            <div className="temu-testimonials-ultra-card-footer">
               {testimonio.compraVerificada && (
-                <div className="testimonios-temu-badge">
+                <div className="temu-testimonials-ultra-verified-purchase">
                   ✅ Compra Verificada
                 </div>
               )}
               
-              <div className="testimonios-temu-likes">
+              <div className="temu-testimonials-ultra-likes-count">
                 ❤️ {testimonio.likes} personas encontraron esto útil
               </div>
             </div>
@@ -323,16 +299,15 @@ const TestimoniosTemu = ({
         ))}
       </div>
 
-      {/* BOTÓN VER MÁS TESTIMONIOS */}
-        {testimoniosConImagenes.length > 3 && (
-        <div className="testimonios-temu-ver-mas">
+      {testimoniosConImagenes.length > 3 && (
+        <div className="temu-testimonials-ultra-show-more">
           <button 
-            className="testimonios-temu-ver-mas-boton"
+            className="temu-testimonials-ultra-show-more-button"
             onClick={toggleMostrarTodos}
           >
             {mostrarTodos ? '👆 Ver Menos Testimonios' : '👇 Ver Más Testimonios'}
           </button>
-          <p className="testimonios-temu-ver-mas-texto">
+          <p className="temu-testimonials-ultra-show-more-text">
               {mostrarTodos 
                 ? `Mostrando todos los ${testimoniosConImagenes.length} testimonios`
                 : `Mostrando 3 de ${testimoniosConImagenes.length} testimonios`
@@ -341,44 +316,27 @@ const TestimoniosTemu = ({
         </div>
       )}
 
-      {/* CTA FINAL MALPARIDO */}
-      <div className="testimonios-temu-cta-final">
-        <h3 className="testimonios-temu-cta-titulo">
-          ¡ÚNETE A LOS MILES DE CLIENTES SATISFECHOS!
-        </h3>
-        <p className="testimonios-temu-cta-texto">
-          No esperes más. Tu transformación comienza HOY.
-        </p>
-        <button className="testimonios-temu-cta-boton">
-          🚀 ¡QUIERO MI TRANSFORMACIÓN AHORA!
-        </button>
-        <div className="testimonios-temu-cta-garantia">
-          🛡️ Garantía de satisfacción del 100% o te devolvemos tu dinero
-        </div>
-      </div>
-
-      {/* MODAL PARA VER TESTIMONIO COMPLETO */}
       {testimonioActivo && (
-        <div className="testimonios-temu-modal" onClick={cerrarTestimonio}>
-          <div className="testimonios-temu-modal-contenido" onClick={(e) => e.stopPropagation()}>
+        <div className="temu-testimonials-ultra-modal" onClick={cerrarTestimonio}>
+          <div className="temu-testimonials-ultra-modal-content" onClick={(e) => e.stopPropagation()}>
             <button 
-              className="testimonios-temu-modal-cerrar"
+              className="temu-testimonials-ultra-modal-close"
               onClick={cerrarTestimonio}
             >
               ✕
             </button>
             
-            <div className="testimonios-temu-modal-header">
+            <div className="temu-testimonials-ultra-modal-header">
               <ImagenInteligente 
                 src={testimonioActivo.imagen} 
                 alt={testimonioActivo.nombre}
-                className="testimonios-temu-modal-avatar"
+                className="temu-testimonials-ultra-modal-avatar"
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
               <div>
                 <h3>{testimonioActivo.nombre}</h3>
                 <p>{testimonioActivo.ubicacion}</p>
-                <div className="testimonios-temu-modal-rating">
+                <div className="temu-testimonials-ultra-modal-rating">
                   {[...Array(testimonioActivo.rating)].map((_, i) => (
                     <span key={i}>⭐</span>
                   ))}
@@ -390,12 +348,12 @@ const TestimoniosTemu = ({
               <ImagenInteligente 
                 src={testimonioActivo.imagenProducto} 
                 alt="Producto en uso"
-                className="testimonios-temu-modal-imagen"
+                className="temu-testimonials-ultra-modal-image"
                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
               />
             )}
 
-            <p className="testimonios-temu-modal-comentario">
+            <p className="temu-testimonials-ultra-modal-comment">
               "{testimonioActivo.comentario}"
             </p>
           </div>

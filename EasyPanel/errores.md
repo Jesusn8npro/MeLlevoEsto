@@ -1,11 +1,12 @@
-Commit: Force redeploy: Actualizar nixpacks.toml para forzar nuevo despliegue en EasyPanel
-
-- Agregar comentario para forzar redespliegue
-- Asegurar que EasyPanel use las correcciones del servidor (serve en lugar de vite preview)
-- Resolver problema persistente 'Service not reachable' 
+Commit: Merge branch 'main' of https://github.com/Jesusn8npro/MeLlevoEsto
+# Please enter a commit message to explain why this merge is necessary,
+# especially if it merges an updated upstream into a topic branch.
+#
+# Lines starting with '#' will be ignored, and an empty message aborts
+# the commit. 
 ##########################################
 ### Download Github Archive Started...
-### Tue, 30 Sep 2025 16:53:39 GMT
+### Fri, 17 Oct 2025 05:22:25 GMT
 ##########################################
 
 
@@ -42,22 +43,22 @@ Saved output to:
 #4 DONE 0.0s
 
 #5 [internal] load build context
-#5 transferring context: 12.18MB 0.2s done
-#5 DONE 0.2s
+#5 transferring context: 14.68MB 0.3s done
+#5 DONE 0.3s
 
-#6 [stage-0  2/15] WORKDIR /app/
+#6 [stage-0  3/15] COPY .nixpacks/nixpkgs-ba913eda2df8eb72147259189d55932012df6301.nix .nixpacks/nixpkgs-ba913eda2df8eb72147259189d55932012df6301.nix
 #6 CACHED
 
-#7 [stage-0  3/15] COPY .nixpacks/nixpkgs-ba913eda2df8eb72147259189d55932012df6301.nix .nixpacks/nixpkgs-ba913eda2df8eb72147259189d55932012df6301.nix
+#7 [stage-0  4/15] RUN nix-env -if .nixpacks/nixpkgs-ba913eda2df8eb72147259189d55932012df6301.nix && nix-collect-garbage -d
 #7 CACHED
 
-#8 [stage-0  4/15] RUN nix-env -if .nixpacks/nixpkgs-ba913eda2df8eb72147259189d55932012df6301.nix && nix-collect-garbage -d
+#8 [stage-0  5/15] COPY .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix
 #8 CACHED
 
-#9 [stage-0  5/15] COPY .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix
+#9 [stage-0  6/15] RUN nix-env -if .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix && nix-collect-garbage -d
 #9 CACHED
 
-#10 [stage-0  6/15] RUN nix-env -if .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix && nix-collect-garbage -d
+#10 [stage-0  2/15] WORKDIR /app/
 #10 CACHED
 
 #11 [stage-0  7/15] COPY .nixpacks/assets /assets/
@@ -67,80 +68,88 @@ Saved output to:
 #12 DONE 0.2s
 
 #13 [stage-0  9/15] RUN  caddy fmt --overwrite /assets/Caddyfile
-#13 DONE 0.4s
+#13 DONE 0.6s
 
 #14 [stage-0 10/15] COPY . /app/.
-#14 DONE 0.3s
+#14 DONE 0.4s
 
 #15 [stage-0 11/15] RUN --mount=type=cache,id=RYu5ajzqtA-/root/npm,target=/root/.npm npm install
-#15 6.844 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
-#15 6.992 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
-#15 6.998 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
-#15 7.100 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
-#15 7.111 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
-#15 7.253 npm warn deprecated @supabase/auth-helpers-react@0.4.2: This package is now deprecated - please use the @supabase/ssr package instead.
-#15 9.629 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
-#15 12.33 
-#15 12.33 added 462 packages, and audited 463 packages in 12s
-#15 12.33 
-#15 12.33 163 packages are looking for funding
-#15 12.33   run `npm fund` for details
-#15 12.34 
-#15 12.34 2 moderate severity vulnerabilities
-#15 12.34 
-#15 12.34 To address all issues (including breaking changes), run:
-#15 12.34   npm audit fix --force
-#15 12.34 
-#15 12.34 Run `npm audit` for details.
-#15 DONE 12.5s
+#15 3.136 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#15 3.315 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+#15 3.328 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#15 3.449 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#15 3.460 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+#15 3.611 npm warn deprecated @supabase/auth-helpers-react@0.4.2: This package is now deprecated - please use the @supabase/ssr package instead.
+#15 5.303 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+#15 6.609 
+#15 6.609 added 462 packages, and audited 463 packages in 6s
+#15 6.610 
+#15 6.610 163 packages are looking for funding
+#15 6.610   run `npm fund` for details
+#15 6.619 
+#15 6.619 2 moderate severity vulnerabilities
+#15 6.619 
+#15 6.619 To address all issues (including breaking changes), run:
+#15 6.619   npm audit fix --force
+#15 6.619 
+#15 6.619 Run `npm audit` for details.
+#15 DONE 6.9s
 
 #16 [stage-0 12/15] COPY . /app/.
-#16 DONE 0.6s
+#16 DONE 0.4s
 
 #17 [stage-0 13/15] RUN --mount=type=cache,id=RYu5ajzqtA-node_modules/cache,target=/app/node_modules/.cache npm run build
-#17 0.901 
-#17 0.901 > me-llevo-esto@0.0.0 build
-#17 0.901 > vite build
-#17 0.901 
-#17 1.240 vite v4.5.14 building for production...
-#17 1.284 transforming...
-#17 8.210 ✓ 1432 modules transformed.
-#17 9.223 rendering chunks...
-#17 10.10 computing gzip size...
-#17 10.14 dist/index.html                   0.72 kB │ gzip:   0.48 kB
-#17 10.14 dist/assets/index-c5bbd36f.css  303.18 kB │ gzip:  48.14 kB
-#17 10.14 dist/assets/index-95427436.js   692.40 kB │ gzip: 181.91 kB │ map: 2,253.05 kB
-#17 10.14 
-#17 10.14 (!) Some chunks are larger than 500 kBs after minification. Consider:
-#17 10.14 - Using dynamic import() to code-split the application
-#17 10.14 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
-#17 10.14 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
-#17 10.14 ✓ built in 8.90s
-#17 10.24 npm notice
-#17 10.24 npm notice New major version of npm available! 10.8.2 -> 11.6.1
-#17 10.24 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.1
-#17 10.24 npm notice To update run: npm install -g npm@11.6.1
-#17 10.24 npm notice
-#17 DONE 10.3s
-
-#18 [stage-0 14/15] RUN printf '\nPATH=/app/node_modules/.bin:$PATH' >> /root/.profile
-#18 DONE 0.1s
-
-#19 [stage-0 15/15] COPY . /app
-#19 DONE 0.5s
-
-#20 exporting to image
-#20 exporting layers
-#20 exporting layers 10.8s done
-#20 writing image sha256:016a8c40b1850543e2489e4ec043f7c941f8ac4bf8496e9ff18961b82baf9126 done
-#20 naming to docker.io/easypanel/mellevoesto/me_llevo_esto done
-#20 DONE 10.8s
+#17 1.064 
+#17 1.064 > me-llevo-esto@0.0.0 build
+#17 1.064 > vite build
+#17 1.064 
+#17 1.363 vite v4.5.14 building for production...
+#17 1.407 transforming...
+#17 4.280 ✓ 144 modules transformed.
+#17 4.280 ✓ built in 2.92s
+#17 4.281 Could not resolve "./formularioproducto.css" from "src/componentes/admin/ecommerce/PaginaCrearProductosComponentes/FormularioProducto.jsx"
+#17 4.281 file: /app/src/componentes/admin/ecommerce/PaginaCrearProductosComponentes/FormularioProducto.jsx
+#17 4.283 error during build:
+#17 4.283 RollupError: Could not resolve "./formularioproducto.css" from "src/componentes/admin/ecommerce/PaginaCrearProductosComponentes/FormularioProducto.jsx"
+#17 4.283     at error (file:///app/node_modules/rollup/dist/es/shared/node-entry.js:2287:30)
+#17 4.283     at ModuleLoader.handleInvalidResolvedId (file:///app/node_modules/rollup/dist/es/shared/node-entry.js:24860:24)
+#17 4.283     at file:///app/node_modules/rollup/dist/es/shared/node-entry.js:24822:26
+#17 4.316 npm notice
+#17 4.316 npm notice New major version of npm available! 10.8.2 -> 11.6.2
+#17 4.316 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.2
+#17 4.316 npm notice To update run: npm install -g npm@11.6.2
+#17 4.316 npm notice
+#17 ERROR: process "/bin/bash -ol pipefail -c npm run build" did not complete successfully: exit code: 1
+------
+ > [stage-0 13/15] RUN --mount=type=cache,id=RYu5ajzqtA-node_modules/cache,target=/app/node_modules/.cache npm run build:
+4.283 error during build:
+4.283 RollupError: Could not resolve "./formularioproducto.css" from "src/componentes/admin/ecommerce/PaginaCrearProductosComponentes/FormularioProducto.jsx"
+4.283     at error (file:///app/node_modules/rollup/dist/es/shared/node-entry.js:2287:30)
+4.283     at ModuleLoader.handleInvalidResolvedId (file:///app/node_modules/rollup/dist/es/shared/node-entry.js:24860:24)
+4.283     at file:///app/node_modules/rollup/dist/es/shared/node-entry.js:24822:26
+4.316 npm notice
+4.316 npm notice New major version of npm available! 10.8.2 -> 11.6.2
+4.316 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.2
+4.316 npm notice To update run: npm install -g npm@11.6.2
+4.316 npm notice
+------
 
  3 warnings found (use docker --debug to expand):
- - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ARG "VITE_SUPABASE_ANON_KEY") (line 13)
  - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "VITE_SUPABASE_ANON_KEY") (line 14)
  - UndefinedVar: Usage of undefined variable '$NIXPACKS_PATH' (line 27)
+ - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ARG "VITE_SUPABASE_ANON_KEY") (line 13)
+Dockerfile:33
+--------------------
+  31 |     # build phase
+  32 |     COPY . /app/.
+  33 | >>> RUN --mount=type=cache,id=RYu5ajzqtA-node_modules/cache,target=/app/node_modules/.cache npm run build
+  34 |     
+  35 |     
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/bash -ol pipefail -c npm run build" did not complete successfully: exit code: 1
 ##########################################
-### Success
-### Tue, 30 Sep 2025 16:54:20 GMT
+### Error
+### Fri, 17 Oct 2025 05:22:41 GMT
 ##########################################
+
+Command failed with exit code 1: docker buildx build --network host -f /etc/easypanel/projects/mellevoesto/me_llevo_esto/code/.nixpacks/Dockerfile -t easypanel/mellevoesto/me_llevo_esto --label 'keep=true' --build-arg 'VITE_SUPABASE_URL=https://rrmafdbxvimmvcerwguy.supabase.co' --build-arg 'VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJybWFmZGJ4dmltbXZjZXJ3Z3V5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0MzYwNDcsImV4cCI6MjA3MjAxMjA0N30.DXx7sOXstXJ_Q9PMrTNQL0ox_LjQGF6i2lU1HrGSVXk' --build-arg 'VITE_URL_BASE=https://mellevoesto-me-llevo-esto.lnrubg.easypanel.host/' --build-arg 'VITE_MODO_DESARROLLO=false' --build-arg 'VITE_DEBUG=false' --build-arg 'GIT_SHA=e59ffb398891fea013a4b08c38756b6ceb5f16c0' /etc/easypanel/projects/mellevoesto/me_llevo_esto/code/

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useMemo, useCallback } from 'react'
 
 // Crear el contexto
 const ChatContext = createContext()
@@ -16,17 +16,19 @@ export const useChat = () => {
 export const ChatProvider = ({ children }) => {
   const [chatAbierto, setChatAbierto] = useState(false)
 
-  const abrirChat = () => setChatAbierto(true)
-  const cerrarChat = () => setChatAbierto(false)
-  const alternarChat = () => setChatAbierto(!chatAbierto)
+  // Memoizar funciones para evitar re-renders innecesarios
+  const abrirChat = useCallback(() => setChatAbierto(true), [])
+  const cerrarChat = useCallback(() => setChatAbierto(false), [])
+  const alternarChat = useCallback(() => setChatAbierto(!chatAbierto), [chatAbierto])
 
-  const value = {
+  // Memoizar el valor del contexto
+  const value = useMemo(() => ({
     chatAbierto,
     abrirChat,
     cerrarChat,
     alternarChat,
     setChatAbierto
-  }
+  }), [chatAbierto, abrirChat, cerrarChat, alternarChat])
 
   return (
     <ChatContext.Provider value={value}>

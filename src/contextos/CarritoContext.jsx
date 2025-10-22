@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react'
+import React, { createContext, useContext, useReducer, useEffect, useMemo, useCallback } from 'react'
 import { clienteSupabase } from '../configuracion/supabase'
 import { useAuth } from './ContextoAutenticacion'
 
@@ -276,8 +276,8 @@ export const CarritoProvider = ({ children }) => {
     }
   }
 
-  // Función para agregar producto al carrito
-  const agregarAlCarrito = async (producto, cantidad = 1, variantes = {}) => {
+  // Memoizar funciones para evitar re-renders innecesarios
+  const agregarAlCarrito = useCallback(async (producto, cantidad = 1) => {
     try {
       // Validaciones de entrada
       if (!producto || !producto.id) {
@@ -423,13 +423,13 @@ export const CarritoProvider = ({ children }) => {
       return { success: true, message: 'Producto agregado al carrito' }
 
     } catch (error) {
-      console.error('Error al agregar al carrito:', error)
-      return { success: false, message: error.message }
-    }
-  }
+       console.error('Error al agregar al carrito:', error)
+       return { success: false, message: error.message }
+     }
+   }, [usuario, estado.sessionId])
 
   // Función para actualizar cantidad
-  const actualizarCantidad = async (itemId, nuevaCantidad) => {
+  const actualizarCantidad = useCallback(async (itemId, nuevaCantidad) => {
     try {
       console.log('🔄 actualizarCantidad llamada con:', {
         itemId,
@@ -491,13 +491,13 @@ export const CarritoProvider = ({ children }) => {
       return { success: true }
 
     } catch (error) {
-      console.error('Error al actualizar cantidad:', error)
-      return { success: false, message: error.message }
-    }
-  }
+       console.error('Error al actualizar cantidad:', error)
+       return { success: false, message: error.message }
+     }
+   }, [usuario, estado.sessionId])
 
   // Función para eliminar del carrito
-  const eliminarDelCarrito = async (itemId) => {
+  const eliminarDelCarrito = useCallback(async (itemId) => {
     try {
       const { error } = await clienteSupabase
         .from('carrito')
@@ -514,13 +514,13 @@ export const CarritoProvider = ({ children }) => {
       return { success: true }
 
     } catch (error) {
-      console.error('Error al eliminar del carrito:', error)
-      return { success: false, message: error.message }
-    }
-  }
+       console.error('Error al eliminar del carrito:', error)
+       return { success: false, message: error.message }
+     }
+   }, [usuario, estado.sessionId])
 
   // Función para limpiar carrito
-  const limpiarCarrito = async () => {
+  const limpiarCarrito = useCallback(async () => {
     try {
       let query = clienteSupabase.from('carrito').delete()
 
@@ -539,10 +539,10 @@ export const CarritoProvider = ({ children }) => {
       return { success: true }
 
     } catch (error) {
-      console.error('Error al limpiar carrito:', error)
-      return { success: false, message: error.message }
-    }
-  }
+       console.error('Error al limpiar carrito:', error)
+       return { success: false, message: error.message }
+     }
+   }, [usuario, estado.sessionId])
 
   // Función para migrar carrito de sesión a usuario
   const migrarCarritoAUsuario = async (usuarioId) => {
@@ -634,51 +634,36 @@ export const CarritoProvider = ({ children }) => {
   }, [sesionInicializada, usuario])
 
   // Función para mostrar notificación
-  const mostrarNotificacion = (tipo, titulo, mensaje) => {
+  const mostrarNotificacion = useCallback((tipo, titulo, mensaje) => {
     dispatch({
       type: TIPOS_ACCION.MOSTRAR_NOTIFICACION,
       payload: { tipo, titulo, mensaje }
     })
-  }
 
-  // Función para ocultar notificación
-  const ocultarNotificacion = () => {
+    // Auto-ocultar después de 5 segundos
+    setTimeout(() => {
+      dispatch({ type: TIPOS_ACCION.OCULTAR_NOTIFICACION })
+    }, 5000)
+  }, [])
+
+  const ocultarNotificacion = useCallback(() => {
     dispatch({ type: TIPOS_ACCION.OCULTAR_NOTIFICACION })
-  }
+  }, [])
 
-  // Función alias para compatibilidad
-  const agregarItem = agregarAlCarrito
-  const alternarModal = () => dispatch({ type: TIPOS_ACCION.TOGGLE_MODAL })
-
-  const valor = {
-    // Estado
+  // Memoizar el valor del contexto
+  const valorContexto = useMemo(() => ({
     ...estado,
-    
-    // Funciones
     agregarAlCarrito,
-    agregarItem, // Alias para compatibilidad
     actualizarCantidad,
     eliminarDelCarrito,
     limpiarCarrito,
-    cargarCarrito,
-    toggleModal,
-    alternarModal, // Alias para toggleModal
-    obtenerProductosRelacionados,
+    toggleModal: () => dispatch({ type: TIPOS_ACCION.TOGGLE_MODAL }),
     mostrarNotificacion,
-    ocultarNotificacion,
-    
-    // Utilidades
-    formatearPrecio: (precio) => {
-      return new Intl.NumberFormat('es-CO', {
-        style: 'currency',
-        currency: 'COP',
-        minimumFractionDigits: 0
-      }).format(precio)
-    }
-  }
+    ocultarNotificacion
+  }), [estado, agregarAlCarrito, actualizarCantidad, eliminarDelCarrito, limpiarCarrito, mostrarNotificacion, ocultarNotificacion])
 
   return (
-    <CarritoContext.Provider value={valor}>
+    <CarritoContext.Provider value={valorContexto}>
       {children}
     </CarritoContext.Provider>
   )

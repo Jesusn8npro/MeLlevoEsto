@@ -1,346 +1,260 @@
 [
   {
-    "pos": 1,
-    "nombre": "id",
-    "tipo": "uuid",
-    "nulable": "NO",
-    "defecto": "uuid_generate_v4()",
-    "comentario": null
+    "nombre_columna": "id",
+    "tipo_dato": "uuid",
+    "acepta_nulos": "NO",
+    "valor_por_defecto": "uuid_generate_v4()"
   },
   {
-    "pos": 2,
-    "nombre": "nombre",
-    "tipo": "character varying",
-    "nulable": "NO",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "nombre",
+    "tipo_dato": "character varying",
+    "acepta_nulos": "NO",
+    "valor_por_defecto": null
   },
   {
-    "pos": 3,
-    "nombre": "slug",
-    "tipo": "character varying",
-    "nulable": "NO",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "slug",
+    "tipo_dato": "character varying",
+    "acepta_nulos": "NO",
+    "valor_por_defecto": null
   },
   {
-    "pos": 4,
-    "nombre": "descripcion",
-    "tipo": "text",
-    "nulable": "NO",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "descripcion",
+    "tipo_dato": "text",
+    "acepta_nulos": "NO",
+    "valor_por_defecto": null
   },
   {
-    "pos": 5,
-    "nombre": "ganchos",
-    "tipo": "ARRAY",
-    "nulable": "YES",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "ganchos",
+    "tipo_dato": "ARRAY",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": null
   },
   {
-    "pos": 6,
-    "nombre": "beneficios",
-    "tipo": "ARRAY",
-    "nulable": "YES",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "beneficios",
+    "tipo_dato": "ARRAY",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": null
   },
   {
-    "pos": 7,
-    "nombre": "ventajas",
-    "tipo": "ARRAY",
-    "nulable": "YES",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "ventajas",
+    "tipo_dato": "ARRAY",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": null
   },
   {
-    "pos": 8,
-    "nombre": "precio",
-    "tipo": "numeric",
-    "nulable": "NO",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "precio",
+    "tipo_dato": "numeric",
+    "acepta_nulos": "NO",
+    "valor_por_defecto": null
   },
   {
-    "pos": 9,
-    "nombre": "precio_original",
-    "tipo": "numeric",
-    "nulable": "YES",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "precio_original",
+    "tipo_dato": "numeric",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": null
   },
   {
-    "pos": 10,
-    "nombre": "descuento",
-    "tipo": "integer",
-    "nulable": "YES",
-    "defecto": "0",
-    "comentario": null
+    "nombre_columna": "descuento",
+    "tipo_dato": "integer",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "0"
   },
   {
-    "pos": 11,
-    "nombre": "estado",
-    "tipo": "character varying",
-    "nulable": "YES",
-    "defecto": "'nuevo'::character varying",
-    "comentario": null
+    "nombre_columna": "estado",
+    "tipo_dato": "character varying",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "'nuevo'::character varying"
   },
   {
-    "pos": 12,
-    "nombre": "categoria_id",
-    "tipo": "uuid",
-    "nulable": "YES",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "categoria_id",
+    "tipo_dato": "uuid",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": null
   },
   {
-    "pos": 16,
-    "nombre": "stock",
-    "tipo": "integer",
-    "nulable": "YES",
-    "defecto": "0",
-    "comentario": null
+    "nombre_columna": "stock",
+    "tipo_dato": "integer",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "0"
   },
   {
-    "pos": 17,
-    "nombre": "stock_minimo",
-    "tipo": "integer",
-    "nulable": "YES",
-    "defecto": "5",
-    "comentario": null
+    "nombre_columna": "stock_minimo",
+    "tipo_dato": "integer",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "5"
   },
   {
-    "pos": 18,
-    "nombre": "landing_tipo",
-    "tipo": "character varying",
-    "nulable": "YES",
-    "defecto": "'catalogo'::character varying",
-    "comentario": null
+    "nombre_columna": "landing_tipo",
+    "tipo_dato": "character varying",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "'catalogo'::character varying"
   },
   {
-    "pos": 19,
-    "nombre": "destacado",
-    "tipo": "boolean",
-    "nulable": "YES",
-    "defecto": "false",
-    "comentario": null
+    "nombre_columna": "destacado",
+    "tipo_dato": "boolean",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "false"
   },
   {
-    "pos": 20,
-    "nombre": "activo",
-    "tipo": "boolean",
-    "nulable": "YES",
-    "defecto": "true",
-    "comentario": null
+    "nombre_columna": "activo",
+    "tipo_dato": "boolean",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "true"
   },
   {
-    "pos": 21,
-    "nombre": "peso",
-    "tipo": "numeric",
-    "nulable": "YES",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "peso",
+    "tipo_dato": "numeric",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": null
   },
   {
-    "pos": 22,
-    "nombre": "dimensiones",
-    "tipo": "jsonb",
-    "nulable": "YES",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "dimensiones",
+    "tipo_dato": "jsonb",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": null
   },
   {
-    "pos": 23,
-    "nombre": "marca",
-    "tipo": "character varying",
-    "nulable": "YES",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "marca",
+    "tipo_dato": "character varying",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": null
   },
   {
-    "pos": 24,
-    "nombre": "modelo",
-    "tipo": "character varying",
-    "nulable": "YES",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "modelo",
+    "tipo_dato": "character varying",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": null
   },
   {
-    "pos": 25,
-    "nombre": "color",
-    "tipo": "character varying",
-    "nulable": "YES",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "color",
+    "tipo_dato": "character varying",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": null
   },
   {
-    "pos": 26,
-    "nombre": "talla",
-    "tipo": "character varying",
-    "nulable": "YES",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "talla",
+    "tipo_dato": "character varying",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": null
   },
   {
-    "pos": 27,
-    "nombre": "material",
-    "tipo": "character varying",
-    "nulable": "YES",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "material",
+    "tipo_dato": "character varying",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": null
   },
   {
-    "pos": 28,
-    "nombre": "garantia_meses",
-    "tipo": "integer",
-    "nulable": "YES",
-    "defecto": "12",
-    "comentario": null
+    "nombre_columna": "garantia_meses",
+    "tipo_dato": "integer",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "12"
   },
   {
-    "pos": 29,
-    "nombre": "origen_pais",
-    "tipo": "character varying",
-    "nulable": "YES",
-    "defecto": "'Colombia'::character varying",
-    "comentario": null
+    "nombre_columna": "origen_pais",
+    "tipo_dato": "character varying",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "'Colombia'::character varying"
   },
   {
-    "pos": 30,
-    "nombre": "palabras_clave",
-    "tipo": "ARRAY",
-    "nulable": "YES",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "palabras_clave",
+    "tipo_dato": "ARRAY",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": null
   },
   {
-    "pos": 31,
-    "nombre": "meta_title",
-    "tipo": "character varying",
-    "nulable": "YES",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "meta_title",
+    "tipo_dato": "character varying",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": null
   },
   {
-    "pos": 32,
-    "nombre": "meta_description",
-    "tipo": "character varying",
-    "nulable": "YES",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "meta_description",
+    "tipo_dato": "character varying",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": null
   },
   {
-    "pos": 33,
-    "nombre": "creado_por",
-    "tipo": "uuid",
-    "nulable": "YES",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "creado_por",
+    "tipo_dato": "uuid",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": null
   },
   {
-    "pos": 34,
-    "nombre": "creado_el",
-    "tipo": "timestamp with time zone",
-    "nulable": "YES",
-    "defecto": "now()",
-    "comentario": null
+    "nombre_columna": "creado_el",
+    "tipo_dato": "timestamp with time zone",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "now()"
   },
   {
-    "pos": 35,
-    "nombre": "actualizado_el",
-    "tipo": "timestamp with time zone",
-    "nulable": "YES",
-    "defecto": "now()",
-    "comentario": null
+    "nombre_columna": "actualizado_el",
+    "tipo_dato": "timestamp with time zone",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "now()"
   },
   {
-    "pos": 36,
-    "nombre": "banner_animado",
-    "tipo": "jsonb",
-    "nulable": "YES",
-    "defecto": "'{\"mensajes\": [\"🚚 ¡ENVÍO GRATIS a toda Colombia en compras mayores a $50.000!\", \"💳 Compra 100% SEGURA - Paga contraentrega sin riesgo\", \"🛡️ GARANTÍA TOTAL o te devolvemos el 100% de tu dinero\", \"⚡ OFERTA LIMITADA - Solo por hoy descuentos hasta 70% OFF\"], \"textColor\": \"#FFFFFF\", \"velocidad\": \"normal\", \"backgroundColor\": \"#FF4444\"}'::jsonb",
-    "comentario": null
+    "nombre_columna": "banner_animado",
+    "tipo_dato": "jsonb",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "'{\"mensajes\": [\"🚚 ¡ENVÍO GRATIS a toda Colombia en compras mayores a $50.000!\", \"💳 Compra 100% SEGURA - Paga contraentrega sin riesgo\", \"🛡️ GARANTÍA TOTAL o te devolvemos el 100% de tu dinero\", \"⚡ OFERTA LIMITADA - Solo por hoy descuentos hasta 70% OFF\"], \"textColor\": \"#FFFFFF\", \"velocidad\": \"normal\", \"backgroundColor\": \"#FF4444\"}'::jsonb"
   },
   {
-    "pos": 37,
-    "nombre": "puntos_dolor",
-    "tipo": "jsonb",
-    "nulable": "YES",
-    "defecto": "'{\"titulo\": \"¿Te sientes identificado con estos problemas diarios?\", \"timeline\": [], \"subtitulo\": \"Miles de personas sufren estos inconvenientes cada día. ¡Tú no tienes que ser una de ellas!\"}'::jsonb",
-    "comentario": null
+    "nombre_columna": "puntos_dolor",
+    "tipo_dato": "jsonb",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "'{\"titulo\": \"¿Te sientes identificado con estos problemas diarios?\", \"timeline\": [], \"subtitulo\": \"Miles de personas sufren estos inconvenientes cada día. ¡Tú no tienes que ser una de ellas!\"}'::jsonb"
   },
   {
-    "pos": 38,
-    "nombre": "caracteristicas",
-    "tipo": "jsonb",
-    "nulable": "YES",
-    "defecto": "'{\"cta\": {\"texto\": \"¡QUIERO APROVECHAR ESTA OFERTA!\", \"subtexto\": \"🔥 Oferta por tiempo limitado\"}, \"imagen\": \"\", \"titulo\": \"¿Por qué miles de personas eligen nuestro producto?\", \"detalles\": [], \"subtitulo\": \"Descubre las características que lo hacen único y especial\", \"beneficios\": []}'::jsonb",
-    "comentario": null
+    "nombre_columna": "caracteristicas",
+    "tipo_dato": "jsonb",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "'{\"cta\": {\"texto\": \"¡QUIERO APROVECHAR ESTA OFERTA!\", \"subtexto\": \"🔥 Oferta por tiempo limitado\"}, \"imagen\": \"\", \"titulo\": \"¿Por qué miles de personas eligen nuestro producto?\", \"detalles\": [], \"subtitulo\": \"Descubre las características que lo hacen único y especial\", \"beneficios\": []}'::jsonb"
   },
   {
-    "pos": 39,
-    "nombre": "testimonios",
-    "tipo": "jsonb",
-    "nulable": "YES",
-    "defecto": "'{\"titulo\": \"¡+15.847 CLIENTES YA TRANSFORMARON SU VIDA!\", \"subtitulo\": \"Lee lo que dicen nuestros clientes reales sobre su experiencia\", \"testimonios\": [], \"estadisticas\": {\"recomiendan\": 98, \"satisfaccion\": 4.9, \"totalClientes\": 0}}'::jsonb",
-    "comentario": null
+    "nombre_columna": "testimonios",
+    "tipo_dato": "jsonb",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "'{\"titulo\": \"¡+15.847 CLIENTES YA TRANSFORMARON SU VIDA!\", \"subtitulo\": \"Lee lo que dicen nuestros clientes reales sobre su experiencia\", \"testimonios\": [], \"estadisticas\": {\"recomiendan\": 98, \"satisfaccion\": 4.9, \"totalClientes\": 0}}'::jsonb"
   },
   {
-    "pos": 40,
-    "nombre": "faq",
-    "tipo": "jsonb",
-    "nulable": "YES",
-    "defecto": "'{\"titulo\": \"Preguntas Frecuentes\", \"preguntas\": [], \"subtitulo\": \"Resolvemos todas tus dudas para que compres con total confianza\"}'::jsonb",
-    "comentario": null
+    "nombre_columna": "faq",
+    "tipo_dato": "jsonb",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "'{\"titulo\": \"Preguntas Frecuentes\", \"preguntas\": [], \"subtitulo\": \"Resolvemos todas tus dudas para que compres con total confianza\"}'::jsonb"
   },
   {
-    "pos": 41,
-    "nombre": "garantias",
-    "tipo": "jsonb",
-    "nulable": "YES",
-    "defecto": "'{\"titulo\": \"Compra con Total Confianza\", \"garantias\": [], \"subtitulo\": \"Tu satisfacción y seguridad son nuestra prioridad #1\"}'::jsonb",
-    "comentario": null
+    "nombre_columna": "garantias",
+    "tipo_dato": "jsonb",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "'{\"titulo\": \"Compra con Total Confianza\", \"garantias\": [], \"subtitulo\": \"Tu satisfacción y seguridad son nuestra prioridad #1\"}'::jsonb"
   },
   {
-    "pos": 42,
-    "nombre": "cta_final",
-    "tipo": "jsonb",
-    "nulable": "YES",
-    "defecto": "'{\"envio\": \"🚚 Envío GRATIS en 24-48 horas\", \"titulo\": \"¡ÚLTIMA OPORTUNIDAD!\", \"garantia\": \"🛡️ Garantía de satisfacción del 100% o te devolvemos tu dinero\", \"urgencia\": \"⚡ Oferta válida solo por hoy\", \"descuento\": \"70% OFF\", \"subtitulo\": \"No dejes pasar esta oferta única. Miles ya han transformado su vida.\", \"botonTexto\": \"¡QUIERO MI TRANSFORMACIÓN AHORA!\", \"precioActual\": \"\", \"precioAnterior\": \"\"}'::jsonb",
-    "comentario": null
+    "nombre_columna": "cta_final",
+    "tipo_dato": "jsonb",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "'{\"envio\": \"🚚 Envío GRATIS en 24-48 horas\", \"titulo\": \"¡ÚLTIMA OPORTUNIDAD!\", \"garantia\": \"🛡️ Garantía de satisfacción del 100% o te devolvemos tu dinero\", \"urgencia\": \"⚡ Oferta válida solo por hoy\", \"descuento\": \"70% OFF\", \"subtitulo\": \"No dejes pasar esta oferta única. Miles ya han transformado su vida.\", \"botonTexto\": \"¡QUIERO MI TRANSFORMACIÓN AHORA!\", \"precioActual\": \"\", \"precioAnterior\": \"\"}'::jsonb"
   },
   {
-    "pos": 43,
-    "nombre": "numero_de_ventas",
-    "tipo": "numeric",
-    "nulable": "YES",
-    "defecto": null,
-    "comentario": null
+    "nombre_columna": "numero_de_ventas",
+    "tipo_dato": "numeric",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": null
   },
   {
-    "pos": 44,
-    "nombre": "calificacion_promedio",
-    "tipo": "numeric",
-    "nulable": "YES",
-    "defecto": "0",
-    "comentario": "Promedio de calificación (0–5), hasta 2 decimales."
+    "nombre_columna": "calificacion_promedio",
+    "tipo_dato": "numeric",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "0"
   },
   {
-    "pos": 45,
-    "nombre": "total_resenas",
-    "tipo": "integer",
-    "nulable": "YES",
-    "defecto": "0",
-    "comentario": "Cantidad total de reseñas asociadas al producto."
+    "nombre_columna": "total_resenas",
+    "tipo_dato": "integer",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "0"
   },
   {
-    "pos": 46,
-    "nombre": "promociones",
-    "tipo": "jsonb",
-    "nulable": "YES",
-    "defecto": "'[]'::jsonb",
-    "comentario": null
+    "nombre_columna": "promociones",
+    "tipo_dato": "jsonb",
+    "acepta_nulos": "YES",
+    "valor_por_defecto": "'[]'::jsonb"
   }
 ]

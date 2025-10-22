@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react'
 
 const ContextoBarraLateral = createContext(undefined)
 
@@ -35,19 +35,19 @@ export const ProveedorBarraLateral = ({ children }) => {
     }
   }, [])
 
-  const alternarBarraLateral = () => {
+  const alternarBarraLateral = useCallback(() => {
     if (window.innerWidth >= 1024) {
       setEstaExpandida((prev) => !prev)
     } else {
       setMovilAbierto((prev) => !prev)
     }
-  }
+  }, [])
 
-  const alternarBarraLateralMovil = () => {
+  const alternarBarraLateralMovil = useCallback(() => {
     setMovilAbierto((prev) => !prev)
-  }
+  }, [])
 
-  const alternarSubmenu = (index, tipoMenu) => {
+  const alternarSubmenu = useCallback((index, tipoMenu) => {
     setSubmenuAbierto((prev) => {
       // Si es el mismo item, cerrarlo
       if (prev && prev.tipo === tipoMenu && prev.index === index) {
@@ -57,24 +57,25 @@ export const ProveedorBarraLateral = ({ children }) => {
       // Si es diferente, abrir el nuevo
       return { tipo: tipoMenu, index }
     })
-  }
+  }, [])
+
+  // Valor del contexto optimizado con useMemo
+  const valor = useMemo(() => ({
+    estaExpandida: esMovil ? false : estaExpandida,
+    movilAbierto,
+    estaEnHover,
+    itemActivo,
+    submenuAbierto,
+    alternarBarraLateral,
+    alternarBarraLateralMovil,
+    setEstaEnHover,
+    setItemActivo,
+    alternarSubmenu,
+    setSubmenuAbierto,
+  }), [esMovil, estaExpandida, movilAbierto, estaEnHover, itemActivo, submenuAbierto, alternarBarraLateral, alternarBarraLateralMovil, alternarSubmenu])
 
   return (
-    <ContextoBarraLateral.Provider
-      value={{
-        estaExpandida: esMovil ? false : estaExpandida,
-        movilAbierto,
-        estaEnHover,
-        itemActivo,
-        submenuAbierto,
-        alternarBarraLateral,
-        alternarBarraLateralMovil,
-        setEstaEnHover,
-        setItemActivo,
-        alternarSubmenu,
-        setSubmenuAbierto,
-      }}
-    >
+    <ContextoBarraLateral.Provider value={valor}>
       {children}
     </ContextoBarraLateral.Provider>
   )

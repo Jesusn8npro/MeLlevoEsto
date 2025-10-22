@@ -26,6 +26,7 @@ import { convertirUrlGoogleDrive, convertirArrayUrlsGoogleDrive, procesarImagene
 // Eliminado ImagenConFallback - usaremos <img> directo
 import './HeroTemu.css'
 import ContraEntregaModal from '../../../../../componentes/checkout/ContraEntregaModal'
+import ModalPromociones from '../../../../../componentes/checkout/ModalPromociones'
 
 // Función local para formatear precios en pesos colombianos
 const formatearPrecioCOP = (precio) => {
@@ -146,25 +147,8 @@ function GaleriaSticky({
 
 /* ============== INDICADOR MODO STICKY ============== */
 function IndicadorModoSticky() {
-  const [modo, setModo] = useState("ESTATICO")
-  
-  useEffect(() => {
-    const verificar = () => {
-      const elemento = document.querySelector("[data-modo-hero-temu]")
-      if (elemento) {
-        setModo((elemento.getAttribute("data-modo-hero-temu") || "estatico").toUpperCase())
-      }
-    }
-    
-    const intervalo = setInterval(verificar, 120)
-    return () => clearInterval(intervalo)
-  }, [])
-  
-  return (
-    <div className="hero-temu-indicador-modo">
-      Sticky: {modo}
-    </div>
-  )
+  // Componente deshabilitado - no mostrar indicador en producción
+  return null
 }
 
 /* ============== COMPONENTE PRINCIPAL HERO TEMU ============== */
@@ -182,6 +166,7 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
   const [popupGaleriaAbierto, setPopupGaleriaAbierto] = useState(false)
   const [mostrarFlechas, setMostrarFlechas] = useState(false)
   const [modalContraEntregaAbierto, setModalContraEntregaAbierto] = useState(false)
+  const [modalPromocionesAbierto, setModalPromocionesAbierto] = useState(false)
   
   // Estados para el slider de miniaturas
   const [esMobile, setEsMobile] = useState(false)
@@ -190,6 +175,26 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
   // Estados para gestos táctiles en el popup
   const [touchStart, setTouchStart] = useState(null)
   const [touchEnd, setTouchEnd] = useState(null)
+
+  // Efecto para ocultar/mostrar el chat widget cuando el modal esté abierto
+  useEffect(() => {
+    const chatWidget = document.querySelector('.chat-widget-container')
+    if (chatWidget) {
+      if (popupGaleriaAbierto) {
+        chatWidget.style.display = 'none'
+      } else {
+        chatWidget.style.display = 'block'
+      }
+    }
+    
+    // Cleanup: asegurar que el chat sea visible cuando el componente se desmonte
+    return () => {
+      const chatWidget = document.querySelector('.chat-widget-container')
+      if (chatWidget) {
+        chatWidget.style.display = 'block'
+      }
+    }
+  }, [popupGaleriaAbierto])
 
   // Configurar altura del header
   useEffect(() => {
@@ -325,9 +330,10 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
         // Calcular la posición para centrar la miniatura
         const scrollLeft = miniatura.offsetLeft - (sliderRect.width / 2) + (miniaturaRect.width / 2)
         
+        // Cambio instantáneo sin animación suave
         slider.scrollTo({
           left: scrollLeft,
-          behavior: 'smooth'
+          behavior: 'auto'
         })
       }
     }
@@ -389,8 +395,8 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
   }
 
   const manejarComprarAhora = () => {
-    // Lógica de compra directa
-    // Aquí iría la lógica real de compra
+    // Abrir el modal de promociones
+    setModalPromocionesAbierto(true)
   }
 
   // Función para truncar texto a 120 palabras
@@ -475,6 +481,34 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                 onMouseEnter={() => setMostrarFlechas(true)}
                 onMouseLeave={() => setMostrarFlechas(false)}
                 onClick={abrirPopupGaleria}
+                onTouchStart={(e) => {
+                  if (imagenesFinales.length <= 1) return;
+                  const touch = e.touches[0];
+                  setTouchStart(touch.clientX);
+                }}
+                onTouchMove={(e) => {
+                  if (imagenesFinales.length <= 1) return;
+                  const touch = e.touches[0];
+                  setTouchEnd(touch.clientX);
+                }}
+                onTouchEnd={(e) => {
+                  if (imagenesFinales.length <= 1 || !touchStart || !touchEnd) return;
+                  const distance = touchStart - touchEnd;
+                  const isLeftSwipe = distance > 50;
+                  const isRightSwipe = distance < -50;
+
+                  if (isLeftSwipe) {
+                    e.stopPropagation(); // Evitar que se abra el modal
+                    manejarImagenSiguiente();
+                  }
+                  if (isRightSwipe) {
+                    e.stopPropagation(); // Evitar que se abra el modal
+                    manejarImagenAnterior();
+                  }
+                  
+                  setTouchStart(null);
+                  setTouchEnd(null);
+                }}
               >
                 <ImagenInteligente
                   src={imagenesFinales[imagenSeleccionada]}
@@ -573,7 +607,6 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                   </div>
                 ))
               ) : (
-                // Fallback por defecto si no hay ganchos
                 <>
                   <div className="hero-temu-caracteristica-item">
                     <span className="hero-temu-icono-caracteristica">⚡</span>
@@ -626,7 +659,19 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
           
           {/* Sección de precios súper vendedora */}
           <div className="hero-temu-seccion-precios-vendedora">
-            <div className="hero-temu-precio-principal-container">
+            {/* Etiqueta VENDIDO - Solo se muestra si el producto no está activo */}
+            {producto?.activo === false && (
+              <div className="hero-temu-etiqueta-vendido">
+                <div className="hero-temu-vendido-contenido">
+                  <span className="hero-temu-vendido-icono">🔥</span>
+                  <span className="hero-temu-vendido-texto">VENDIDO</span>
+                  <span className="hero-temu-vendido-subtext">¡Se agotó por alta demanda!</span>
+                </div>
+                <div className="hero-temu-vendido-overlay"></div>
+              </div>
+            )}
+            
+            <div className={`hero-temu-precio-principal-container ${producto?.activo === false ? 'vendido' : ''}`}>
               <span className="hero-temu-precio-actual-grande">
                 {formatearPrecioCOP(producto?.precio || 8498)}
               </span>
@@ -658,32 +703,49 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
 
           {/* Botones de acción principales */}
           <div className="hero-temu-botones-accion">
-            <BotonCarritoAnimado
-              producto={producto}
-              cantidad={cantidad}
-              variante={varianteSeleccionada}
-              className="hero-temu-boton-carrito"
-              onAgregar={manejarAgregarCarrito}
-              onError={(error) => console.error('Error en botón animado:', error)}
-            >
-              Agregar al carrito
-            </BotonCarritoAnimado>
-            
-            <button 
-              onClick={() => setModalContraEntregaAbierto(true)}
-              className="hero-temu-boton-contra-entrega"
-            >
-              <Truck size={18} />
-              Contra entrega
-            </button>
-            
-            <button 
-              onClick={manejarComprarAhora}
-              className="hero-temu-boton-pagar-plataforma"
-            >
-              <Zap size={18} />
-              Pagar plataforma
-            </button>
+            {producto?.activo === false ? (
+              // Botones deshabilitados cuando el producto está vendido
+              <div className="hero-temu-botones-vendido">
+                <button className="hero-temu-boton-vendido" disabled>
+                  <span>❌</span>
+                  Producto Vendido
+                </button>
+                <button className="hero-temu-boton-notificar">
+                  <span>🔔</span>
+                  Notificarme cuando esté disponible
+                </button>
+              </div>
+            ) : (
+              // Botones normales cuando el producto está disponible
+              <>
+                <BotonCarritoAnimado
+                  producto={producto}
+                  cantidad={cantidad}
+                  variante={varianteSeleccionada}
+                  className="hero-temu-boton-carrito"
+                  onAgregar={manejarAgregarCarrito}
+                  onError={(error) => console.error('Error en botón animado:', error)}
+                >
+                  Agregar al carrito
+                </BotonCarritoAnimado>
+                
+                <button 
+                  onClick={() => setModalContraEntregaAbierto(true)}
+                  className="hero-temu-boton-contra-entrega"
+                >
+                  <Truck size={18} />
+                  Contra entrega
+                </button>
+                
+                <button 
+                  onClick={manejarComprarAhora}
+                  className="hero-temu-boton-pagar-plataforma"
+                >
+                  <Zap size={18} />
+                  Pagar plataforma
+                </button>
+              </>
+            )}
           </div>
 
           {/* Imagen de métodos de pago */}
@@ -695,7 +757,6 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
             />
           </div>
 
-          {/* Descripción expandible */}
           {producto?.descripcion && (
             <div className="hero-temu-seccion-descripcion">
               <h3 className="hero-temu-titulo-descripcion">
@@ -738,70 +799,145 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
             </div>
           </div>
 
-          {/* Por qué elegir este producto */}
-          <div className="hero-temu-seccion-porque-elegir">
-            <h3 className="hero-temu-titulo-porque-elegir">
-              ⭐ Por qué elegir este producto
-            </h3>
-            <div className="hero-temu-beneficios-grid">
-              <div className="hero-temu-beneficio-item">
-                <span className="hero-temu-icono-beneficio">🚀</span>
-                <div className="hero-temu-contenido-beneficio">
-                  <h4>Alto Rendimiento</h4>
-                  <p>Motor potente de 200cc que garantiza un rendimiento excepcional en cualquier terreno</p>
-                </div>
-              </div>
-              
-              <div className="hero-temu-beneficio-item">
-                <span className="hero-temu-icono-beneficio">🛡️</span>
-                <div className="hero-temu-contenido-beneficio">
-                  <h4>Máxima Seguridad</h4>
-                  <p>Sistema de frenos ABS, tablero digital y luces LED para tu seguridad total</p>
-                </div>
-              </div>
-              
-              <div className="hero-temu-beneficio-item">
-                <span className="hero-temu-icono-beneficio">🔒</span>
-                <div className="hero-temu-contenido-beneficio">
-                  <h4>Garantía Extendida</h4>
-                  <p>2 años de garantía completa para tu tranquilidad y confianza</p>
-                </div>
-              </div>
-              
-              <div className="hero-temu-beneficio-item">
-                <span className="hero-temu-icono-beneficio">🚚</span>
-                <div className="hero-temu-contenido-beneficio">
-                  <h4>Envío Gratis</h4>
-                  <p>Entrega gratuita a toda Colombia sin costo adicional</p>
-                </div>
+          {producto?.caracteristicas && (
+            <div className="hero-temu-seccion-porque-elegir">
+              <h3 className="hero-temu-titulo-porque-elegir">
+                ⭐ {producto.caracteristicas.titulo || 'Por qué elegir este producto'}
+              </h3>
+              {producto.caracteristicas.subtitulo && (
+                <p className="hero-temu-subtitulo-porque-elegir">
+                  {producto.caracteristicas.subtitulo}
+                </p>
+              )}
+              <div className="hero-temu-beneficios-grid">
+                {producto.caracteristicas.detalles && producto.caracteristicas.detalles.map((detalle, index) => (
+                  <div key={`detalle-${index}`} className="hero-temu-beneficio-item">
+                    <span className="hero-temu-icono-beneficio">
+                      {detalle.icono || '⭐'}
+                    </span>
+                    <div className="hero-temu-contenido-beneficio">
+                      <h4>{detalle.titulo || detalle}</h4>
+                      {detalle.descripcion && <p>{detalle.descripcion}</p>}
+                    </div>
+                  </div>
+                ))}
+                
+                {producto.caracteristicas.beneficios && producto.caracteristicas.beneficios.map((beneficio, index) => (
+                  <div key={`beneficio-${index}`} className="hero-temu-beneficio-item">
+                    <span className="hero-temu-icono-beneficio">
+                      {beneficio.icono || '✅'}
+                    </span>
+                    <div className="hero-temu-contenido-beneficio">
+                      <h4>{beneficio.titulo || beneficio}</h4>
+                      {beneficio.descripcion && <p>{beneficio.descripcion}</p>}
+                    </div>
+                  </div>
+                ))}
+
+                {(!producto.caracteristicas.detalles && !producto.caracteristicas.beneficios) && 
+                 producto.ventajas && producto.ventajas.slice(0, 4).map((ventaja, index) => {
+                  const iconos = ['🚀', '🛡️', '🔒', '🚚'];
+                  return (
+                    <div key={`ventaja-${index}`} className="hero-temu-beneficio-item">
+                      <span className="hero-temu-icono-beneficio">
+                        {iconos[index] || '⭐'}
+                      </span>
+                      <div className="hero-temu-contenido-beneficio">
+                        <h4>{ventaja}</h4>
+                        <p>Beneficio específico de este producto</p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
-          </div>
+          )}
 
         </div>
       </div>
 
-      {/* POPUP DE GALERÍA ESTILO TEMU */}
       {popupGaleriaAbierto && (
         <div className="hero-temu-popup-galeria" onClick={cerrarPopupGaleria}>
           <div className="hero-temu-popup-contenido" onClick={(e) => e.stopPropagation()}>
             
-            {/* Header del popup */}
             <div className="hero-temu-popup-header">
               <span className="hero-temu-popup-contador">
                 {imagenSeleccionada + 1}/{imagenesFinales.length}
               </span>
-              <button 
-                className="hero-temu-popup-cerrar"
-                onClick={cerrarPopupGaleria}
-              >
-                <X size={24} />
-              </button>
+              <div className="hero-temu-popup-botones">
+                <button 
+                  className="hero-temu-popup-compartir"
+                  onClick={() => {
+                    if (navigator.share) {
+                      navigator.share({
+                        title: 'Mira este producto increíble',
+                        text: 'Te va a encantar este producto que encontré',
+                        url: window.location.href
+                      });
+                    } else {
+                      navigator.clipboard.writeText(window.location.href);
+                      alert('¡Enlace copiado al portapapeles!');
+                    }
+                  }}
+                >
+                  <Share2 size={20} />
+                </button>
+                <button 
+                  className="hero-temu-popup-cerrar"
+                  onClick={cerrarPopupGaleria}
+                >
+                  <X size={24} />
+                </button>
+              </div>
             </div>
 
-            {/* Imagen principal del popup */}
+            <div className="hero-temu-popup-layout-desktop">
+              {imagenesFinales.length > 1 && (
+                <div className="hero-temu-popup-miniaturas-desktop">
+                  {imagenesFinales.map((imagen, index) => (
+                    <button
+                      key={index}
+                      className={`hero-temu-popup-miniatura-desktop ${index === imagenSeleccionada ? 'activa' : ''}`}
+                      onClick={() => manejarCambioImagen(index)}
+                    >
+                      <ImagenInteligente 
+                        src={imagen} 
+                        alt={`Vista ${index + 1}`} 
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <div className="hero-temu-popup-imagen-container">
+                <ImagenInteligente 
+                  src={imagenesFinales[imagenSeleccionada]} 
+                  alt={producto?.nombre || 'Producto'}
+                  className="hero-temu-popup-imagen"
+                />
+
+                {imagenesFinales.length > 1 && (
+                  <>
+                    <button 
+                      className="hero-temu-popup-flecha hero-temu-popup-flecha-izquierda"
+                      onClick={manejarImagenAnterior}
+                    >
+                      <ChevronLeft size={24} />
+                    </button>
+                    <button 
+                      className="hero-temu-popup-flecha hero-temu-popup-flecha-derecha"
+                      onClick={manejarImagenSiguiente}
+                    >
+                      <ChevronRight size={24} />
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+
             <div 
-              className="hero-temu-popup-imagen-container"
+              className="hero-temu-popup-layout-mobile"
               onTouchStart={(e) => {
                 if (imagenesFinales.length <= 1) return;
                 const touch = e.touches[0];
@@ -812,7 +948,7 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                 const touch = e.touches[0];
                 setTouchEnd(touch.clientX);
               }}
-              onTouchEnd={() => {
+              onTouchEnd={(e) => {
                 if (imagenesFinales.length <= 1 || !touchStart || !touchEnd) return;
                 const distance = touchStart - touchEnd;
                 const isLeftSwipe = distance > 50;
@@ -829,19 +965,20 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                 setTouchEnd(null);
               }}
             >
-              <ImagenInteligente 
-                src={imagenesFinales[imagenSeleccionada]} 
-                alt={producto?.nombre || 'Producto'}
-                className="hero-temu-popup-imagen"
-              />
+              <div className="hero-temu-popup-imagen-container-mobile">
+                <ImagenInteligente 
+                  src={imagenesFinales[imagenSeleccionada]} 
+                  alt={producto?.nombre || 'Producto'}
+                  className="hero-temu-popup-imagen"
+                />
+              </div>
 
-              {/* Miniaturas en el popup - justo pegadas debajo de la imagen */}
               {imagenesFinales.length > 1 && (
-                <div className="hero-temu-popup-miniaturas">
+                <div className="hero-temu-popup-miniaturas-mobile">
                   {imagenesFinales.map((imagen, index) => (
                     <button
                       key={index}
-                      className={`hero-temu-popup-miniatura ${index === imagenSeleccionada ? 'activa' : ''}`}
+                      className={`hero-temu-popup-miniatura-mobile ${index === imagenSeleccionada ? 'activa' : ''}`}
                       onClick={() => manejarCambioImagen(index)}
                     >
                       <ImagenInteligente 
@@ -855,7 +992,6 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
               )}
             </div>
 
-            {/* Botón de añadir al carrito en popup */}
             <div className="hero-temu-popup-acciones">
               <BotonCarritoAnimado
                 producto={producto}
@@ -875,13 +1011,23 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
         </div>
       )}
 
-      {/* Modal Contra Entrega */}
       <ContraEntregaModal
         abierto={modalContraEntregaAbierto}
         onCerrar={() => setModalContraEntregaAbierto(false)}
         producto={producto}
         onConfirmar={(payload) => {
           console.log('Pedido COD creado localmente:', payload)
+        }}
+      />
+
+      <ModalPromociones
+        isOpen={modalPromocionesAbierto}
+        onClose={() => setModalPromocionesAbierto(false)}
+        producto={producto}
+        onSeleccionarOferta={(oferta) => {
+          console.log('Oferta seleccionada:', oferta)
+          // Aquí puedes agregar la lógica para procesar la oferta seleccionada
+          // Por ejemplo, redirigir al checkout con la oferta
         }}
       />
     </div>

@@ -97,9 +97,9 @@ const ImagenInteligente = ({
 
   const estiloFinal = {
     ...style,
-    opacity: cargando ? 0.7 : 1,
-    transition: 'opacity 0.3s ease',
-    backgroundColor: cargando ? '#f5f5f5' : 'transparent'
+    opacity: 1, // Siempre opacidad completa
+    transition: 'none', // Sin transiciones para cambio instantáneo
+    backgroundColor: 'transparent' // Siempre fondo transparente
   }
 
   return (
@@ -113,27 +113,12 @@ const ImagenInteligente = ({
         onError={manejarError}
         referrerPolicy="no-referrer"
         crossOrigin="anonymous"
-        loading="lazy"
-        decoding="async"
+        loading="eager" // Cambio de lazy a eager para carga inmediata
+        decoding="sync" // Cambio de async a sync para decodificación inmediata
         {...props}
       />
       
-      {cargando && (
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          fontSize: '12px',
-          color: '#666',
-          background: 'rgba(255,255,255,0.8)',
-          padding: '4px 8px',
-          borderRadius: '4px',
-          pointerEvents: 'none'
-        }}>
-          Cargando...
-        </div>
-      )}
+      {/* Eliminado el indicador de carga "Cargando..." */}
       
       {error && (
         <div style={{

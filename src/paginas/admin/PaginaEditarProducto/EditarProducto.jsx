@@ -1,10 +1,10 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import FormularioProducto from '../../../componentes/admin/ecommerce/PaginaCrearProductosComponentes/FormularioProducto'
+import CreadorProductosPR from '../CreadorDeProductosPR/CreadorProductosPR'
 
 /**
  * EditarProducto - Página para editar productos existentes
- * Ahora usa el componente unificado FormularioProducto
+ * Ahora usa el componente CreadorProductosPR
  */
 
 const EditarProducto = () => {
@@ -16,7 +16,7 @@ const EditarProducto = () => {
   }
 
   return (
-    <FormularioProducto 
+    <CreadorProductosPR 
       modo="editar"
       slug={slug}
       onSuccess={manejarExito}

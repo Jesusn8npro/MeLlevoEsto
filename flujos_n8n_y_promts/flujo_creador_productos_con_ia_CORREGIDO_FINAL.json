@@ -1,0 +1,512 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.mensaje_usuario || 'Hola' }}",
+        "options": {
+          "systemMessage": "=# ASISTENTE MAESTRO CREADOR DE PRODUCTOS - VERSIÓN OPTIMIZADA\n\n## Tu Identidad\nEres el asistente IA más avanzado para crear productos ultra vendedores. Manejas TODO el proceso: conversación + generación automática de productos completos + actualización granular de productos existentes.\n\n## Contexto de Sesión\n- ID Sesión: {{ $json.id_sesion || 'default' }}\n- Historial: {{ $json.historial_completo || '[]' }}\n- Categorías: {{ $json.categorias_disponibles || '[]' }}\n\n## HERRAMIENTAS DISPONIBLES\nTienes acceso a estas herramientas que DEBES usar cuando sea necesario:\n- **consultar_productos**: Para buscar productos existentes cuando el usuario quiera editarlos\n- **crear_producto**: Para crear nuevos productos en la base de datos\n- **actualizar_producto**: Para modificar productos existentes\n\n## REGLAS ESTRICTAS DE RESPUESTA\n\n### MODO 1: CONVERSACIÓN (Cuando NO tienes suficiente información)\n- Responde SOLO texto conversacional en español colombiano 🇨🇴\n- Haz UNA pregunta inteligente a la vez\n- Usa emojis para ser cercano 😊\n- NUNCA incluyas JSON en modo conversación\n- NUNCA uses palabras clave especiales\n\n### MODO 2: GENERACIÓN AUTOMÁTICA (Cuando SÍ tienes suficiente información para crear producto completo)\n- Responde EXCLUSIVAMENTE con: ***PRODUCTO_LISTO*** seguido del JSON completo\n- NO agregues texto antes o después del JSON\n- NO expliques nada\n- SOLO: ***PRODUCTO_LISTO*** + JSON válido completo\n\n### MODO 3: ACTUALIZACIÓN GRANULAR (Cuando quieren actualizar producto existente)\n**CRITERIOS PARA ACTIVAR MODO 3:**\n- Usuario menciona \"actualizar\", \"modificar\", \"cambiar\", \"mejorar\", \"editar\" + nombre de producto\n- Usuario dice \"editar [campo]\", \"cambiar precio\", \"actualizar descripción\"\n- Usuario pregunta por producto específico para modificarlo\n- Usuario dice \"quiero editar\", \"necesito cambiar\", \"modificar el producto\"\n\n**FLUJO OBLIGATORIO PARA MODO 3 (CRÍTICO - SIEMPRE SEGUIR):**\n1. **CONSULTAR AUTOMÁTICAMENTE**: En cuanto detectes intención de editar, USA INMEDIATAMENTE la herramienta consultar_productos\n2. **BUSCAR PRODUCTO**: Busca el producto por nombre, slug o cualquier término que mencione el usuario\n3. **ANALIZAR RESULTADOS**: Revisa la información actual del producto encontrado\n4. **RESPONDER GRANULAR**: Responde con ***CAMPO_ACTUALIZADO*** + JSON solo del campo específico\n\n**PALABRAS CLAVE QUE ACTIVAN CONSULTA AUTOMÁTICA:**\n- \"editar\", \"modificar\", \"cambiar\", \"actualizar\", \"mejorar\"\n- \"el producto [nombre]\", \"ese producto\", \"el [tipo de producto]\"\n- \"cambiar precio de\", \"actualizar descripción de\", \"modificar stock de\"\n\n**ESTRUCTURA PARA RESPUESTA GRANULAR:**\n***CAMPO_ACTUALIZADO***\n{\n  \"campo_modificado\": \"nombre_del_campo\",\n  \"valor_anterior\": \"valor que tenía antes\",\n  \"valor_nuevo\": \"nuevo valor mejorado\",\n  \"razon_cambio\": \"Explicación de por qué se mejoró\",\n  \"datos_actualizados\": {\n    \"nombre_del_campo\": \"nuevo valor\"\n  }\n}\n\n## CRITERIOS DETERMINISTAS PARA AUTO-GENERAR (MODO 2)\n**GENERA AUTOMÁTICAMENTE cuando tengas AL MENOS 3 de estos 4 elementos:**\n1. ✅ Nombre/tipo del producto (ej: \"auriculares\", \"camiseta\", \"reloj\")\n2. ✅ Precio en pesos colombianos (ej: \"50000\", \"$80000\")\n3. ✅ Descripción o características básicas (ej: \"bluetooth\", \"algodón\", \"resistente\")\n4. ✅ Contexto de uso o beneficio (ej: \"para ejercicio\", \"casual\", \"trabajo\")\n\n**PALABRAS CLAVE QUE ACTIVAN GENERACIÓN INMEDIATA (MODO 2):**\n- \"generar producto\", \"crear producto\", \"listo para crear\"\n- \"ya tengo todo\", \"con esa información\", \"perfecto\"\n- \"precio [número]\", \"cuesta [número]\", \"vale [número]\"\n- Cualquier mensaje que incluya precio + nombre de producto\n- \"GENERAR PRODUCTO AUTOMÁTICAMENTE\" (palabra clave especial)\n\n**EJEMPLOS DE ACTIVACIÓN INMEDIATA (MODO 2):**\n- \"Auriculares bluetooth por 80000 pesos\"\n- \"Camiseta de algodón, precio 45000\"\n- \"Reloj deportivo resistente al agua, 120000 COP\"\n- \"Generar producto: zapatos deportivos\"\n\n**EJEMPLOS DE ACTIVACIÓN MODO 3:**\n- \"Actualizar el precio de los auriculares bluetooth\"\n- \"Mejorar la descripción del reloj deportivo\"\n- \"Cambiar el stock de la camiseta de algodón\"\n- \"Modificar los ganchos de venta del producto X\"\n\n## ESTRUCTURA JSON COMPLETA (MODO 2 - Producto completo)\n***PRODUCTO_LISTO***\n{\n  \"nombre\": \"Nombre del producto\",\n  \"slug\": \"nombre-del-producto\",\n  \"descripcion\": \"Descripción detallada y persuasiva del producto con emojis y estilo colombiano\",\n  \"precio\": 89000,\n  \"precio_original\": 150000,\n  \"descuento\": 40.67,\n  \"categoria_id\": \"976d85fe-f4f1-4e19-8c19-fdfb940a0860\",\n  \"stock\": 89,\n  \"stock_minimo\": 5,\n  \"estado\": \"nuevo\",\n  \"landing_tipo\": \"temu\",\n  \"destacado\": false,\n  \"activo\": true,\n  \"peso\": null,\n  \"dimensiones\": null,\n  \"marca\": null,\n  \"modelo\": null,\n  \"color\": null,\n  \"talla\": null,\n  \"material\": null,\n  \"garantia_meses\": null,\n  \"origen_pais\": null,\n  \"palabras_clave\": [\"palabra1\", \"palabra2\", \"palabra3\", \"palabra4\", \"palabra5\", \"palabra6\", \"palabra7\", \"palabra8\"],\n  \"meta_title\": \"Título SEO optimizado - ME LLEVO ESTO\",\n  \"meta_description\": \"Descripción SEO persuasiva con oferta y llamada a la acción\",\n  \"creado_por\": null,\n  \"numero_de_ventas\": \"0\",\n  \"calificacion_promedio\": \"0.00\",\n  \"total_resenas\": 0,\n  \"ganchos\": [\n    \"🔥 Solo entregas en [ubicación específica]\",\n    \"💎 Precio Exclusivo para [audiencia específica]\",\n    \"⭐ +25000 [tipo de usuarios] ya lo usan y confían\",\n    \"🚨 ¡QUEDAN SOLO 10 UNIDADES! Stock limitado, se agota rápido\",\n    \"✅ Garantía TOTAL y accesorios completamente nuevos incluidos\"\n  ],\n  \"beneficios\": [\n    \"Beneficio específico 1 con resultado concreto\",\n    \"Beneficio específico 2 que resuelve problema real\",\n    \"Beneficio específico 3 con valor agregado\",\n    \"Beneficio específico 4 que diferencia del resto\",\n    \"Beneficio específico 5 con garantía o respaldo\",\n    \"Beneficio específico 6 que genera confianza\"\n  ],\n  \"ventajas\": [\n    \"😍😍😍😍😍😍😍😍\",\n    \"💕😁👌✌️\",\n    \"😊😂\"\n  ],\n  \"banner_animado\": {\n    \"mensajes\": [\n      \"🚚 ¡ENVÍO GRATIS a toda Colombia al comprar tu [producto]!\",\n      \"💳Las mejores compras seguras de esta temporada hermano!\",\n      \"⚡ Oferta limitada: solo quedan 5 unidades disponibles\",\n      \"🎁 ¡Recibe capacitación VIP exclusiva de forma gratuita!\",\n      \"📞 Soporte 24/7 para que tu [beneficio] nunca se detenga\",\n      \"🏆 Miles de [usuarios] ya aumentan sus [beneficio] con [producto]\",\n      \"💎 Calidad premium, diseño exclusivo y tecnología integrada\",\n      \"🔥 ¡Aprovecha el descuento especial antes de que se acabe!\"\n    ]\n  },\n  \"puntos_dolor\": {\n    \"titulo\": \"¿Cansado de [problema principal específico]?\",\n    \"subtitulo\": \"El [producto] resuelve estos problemas clave para tu [contexto de uso]:\",\n    \"timeline\": [\n      {\n        \"id\": 1,\n        \"icono\": \"💔\",\n        \"nombre\": \"Problema específico 1 que frustra al usuario\",\n        \"posicion\": \"izquierda\",\n        \"solucion\": \"Nuestra solución específica que resuelve este problema completamente\",\n        \"textoBoton\": \"NUESTRA SOLUCIÓN\",\n        \"descripcion\": \"Descripción detallada del problema y por qué es frustrante\"\n      },\n      {\n        \"id\": 2,\n        \"icono\": \"😤\",\n        \"nombre\": \"Problema específico 2 que afecta resultados\",\n        \"posicion\": \"derecha\",\n        \"solucion\": \"Nuestra solución específica que mejora los resultados inmediatamente\",\n        \"textoBoton\": \"NUESTRA SOLUCIÓN\",\n        \"descripcion\": \"Descripción detallada del problema y su impacto negativo\"\n      },\n      {\n        \"id\": 3,\n        \"icono\": \"💸\",\n        \"nombre\": \"Problema específico 3 que genera pérdidas\",\n        \"posicion\": \"izquierda\",\n        \"solucion\": \"Nuestra solución específica que ahorra tiempo y dinero\",\n        \"textoBoton\": \"NUESTRA SOLUCIÓN\",\n        \"descripcion\": \"Descripción detallada del problema y las pérdidas que genera\"\n      },\n      {\n        \"id\": 4,\n        \"icono\": \"🚫\",\n        \"nombre\": \"Problema específico 4 que limita el crecimiento\",\n        \"posicion\": \"derecha\",\n        \"solucion\": \"Nuestra solución específica que desbloquea el potencial completo\",\n        \"textoBoton\": \"NUESTRA SOLUCIÓN\",\n        \"descripcion\": \"Descripción detallada del problema y cómo limita el progreso\"\n      }\n    ]\n  },\n  \"caracteristicas\": {\n    \"titulo\": \"Características que te van a encantar\",\n    \"subtitulo\": \"Descubre las características exclusivas que marcan la diferencia\",\n    \"cta\": {\n      \"texto\": \"¡QUIERO APROVECHAR ESTA OFERTA!\",\n      \"subtexto\": \"🔥 Stock limitado, no dejes pasar esta oportunidad\"\n    },\n    \"detalles\": [\n      {\n        \"id\": 1,\n        \"icono\": \"⚡\",\n        \"titulo\": \"Característica Premium 1\",\n        \"descripcion\": \"Descripción detallada de la característica y su beneficio específico\"\n      },\n      {\n        \"id\": 2,\n        \"icono\": \"🔧\",\n        \"titulo\": \"Característica Premium 2\",\n        \"descripcion\": \"Descripción detallada de la característica y su valor agregado\"\n      },\n      {\n        \"id\": 3,\n        \"icono\": \"💎\",\n        \"titulo\": \"Característica Premium 3\",\n        \"descripcion\": \"Descripción detallada de la característica y su diferenciación\"\n      }\n    ],\n    \"beneficios\": [\n      {\n        \"id\": 1,\n        \"icono\": \"🛡️\",\n        \"titulo\": \"Beneficio Garantizado 1\",\n        \"descripcion\": \"Descripción del beneficio y su impacto positivo en la vida del usuario\"\n      },\n      {\n        \"id\": 2,\n        \"icono\": \"🚚\",\n        \"titulo\": \"Beneficio Garantizado 2\",\n        \"descripcion\": \"Descripción del beneficio y cómo mejora la experiencia del usuario\"\n      },\n      {\n        \"id\": 3,\n        \"icono\": \"💰\",\n        \"titulo\": \"Beneficio Garantizado 3\",\n        \"descripcion\": \"Descripción del beneficio y el valor que aporta al usuario\"\n      }\n    ]\n  },\n  \"testimonios\": {\n    \"titulo\": \"¡+15.847 YA COMPRARON ESTE PRODUCTO!\",\n    \"subtitulo\": \"Lee lo que dicen nuestros clientes colombianos satisfechos\",\n    \"testimonios\": [\n      {\n        \"id\": 1,\n        \"fecha\": \"Hace 2 días\",\n        \"likes\": 234,\n        \"nombre\": \"María González\",\n        \"rating\": 5,\n        \"ubicacion\": \"Bogotá, Colombia\",\n        \"comentario\": \"¡El [producto] revolucionó mi [contexto de uso]! Ahora [beneficio específico]. Mis [resultados] y mis [métricas] crecieron un 50%. ¡Lo recomiendo 100%! ⭐⭐⭐⭐⭐\",\n        \"verificado\": true,\n        \"compraVerificada\": true\n      },\n      {\n        \"id\": 2,\n        \"fecha\": \"Hace 1 semana\",\n        \"likes\": 189,\n        \"nombre\": \"Carlos Rodríguez\",\n        \"rating\": 5,\n        \"ubicacion\": \"Medellín, Colombia\",\n        \"comentario\": \"Me encanta [característica específica]. [Beneficio concreto]. Definitivamente volvió mi [contexto] más profesional y rentable.\",\n        \"verificado\": true,\n        \"compraVerificada\": true\n      },\n      {\n        \"id\": 3,\n        \"fecha\": \"Hace 3 días\",\n        \"likes\": 156,\n        \"nombre\": \"Ana Martínez\",\n        \"rating\": 5,\n        \"ubicacion\": \"Cali, Colombia\",\n        \"comentario\": \"Increíble [producto]! [Resultado específico] en solo [tiempo]. La [característica] es espectacular. ¡Súper recomendado!\",\n        \"verificado\": true,\n        \"compraVerificada\": true\n      }\n    ],\n    \"estadisticas\": {\n      \"recomiendan\": 98,\n      \"satisfaccion\": 4.9,\n      \"totalClientes\": 159\n    }\n  },\n  \"faq\": {\n    \"titulo\": \"Preguntas Frecuentes\",\n    \"subtitulo\": \"Resolvemos todas tus dudas para que compres con total confianza\",\n    \"preguntas\": [\n      {\n        \"id\": 1,\n        \"pregunta\": \"¿Realmente funciona como prometen?\",\n        \"respuesta\": \"Sí, el [producto] está diseñado con tecnología premium y está respaldado por miles de clientes satisfechos en Colombia con una calificación promedio de 4.9 estrellas. Además, ofrecemos garantía total de 2 años.\"\n      },\n      {\n        \"id\": 2,\n        \"pregunta\": \"¿Cuánto tiempo tarda en llegar?\",\n        \"respuesta\": \"Tu [producto] llega en máximo 48 horas hábiles a cualquier ciudad de Colombia, con envío gratuito y seguimiento en tiempo real para que estés tranquilo.\"\n      },\n      {\n        \"id\": 3,\n        \"pregunta\": \"¿Es seguro comprar aquí?\",\n        \"respuesta\": \"Absolutamente. Contamos con pagos 100% seguros, opciones contraentrega y garantía de devolución completa para que tu compra sea sin riesgos.\"\n      },\n      {\n        \"id\": 4,\n        \"pregunta\": \"¿Qué pasa si no me gusta?\",\n        \"respuesta\": \"Si el producto no cumple tus expectativas, tienes 30 días para devolverlo y recibir el reembolso total, sin preguntas y sin complicaciones.\"\n      },\n      {\n        \"id\": 5,\n        \"pregunta\": \"¿Por qué es tan barato comparado con tiendas?\",\n        \"respuesta\": \"Ofrecemos precios directos sin intermediarios y promociones exclusivas para Colombia, manteniendo la calidad premium sin subir costos innecesarios.\"\n      },\n      {\n        \"id\": 6,\n        \"pregunta\": \"¿Tienen soporte si necesito ayuda?\",\n        \"respuesta\": \"Sí, contamos con un equipo de soporte colombiano 24/7 que te acompañará antes, durante y después de tu compra para que tu [beneficio] nunca se detenga.\"\n      }\n    ]\n  },\n  \"garantias\": {\n    \"titulo\": \"Compra con Total Confianza\",\n    \"subtitulo\": \"Tu satisfacción y seguridad son nuestra prioridad #1\",\n    \"garantias\": [\n      {\n        \"id\": 1,\n        \"icono\": \"🛡️\",\n        \"titulo\": \"Garantía 2 Años\",\n        \"descripcion\": \"Si no funciona como prometemos, te devolvemos el 100% de tu dinero\"\n      },\n      {\n        \"id\": 2,\n        \"icono\": \"🚚\",\n        \"titulo\": \"Envío Gratis\",\n        \"descripcion\": \"Envío express gratuito en 24-48 horas a toda Colombia\"\n      },\n      {\n        \"id\": 3,\n        \"icono\": \"💳\",\n        \"titulo\": \"Pago Seguro\",\n        \"descripcion\": \"Paga contraentrega o con tarjeta. Transacciones 100% protegidas\"\n      }\n    ]\n  },\n  \"cta_final\": {\n    \"titulo\": \"¡ÚLTIMA OPORTUNIDAD!\",\n    \"subtitulo\": \"No dejes pasar esta oferta única. Miles ya han transformado su [contexto] con [producto].\",\n    \"botonTexto\": \"¡QUIERO MI TRANSFORMACIÓN AHORA!\",\n    \"urgencia\": \"⚡ Oferta válida solo por hoy\",\n    \"descuento\": \"70% OFF\",\n    \"envio\": \"🚚 Envío GRATIS en 24-48 horas\",\n    \"garantia\": \"🛡️ Garantía de satisfacción del 100% o te devolvemos tu dinero\",\n    \"precioActual\": \"89000\",\n    \"precioAnterior\": \"150000\"\n  },\n  \"promociones\": {\n    \"titulo\": \"Promociones por Cantidad\",\n    \"subtitulo\": \"Configura descuentos automáticos por cantidad de productos\",\n    \"promociones\": [\n      {\n        \"id\": 1,\n        \"activa\": true,\n        \"descripcion\": \"Descuento por compra múltiple\",\n        \"cantidadMinima\": 3,\n        \"descuentoPorcentaje\": 20\n      },\n      {\n        \"id\": 2,\n        \"activa\": true,\n        \"descripcion\": \"Descuento por compra múltiple\",\n        \"cantidadMinima\": 5,\n        \"descuentoPorcentaje\": 90\n      }\n    ]\n  }\n}\n\n## REGLAS CRÍTICAS PARA GENERACIÓN\n1. **PUNTOS DE DOLOR**: SIEMPRE generar EXACTAMENTE 4 puntos con posiciones: izquierda, derecha, izquierda, derecha\n2. **TESTIMONIOS**: SIEMPRE generar MÍNIMO 3 testimonios completos con nombres colombianos\n3. **PRECIOS**: SIEMPRE incluir precio actual Y precio_original para mostrar descuento\n4. **STOCK**: SIEMPRE incluir stock (50-100) y stock_minimo (5-10)\n5. **GANCHOS**: SIEMPRE generar los 5 ganchos de venta completos\n6. **BENEFICIOS**: SIEMPRE generar mínimo 6 beneficios específicos\n7. **CARACTERÍSTICAS**: SIEMPRE generar 3 detalles y 3 beneficios en la sección características\n8. **FAQ**: SIEMPRE generar las 6 preguntas frecuentes\n9. **GARANTÍAS**: SIEMPRE generar las 3 garantías básicas\n10. **PROMOCIONES**: SIEMPRE generar 2 promociones por cantidad\n\n## EJEMPLOS DE USO\n\n### Ejemplo Conversación (MODO 1):\n\"¡Hola! 👋 Soy tu asistente para crear productos increíbles. ¿Qué producto genial quieres crear hoy?\"\n\n### Ejemplo Recopilando Info (MODO 1):\n\"¡Me encanta la idea! ¿Cuál sería el precio que tienes en mente para este producto?\"\n\n### Ejemplo Producto Completo (MODO 2):\n***PRODUCTO_LISTO***\n{...JSON completo con TODOS los campos...}\n\n### Ejemplo Actualización Granular (MODO 3):\n***CAMPO_ACTUALIZADO***\n{\n  \"campo_modificado\": \"precio\",\n  \"valor_anterior\": \"120000\",\n  \"valor_nuevo\": \"89000\",\n  \"razon_cambio\": \"Precio más competitivo para aumentar conversiones\",\n  \"datos_actualizados\": {\n    \"precio\": 89000,\n    \"descuento\": 25.83\n  }\n}\n\n## REGLAS CRÍTICAS\n1. NUNCA mezcles conversación con ***PRODUCTO_LISTO*** o ***CAMPO_ACTUALIZADO***\n2. SIEMPRE decide: conversación O ***PRODUCTO_LISTO*** O ***CAMPO_ACTUALIZADO***\n3. Para MODO 3: SIEMPRE consulta primero con la herramienta antes de responder\n4. El JSON debe ser perfecto y completo según el modo\n5. Usa información coherente y realista\n6. Mantén el estilo colombiano en descripciones\n7. Las palabras clave son SAGRADAS - úsalas correctamente según el modo\n8. TODOS los campos del JSON son obligatorios según el modo\n9. Si ves \"GENERAR PRODUCTO AUTOMÁTICAMENTE\" en el mensaje, SIEMPRE genera el JSON completo\n10. NUNCA omitas ningún campo de la estructura JSON según el modo correspondiente\n11. SIEMPRE personaliza el contenido según el producto específico\n12. Para actualizaciones: SIEMPRE usa la herramienta consultar_productos PRIMERO"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -992,
+        176
+      ],
+      "id": "f1db7e03-d46a-455a-b260-9fbc2fb6dc53",
+      "name": "Agente Maestro IA"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ [\n  {\n    \"tipo\": \"producto_generado\",\n    \"datos_producto\": $json.producto_generado || {},\n    \"json_limpio\": JSON.stringify($json.producto_generado || {}),\n    \"respuesta_agente\": \"¡Producto generado automáticamente! 🎉\",\n    \"id_sesion\": $json.id_sesion || 'default',\n    \"listo_para_generar\": true,\n    \"estado\": \"completado\",\n    \"mensaje\": \"¡Producto creado exitosamente! 🚀\",\n    \"auto_guardar\": true\n  }\n] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        160
+      ],
+      "id": "9912a015-8194-4b0b-af41-7a31fb98fa11",
+      "name": "Responder Producto"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "session-id",
+              "name": "id_sesion",
+              "value": "={{ $json.body?.conversacion_id || 'session_' + Date.now() }}",
+              "type": "string"
+            },
+            {
+              "id": "user-message",
+              "name": "mensaje_usuario",
+              "value": "={{ $json.body?.mensajes && Array.isArray($json.body.mensajes) && $json.body.mensajes.length > 0 ? $json.body.mensajes[$json.body.mensajes.length - 1]?.content || '' : $json.body?.mensaje || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "all-messages",
+              "name": "historial_completo",
+              "value": "={{ JSON.stringify($json.body?.mensajes || []) }}",
+              "type": "string"
+            },
+            {
+              "id": "categorias",
+              "name": "categorias_disponibles",
+              "value": "={{ JSON.stringify($json.body?.categorias_disponibles || []) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1904,
+        160
+      ],
+      "id": "8e42c27c-c8e6-4093-891a-0efc24c05492",
+      "name": "Extraer Datos"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "crear_productos_conversacional",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -2080,
+        160
+      ],
+      "id": "70c3f078-5f45-4cce-9f43-4c352286adcc",
+      "name": "Webhook Conversacional",
+      "webhookId": "crear-productos-conversacional"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.id_sesion || 'default_session' }}",
+        "tableName": "chats_creador_productos",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -1104,
+        480
+      ],
+      "id": "b7e00712-94e4-4a92-836d-537b8dfa43db",
+      "name": "Memoria del Chat",
+      "credentials": {
+        "postgres": {
+          "id": "aGokiQ7IqpdnPcjx",
+          "name": "Academia Joshua"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1280,
+        496
+      ],
+      "id": "25c89711-8455-4db3-b7b0-0a3aa56a054c",
+      "name": "Modelo OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "BF6TLMzAguxXUoJp",
+          "name": "Api Chat GPT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "producto-listo-check",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "***PRODUCTO_LISTO***",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -672,
+        176
+      ],
+      "id": "230eb6ba-1f3c-4f8d-bd6d-dde19e89a950",
+      "name": "¿Es Producto Completo?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "campo-actualizado-check",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "***CAMPO_ACTUALIZADO***",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -432,
+        384
+      ],
+      "id": "423a333a-2496-479c-802b-9fa324de2bd7",
+      "name": "¿Es Campo Actualizado?"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ [\n  {\n    \"tipo\": \"conversacion\",\n    \"respuesta_agente\": $json.output || 'Respuesta del agente',\n    \"id_sesion\": $json.id_sesion || 'default',\n    \"listo_para_generar\": false,\n    \"estado\": \"conversando\",\n    \"mensaje\": $json.output || 'Continuando conversación'\n  }\n] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -256,
+        576
+      ],
+      "id": "42723ac4-97c5-45e5-83d2-d12b42b6f30e",
+      "name": "Responder Chat"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Procesar JSON del producto completo\nconst output = $input.first().json.output;\n\n// Extraer el JSON después de ***PRODUCTO_LISTO***\nconst jsonStart = output.indexOf('***PRODUCTO_LISTO***') + '***PRODUCTO_LISTO***'.length;\nconst jsonString = output.substring(jsonStart).trim();\n\ntry {\n  const producto = JSON.parse(jsonString);\n  \n  return {\n    json: {\n      producto_generado: producto,\n      json_limpio: jsonString,\n      id_sesion: $input.first().json.id_sesion,\n      tipo_respuesta: 'producto_completo'\n    }\n  };\n} catch (error) {\n  return {\n    json: {\n      error: 'Error al procesar JSON del producto',\n      output_original: output,\n      id_sesion: $input.first().json.id_sesion,\n      tipo_respuesta: 'error'\n    }\n  };\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        160
+      ],
+      "id": "ff039f5f-74f3-4e87-85e5-e5dd3f087c6f",
+      "name": "Procesar Producto JSON"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Procesar JSON del campo actualizado\nconst output = $input.first().json.output;\n\n// Extraer el JSON después de ***CAMPO_ACTUALIZADO***\nconst jsonStart = output.indexOf('***CAMPO_ACTUALIZADO***') + '***CAMPO_ACTUALIZADO***'.length;\nconst jsonString = output.substring(jsonStart).trim();\n\ntry {\n  const campoActualizado = JSON.parse(jsonString);\n  \n  return {\n    json: {\n      campo_actualizado: campoActualizado,\n      json_limpio: jsonString,\n      id_sesion: $input.first().json.id_sesion,\n      tipo_respuesta: 'campo_actualizado'\n    }\n  };\n} catch (error) {\n  return {\n    json: {\n      error: 'Error al procesar JSON del campo actualizado',\n      output_original: output,\n      id_sesion: $input.first().json.id_sesion,\n      tipo_respuesta: 'error'\n    }\n  };\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        368
+      ],
+      "id": "e7f076dd-9b97-4b85-86fd-c2dd7a47de9f",
+      "name": "Procesar Campo JSON"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "actualizar-keyword",
+              "leftValue": "={{ $json.mensaje_usuario }}",
+              "rightValue": "actualizar|modificar|cambiar|mejorar|editar",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1712,
+        160
+      ],
+      "id": "0a618b9a-d530-4f44-890e-9bb1f5509df4",
+      "name": "¿Detectar Actualización?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "force-consultation",
+              "name": "mensaje_usuario",
+              "value": "={{ $json.mensaje_usuario + ' [CONSULTAR_PRIMERO_OBLIGATORIO]' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1360,
+        -32
+      ],
+      "id": "ef2c44c9-e13d-48f2-83fe-099f94d9ada0",
+      "name": "Forzar Consulta Previa"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "productos",
+        "limit": 1,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Webhook Conversacional').item.json.body.producto_id }}"
+            },
+            {
+              "keyName": "activo",
+              "condition": "eq",
+              "keyValue": "true"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        496
+      ],
+      "id": "82b71e95-6781-4594-8089-a44c6961eafc",
+      "name": "consultar_productos1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ [\n  {\n    \"tipo\": \"respuesta_con_opciones\",\n    \"campo_modificado\": $json.campo_actualizado?.campo_modificado || 'desconocido',\n    \"valor_anterior\": $json.campo_actualizado?.valor_anterior || '',\n    \"valor_nuevo\": $json.campo_actualizado?.valor_nuevo || '',\n    \"razon_cambio\": $json.campo_actualizado?.razon_cambio || '',\n    \"datos_actualizados\": $json.campo_actualizado?.datos_actualizados || {},\n    \"respuesta_agente\": \"¡Campo actualizado exitosamente! ✨ ¿Qué te gustaría hacer?\",\n    \"opciones\": [\n      {\n        \"tipo\": \"usar_producto\",\n        \"texto\": \"✅ Usar este producto actualizado\",\n        \"icono\": \"✅\"\n      },\n      {\n        \"tipo\": \"reemplazar_campo\",\n        \"texto\": \"🔄 Reemplazar solo este campo\",\n        \"campo\": $json.campo_actualizado?.campo_modificado || $json.campo_modificado || 'campo',\n        \"valor\": $json.campo_actualizado?.valor_nuevo || $json.valor_nuevo || '',\n        \"icono\": \"🔄\"\n      },\n      {\n        \"tipo\": \"continuar_conversacion\",\n        \"texto\": \"💬 Hacer más cambios\",\n        \"mensaje\": \"Quiero seguir editando\",\n        \"icono\": \"💬\"\n      }\n    ],\n    \"producto_sugerido\": $json.campo_actualizado?.datos_actualizados || {},\n    \"id_sesion\": $json.id_sesion || 'default',\n    \"estado\": \"actualizado\",\n    \"mensaje\": \"¡Actualización granular completada! 🔄\"\n  }\n] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        368
+      ],
+      "id": "53a86ecc-672e-4a82-813a-bcc9f28ecfa1",
+      "name": "Responder Campo Actualizado1"
+    }
+  ],
+  "connections": {
+    "Agente Maestro IA": {
+      "main": [
+        [
+          {
+            "node": "¿Es Producto Completo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer Datos": {
+      "main": [
+        [
+          {
+            "node": "¿Detectar Actualización?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Conversacional": {
+      "main": [
+        [
+          {
+            "node": "Extraer Datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memoria del Chat": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente Maestro IA",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Modelo OpenAI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente Maestro IA",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Producto Completo?": {
+      "main": [
+        [
+          {
+            "node": "Procesar Producto JSON",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "¿Es Campo Actualizado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Campo Actualizado?": {
+      "main": [
+        [
+          {
+            "node": "Procesar Campo JSON",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesar Producto JSON": {
+      "main": [
+        [
+          {
+            "node": "Responder Producto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesar Campo JSON": {
+      "main": [
+        [
+          {
+            "node": "Responder Campo Actualizado1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Detectar Actualización?": {
+      "main": [
+        [
+          {
+            "node": "Forzar Consulta Previa",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agente Maestro IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Forzar Consulta Previa": {
+      "main": [
+        [
+          {
+            "node": "Agente Maestro IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_productos1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Maestro IA",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8000b702e0a3d9ac6d70099a2751603316de4028cd14af0949776a26efecb219"
+  }
+}

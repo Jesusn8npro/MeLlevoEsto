@@ -7,12 +7,6 @@ import { clienteSupabase } from '../../configuracion/supabase'
 import { useNavigate } from 'react-router-dom'
 import './ContraEntregaModal.css'
 
-/**
- * Modal de "Pago Contra Entrega" inspirado en Releasit
- * - Sin login obligatorio
- * - Ofertas por cantidad
- * - Formulario de envío simplificado en español
- */
 const ContraEntregaModal = ({
   abierto,
   onCerrar,
@@ -20,22 +14,90 @@ const ContraEntregaModal = ({
   onConfirmar,
 }) => {
   const precioUnitario = producto?.precio || 0
-  // Número de WhatsApp configurable vía env; normaliza agregando +57 si falta
   const WHATSAPP_NUMERO_RAW = import.meta.env?.VITE_WHATSAPP_NUMERO ?? '3214892176'
   const WHATSAPP_NUMERO = WHATSAPP_NUMERO_RAW.startsWith('57') ? WHATSAPP_NUMERO_RAW : `57${WHATSAPP_NUMERO_RAW}`
 
-  // Ofertas por cantidad (ajustables)
-  const OFERTAS = [
-    { id: 1, titulo: 'Compra 1 unidad', subtitulo: 'Precio de Oferta', cantidad: 1, descuento: 0 },
-    { id: 2, titulo: 'Compra 2 unidades con un 15 % de descuento adicional', subtitulo: 'Ahorra 15 % Más', cantidad: 2, descuento: 15 },
-    { id: 3, titulo: 'Compra 3 unidades con un 25 % de descuento adicional', subtitulo: 'Ahorras 25 % Más', cantidad: 3, descuento: 25 },
-  ]
+  const generarOfertas = () => {
+    console.log('🔍 DEBUG - Producto completo:', producto)
+    console.log('🔍 DEBUG - Promociones del producto:', producto?.promociones)
+    
+    const ofertas = []
+    
+    // Siempre agregar la oferta base de 1 unidad
+    ofertas.push({
+      id: 1,
+      titulo: 'Compra 1 unidad',
+      subtitulo: 'Precio de Oferta',
+      cantidad: 1,
+      descuento: 0
+    })
 
-  const [ofertaSeleccionada, setOfertaSeleccionada] = useState(OFERTAS[0])
+    // ✅ CORRECCIÓN: Acceder correctamente a las promociones según la estructura real de Supabase
+    // Las promociones están en producto.promociones.promociones (no directamente en producto.promociones)
+    let promocionesReales = null
+    
+    if (producto?.promociones) {
+      // Si promociones es un objeto con la estructura {titulo, subtitulo, promociones: [...]}
+      if (producto.promociones.promociones && Array.isArray(producto.promociones.promociones)) {
+        promocionesReales = producto.promociones.promociones
+        console.log('✅ DEBUG - Encontradas promociones en estructura anidada:', promocionesReales.length)
+      }
+      // Si promociones es directamente un array (estructura alternativa)
+      else if (Array.isArray(producto.promociones)) {
+        promocionesReales = producto.promociones
+        console.log('✅ DEBUG - Encontradas promociones en estructura directa:', promocionesReales.length)
+      }
+    }
+
+    if (promocionesReales && promocionesReales.length > 0) {
+      console.log('🎁 DEBUG - Procesando promociones reales:', promocionesReales)
+      
+      // Mapear SOLO las promociones reales de Supabase al formato del modal
+      promocionesReales.forEach((promo, index) => {
+        console.log(`🔍 DEBUG - Promoción ${index}:`, promo)
+        
+        // Validar que la promoción esté activa y tenga cantidad mínima válida
+        if (promo.activa && promo.cantidadMinima && promo.cantidadMinima > 1 && promo.descuentoPorcentaje) {
+          console.log(`✅ DEBUG - Promoción ${index} es válida, agregando...`)
+          ofertas.push({
+            id: index + 2,
+            titulo: `Compra ${promo.cantidadMinima} unidades con un ${promo.descuentoPorcentaje}% de descuento adicional`,
+            subtitulo: promo.descripcion || `Ahorras ${promo.descuentoPorcentaje}% Más`,
+            cantidad: promo.cantidadMinima,
+            descuento: promo.descuentoPorcentaje
+          })
+        } else {
+          console.log(`❌ DEBUG - Promoción ${index} no es válida:`, {
+            activa: promo.activa,
+            cantidadMinima: promo.cantidadMinima,
+            descuentoPorcentaje: promo.descuentoPorcentaje
+          })
+        }
+      })
+    } else {
+      console.log('❌ DEBUG - No hay promociones configuradas en Supabase para este producto')
+    }
+
+    // ✅ CORRECCIÓN: NO generar promociones falsas por defecto
+    // Solo mostrar la oferta base si no hay promociones reales configuradas
+    if (ofertas.length === 1) {
+      console.log('ℹ️ DEBUG - Solo se mostrará la oferta base (sin promociones inventadas)')
+    }
+
+    console.log('🎯 DEBUG - Ofertas finales (solo reales de Supabase):', ofertas)
+    return ofertas
+  }
+
+  const OFERTAS = useMemo(() => {
+    console.log('🔄 DEBUG - Regenerando ofertas...')
+    const ofertas = generarOfertas()
+    console.log('🎯 DEBUG - Ofertas generadas en useMemo:', ofertas)
+    return ofertas
+  }, [producto?.promociones, producto?.id])
+  const [ofertaSeleccionada, setOfertaSeleccionada] = useState(null)
   const [agregarUpsell, setAgregarUpsell] = useState(false)
   const PRECIO_UPSELL = 32000
 
-  // Formulario
   const [form, setForm] = useState({
     nombre: '',
     apellido: '',
@@ -56,355 +118,410 @@ const ContraEntregaModal = ({
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (!abierto) return
-    setErrores({})
-    // Bloquear scroll del body cuando el modal está abierto
-    const prevOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => { document.body.style.overflow = prevOverflow }
-  }, [abierto])
+    console.log('🔄 DEBUG - useEffect OFERTAS ejecutándose...')
+    console.log('🔍 DEBUG - OFERTAS disponibles:', OFERTAS)
+    console.log('🔍 DEBUG - Oferta actualmente seleccionada:', ofertaSeleccionada)
+    
+    if (OFERTAS.length > 0) {
+      if (!ofertaSeleccionada || !OFERTAS.find(o => o.id === ofertaSeleccionada?.id)) {
+        console.log('✅ DEBUG - Estableciendo primera oferta como seleccionada:', OFERTAS[0])
+        setOfertaSeleccionada(OFERTAS[0])
+      }
+    }
+  }, [OFERTAS, ofertaSeleccionada])
 
-  // Lista rápida de departamentos (se puede mover a util)
-  const DEPARTAMENTOS_CO = useMemo(() => ([
-    'Amazonas','Antioquia','Arauca','Atlántico','Bolívar','Boyacá','Caldas','Caquetá','Casanare','Cauca','Cesar','Chocó','Córdoba','Cundinamarca','Guainía','Guaviare','Huila','La Guajira','Magdalena','Meta','Nariño','Norte de Santander','Putumayo','Quindío','Risaralda','San Andrés y Providencia','Santander','Sucre','Tolima','Valle del Cauca','Vaupés','Vichada'
-  ]), [])
-
-  const calcularSubtotal = (oferta) => {
-    const base = precioUnitario * oferta.cantidad
-    const conDescuento = base * (1 - (oferta.descuento || 0) / 100)
-    return Math.round(conDescuento)
-  }
-
-  const subtotal = useMemo(() => calcularSubtotal(ofertaSeleccionada), [ofertaSeleccionada])
-  const envio = 0
-  const total = useMemo(() => subtotal + (agregarUpsell ? PRECIO_UPSELL : 0), [subtotal, agregarUpsell])
-
-  const actualizar = (campo, valor) => setForm((prev) => ({ ...prev, [campo]: valor }))
-
-  const construirUrlWhatsapp = () => {
-    const base = `https://wa.me/${WHATSAPP_NUMERO}`
-    const texto = `Hola 👋, acabo de completar mi compra${producto?.nombre ? ` de ${producto.nombre}` : ''} por ${formatearPrecioCOP(total)}. Tengo dudas y me gustaría hablar con un asesor.`
-    return `${base}?text=${encodeURIComponent(texto)}`
-  }
-
-  // Redirección a WhatsApp ya no ocurre aquí automáticamente; se hará desde la página de perfil.
-
-  const validar = () => {
-    const e = {}
-    if (!validarNombre(form.nombre)) e.nombre = 'Nombre inválido'
-    if (!validarNombre(form.apellido)) e.apellido = 'Apellido inválido'
-    // Email requerido por la tabla 'pedidos': usar el del usuario o pedirlo
-    if (!usuario?.email && !form.email) e.email = 'Ingresa tu correo'
-    if (form.email && !validarEmail(form.email)) e.email = 'Email inválido'
-    if (!validarTelefono(form.telefono)) e.telefono = 'Teléfono inválido (ej: 300 123 4567)'
-    if (!validarDireccion(form.direccion)) e.direccion = 'Dirección muy corta'
-    if (!form.apto) e.apto = 'Especifica apartamento/casa/bloque/piso'
-    if (!form.barrio) e.barrio = 'Ingresa barrio'
-    if (!form.departamento) e.departamento = 'Selecciona departamento'
-    if (!form.ciudad) e.ciudad = 'Ingresa ciudad'
-    setErrores(e)
-    return Object.keys(e).length === 0
-  }
+  const DEPARTAMENTOS_CO = useMemo(() => [
+    'Amazonas', 'Antioquia', 'Arauca', 'Atlántico', 'Bolívar', 'Boyacá', 'Caldas', 'Caquetá',
+    'Casanare', 'Cauca', 'Cesar', 'Chocó', 'Córdoba', 'Cundinamarca', 'Guainía', 'Guaviare',
+    'Huila', 'La Guajira', 'Magdalena', 'Meta', 'Nariño', 'Norte de Santander', 'Putumayo',
+    'Quindío', 'Risaralda', 'San Andrés y Providencia', 'Santander', 'Sucre', 'Tolima',
+    'Valle del Cauca', 'Vaupés', 'Vichada'
+  ], [])
 
   const generarPasswordAleatoria = () => {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*()_+'
-    let pwd = ''
-    for (let i = 0; i < 12; i++) {
-      pwd += chars[Math.floor(Math.random() * chars.length)]
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    let password = ''
+    for (let i = 0; i < 8; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length))
     }
-    return pwd
+    return password
   }
 
   const manejarConfirmar = async (e) => {
     e.preventDefault()
-    if (!validar()) return
+    
+    const nuevosErrores = {}
+    if (!validarNombre(form.nombre)) nuevosErrores.nombre = 'Nombre inválido'
+    if (!validarNombre(form.apellido)) nuevosErrores.apellido = 'Apellido inválido'
+    if (!validarEmail(form.email)) nuevosErrores.email = 'Email inválido'
+    if (!validarTelefono(form.telefono)) nuevosErrores.telefono = 'Teléfono inválido'
+    if (!validarDireccion(form.direccion)) nuevosErrores.direccion = 'Dirección inválida'
+    if (!form.departamento) nuevosErrores.departamento = 'Selecciona un departamento'
+    if (!form.ciudad) nuevosErrores.ciudad = 'Ciudad requerida'
 
-    // Crear usuario automáticamente si no hay sesión y hay email
-    if (!sesionInicializada && form.email) {
-      try {
-        const nombreCompleto = `${form.nombre} ${form.apellido}`.trim()
+    if (Object.keys(nuevosErrores).length > 0) {
+      setErrores(nuevosErrores)
+      return
+    }
+
+    try {
+      let usuarioId = usuario?.id
+
+      if (!sesionInicializada || !usuario) {
         const passwordTemporal = generarPasswordAleatoria()
-        const res = await registrarse(form.email, passwordTemporal, {
-          nombre: nombreCompleto,
+        const resultadoRegistro = await registrarse(form.email, passwordTemporal, {
+          nombre: form.nombre,
+          apellido: form.apellido,
           telefono: form.telefono
         })
-        if (!res?.success) {
-          console.warn('No se pudo registrar automáticamente al usuario:', res?.error)
-        }
-      } catch (err) {
-        console.warn('Error registrando usuario automáticamente:', err?.message)
-      }
-    }
 
-    const payload = {
-      producto_id: producto?.id,
-      producto_nombre: producto?.nombre,
-      oferta: ofertaSeleccionada,
-      upsell_agregado: agregarUpsell,
-      total,
-      formulario: form,
-    }
-    onConfirmar?.(payload)
-    // Mostrar confirmación en lugar de cerrar/redirigir
-    setCompraConfirmada(payload)
-
-    // Guardar pedido en Supabase para que aparezca en /perfil/pedidos
-    ;(async () => {
-      try {
-        // Asegurar sesión: si acabamos de registrar, esperar a que exista
-        let userId = usuario?.id || null
-        let userEmail = usuario?.email || null
-        if (!userId) {
-          const { data: { session } } = await clienteSupabase.auth.getSession()
-          userId = session?.user?.id || null
-          userEmail = session?.user?.email || userEmail
-        }
-        if (!userId) {
-          console.error('❌ No hay usuario autenticado para asociar el pedido')
+        if (resultadoRegistro.error) {
+          setErrores({ general: 'Error al crear cuenta: ' + resultadoRegistro.error.message })
           return
         }
-
-        const base = precioUnitario * ofertaSeleccionada.cantidad
-        const descuento = base - subtotal
-        const direccionEnvio = {
-          direccion: form.direccion,
-          ciudad: form.ciudad,
-          departamento: form.departamento,
-          barrio: form.barrio,
-          apto: form.apto,
-          pais: 'Colombia',
-          codigo_postal: ''
-        }
-        const productos = [
-          {
-            producto_id: producto?.id,
-            nombre: producto?.nombre,
-            cantidad: ofertaSeleccionada.cantidad,
-            precio_unitario: precioUnitario
-          }
-        ]
-
-        // Generar número de pedido legible y único
-        const generarNumeroPedido = () => {
-          const fecha = new Date()
-          const ymd = `${fecha.getFullYear()}${String(fecha.getMonth()+1).padStart(2,'0')}${String(fecha.getDate()).padStart(2,'0')}`
-          const rnd = Math.floor(Math.random()*9000)+1000
-          return `ME-${ymd}-${rnd}`
-        }
-
-        const pedido = {
-          numero_pedido: generarNumeroPedido(),
-          usuario_id: userId,
-          nombre_cliente: `${form.nombre} ${form.apellido}`.trim(),
-          email_cliente: form.email || userEmail,
-          telefono_cliente: form.telefono,
-          direccion_envio: direccionEnvio,
-          productos,
-          subtotal: base,
-          descuento_aplicado: descuento,
-          costo_envio: envio,
-          total,
-          estado: 'pendiente',
-          metodo_pago: 'contraentrega'
-        }
-
-        const { error } = await clienteSupabase
-          .from('pedidos')
-          .insert(pedido)
-
-        if (error) {
-          console.error('❌ Error guardando pedido en Supabase:', error.message, { pedido })
-        } else {
-          console.log('✅ Pedido guardado en Supabase y asociado al usuario')
-        }
-      } catch (err) {
-        console.error('💥 Error inesperado al guardar pedido:', err?.message)
+        usuarioId = resultadoRegistro.data.user.id
       }
-    })()
 
-    // Navegar a la página de pedidos del perfil y cerrar el modal
-    onCerrar?.()
-    navigate('/perfil/pedidos?after=cod')
+      const precioConDescuento = precioUnitario * (1 - (ofertaSeleccionada?.descuento || 0) / 100)
+      const subtotal = precioConDescuento * (ofertaSeleccionada?.cantidad || 1)
+      const upsellTotal = agregarUpsell ? PRECIO_UPSELL : 0
+      const total = subtotal + upsellTotal
+
+      const payload = {
+        usuario_id: usuarioId,
+        producto_id: producto.id,
+        cantidad: ofertaSeleccionada?.cantidad || 1,
+        precio_unitario: precioUnitario,
+        descuento_porcentaje: ofertaSeleccionada?.descuento || 0,
+        precio_con_descuento: precioConDescuento,
+        subtotal: subtotal,
+        upsell_agregado: agregarUpsell,
+        upsell_precio: agregarUpsell ? PRECIO_UPSELL : 0,
+        total: total,
+        estado: 'pendiente',
+        metodo_pago: 'contra_entrega',
+        numero_pedido: `COD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        oferta: {
+          id: ofertaSeleccionada?.id,
+          titulo: ofertaSeleccionada?.titulo,
+          cantidad: ofertaSeleccionada?.cantidad,
+          descuento: ofertaSeleccionada?.descuento
+        },
+        formulario: {
+          nombre: form.nombre,
+          apellido: form.apellido,
+          email: form.email,
+          telefono: form.telefono,
+          direccion: form.direccion,
+          apto: form.apto,
+          barrio: form.barrio,
+          departamento: form.departamento,
+          ciudad: form.ciudad
+        },
+        created_at: new Date().toISOString()
+      }
+
+      const { data, error } = await clienteSupabase
+        .from('pedidos')
+        .insert([payload])
+        .select()
+
+      if (error) {
+        console.error('Error al guardar pedido:', error)
+        setErrores({ general: 'Error al procesar el pedido' })
+        return
+      }
+
+      setCompraConfirmada(data[0])
+      if (onConfirmar) onConfirmar(data[0])
+
+    } catch (error) {
+      console.error('Error en manejarConfirmar:', error)
+      setErrores({ general: 'Error inesperado al procesar el pedido' })
+    }
   }
+
+  const manejarCambioForm = (campo, valor) => {
+    setForm(prev => ({ ...prev, [campo]: valor }))
+    if (errores[campo]) {
+      setErrores(prev => ({ ...prev, [campo]: '' }))
+    }
+  }
+
+  const calcularSubtotal = () => {
+    if (!ofertaSeleccionada) return 0
+    const precioConDescuento = precioUnitario * (1 - (ofertaSeleccionada.descuento || 0) / 100)
+    return precioConDescuento * ofertaSeleccionada.cantidad
+  }
+
+  const calcularTotal = () => {
+    const subtotal = calcularSubtotal()
+    const upsellTotal = agregarUpsell ? PRECIO_UPSELL : 0
+    return subtotal + upsellTotal
+  }
+
+  useEffect(() => {
+    let intervalo
+    if (compraConfirmada && contador > 0) {
+      intervalo = setInterval(() => {
+        setContador(prev => prev - 1)
+      }, 1000)
+    } else if (compraConfirmada && contador === 0 && !redireccionEnCurso) {
+      setRedireccionEnCurso(true)
+      const mensaje = `¡Hola! Acabo de realizar un pedido:\n\n` +
+        `🛍️ Producto: ${producto?.nombre}\n` +
+        `📦 Cantidad: ${ofertaSeleccionada?.cantidad}\n` +
+        `💰 Total: ${formatearPrecioCOP(calcularTotal())}\n` +
+        `📋 Pedido: ${compraConfirmada.numero_pedido}\n\n` +
+        `📍 Dirección de entrega:\n${form.direccion}, ${form.ciudad}, ${form.departamento}\n\n` +
+        `👤 Datos de contacto:\n${form.nombre} ${form.apellido}\n📱 ${form.telefono}`
+
+      const url = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensaje)}`
+      window.open(url, '_blank')
+      
+      setTimeout(() => {
+        setCerrandoAuto(true)
+        setTimeout(() => {
+          onCerrar()
+        }, 500)
+      }, 1000)
+    }
+
+    return () => {
+      if (intervalo) clearInterval(intervalo)
+    }
+  }, [compraConfirmada, contador, redireccionEnCurso, producto, ofertaSeleccionada, form, WHATSAPP_NUMERO, onCerrar])
 
   if (!abierto) return null
 
   return (
-    <div className="cod-modal-overlay" onClick={onCerrar}>
-      <div className={`cod-modal ${cerrandoAuto ? 'cod-cerrar-anim' : ''}`} onClick={(e) => e.stopPropagation()}>
-        <button className="cod-cerrar" onClick={onCerrar} aria-label="Cerrar">
-          <X size={20} />
+    <div className={`cod-modal-overlay ${cerrandoAuto ? 'cod-cerrando' : ''}`}>
+      <div className="cod-modal">
+        <button className="cod-cerrar" onClick={onCerrar}>
+          <X size={24} />
         </button>
 
-        <div className="cod-header">
-          <div className="cod-cod-banner">
-            <div className="cod-cod-left">
-              <BadgeDollarSign size={18} />
-              <strong>Pago Contra Entrega</strong>
-            </div>
-            <div className="cod-cod-right">
-              <span>Pagas al recibir, sin pagos online</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Ofertas */}
-        <div className="cod-ofertas">
-          {OFERTAS.map((o) => (
-            <label key={o.id} className={`cod-oferta ${ofertaSeleccionada.id === o.id ? 'seleccionada' : ''}`}>
-              <input
-                type="radio"
-                name="oferta"
-                checked={ofertaSeleccionada.id === o.id}
-                onChange={() => setOfertaSeleccionada(o)}
-              />
-              <div className="cod-oferta-contenido">
-                <div className="cod-oferta-titulos">
-                  <span className="cod-oferta-titulo">{o.titulo}</span>
-                  <span className="cod-oferta-subtitulo">{o.subtitulo}</span>
-                </div>
-                <div className="cod-oferta-precio">{formatearPrecioCOP(calcularSubtotal(o))}</div>
-              </div>
-            </label>
-          ))}
-        </div>
-
-        {/* Resumen */}
-        <div className="cod-resumen">
-          <div className="cod-resumen-linea">
-            <span>Subtotal</span>
-            <span>{formatearPrecioCOP(subtotal)}</span>
-          </div>
-          <div className="cod-resumen-linea">
-            <span>Envío</span>
-            <span className="cod-envio-gratis">Gratis</span>
-          </div>
-          <div className="cod-resumen-linea cod-total">
-            <span>Total</span>
-            <span className="cod-precio-total">{formatearPrecioCOP(total)}</span>
-          </div>
-        </div>
-
-        {/* Formulario o confirmación */}
         {!compraConfirmada ? (
-        <form className="cod-form" onSubmit={manejarConfirmar}>
-          <div className="cod-section-title">Datos de Envío</div>
-          <p className="cod-form-nota">ATENCIÓN: Ingresa tus datos de envío lo más completos posible para garantizar la entrega de tu pedido en oferta</p>
-
-          {/* Mensaje de bienvenida y aclaración de WhatsApp */}
-          <div className="cod-bienvenida" role="note">
-            <strong>¡Hola!</strong> Al completar tu compra, si agregas tu correo, crearemos tu cuenta automáticamente para que puedas ver tu pedido en "Mi Cuenta".
-            <br />
-            Cuando hagas clic en <strong>"Aceptar"</strong> te llevaremos a nuestro WhatsApp por si tienes más dudas sobre tu nueva compra. ¡Gracias por tu confianza!
-          </div>
-
-          <div className="cod-grid-2">
-            <div className="cod-campo">
-              <label>Nombre</label>
-              <input type="text" value={form.nombre} onChange={(e)=>actualizar('nombre', e.target.value)} placeholder="Nombre" />
-              {errores.nombre && <span className="cod-error">{errores.nombre}</span>}
+          <>
+            <div className="cod-header">
+              <div className="cod-icono-pago">
+                <BadgeDollarSign size={32} />
+              </div>
+              <h2 className="cod-titulo">Pago Contra Entrega</h2>
+              <p className="cod-subtitulo">Paga al recibir tu pedido</p>
             </div>
-            <div className="cod-campo">
-              <label>Apellido</label>
-              <input type="text" value={form.apellido} onChange={(e)=>actualizar('apellido', e.target.value)} placeholder="Apellido" />
-              {errores.apellido && <span className="cod-error">{errores.apellido}</span>}
+
+            <div className="cod-banner">
+              <div className="cod-banner-contenido">
+                <Truck className="cod-banner-icono" size={20} />
+                <span>Envío GRATIS a toda Colombia</span>
+              </div>
             </div>
-          </div>
 
-          <div className="cod-campo">
-            <label>Teléfono (Ejemplo: 3102345678)</label>
-            <input type="tel" value={form.telefono} onChange={(e)=>actualizar('telefono', e.target.value)} placeholder="Teléfono" />
-            {errores.telefono && <span className="cod-error">{errores.telefono}</span>}
-            <small className="cod-ayuda">Asegúrate que sea correcto, un número equivocado impedirá el envío del producto.</small>
-          </div>
-
-          <div className="cod-campo">
-            <label>Correo (opcional, para crear tu cuenta automáticamente)</label>
-            <input type="email" value={form.email} onChange={(e)=>actualizar('email', e.target.value)} placeholder="tucorreo@ejemplo.com" />
-            {errores.email && <span className="cod-error">{errores.email}</span>}
-            <small className="cod-ayuda">Si lo agregas, te creamos una cuenta y podrás ver tu pedido en "Mi Cuenta".</small>
-          </div>
-
-          <div className="cod-campo">
-            <label>Dirección (EJEMPLO: CALLE 2 # 12 - 32)</label>
-            <input type="text" value={form.direccion} onChange={(e)=>actualizar('direccion', e.target.value)} placeholder="Dirección" />
-            {errores.direccion && <span className="cod-error">{errores.direccion}</span>}
-          </div>
-
-          <div className="cod-campo">
-            <label>Casa o Apartamento (Ej: Apto, torre, bloque o piso)</label>
-            <input type="text" value={form.apto} onChange={(e)=>actualizar('apto', e.target.value)} placeholder="Apto, torre, bloque o piso" />
-            {errores.apto && <span className="cod-error">{errores.apto}</span>}
-          </div>
-
-          <div className="cod-grid-2">
-            <div className="cod-campo">
-              <label>Barrio</label>
-              <input type="text" value={form.barrio} onChange={(e)=>actualizar('barrio', e.target.value)} placeholder="Barrio" />
-              {errores.barrio && <span className="cod-error">{errores.barrio}</span>}
+            <div className="cod-ofertas">
+              <h3 className="cod-ofertas-titulo">Selecciona tu oferta:</h3>
+              <div className="cod-ofertas-lista">
+                {console.log('🎨 DEBUG - Renderizando ofertas en JSX:', OFERTAS)}
+                {OFERTAS && OFERTAS.length > 0 ? OFERTAS.map((o) => {
+                  console.log('🎨 DEBUG - Renderizando oferta individual:', o)
+                  return (
+                    <label
+                      key={o.id}
+                      className={`cod-oferta ${ofertaSeleccionada?.id === o.id ? 'cod-oferta-seleccionada' : ''}`}
+                      data-descuento={o.descuento}
+                    >
+                      <input
+                        type="radio"
+                        name="oferta"
+                        value={o.id}
+                        checked={ofertaSeleccionada?.id === o.id}
+                        onChange={() => setOfertaSeleccionada(o)}
+                      />
+                      <div className="cod-oferta-contenido">
+                        <div className="cod-oferta-info">
+                          <h4 className="cod-oferta-titulo">{o.titulo}</h4>
+                          <p className="cod-oferta-subtitulo">{o.subtitulo}</p>
+                        </div>
+                        <div className="cod-oferta-precio">
+                          {formatearPrecioCOP(precioUnitario * (1 - (o.descuento || 0) / 100) * o.cantidad)}
+                        </div>
+                      </div>
+                      {o.descuento > 0 && (
+                        <div className="cod-oferta-descuento">
+                          -{o.descuento}%
+                        </div>
+                      )}
+                    </label>
+                  )
+                }) : (
+                  <div style={{padding: '20px', textAlign: 'center', color: '#666'}}>
+                    🔄 Cargando ofertas...
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="cod-campo">
-              <label>Departamento</label>
-              <select value={form.departamento} onChange={(e)=>actualizar('departamento', e.target.value)}>
-                <option value="">Departamento</option>
-                {DEPARTAMENTOS_CO.map((d)=> <option key={d} value={d}>{d}</option>)}
-              </select>
-              {errores.departamento && <span className="cod-error">{errores.departamento}</span>}
+
+            <div className="cod-resumen">
+              <div className="cod-resumen-linea">
+                <span>Subtotal</span>
+                <span>{formatearPrecioCOP(calcularSubtotal())}</span>
+              </div>
+              <div className="cod-resumen-linea">
+                <span>Envío</span>
+                <span className="cod-gratis">Gratis</span>
+              </div>
+              <div className="cod-resumen-linea cod-total">
+                <span>Total</span>
+                <span>{formatearPrecioCOP(calcularTotal())}</span>
+              </div>
             </div>
-          </div>
 
-          <div className="cod-campo">
-            <label>Ciudad</label>
-            <input type="text" value={form.ciudad} onChange={(e)=>actualizar('ciudad', e.target.value)} placeholder="Ciudad" />
-            {errores.ciudad && <span className="cod-error">{errores.ciudad}</span>}
-          </div>
+            <form onSubmit={manejarConfirmar} className="cod-formulario">
+              <h3 className="cod-form-titulo">Datos de envío</h3>
+              
+              <div className="cod-form-grupo-doble">
+                <div className="cod-form-grupo">
+                  <input
+                    type="text"
+                    placeholder="Nombre"
+                    value={form.nombre}
+                    onChange={(e) => manejarCambioForm('nombre', e.target.value)}
+                    className={errores.nombre ? 'cod-error' : ''}
+                  />
+                  {errores.nombre && <span className="cod-error-texto">{errores.nombre}</span>}
+                </div>
+                <div className="cod-form-grupo">
+                  <input
+                    type="text"
+                    placeholder="Apellido"
+                    value={form.apellido}
+                    onChange={(e) => manejarCambioForm('apellido', e.target.value)}
+                    className={errores.apellido ? 'cod-error' : ''}
+                  />
+                  {errores.apellido && <span className="cod-error-texto">{errores.apellido}</span>}
+                </div>
+              </div>
 
-          {/* Upsell simple */}
-          <div className="cod-upsell">
-            <label>
-              <input type="checkbox" checked={agregarUpsell} onChange={(e)=>setAgregarUpsell(e.target.checked)} />
-              <span> ¿Deseas agregar un kit por solo {formatearPrecioCOP(PRECIO_UPSELL)}?</span>
-            </label>
-            <span className="cod-upsell-badge">¡UNIDADES LIMITADAS!</span>
-          </div>
+              <div className="cod-form-grupo">
+                <input
+                  type="email"
+                  placeholder="Correo electrónico"
+                  value={form.email}
+                  onChange={(e) => manejarCambioForm('email', e.target.value)}
+                  className={errores.email ? 'cod-error' : ''}
+                />
+                {errores.email && <span className="cod-error-texto">{errores.email}</span>}
+              </div>
 
-          <button type="submit" className="cod-cta-principal" aria-label="Aceptar y completar compra, pagar al recibir">
-            <Lock size={16} />
-            <span>ACEPTAR Y COMPLETAR TU COMPRA:</span>
-            <strong>{formatearPrecioCOP(total)}</strong>
-            <ChevronRight size={16} className="cod-cta-arrow" />
-          </button>
-          <p className="cod-cod-note">
-            <Info size={14} /> Pagarás el total mostrado cuando el pedido llegue a tu domicilio (Contra Entrega).
-          </p>
-        </form>
+              <div className="cod-form-grupo">
+                <input
+                  type="tel"
+                  placeholder="Teléfono (ej: 3001234567)"
+                  value={form.telefono}
+                  onChange={(e) => manejarCambioForm('telefono', e.target.value)}
+                  className={errores.telefono ? 'cod-error' : ''}
+                />
+                {errores.telefono && <span className="cod-error-texto">{errores.telefono}</span>}
+              </div>
+
+              <div className="cod-form-grupo">
+                <input
+                  type="text"
+                  placeholder="Dirección completa"
+                  value={form.direccion}
+                  onChange={(e) => manejarCambioForm('direccion', e.target.value)}
+                  className={errores.direccion ? 'cod-error' : ''}
+                />
+                {errores.direccion && <span className="cod-error-texto">{errores.direccion}</span>}
+              </div>
+
+              <div className="cod-form-grupo-doble">
+                <div className="cod-form-grupo">
+                  <input
+                    type="text"
+                    placeholder="Apto/Casa (opcional)"
+                    value={form.apto}
+                    onChange={(e) => manejarCambioForm('apto', e.target.value)}
+                  />
+                </div>
+                <div className="cod-form-grupo">
+                  <input
+                    type="text"
+                    placeholder="Barrio"
+                    value={form.barrio}
+                    onChange={(e) => manejarCambioForm('barrio', e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="cod-form-grupo-doble">
+                <div className="cod-form-grupo">
+                  <select
+                    value={form.departamento}
+                    onChange={(e) => manejarCambioForm('departamento', e.target.value)}
+                    className={errores.departamento ? 'cod-error' : ''}
+                  >
+                    <option value="">Selecciona departamento</option>
+                    {DEPARTAMENTOS_CO.map(dep => (
+                      <option key={dep} value={dep}>{dep}</option>
+                    ))}
+                  </select>
+                  {errores.departamento && <span className="cod-error-texto">{errores.departamento}</span>}
+                </div>
+                <div className="cod-form-grupo">
+                  <input
+                    type="text"
+                    placeholder="Ciudad"
+                    value={form.ciudad}
+                    onChange={(e) => manejarCambioForm('ciudad', e.target.value)}
+                    className={errores.ciudad ? 'cod-error' : ''}
+                  />
+                  {errores.ciudad && <span className="cod-error-texto">{errores.ciudad}</span>}
+                </div>
+              </div>
+
+              {errores.general && (
+                <div className="cod-error-general">{errores.general}</div>
+              )}
+
+              <button type="submit" className="cod-cta-principal">
+                <Lock size={20} />
+                Confirmar Pedido - {formatearPrecioCOP(calcularTotal())}
+                <ChevronRight size={20} />
+              </button>
+            </form>
+          </>
         ) : (
-          <div className="cod-confirmacion" role="dialog" aria-label="Compra exitosa">
-            <div className="cod-confirmacion-header">
-              <CheckCircle size={22} color="#16a34a" />
-              <strong>¡Compra registrada con éxito!</strong>
+          <div className="cod-confirmacion">
+            <div className="cod-confirmacion-icono">
+              <CheckCircle size={64} />
             </div>
-            <p className="cod-confirmacion-mensaje">
-              Estamos procesando tu pedido y te llegará lo más pronto posible. Si tienes dudas, puedes escribirnos por WhatsApp.
+            <h2 className="cod-confirmacion-titulo">¡Pedido Confirmado!</h2>
+            <p className="cod-confirmacion-numero">
+              Número de pedido: <strong>{compraConfirmada.numero_pedido}</strong>
             </p>
             <div className="cod-confirmacion-detalles">
-              <div className="cod-resumen-linea"><span>Producto</span><span>{compraConfirmada.producto_nombre || 'Producto'}</span></div>
-              <div className="cod-resumen-linea"><span>Cantidad</span><span>{compraConfirmada.oferta?.cantidad || 1}</span></div>
-              <div className="cod-resumen-linea"><span>Total</span><span className="cod-precio-total">{formatearPrecioCOP(compraConfirmada.total)}</span></div>
-              <div className="cod-resumen-linea"><span>Teléfono</span><span>{compraConfirmada.formulario?.telefono}</span></div>
-              {compraConfirmada.formulario?.email && (
-                <div className="cod-resumen-linea"><span>Correo</span><span>{compraConfirmada.formulario.email}</span></div>
-              )}
-              <div className="cod-resumen-linea"><span>Dirección</span><span>{compraConfirmada.formulario?.direccion}</span></div>
-              <div className="cod-resumen-linea"><span>Ciudad</span><span>{compraConfirmada.formulario?.ciudad}</span></div>
+              <p><strong>Total:</strong> {formatearPrecioCOP(compraConfirmada.total)}</p>
+              <p><strong>Método:</strong> Pago contra entrega</p>
+              <p><strong>Entrega:</strong> 1-3 días hábiles</p>
             </div>
             <div className="cod-confirmacion-acciones">
-              <button type="button" className="cod-cta-whatsapp" onClick={() => {
-                if (redireccionEnCurso) return
-                const waUrl = construirUrlWhatsapp()
-                setRedireccionEnCurso(true)
-                window.location.href = waUrl
-              }}>
+              <button
+                type="button"
+                className="cod-cta-principal"
+                onClick={() => {
+                  const mensaje = `¡Hola! Acabo de realizar un pedido:\n\n` +
+                    `🛍️ Producto: ${producto?.nombre}\n` +
+                    `📦 Cantidad: ${ofertaSeleccionada?.cantidad}\n` +
+                    `💰 Total: ${formatearPrecioCOP(calcularTotal())}\n` +
+                    `📋 Pedido: ${compraConfirmada.numero_pedido}\n\n` +
+                    `📍 Dirección de entrega:\n${form.direccion}, ${form.ciudad}, ${form.departamento}\n\n` +
+                    `👤 Datos de contacto:\n${form.nombre} ${form.apellido}\n📱 ${form.telefono}`
+
+                  const url = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensaje)}`
+                  window.open(url, '_blank')
+                }}
+              >
                 Consultar por WhatsApp {contador > 0 ? `(se abrirá en ${contador}s)` : ''}
               </button>
               <button type="button" className="cod-cta-secundario" onClick={onCerrar}>Cerrar</button>
@@ -412,7 +529,6 @@ const ContraEntregaModal = ({
           </div>
         )}
         
-        {/* Sellos de confianza (imagen completa) */}
         {!compraConfirmada && (
           <div className="cod-sellos">
             <img
@@ -424,7 +540,6 @@ const ContraEntregaModal = ({
           </div>
         )}
         
-        {/* Botón de pago en plataforma y logos */}
         {!compraConfirmada && (
           <div className="cod-plataforma">
             <button type="button" className="cod-cta-plataforma" onClick={() => console.log('Pagar en plataforma')}>

@@ -1,0 +1,559 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e7211e46-0f49-46a0-9cb7-e83fed150efd",
+                    "leftValue": "={{ $json.body.image_url }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Foto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.message }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "85edf561-8f5e-4215-9e19-78ff0392068e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Texto"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1312,
+        656
+      ],
+      "id": "df85f032-7903-427a-96f7-b8dd05562802",
+      "name": "Conmutador"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.body.image_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1152,
+        432
+      ],
+      "id": "a5882449-d549-4d05-916b-ecc8dc6faee8",
+      "name": "Descargar Imagen"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/imagenes/{{ $now.format('yyyy-MM-dd') }}/{{ $now.toUnixInteger() }}-{{ $('Webhook Trigger Imágenes IA').item.json.body.session_id }}.jpg",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -960,
+        432
+      ],
+      "id": "7134742e-5893-45fb-a701-65a7d37c692d",
+      "name": "Subir a Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener respuesta del upload de Supabase\nconst uploadResponse = items[0].json;\n\n// Obtener datos del webhook\nconst webhookData = $('Webhook Trigger Imágenes IA').item.json;\nconst sessionId = webhookData.body.session_id || 'default';\nconst timestamp = new Date().getTime();\nconst date = new Date().toISOString().split('T')[0];\n\n// El nombre real del archivo subido (Supabase devuelve esto en Key o Id)\nconst actualFileName = uploadResponse.Key || uploadResponse.Id || uploadResponse.path || `${date}/${timestamp}-${sessionId}.jpg`;\n\n// Construir URL pública correcta\nconst publicUrl = `https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/public/imagenes/${actualFileName}`;\n\nreturn {\n  json: {\n    success: true,\n    id: actualFileName,\n    name: actualFileName.split('/').pop(),\n    fileName: actualFileName,\n    fullPath: actualFileName,\n    webViewLink: publicUrl,\n    publicUrl: publicUrl,\n    Key: actualFileName,\n    bucket: 'imagenes',\n    uploadedAt: new Date().toISOString(),\n    originalResponse: uploadResponse\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -768,
+        432
+      ],
+      "id": "process-upload-info",
+      "name": "Procesar Info Upload"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "53de4eb0-6684-48f5-a5b5-2b3bedaff817",
+              "name": "body.message",
+              "value": "=El usuario acaba de enviar una imagen. \n\n📁 Ruta del archivo: {{ $json.fullPath }}\n🔗 URL pública: {{ $json.publicUrl }}\n\n💬 Mensaje del usuario: {{ $('Webhook Trigger Imágenes IA').item.json.body.message }}",
+              "type": "string"
+            },
+            {
+              "id": "file-info",
+              "name": "fileInfo",
+              "value": "={{ $json }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -576,
+        432
+      ],
+      "id": "ee2da8db-2dca-4fff-8a75-5a43871db224",
+      "name": "Establecer Texto"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Usa esta herramienta para RENOMBRAR o MOVER archivos en Supabase Storage.\n\nParámetros requeridos:\n- sourceKey: La ruta completa actual del archivo (ej: \"2025-10-17/1760728365-session123.jpg\")\n- destinationKey: La nueva ruta completa del archivo (ej: \"2025-10-17/mi-foto-favorita.jpg\")\n\nEjemplo de uso:\n{\n  \"bucketId\": \"imagenes\",\n  \"sourceKey\": \"2025-10-17/1760728365-session123.jpg\",\n  \"destinationKey\": \"2025-10-17/foto-de-vacaciones.jpg\"\n}",
+        "method": "POST",
+        "url": "https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/move",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $fromAI(\"requestBody\", \"El cuerpo JSON de la petición con bucketId, sourceKey y destinationKey\", \"json\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 1.1,
+      "position": [
+        32,
+        992
+      ],
+      "id": "tool-rename-file",
+      "name": "Herramienta Renombrar Archivo",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Usa esta herramienta para BUSCAR archivos originales que el usuario ha subido.\n\nParámetros opcionales:\n- search: Texto para buscar en los nombres de archivos\n- limit: Número máximo de resultados (por defecto 100)\n\nEjemplo:\n{\n  \"limit\": 50,\n  \"offset\": 0,\n  \"sortBy\": { \"column\": \"created_at\", \"order\": \"desc\" },\n  \"search\": \"vacaciones\"\n}\n\nDevuelve una lista de archivos con sus URLs públicas.",
+        "method": "POST",
+        "url": "https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/list/imagenes",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $fromAI(\"searchParams\", \"Parámetros de búsqueda en formato JSON con campos opcionales: search, limit, offset, sortBy\", \"json\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 1.1,
+      "position": [
+        176,
+        992
+      ],
+      "id": "tool-search-originals",
+      "name": "Herramienta Buscar Originales",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Usa esta herramienta para BUSCAR imágenes generadas por IA.\n\nParámetros opcionales:\n- search: Texto para buscar en los nombres de archivos\n- limit: Número máximo de resultados (por defecto 100)\n\nEsta herramienta busca específicamente en la carpeta 'ai-generated/'.\n\nEjemplo:\n{\n  \"limit\": 50,\n  \"search\": \"editada\",\n  \"prefix\": \"ai-generated/\"\n}",
+        "method": "POST",
+        "url": "https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/list/imagenes",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $fromAI(\"searchParams\", \"Parámetros de búsqueda con prefix obligatorio 'ai-generated/' y campos opcionales: search, limit\", \"json\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        992
+      ],
+      "id": "tool-search-ai",
+      "name": "Herramienta Buscar IA",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Usa esta herramienta para ELIMINAR archivos de Supabase Storage.\n\n⚠️ IMPORTANTE: Esta acción es permanente y no se puede deshacer.\n\nParámetro requerido:\n- prefixes: Array con las rutas de los archivos a eliminar\n\nEjemplo:\n{\n  \"prefixes\": [\"2025-10-17/archivo-a-borrar.jpg\"]\n}",
+        "method": "DELETE",
+        "url": "https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/imagenes",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $fromAI(\"deleteParams\", \"JSON con el campo 'prefixes' que es un array de rutas de archivos a eliminar\", \"json\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        992
+      ],
+      "id": "tool-delete-file",
+      "name": "Herramienta Eliminar Archivo",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Webhook Trigger Imágenes IA').item.json.body.session_id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -992,
+        1200
+      ],
+      "id": "b7214801-7a25-456e-87f8-f89a03800321",
+      "name": "Memoria Simple"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1056,
+        976
+      ],
+      "id": "83a0d134-2aec-44b8-b4f8-fdc33b22a127",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "afEdUlo465aPlyDq",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Llama a esta herramienta para editar una imagen. Debes pasar un nuevo título de imagen, un prompt de imagen muy detallado/profesional y el ID de la imagen.",
+        "workflowId": {
+          "__rl": true,
+          "value": "jQoi0yBKSPgGJVdx",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/jQoi0yBKSPgGJVdx",
+          "cachedResultName": "editar_imagen"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "imageTitle": "={{ $fromAI('imageTitle', 'El título de la nueva imagen', 'string') }}",
+            "imagePrompt": "={{ $fromAI('imagePrompt', 'El prompt de generación de imagen. Debe ser detallado y optimizado para la generación de imágenes por IA.', 'string') }}",
+            "imageID": "={{ $fromAI('imageID', 'El ID o ruta completa de la imagen a editar', 'string') }}"
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -256,
+        1200
+      ],
+      "id": "f577aaf6-2700-4bcb-9b75-81457f3812d6",
+      "name": "editar_imagen"
+    },
+    {
+      "parameters": {
+        "description": "Llama a esta herramienta para combinar dos imágenes. Debes pasar un prompt de generación de imagen, los IDs de ambas imágenes y un título para esta nueva imagen.",
+        "workflowId": {
+          "__rl": true,
+          "value": "Mwp4SQDxcbDxijRs",
+          "mode": "list",
+          "cachedResultName": "combinar_imagenes"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "prompt": "={{ $fromAI('prompt', 'El prompt de generación de imagen optimizado para IA', 'string') }}",
+            "image1": "={{ $fromAI('imagen1', 'La ruta completa de la imagen 1', 'string') }}",
+            "image2": "={{ $fromAI('imagen2', 'La ruta completa de la imagen 2', 'string') }}",
+            "imageTitle": "={{ $fromAI('tituloImagen', 'El título para la nueva imagen combinada', 'string') }}"
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -96,
+        1200
+      ],
+      "id": "82123107-ab46-4709-980c-8afadf4a7c63",
+      "name": "combinar_imagenes"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1216,
+        960
+      ],
+      "id": "de69b410-ba85-4dee-bd8b-8aef60fc06af",
+      "name": "GPT 5 mini",
+      "credentials": {
+        "openAiApi": {
+          "id": "BF6TLMzAguxXUoJp",
+          "name": "Api Chat GPT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.message }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "# 🎯 Asistente de Gestión de Imágenes con Supabase Storage\n\nEres un asistente experto en gestión de imágenes y archivos. Tu rol es ayudar al usuario a organizar, buscar y manipular sus imágenes almacenadas en Supabase Storage de forma eficiente y amigable.\n\n## 📁 Estructura de Almacenamiento\n\n**Bucket:** `imagenes`\n**Estructura de carpetas:**\n- `YYYY-MM-DD/` - Imágenes originales organizadas por fecha\n- `ai-generated/` - Imágenes generadas o editadas por IA\n- `productos/` - Imágenes de productos\n\n**Formato de nombres:**\n- Originales: `2025-10-17/1760728365-session123.jpg`\n- IA: `ai-generated/nombre-descriptivo.jpg`\n\n## 🛠️ Herramientas Disponibles\n\n### 1. **Herramienta Renombrar Archivo**\nCambia el nombre o mueve archivos en Supabase.\n\n**Cuándo usar:** Cuando el usuario quiera renombrar una foto o moverla a otra carpeta.\n\n**Formato del JSON:**\n```json\n{\n  \"bucketId\": \"imagenes\",\n  \"sourceKey\": \"2025-10-17/1760728365-session123.jpg\",\n  \"destinationKey\": \"2025-10-17/mi-foto-favorita.jpg\"\n}\n```\n\n**Ejemplo de conversación:**\nUsuario: \"Renombra la última foto que subí a 'vacaciones-playa'\"\nAsistente: Usa la herramienta con destinationKey: \"2025-10-17/vacaciones-playa.jpg\"\n\n### 2. **Herramienta Buscar Originales**\nBusca imágenes originales subidas por el usuario.\n\n**Cuándo usar:** Cuando el usuario pregunte por sus fotos, imágenes recientes, o busque algo específico.\n\n**Formato del JSON:**\n```json\n{\n  \"limit\": 20,\n  \"offset\": 0,\n  \"sortBy\": {\n    \"column\": \"created_at\",\n    \"order\": \"desc\"\n  },\n  \"search\": \"vacaciones\"\n}\n```\n\n**Ejemplo de conversación:**\nUsuario: \"Muéstrame mis últimas 5 fotos\"\nAsistente: Usa la herramienta con limit: 5, sortBy con created_at desc\n\n### 3. **Herramienta Buscar IA**\nBusca imágenes generadas o editadas por IA.\n\n**Cuándo usar:** Cuando el usuario busque imágenes editadas, combinadas o generadas.\n\n**Formato del JSON:**\n```json\n{\n  \"limit\": 20,\n  \"prefix\": \"ai-generated/\",\n  \"search\": \"editada\",\n  \"sortBy\": {\n    \"column\": \"created_at\",\n    \"order\": \"desc\"\n  }\n}\n```\n\n### 4. **Herramienta Eliminar Archivo**\n⚠️ Elimina permanentemente archivos.\n\n**Cuándo usar:** SOLO cuando el usuario EXPLÍCITAMENTE pida eliminar/borrar un archivo.\n\n**Formato del JSON:**\n```json\n{\n  \"prefixes\": [\"2025-10-17/archivo-a-borrar.jpg\"]\n}\n```\n\n**IMPORTANTE:** Siempre confirma antes de eliminar: \"¿Estás seguro de que quieres eliminar [nombre]? Esta acción no se puede deshacer.\"\n\n### 5. **Editar Imagen**\nEdita una imagen existente usando IA.\n\n**Parámetros:**\n- imageTitle: Título descriptivo\n- imagePrompt: Prompt detallado para la IA\n- imageID: Ruta completa del archivo\n\n### 6. **Combinar Imágenes**\nCombina dos imágenes en una.\n\n**Parámetros:**\n- prompt: Cómo combinar las imágenes\n- image1: Ruta de la primera imagen\n- image2: Ruta de la segunda imagen\n- imageTitle: Título para el resultado\n\n## 📋 Protocolo de Interacción\n\n### Cuando el usuario SUBE una imagen:\n1. ✅ Confirma que se recibió correctamente\n2. 📁 Muestra la ruta del archivo y la URL pública\n3. 🤔 Pregunta: \"¿Cómo te gustaría nombrar esta foto?\"\n4. ✏️ Una vez responda, usa **Herramienta Renombrar Archivo**\n5. ✅ Confirma el cambio y muestra la nueva URL\n\n### Cuando el usuario BUSCA imágenes:\n1. 🔍 Usa la herramienta apropiada (Originales o IA)\n2. 📊 Presenta los resultados de forma clara y organizada\n3. 🔗 Incluye las URLs públicas para cada imagen\n4. 💡 Sugiere acciones útiles (renombrar, editar, combinar)\n\n### Cuando el usuario quiere RENOMBRAR:\n1. 🔍 Si no especifica cuál imagen, búscala primero\n2. ✏️ Usa **Herramienta Renombrar Archivo**\n3. ✅ Confirma el cambio con la nueva URL\n\n### Cuando el usuario quiere ELIMINAR:\n1. ⚠️ **SIEMPRE** pide confirmación explícita\n2. 📝 Explica que es permanente\n3. 🗑️ Solo elimina si confirma\n4. ✅ Confirma la eliminación\n\n## 🎨 Formato de URLs Públicas\n\nTodas las URLs públicas siguen este formato:\n```\nhttps://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/public/imagenes/[ruta-completa]\n```\n\n**Ejemplo:**\n```\nhttps://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/public/imagenes/2025-10-17/vacaciones-playa.jpg\n```\n\n## 💡 Mejores Prácticas\n\n1. **Sé proactivo:** Sugiere organización y nombres descriptivos\n2. **Sé claro:** Siempre muestra las URLs públicas completas\n3. **Sé preciso:** Usa las rutas exactas de los archivos\n4. **Sé cuidadoso:** Confirma acciones destructivas\n5. **Sé útil:** Ofrece opciones y siguiente pasos\n\n## 🚫 Restricciones\n\n- ❌ NUNCA inventes nombres de archivos que no existen\n- ❌ NUNCA elimines sin confirmación explícita\n- ❌ NUNCA uses rutas de archivos incorrectas\n- ❌ NUNCA olvides incluir las URLs públicas completas\n- ✅ SIEMPRE usa las herramientas disponibles\n- ✅ SIEMPRE verifica que las rutas sean correctas\n- ✅ SIEMPRE proporciona feedback claro al usuario\n\n## 📱 Tono y Estilo\n\n- Amigable y profesional\n- Usa emojis relevantes para mayor claridad\n- Respuestas concisas pero completas\n- Ofrece ayuda proactiva\n- Explica los procesos cuando sea útil\n\n¡Estás listo para ayudar al usuario a gestionar sus imágenes de forma eficiente! 🚀",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -560,
+        672
+      ],
+      "id": "35f99a2a-c999-4c49-960d-84382602ef1d",
+      "name": "Agente Google"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generar-imagenes-ia",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1600,
+        656
+      ],
+      "id": "701eadea-9b04-4876-8544-726eaa09c8c2",
+      "name": "Webhook Trigger Imágenes IA",
+      "webhookId": "generar-imagenes-ia-webhook"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"output\": $json.output, \"session_id\": $json.session_id, \"producto_id\": $json.producto_id, \"imagenes\": $json.imagenes || [], \"archivos\": $json.archivos || [] } }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -64,
+        672
+      ],
+      "id": "487eaa48-39a5-44fb-91fb-379edff3a6bb",
+      "name": "Responder Webhook"
+    }
+  ],
+  "connections": {
+    "Conmutador": {
+      "main": [
+        [
+          {
+            "node": "Descargar Imagen",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agente Google",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar Imagen": {
+      "main": [
+        [
+          {
+            "node": "Subir a Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir a Supabase": {
+      "main": [
+        [
+          {
+            "node": "Procesar Info Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesar Info Upload": {
+      "main": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Herramienta Renombrar Archivo": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Herramienta Buscar Originales": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Herramienta Buscar IA": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Herramienta Eliminar Archivo": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Establecer Texto": {
+      "main": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente Google": {
+      "main": [
+        [
+          {
+            "node": "Responder Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

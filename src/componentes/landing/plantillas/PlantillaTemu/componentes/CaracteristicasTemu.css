@@ -111,6 +111,28 @@
   animation: caracteristicas-temu-badge-pulse 2s ease-in-out infinite;
 }
 
+.caracteristicas-temu-click-hint {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+}
+
+.caracteristicas-temu-imagen-container:hover .caracteristicas-temu-click-hint {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-5px);
+}
+
 @keyframes caracteristicas-temu-badge-pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }

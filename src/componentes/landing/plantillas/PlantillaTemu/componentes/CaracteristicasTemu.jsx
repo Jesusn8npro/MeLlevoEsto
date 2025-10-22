@@ -19,6 +19,28 @@ const CaracteristicasTemu = ({
   producto = null
 }) => {
   
+  // Función para hacer scroll al producto (Hero section)
+  const scrollToProduct = () => {
+    // Buscar el elemento del hero o la sección principal del producto
+    const heroSection = document.querySelector('.hero-temu-seccion') || 
+                       document.querySelector('.hero-section') ||
+                       document.querySelector('[data-section="hero"]') ||
+                       document.querySelector('.plantilla-temu-content > *:first-child')
+    
+    if (heroSection) {
+      heroSection.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      })
+    } else {
+      // Fallback: scroll al inicio de la página
+      window.scrollTo({ 
+        top: 0, 
+        behavior: 'smooth' 
+      })
+    }
+  }
+  
   const sectionRef = useRef(null)
   
   // Datos por defecto - Layout en 3 columnas
@@ -146,7 +168,12 @@ const CaracteristicasTemu = ({
 
         {/* COLUMNA CENTRO - PRODUCTO */}
         <div className="caracteristicas-temu-columna caracteristicas-temu-producto">
-          <div className="caracteristicas-temu-imagen-container caracteristicas-temu-item">
+          <div 
+            className="caracteristicas-temu-imagen-container caracteristicas-temu-item"
+            onClick={scrollToProduct}
+            style={{ cursor: 'pointer' }}
+            title="Haz clic para ver el producto completo"
+          >
             <ImagenInteligente 
               src={imagenCaracteristicas} 
               alt="Producto principal"
@@ -156,6 +183,9 @@ const CaracteristicasTemu = ({
             <div className="caracteristicas-temu-imagen-overlay">
               <div className="caracteristicas-temu-badge-calidad">
                 ⭐ CALIDAD PREMIUM
+              </div>
+              <div className="caracteristicas-temu-click-hint">
+                👆 Clic para ver producto
               </div>
             </div>
           </div>

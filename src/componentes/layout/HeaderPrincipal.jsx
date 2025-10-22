@@ -185,24 +185,59 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
   const esPaginaProducto = location.pathname.startsWith('/producto/')
   const esPaginaTienda = location.pathname.startsWith('/tienda')
 
-  // Detectar scroll para header sticky (solo si NO estamos en producto/tienda)
+  // Detectar scroll para header sticky con mejor lógica
   useEffect(() => {
-    if (esPaginaProducto || esPaginaTienda) {
-      setHeaderSticky(false) // Forzar no sticky en páginas de producto y tienda
+    // Verificar si la página tiene suficiente contenido para scroll
+    const verificarContenidoSuficiente = () => {
+      const alturaVentana = window.innerHeight
+      const alturaDocumento = document.documentElement.scrollHeight
+      return alturaDocumento > alturaVentana + 200 // Margen de 200px
+    }
+
+    // Si estamos en páginas específicas o no hay suficiente contenido, desactivar sticky
+    if (esPaginaProducto || esPaginaTienda || !verificarContenidoSuficiente()) {
+      setHeaderSticky(false)
       return
     }
 
+    let ticking = false
+    let lastScrollY = 0
+
     const manejarScroll = () => {
-      const scrollY = window.scrollY
-      const shouldBeSticky = scrollY > 100 // Activar sticky después de 100px de scroll
-      
-      if (shouldBeSticky !== headerSticky) {
-        setHeaderSticky(shouldBeSticky)
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrollY = window.scrollY
+          const shouldBeSticky = scrollY > 120 // Activar sticky después de 120px de scroll
+          
+          // Solo actualizar si hay un cambio real y suficiente diferencia
+          if (shouldBeSticky !== headerSticky && Math.abs(scrollY - lastScrollY) > 10) {
+            setHeaderSticky(shouldBeSticky)
+            lastScrollY = scrollY
+          }
+          
+          ticking = false
+        })
+        ticking = true
+      }
+    }
+
+    // Verificar contenido al cargar y redimensionar
+    const manejarResize = () => {
+      if (!verificarContenidoSuficiente()) {
+        setHeaderSticky(false)
       }
     }
 
     window.addEventListener('scroll', manejarScroll, { passive: true })
-    return () => window.removeEventListener('scroll', manejarScroll)
+    window.addEventListener('resize', manejarResize, { passive: true })
+    
+    // Verificación inicial
+    manejarResize()
+    
+    return () => {
+      window.removeEventListener('scroll', manejarScroll)
+      window.removeEventListener('resize', manejarResize)
+    }
   }, [headerSticky, esPaginaProducto, esPaginaTienda])
 
   // Alternar menú móvil
@@ -239,7 +274,7 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
   // Navegar a agregar producto
   const navegarAAgregarProducto = () => {
     setMenuUsuarioAbierto(false)
-    navigate('/admin/productos/agregar')
+    navigate('/admin/productos/creador-pr')
   }
 
   // Navegaciones cliente
