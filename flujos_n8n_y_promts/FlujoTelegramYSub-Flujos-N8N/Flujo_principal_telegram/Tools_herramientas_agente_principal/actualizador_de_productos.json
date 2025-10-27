@@ -321,16 +321,12 @@
               "fieldValue": "={{ $('Generar Valor Inteligente').item.json.valor_generado }}"
             },
             {
-              "fieldId": "fecha_actualizacion",
+              "fieldId": "actualizado_el",
               "fieldValue": "={{ new Date().toISOString() }}"
             },
             {
               "fieldId": "estado",
               "fieldValue": "activo"
-            },
-            {
-              "fieldId": "version",
-              "fieldValue": "={{ ($('Obtener Datos del Producto').item.json.version || 0) + 1 }}"
             }
           ]
         }
