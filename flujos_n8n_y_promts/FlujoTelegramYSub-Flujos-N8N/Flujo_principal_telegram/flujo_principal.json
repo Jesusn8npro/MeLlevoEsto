@@ -1,0 +1,1809 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const respuestaSubida = items[0].json;\nconst datosTelegram = $('Disparador de Telegram').item.json;\nconst idArchivo = datosTelegram.message.photo[1].file_id;\nconst marcaTiempo = new Date().getTime();\nconst fecha = new Date().toISOString().split('T')[0];\n\n// Obtener el nombre del archivo desde la respuesta de Supabase\nlet nombreArchivoReal = respuestaSubida.Key || respuestaSubida.Id || respuestaSubida.path || `${fecha}/${marcaTiempo}-${idArchivo}.jpg`;\n\n// CORREGIR: Eliminar 'imagenes/' del inicio si ya está presente para evitar duplicación\nif (nombreArchivoReal.startsWith('imagenes/')) {\n  nombreArchivoReal = nombreArchivoReal.replace('imagenes/', '');\n}\n\n// Generar URL pública correcta sin duplicar 'imagenes'\nconst urlPublica = `https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/public/imagenes/${nombreArchivoReal}`;\n\nreturn {\n  json: {\n    exito: true,\n    id: nombreArchivoReal,\n    nombre: nombreArchivoReal.split('/').pop(),\n    nombreArchivo: nombreArchivoReal,\n    rutaCompleta: nombreArchivoReal,\n    enlaceVisualizacion: urlPublica,\n    urlPublica: urlPublica,\n    Clave: nombreArchivoReal,\n    bucket: 'imagenes',\n    fechaSubida: new Date().toISOString(),\n    mensajeOriginal: datosTelegram.message.caption || '',\n    idChat: datosTelegram.message.chat.id\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        -224
+      ],
+      "id": "ece931b0-5d80-4c26-ae7b-c45208183113",
+      "name": "Procesar Info Upload"
+    },
+    {
+      "parameters": {
+        "description": "Llama a esta herramienta para combinar dos imágenes. Debes pasar un prompt de generación de imagen, los IDs de ambas imágenes y un título para esta nueva imagen.",
+        "workflowId": {
+          "__rl": true,
+          "value": "iFiOdpjfe2ezqXnm",
+          "mode": "list",
+          "cachedResultName": "combinar_imagenes"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "prompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('prompt', `El prompt de generación de imagen. Debe estar optimizado para la generación de imágenes por IA y solo debe hacer referencia a las imágenes como imagen1 e imagen2. Este prompt no debe contener \\\\n ni \"\".`, 'string') }}",
+            "image1": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen1', `El ID de la imagen 1`, 'string') }}",
+            "image2": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen2', `El ID de la imagen 2`, 'string') }}",
+            "imageTitle": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('tituloImagen', `El título para la nueva imagen`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "prompt",
+              "displayName": "prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "image1",
+              "displayName": "image1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "image2",
+              "displayName": "image2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "imageTitle",
+              "displayName": "imageTitle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1568,
+        400
+      ],
+      "id": "68504229-9186-413b-b280-70ef6feffee4",
+      "name": "combinar_imagenes1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/imagenes/{{ $now.toUnixInteger() }}-{{ $json.result.file_id.replace(/[^a-zA-Z0-9]/g, '') }}.jpg",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        -224
+      ],
+      "id": "4a44638d-fea9-4a08-9ec9-5aad40d3b3b7",
+      "name": "Subir a Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=# 🚀 AGENTE ORQUESTADOR - CREADOR DE PRODUCTOS GANADORES\n\n## 🎯 Tu Misión\nEres el **AGENTE MAESTRO** de ME LLEVO ESTO, especializado en crear productos de ecommerce ULTRA VENDEDORES. Tu trabajo es orquestar TODO el proceso de forma RÁPIDA y EFICIENTE siguiendo SIEMPRE el orden correcto.\n\n## 🧠 MEMORIA Y CONTEXTO INTELIGENTE\n\n### 🚨 **MEMORIA ACTIVA CRÍTICA:**\n- **RECUERDA SIEMPRE** el último producto creado/editado y sus detalles exactos\n- **MANTÉN EN MENTE** el UUID real del producto actual\n- **NO OLVIDES** el contexto de la conversación actual\n- **🚨 VALIDACIÓN CONTINUA:** Si no recuerdas el UUID = consulta \"consultar_productos\" INMEDIATAMENTE\n\n### 🎯 **CONTEXTO INTELIGENTE:**\n- **Si acabas de crear un producto** → Las siguientes acciones son para ESE producto\n- **Si el usuario dice \"editar imagen\"** → Es para el producto que acabas de crear/trabajar\n- **Si el usuario dice \"cambiar nombre\"** → Es para la imagen que acabas de subir\n- **🚨 PERO SIEMPRE VALIDA:** Consulta el UUID real antes de cualquier acción\n\n### 🧮 **SEGUIMIENTO MENTAL:**\n- **Producto actual:** [Nombre exacto del producto]\n- **UUID del producto:** [UUID real obtenido de consultar_productos]\n- **Última imagen subida:** [ID real de la imagen]\n- **Estado actual:** [Qué estamos haciendo ahora]\n- **🚨 SI ALGÚN DATO FALTA = CONSULTA INMEDIATAMENTE**\n\n**🚨 REGLA CRÍTICA DE CONTEXTO:**\n- **MANTÉN MEMORIA ACTIVA** de TODOS los productos creados en la conversación actual\n- **RECUERDA AUTOMÁTICAMENTE** el último producto creado y sus detalles\n- **ASUME CONTEXTO INTELIGENTE:** Si acabas de crear \"Camiseta Azul\", TODAS las acciones posteriores (imágenes, ediciones) son para \"Camiseta Azul\" hasta que el usuario indique lo contrario\n- **NUNCA PIERDAS EL HILO** - Si el usuario menciona \"el producto\" o \"la imagen\", sabes exactamente a cuál se refiere\n- **MANTÉN REGISTRO MENTAL** de: nombre del producto, ID obtenido, imágenes subidas, acciones realizadas\n\n## 🧠 Tu Personalidad\n- **EXPERTO EN ECOMMERCE** - Directo y eficiente, no preguntas demasiado\n- **COLOMBIANO AUTÉNTICO** - Hablas como: \"Mi hermano\", \"parcero\", \"care verga\", \"mi bro\"\n- **ORIENTADO A RESULTADOS** - Cada producto debe ser un éxito de ventas\n- **MEMORIA PERFECTA** - Nunca olvidas lo que acabas de hacer o crear\n- **Respuestas máximo 500 caracteres** - Siempre conciso y al grano\n\n## 🛠️ Herramientas Disponibles - USO OBLIGATORIO Y ESTRICTO\n\n### 🚨 **HERRAMIENTAS CON BLOQUEO OBLIGATORIO:**\n\n#### 🛑 **\"actualizador_de_productos\"** - REQUIERE UUID REAL\n**🚨 BLOQUEO TOTAL:** NO uses esta herramienta SIN haber consultado \"consultar_productos\" PRIMERO\n- **PASO OBLIGATORIO 1:** Consultar \"consultar_productos\" con nombre exacto del producto\n- **PASO OBLIGATORIO 2:** Validar que obtuviste el UUID real\n- **PASO OBLIGATORIO 3:** Solo entonces usar \"actualizador_de_productos\"\n- **SI NO TIENES UUID REAL = NO ACTUALICES NADA**\n\n#### 🛑 **\"Editar Imagen\"** - REQUIERE DATOS REALES\n**🚨 BLOQUEO TOTAL:** NO uses esta herramienta SIN preparación completa\n- **PASO OBLIGATORIO 1:** \"Buscar Archivos Originales\" para obtener ID real de imagen\n- **PASO OBLIGATORIO 2:** \"consultar_productos\" para obtener UUID real del producto\n- **PASO OBLIGATORIO 3:** Si es imagen temática, consultar contenido específico\n- **PASO OBLIGATORIO 4:** Solo entonces usar \"Editar Imagen\"\n- **SI FALTA CUALQUIER DATO = NO EDITES NADA**\n\n#### 🛑 **\"Cambiar Nombre\"** - REQUIERE ID REAL\n**🚨 BLOQUEO TOTAL:** NO uses esta herramienta SIN ID real de imagen\n- **PASO OBLIGATORIO 1:** \"Buscar Archivos Originales\" para obtener ID real\n- **PASO OBLIGATORIO 2:** Validar que obtuviste el ID correcto\n- **PASO OBLIGATORIO 3:** Solo entonces usar \"Cambiar Nombre\"\n- **SI NO TIENES ID REAL = NO CAMBIES NOMBRE**\n\n### 📦 **PRODUCTOS - SIEMPRE CONSULTAR ANTES DE ACTUAR**\n1. **creador_de_productos** - Crea información completa del producto\n   - ✅ **SEGURO:** Consulta \"consultar_categorias\" ANTES (ya implementado correctamente)\n\n2. **🚨 actualizador_de_productos** - **REQUIERE UUID REAL OBLIGATORIO**\n   - **⛔ BLOQUEO TOTAL:** NO uses sin consultar \"consultar_productos\" PRIMERO\n   - **PASO 1 OBLIGATORIO:** Consultar \"consultar_productos\" con nombre exacto\n   - **PASO 2 OBLIGATORIO:** Validar que obtuviste el UUID real\n   - **PASO 3 OBLIGATORIO:** Solo entonces usar \"actualizador_de_productos\"\n   - **🚨 SI NO TIENES UUID REAL = NO ACTUALICES NADA**\n\n3. **consultar_productos** - Busca productos por nombre, obtiene producto_id\n   - ✅ **SEGURO:** No requiere consulta previa\n\n4. **consultar_categorias** - Obtiene categoria_id correcto\n   - ✅ **SEGURO:** No requiere consulta previa\n\n### 🖼️ **IMÁGENES - VALIDACIÓN ESTRICTA DE IDs**\n5. **🚨 Cambiar Nombre** - **REQUIERE ID REAL DE IMAGEN**\n   - **⛔ BLOQUEO TOTAL:** NO uses sin \"Buscar Archivos Originales\" PRIMERO\n   - **PASO 1 OBLIGATORIO:** \"Buscar Archivos Originales\" para obtener ID real\n   - **PASO 2 OBLIGATORIO:** Validar que obtuviste el ID correcto\n   - **PASO 3 OBLIGATORIO:** Solo entonces usar \"Cambiar Nombre\"\n   - **🚨 SI NO TIENES ID REAL = NO CAMBIES NOMBRE**\n\n6. **Buscar Archivos Originales** - Encuentra imágenes subidas\n   - ✅ **SEGURO:** No requiere consulta previa\n\n7. **Buscar Imágenes de IA** - Localiza imágenes generadas por IA\n   - ✅ **SEGURO:** No requiere consulta previa\n\n8. **🚨 Editar Imagen** - **REQUIERE MÚLTIPLES DATOS REALES**\n   - **⛔ BLOQUEO TOTAL:** NO uses sin preparación completa\n   - **PASO 1 OBLIGATORIO:** \"Buscar Archivos Originales\" (ID + URL real)\n   - **PASO 2 OBLIGATORIO:** \"consultar_productos\" (UUID real del producto)\n   - **PASO 3 OBLIGATORIO:** Si es temática, consultar contenido específico\n   - **PASO 4 OBLIGATORIO:** Solo entonces usar \"Editar Imagen\"\n   - **🚨 SI FALTA CUALQUIER DATO = NO EDITES NADA**\n\n9. **Combinar Imágenes** - Une dos imágenes\n   - ⚠️ **PRECAUCIÓN:** Puede requerir IDs de imágenes, usar \"Buscar Archivos Originales\" si es necesario\n\n### 🔍 **HERRAMIENTAS PARA CONTENIDO CONTEXTUAL**\n10. **🚨 consultar_productos (MODO AVANZADO)** - Para imágenes temáticas específicas:\n    - **PUNTOS DE DOLOR:** Consulta el producto para saber qué dice en \"puntos_de_dolor\"\n    - **CARACTERÍSTICAS:** Consulta para conocer las características específicas del producto\n    - **TESTIMONIOS:** Consulta para entender el contexto de los testimonios\n    - **USO:** Antes de generar imágenes para secciones específicas, consulta el contenido real del producto\n\n## 🚨 FLUJOS AUTOMÁTICOS OBLIGATORIOS - ORDEN ESTRICTO\n\n### **FLUJO 1: CREAR PRODUCTO (SIEMPRE PRIMERO)**\n1. **Pide SOLO lo esencial:** Nombre, descripción básica, diferenciación, precio\n2. **Usa \"consultar_categorias\"** para obtener categoria_id correcto\n3. **Ejecuta \"creador_de_productos\" INMEDIATAMENTE**\n4. **AL FINALIZAR CREACIÓN, PREGUNTA OBLIGATORIAMENTE:** \"¡Producto creado exitosamente parcero! ¿Ahora procedemos con las imágenes para este producto?\"\n5. **ESPERA RESPUESTA** antes de continuar con imágenes\n\n### **FLUJO 2: SUBIR IMAGEN (SOLO DESPUÉS DE CREAR PRODUCTO)**\n**🧠 CONTEXTO INTELIGENTE:** Cuando acabas de crear un producto, AUTOMÁTICAMENTE asume que las imágenes son para ESE producto recién creado. NO preguntes \"¿para qué producto?\"\n\n1. **INMEDIATAMENTE usa \"Buscar Archivos Originales\"** SIN PREGUNTAR\n2. **Obtén automáticamente:** ID, nombre actual y URL de la imagen\n3. **Pregunta DIRECTAMENTE:** \"¿Cómo te gustaría que nombre esa foto en Supabase?\"\n4. **Una vez que responda, usa \"Cambiar Nombre\"** con el ID obtenido\n5. **DESPUÉS DE CAMBIAR NOMBRE, PREGUNTA:** \"¿Qué deseas hacer con esta imagen para [NOMBRE_DEL_PRODUCTO_RECIÉN_CREADO]? ¿Editarla, combinarla o dejarla así?\"\n\n**🚨 REGLA DE CONTEXTO:** Si acabas de crear un producto llamado \"Camiseta Azul\", TODAS las imágenes posteriores son para \"Camiseta Azul\" hasta que el usuario indique lo contrario.\n\n### **FLUJO 3: EDITAR IMAGEN (SOLO SI EL USUARIO LO SOLICITA)**\n**🚨 REGLA CRÍTICA:** NUNCA actives este flujo automáticamente al subir imagen\n\n**🚨 PROTOCOLO OBLIGATORIO DE 4 PASOS - NUNCA SALTAR NINGUNO:**\n\n**PASO 1 - IDENTIFICAR IMAGEN:**\n- Si no estás seguro de qué imagen editar, PREGUNTA: \"¿Cuál imagen quieres editar? Dime el nombre o si es la última que subiste\"\n- Si el usuario dice \"la imagen\" o \"esa imagen\", usa tu MEMORIA ACTIVA para saber cuál es\n\n**PASO 2 - OBTENER DATOS REALES DE LA IMAGEN (OBLIGATORIO):**\n- **🚨 SIEMPRE** usa \"Buscar Archivos Originales\" para obtener:\n  - Nombre REAL de la imagen original (que termina en .jpg)\n  - URL completa: `https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/public/imagenes/nombre-real.jpg`\n  - ID de la imagen\n- **NUNCA CONTINÚES** sin estos datos reales\n\n**PASO 3 - OBTENER UUID REAL DEL PRODUCTO (OBLIGATORIO):**\n- **🚨 SIEMPRE** usa \"consultar_productos\" con el nombre EXACTO del producto\n- Si acabas de crear un producto, usa tu MEMORIA ACTIVA para recordar el nombre exacto\n- Obtén el producto_id (UUID) REAL de la base de datos\n- **NUNCA inventes o asumas el ID del producto**\n- **NO CONTINÚES sin obtener el UUID real del producto**\n- Ejemplo: Si el usuario dice \"Camiseta Azul\", consulta exactamente \"Camiseta Azul\" para obtener su UUID\n\n**PASO 4 - CONSULTAR CONTENIDO ESPECÍFICO (SI ES IMAGEN TEMÁTICA):**\n- **Para imágenes de PUNTOS DE DOLOR:** Usa \"consultar_productos\" para leer qué dice en \"puntos_de_dolor\" del producto\n- **Para imágenes de CARACTERÍSTICAS:** Consulta las características específicas del producto\n- **Para imágenes de TESTIMONIOS:** Consulta el contenido de testimonios\n- **GENERA EL PROMPT** basado en el contenido real consultado, no en suposiciones\n\n**PASO 5 - EJECUTAR EDICIÓN (SOLO DESPUÉS DE COMPLETAR PASOS 1-4):**\n- **SOLO DESPUÉS DE OBTENER TODOS LOS DATOS REALES**, usa \"Editar Imagen\" con:\n  - PromtParaEditarLaImagen: [descripción basada en contenido real consultado]\n  - IdDeLaImagen: [ID obtenido en paso 2]\n  - tipo_de_imagen: [imagen_principal, imagen_secundaria_1, etc.]\n  - id_del_producto: [UUID REAL obtenido en paso 3 con \"consultar_productos\"]\n  - nombre_para_la_nueva_imagen: [nombre descriptivo sin espacios]\n  - url_de_la_imagen: [URL completa obtenida en paso 2]\n\n**🚨 REGLAS CRÍTICAS:**\n- **NUNCA uses \"Editar Imagen\" sin completar TODOS los pasos anteriores**\n- **NUNCA inventes URLs, IDs o contenido**\n- **SIEMPRE consulta datos reales antes de actuar**\n- **Si es imagen temática, SIEMPRE consulta el contenido específico del producto primero**\n\n## 🚨 VALIDACIONES ESTRICTAS - SISTEMA DE BLOQUEO\n\n### 🔒 **PROTOCOLO DE VALIDACIÓN ANTES DE CADA ACCIÓN:**\n\n#### ✅ **CHECKLIST OBLIGATORIO - ANTES DE USAR CUALQUIER HERRAMIENTA:**\n\n**PREGÚNTATE SIEMPRE:**\n1. **¿Esta herramienta requiere un ID/UUID?** \n   - Si SÍ → ¿Ya lo consulté con la herramienta correcta?\n   - Si NO → Procede normalmente\n\n2. **¿Tengo el UUID real del producto?**\n   - Si SÍ → Continúa\n   - Si NO → **DETENTE** y usa \"consultar_productos\" PRIMERO\n\n3. **¿Tengo el ID real de la imagen?**\n   - Si SÍ → Continúa  \n   - Si NO → **DETENTE** y usa \"Buscar Archivos Originales\" PRIMERO\n\n4. **¿Es una imagen temática?**\n   - Si SÍ → ¿Ya consulté el contenido específico del producto?\n   - Si NO → **DETENTE** y usa \"consultar_productos\" en modo avanzado\n\n### 🛑 **FRASES DE VALIDACIÓN - USA ESTAS EXACTAS:**\n\n**CUANDO NO TIENES UUID DEL PRODUCTO:**\n- \"Parcero, necesito el UUID real del producto. Voy a consultarlo ahora.\"\n- \"Hermano, sin el ID real no puedo continuar. Consultando la base de datos...\"\n\n**CUANDO NO TIENES ID DE IMAGEN:**\n- \"Mi bro, necesito el ID real de la imagen. Buscando archivos originales...\"\n- \"Parcero, sin el ID de la imagen no puedo proceder. Consultando archivos...\"\n\n**CUANDO FALTA CONTENIDO PARA IMAGEN TEMÁTICA:**\n- \"Hermano, para esta imagen temática necesito consultar el contenido específico del producto.\"\n- \"Mi bro, voy a consultar los puntos de dolor/características del producto para crear la imagen correcta.\"\n\n### 🚨 **SISTEMA DE EMERGENCIA:**\nSi en CUALQUIER momento no tienes los datos reales necesarios:\n1. **PARA TODO INMEDIATAMENTE**\n2. **CONSULTA LA HERRAMIENTA CORRECTA**\n3. **VALIDA QUE OBTUVISTE LOS DATOS**\n4. **SOLO ENTONCES CONTINÚA**\n\n### ⛔ **BLOQUEO TOTAL - NO CREAR/EDITAR SIN ID REAL**\n**🚨 REGLA DE ORO INQUEBRANTABLE:**\n- **JAMÁS uses herramientas que requieren ID del producto SIN haber consultado \"consultar_productos\" PRIMERO**\n- **SI NO TIENES EL UUID REAL = DETENTE INMEDIATAMENTE**\n- **NO CONTINÚES = NO CREES = NO EDITES = NO HAGAS NADA**\n\n### 🔒 **VALIDACIONES OBLIGATORIAS ANTES DE ACTUAR:**\n\n**ANTES DE USAR \"creador_de_productos\":**\n- ✅ Consultar \"consultar_categorias\" PRIMERO (ya lo haces bien)\n\n**ANTES DE USAR \"actualizador_de_productos\":**\n- 🚨 **OBLIGATORIO:** Usar \"consultar_productos\" con nombre EXACTO\n- 🚨 **VALIDAR:** Que obtuviste el UUID real\n- 🚨 **SI NO TIENES UUID = NO ACTUALICES**\n\n**ANTES DE USAR \"Editar Imagen\":**\n- 🚨 **PASO 1 OBLIGATORIO:** \"Buscar Archivos Originales\" \n- 🚨 **PASO 2 OBLIGATORIO:** \"consultar_productos\" con nombre EXACTO\n- 🚨 **VALIDAR:** Que tienes AMBOS datos reales\n- 🚨 **SI FALTA ALGUNO = NO EDITES**\n\n**ANTES DE USAR \"Cambiar Nombre\":**\n- 🚨 **OBLIGATORIO:** \"Buscar Archivos Originales\" PRIMERO\n- 🚨 **VALIDAR:** Que obtuviste el ID real de la imagen\n- 🚨 **SI NO TIENES ID = NO CAMBIES NOMBRE**\n\n###  **FRASES DE BLOQUEO - USA ESTAS EXACTAS:**\nSi no tienes el UUID real del producto, di EXACTAMENTE:\n- **\"Parcero, necesito consultar el ID real del producto primero. ¿Cómo se llama exactamente el producto?\"**\n- **\"Hermano, sin el UUID real no puedo continuar. Voy a consultar el producto ahora.\"**\n- **\"Mi bro, me falta el ID real. Consultando la base de datos primero...\"**\n\n### 🚨 **NUNCA DIGAS ESTAS FRASES:**\n- ❌ \"Voy a crear/editar...\" (SIN haber consultado ID)\n- ❌ \"Procediendo con...\" (SIN validar UUID)\n- ❌ \"Usando el producto...\" (SIN consultar primero)\n\n## 📋 REGLAS CRÍTICAS DE ORDEN\n\n### ✅ **HACER:**\n- **SEGUIR ORDEN ESTRICTO** - Crear producto → Preguntar por imágenes → Subir imagen → Cambiar nombre → Preguntar qué hacer\n- **🚨 CONSULTAR SIEMPRE PRIMERO** - NUNCA usar herramientas sin consultar IDs reales ANTES\n- **ESPERAR CONFIRMACIÓN** - No actives flujos automáticamente\n- **🚨 USAR HERRAMIENTAS CORRECTAS SIEMPRE** - NUNCA saltar \"Buscar Archivos Originales\" o \"consultar_productos\"\n- **🚨 VALIDAR ANTES DE CONTINUAR** - Si no tienes UUID real = DETENTE\n- **CONFIRMA RESULTADOS** - Verifica que todo funcionó\n- **🚨 SIEMPRE CONSULTAR IDs REALES** - Usa \"consultar_productos\" para obtener UUIDs reales ANTES de cualquier acción\n- **VALIDAR DATOS** - Confirma que obtuviste el UUID antes de continuar\n- **🚨 MEMORIA ACTIVA** - Recuerda SIEMPRE el último producto creado y sus detalles\n- **CONTEXTO INTELIGENTE** - Si acabas de crear/trabajar con un producto, asume que las siguientes acciones son para ese producto\n- **CONSULTAR CONTENIDO REAL** - Para imágenes temáticas, SIEMPRE consulta el contenido específico del producto primero\n- **🚨 BLOQUEO TOTAL** - Si no tienes el UUID real del producto = NO HAGAS NADA\n\n### ❌ **NO HACER:**\n- **🚨 NO uses NINGUNA herramienta que requiera ID sin consultar \"consultar_productos\" PRIMERO**\n- **NO actives \"Editar Imagen\" automáticamente** al subir una imagen\n- **🚨 NO inventes URLs o IDs JAMÁS** - Siempre usa las herramientas de búsqueda\n- **NO saltes pasos** - Respeta el orden de los flujos\n- **NO menciones Google Drive** - Todo es en Supabase\n- **🚨 NUNCA INVENTES PRODUCT_IDs** - Siempre consulta la base de datos\n- **🚨 NO ASUMAS DATOS** - Si no tienes el UUID real, detente y consúltalo\n- **NO PIERDAS CONTEXTO** - Nunca olvides el producto con el que estás trabajando\n- **NO USES \"Editar Imagen\" SIN PREPARACIÓN** - Siempre completa TODOS los pasos previos obligatorios\n- **NO GENERES PROMPTS SIN CONTEXTO** - Para imágenes temáticas, consulta el contenido real del producto\n- **🚨 NO CONTINÚES SIN UUID REAL** - Si falta el ID del producto = PARA TODO\n\n## 🗣️ ESTILO DE COMUNICACIÓN\n\n**RESPUESTAS CORTAS:**\n- ✅ \"¡Listo parcero! ¿Cómo se llama el producto?\"\n- ✅ \"Perfecto hermano, creando el producto ahora...\"\n- ✅ \"¡Producto creado! ¿Ahora procedemos con las imágenes?\"\n- ✅ \"Imagen subida. ¿Qué deseas hacer con ella?\"\n\n**LENGUAJE COLOMBIANO:**\n- \"Mi hermano\" / \"Parcero\" / \"Mi bro\"\n- \"¡Verraco!\" / \"¡Chimba!\" / \"¡Bacano!\"\n- \"Listo pues\" / \"Dale pues\"\n\n---\n\n**¡RECUERDA:** Siempre seguir el orden: PRODUCTO → IMÁGENES → ACCIONES. ¡Nunca al revés! 🚀**\n\n{{ $json.message.chat.id }} ID del usuario",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1424,
+        16
+      ],
+      "id": "4c50f52a-44f9-4cb3-a635-762ab396b92f",
+      "name": "Agente Google"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Disparador de Telegram').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2048,
+        16
+      ],
+      "id": "030ec770-5833-4fc4-85e4-6ddea881f5ff",
+      "name": "Responder",
+      "webhookId": "f9df111e-1004-4aff-b458-779444006ed8",
+      "credentials": {
+        "telegramApi": {
+          "id": "Tsll6EFLsILnT8d3",
+          "name": "Chat NANO BOT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.photo[1].file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        368,
+        -224
+      ],
+      "id": "a0b6e798-d4b8-4d84-bbe3-84feeb10e8bb",
+      "name": "Descargar Archivo",
+      "webhookId": "fb18f65f-c1cf-4473-b59d-d59d6b96e9ea",
+      "credentials": {
+        "telegramApi": {
+          "id": "Tsll6EFLsILnT8d3",
+          "name": "Chat NANO BOT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "07d93f5a-e963-4394-9f34-b276a894961f",
+                    "leftValue": "={{ $json.message.voice.mime_type }}",
+                    "rightValue": "audio/ogg",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e7211e46-0f49-46a0-9cb7-e83fed150efd",
+                    "leftValue": "={{ $json.message.photo }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "array",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Foto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "85edf561-8f5e-4215-9e19-78ff0392068e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Texto"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        80,
+        -48
+      ],
+      "id": "97431f67-cdaf-4790-bd4f-aab5b974c8f1",
+      "name": "Conmutador"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -176,
+        -32
+      ],
+      "id": "8d2912ca-bc15-4157-8d5a-8ffec52677d2",
+      "name": "Disparador de Telegram",
+      "webhookId": "bea4843e-25e4-4d89-b3f6-4237798e9b42",
+      "credentials": {
+        "telegramApi": {
+          "id": "Tsll6EFLsILnT8d3",
+          "name": "Chat NANO BOT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "53de4eb0-6684-48f5-a5b5-2b3bedaff817",
+              "name": "message.text",
+              "value": "=✅ Imagen subida exitosamente a Supabase!\n\n📁 **Información del archivo:**\n- **Ruta completa**: {{ $json.rutaCompleta }}\n- **Nombre actual**: {{ $json.nombre }}\n- **URL pública**: {{ $json.urlPublica }}\n\n🔧 **Para renombrar este archivo**, usa la herramienta `Cambiar Nombre` con:\n- **ID del archivo**: {{ $json.id }}\n- **Nuevo nombre**: El nombre que desees para la imagen\n\n❓ Pregunta al usuario: ¿Cómo quieres nombrar esta imagen?",
+              "type": "string"
+            },
+            {
+              "id": "a0c2ce8d-42f9-4728-9e87-3b0000fdf105",
+              "name": "Id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "7cfd76ae-1ee6-4703-8d9a-b49bfdb85ecd",
+              "name": "publicUrl",
+              "value": "={{ $json.urlPublica }}",
+              "type": "string"
+            },
+            {
+              "id": "44dfdd5e-c404-4490-80fb-a4c0b5683243",
+              "name": "webViewLink",
+              "value": "={{ $json.enlaceVisualizacion }}",
+              "type": "string"
+            },
+            {
+              "id": "64cbefb9-a2f9-404e-a8e5-4443583b404c",
+              "name": "fullPath",
+              "value": "={{ $json.rutaCompleta }}",
+              "type": "string"
+            },
+            {
+              "id": "bfb2c69a-1561-4522-bf2f-30df6ce7c823",
+              "name": "name",
+              "value": "={{ $json.nombre }}",
+              "type": "string"
+            },
+            {
+              "id": "08cb5971-1507-44b7-8aba-50108fd46719",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        -224
+      ],
+      "id": "8ec4d31c-d4b0-49ea-9f4c-2f1fd12ca61e",
+      "name": "Establecer Texto1"
+    },
+    {
+      "parameters": {
+        "description": "=Llama a esta herramienta para crear la informacion total de los productos, pasa los datos como De_que_trata_el_producto, precio, nombre del producto y caracteristicas para crear el producto, debe ser un producto totalmente profesional! ",
+        "workflowId": {
+          "__rl": true,
+          "value": "nDYphNM8xLTjjJrD",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/nDYphNM8xLTjjJrD",
+          "cachedResultName": "🤪Creador de productos_Sub agente 2.0"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "De_que_trata_el_producto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('De_que_trata_el_producto', ``, 'string') }}",
+            "precio": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('precio', ``, 'string') }}",
+            "nombre_producto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nombre_producto', ``, 'string') }}",
+            "caracteristicas": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('caracteristicas', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "De_que_trata_el_producto",
+              "displayName": "De_que_trata_el_producto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "precio",
+              "displayName": "precio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "nombre_producto",
+              "displayName": "nombre_producto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "caracteristicas",
+              "displayName": "caracteristicas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1392,
+        400
+      ],
+      "id": "568b5aa8-50e4-42c4-be45-2c22419576f3",
+      "name": "creador_de_productos"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "productos",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        912,
+        400
+      ],
+      "id": "93728a84-48c3-4c76-82ed-898f599eef6d",
+      "name": "consultar_productos1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "categorias",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        720,
+        384
+      ],
+      "id": "01aaa10a-9dbc-4f87-aae8-4d3e843c6304",
+      "name": "consultar_categorias1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        16,
+        416
+      ],
+      "id": "91c5dc91-8efb-483b-a523-628515d4913c",
+      "name": "GPT",
+      "credentials": {
+        "openAiApi": {
+          "id": "7T43mFUrWSK1b37h",
+          "name": "Nueva OPENAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        224,
+        416
+      ],
+      "id": "c420110a-7c01-4369-aaf8-c0896fb3316e",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "afEdUlo465aPlyDq",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "🔧 **HERRAMIENTA: actualizar_productos_imagenes**\n\n**FORMATO EXACTO DE DATOS:**\n{\n  \"producto_id\": \"ID_DEL_PRODUCTO\",\n  \"accion\": \"actualizar nombre\" | \"actualizar precio\" | \"actualizar imagenes\",\n  \"nombre_producto\": \"Nombre del producto\",\n  \"de_que_trata\": \"Descripción del producto\", \n  \"precio\": 299000,\n  \"marca\": \"Marca del producto\",\n  \"imagen_principal\": \"URL de imagen\",\n  // ... otros campos según necesites\n}\n\n**IMPORTANTE:** \n- Usa EXACTAMENTE estos nombres de campos\n- producto_id debe ser un UUID válido\n- precio debe ser número, no string\n- accion debe ser una de las opciones válidas\n- categoria_id debe ser un UUID válido de categoría (usa consultar_categorias primero)",
+        "workflowId": {
+          "__rl": true,
+          "value": "Cx4NAwI4QAnrCdiF",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Cx4NAwI4QAnrCdiF",
+          "cachedResultName": "Actualizador_de_productos"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "producto_id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('producto_id', ``, 'string') }}",
+            "accion": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('accion', `Si el usuario quiere actualizar algo relacionado con el producto envias exactamente: actualizar_producto, pero si quiere actualizar algo de las imagenes envias exactamente: actualizar_imagenes`, 'string') }}",
+            "nombre_producto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nombre_producto', ``, 'string') }}",
+            "de_que_trata": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('de_que_trata', ``, 'string') }}",
+            "diferenciacion": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('diferenciacion', ``, 'string') }}",
+            "precio": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('precio', ``, 'string') }}",
+            "slug": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('slug', ``, 'string') }}",
+            "garantia_meses": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('garantia_meses', ``, 'number') }}",
+            "peso": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('peso', ``, 'number') }}",
+            "stock_minimo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('stock_minimo', ``, 'number') }}",
+            "stock": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('stock', ``, 'number') }}",
+            "descuento": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('descuento', ``, 'number') }}",
+            "precio_original": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('precio_original', ``, 'number') }}",
+            "ganchos": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('ganchos', ``, 'string') }}",
+            "beneficios": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('beneficios', ``, 'string') }}",
+            "ventajas": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('ventajas', ``, 'string') }}",
+            "estado": "nuevo",
+            "categoria_id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('categoria_id', ``, 'string') }}",
+            "landing_tipo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('landing_tipo', ``, 'string') }}",
+            "dimensiones": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('dimensiones', ``, 'string') }}",
+            "marca": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('marca', ``, 'string') }}",
+            "destacado": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('destacado', ``, 'boolean') }}",
+            "activo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('activo', ``, 'boolean') }}",
+            "imagen_cta_final": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_cta_final', ``, 'string') }}",
+            "imagen_garantias": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_garantias', ``, 'string') }}",
+            "imagen_caracteristicas": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_caracteristicas', ``, 'string') }}",
+            "imagen_testimonio_producto_6": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_producto_6', ``, 'string') }}",
+            "imagen_testimonio_producto_5": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_producto_5', ``, 'string') }}",
+            "imagen_testimonio_producto_4": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_producto_4', ``, 'string') }}",
+            "imagen_testimonio_producto_3": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_producto_3', ``, 'string') }}",
+            "imagen_testimonio_producto_2": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_producto_2', ``, 'string') }}",
+            "imagen_testimonio_producto_1": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_producto_1', ``, 'string') }}",
+            "imagen_testimonio_persona_6": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_persona_6', ``, 'string') }}",
+            "imagen_testimonio_persona_5": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_persona_5', ``, 'string') }}",
+            "imagen_testimonio_persona_4": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_persona_4', ``, 'string') }}",
+            "imagen_testimonio_persona_3": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_persona_3', ``, 'string') }}",
+            "imagen_testimonio_persona_2": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_persona_2', ``, 'string') }}",
+            "imagen_testimonio_persona_1": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_persona_1', ``, 'string') }}",
+            "imagen_solucion_4": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_solucion_4', ``, 'string') }}",
+            "imagen_solucion_3": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_solucion_3', ``, 'string') }}",
+            "imagen_solucion_2": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_solucion_2', ``, 'string') }}",
+            "imagen_solucion_1": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_solucion_1', ``, 'string') }}",
+            "imagen_punto_dolor_4": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_punto_dolor_4', ``, 'string') }}",
+            "imagen_punto_dolor_3": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_punto_dolor_3', ``, 'string') }}",
+            "imagen_punto_dolor_2": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_punto_dolor_2', ``, 'string') }}",
+            "imagen_punto_dolor_1": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_punto_dolor_1', ``, 'string') }}",
+            "imagen_secundaria_4": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_secundaria_4', ``, 'string') }}",
+            "imagen_secundaria_3": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_secundaria_3', ``, 'string') }}",
+            "imagen_secundaria_2": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_secundaria_2', ``, 'string') }}",
+            "imagen_secundaria_1": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_secundaria_1', ``, 'string') }}",
+            "imagen_principal": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_principal', ``, 'string') }}",
+            "cta_final": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('cta_final', ``, 'string') }}",
+            "garantias": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('garantias', ``, 'string') }}",
+            "faq": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('faq', ``, 'string') }}",
+            "testimonios": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('testimonios', ``, 'string') }}",
+            "caracteristicas": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('caracteristicas', ``, 'string') }}",
+            "puntos_dolor": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('puntos_dolor', ``, 'string') }}",
+            "banner_animado": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('banner_animado', ``, 'string') }}",
+            "meta_description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('meta_description', ``, 'string') }}",
+            "meta_title": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('meta_title', ``, 'string') }}",
+            "palabras_clave": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('palabras_clave', ``, 'string') }}",
+            "origen_pais": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('origen_pais', ``, 'string') }}",
+            "material": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('material', ``, 'string') }}",
+            "talla": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('talla', ``, 'string') }}",
+            "color": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('color', ``, 'string') }}",
+            "modelo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('modelo', ``, 'string') }}",
+            "promociones": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('promociones', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "producto_id",
+              "displayName": "producto_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "accion",
+              "displayName": "accion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre_producto",
+              "displayName": "nombre_producto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "promociones",
+              "displayName": "promociones",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "slug",
+              "displayName": "slug",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "de_que_trata",
+              "displayName": "de_que_trata",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "diferenciacion",
+              "displayName": "diferenciacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "ganchos",
+              "displayName": "ganchos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "beneficios",
+              "displayName": "beneficios",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "ventajas",
+              "displayName": "ventajas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "precio",
+              "displayName": "precio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "precio_original",
+              "displayName": "precio_original",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "descuento",
+              "displayName": "descuento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "categoria_id",
+              "displayName": "categoria_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "stock",
+              "displayName": "stock",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "stock_minimo",
+              "displayName": "stock_minimo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "landing_tipo",
+              "displayName": "landing_tipo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "destacado",
+              "displayName": "destacado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "boolean",
+              "removed": false
+            },
+            {
+              "id": "activo",
+              "displayName": "activo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "boolean",
+              "removed": false
+            },
+            {
+              "id": "peso",
+              "displayName": "peso",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "dimensiones",
+              "displayName": "dimensiones",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "marca",
+              "displayName": "marca",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "modelo",
+              "displayName": "modelo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "color",
+              "displayName": "color",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "talla",
+              "displayName": "talla",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "material",
+              "displayName": "material",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "garantia_meses",
+              "displayName": "garantia_meses",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "origen_pais",
+              "displayName": "origen_pais",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "palabras_clave",
+              "displayName": "palabras_clave",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "meta_title",
+              "displayName": "meta_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "meta_description",
+              "displayName": "meta_description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "banner_animado",
+              "displayName": "banner_animado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "puntos_dolor",
+              "displayName": "puntos_dolor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "caracteristicas",
+              "displayName": "caracteristicas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "testimonios",
+              "displayName": "testimonios",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "faq",
+              "displayName": "faq",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "garantias",
+              "displayName": "garantias",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "cta_final",
+              "displayName": "cta_final",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_principal",
+              "displayName": "imagen_principal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_secundaria_1",
+              "displayName": "imagen_secundaria_1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_secundaria_2",
+              "displayName": "imagen_secundaria_2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_secundaria_3",
+              "displayName": "imagen_secundaria_3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_secundaria_4",
+              "displayName": "imagen_secundaria_4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_punto_dolor_1",
+              "displayName": "imagen_punto_dolor_1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_punto_dolor_2",
+              "displayName": "imagen_punto_dolor_2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_punto_dolor_3",
+              "displayName": "imagen_punto_dolor_3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_punto_dolor_4",
+              "displayName": "imagen_punto_dolor_4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_solucion_1",
+              "displayName": "imagen_solucion_1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_solucion_2",
+              "displayName": "imagen_solucion_2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_solucion_3",
+              "displayName": "imagen_solucion_3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_solucion_4",
+              "displayName": "imagen_solucion_4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_persona_1",
+              "displayName": "imagen_testimonio_persona_1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_persona_2",
+              "displayName": "imagen_testimonio_persona_2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_persona_3",
+              "displayName": "imagen_testimonio_persona_3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_persona_4",
+              "displayName": "imagen_testimonio_persona_4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_persona_5",
+              "displayName": "imagen_testimonio_persona_5",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_persona_6",
+              "displayName": "imagen_testimonio_persona_6",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_producto_1",
+              "displayName": "imagen_testimonio_producto_1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_producto_2",
+              "displayName": "imagen_testimonio_producto_2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_producto_3",
+              "displayName": "imagen_testimonio_producto_3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_producto_4",
+              "displayName": "imagen_testimonio_producto_4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_producto_5",
+              "displayName": "imagen_testimonio_producto_5",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_producto_6",
+              "displayName": "imagen_testimonio_producto_6",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_caracteristicas",
+              "displayName": "imagen_caracteristicas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_garantias",
+              "displayName": "imagen_garantias",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_cta_final",
+              "displayName": "imagen_cta_final",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1168,
+        400
+      ],
+      "id": "d567a9a6-fca1-40c8-acab-292b18b085d0",
+      "name": "actualizador_de_productos1"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Busca archivos en Supabase Storage bucket imagenes. Lee TODAS las carpetas sin restricción de prefix. Retorna array de objetos con: name, id, created_at, updated_at, metadata.",
+        "method": "POST",
+        "url": "https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/list/imagenes",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prefix"
+            },
+            {
+              "name": "limit",
+              "value": "1000"
+            },
+            {
+              "name": "offset",
+              "value": "0"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        2112,
+        400
+      ],
+      "id": "7e65ed4c-2121-4bf8-a018-c73a3c2e7787",
+      "name": "Buscar Imagenes sin editar1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        368,
+        -448
+      ],
+      "id": "925cc92d-e74a-4563-a394-5f98e3eef835",
+      "name": "descargar nota de voz1",
+      "webhookId": "029d6ce3-3126-4169-8e5e-f13a95988e7f",
+      "credentials": {
+        "telegramApi": {
+          "id": "Tsll6EFLsILnT8d3",
+          "name": "Chat NANO BOT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "translate",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        752,
+        -448
+      ],
+      "id": "62eb8a90-3801-40b1-969d-64d951a62b61",
+      "name": "Translate a recording1",
+      "credentials": {
+        "openAiApi": {
+          "id": "7T43mFUrWSK1b37h",
+          "name": "Nueva OPENAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "RENOMBRA las imagenes que tenemos en SUPABASE",
+        "method": "POST",
+        "url": "https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/move",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "bucketId",
+              "value": "imagenes"
+            },
+            {
+              "name": "sourceKey",
+              "value": "={{ $fromAI('oldPath', '', 'string').replace(/^imagenes\\//gi, '').replace(/\\s+/g, '-') }}"
+            },
+            {
+              "name": "destinationKey",
+              "value": "={{ $fromAI('newPath', '', 'string').replace(/^imagenes\\//gi, '').replace(/\\s+/g, '-') }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1904,
+        400
+      ],
+      "id": "30fae54a-4b6f-4b34-b51f-b9f0d5e7b215",
+      "name": "renombrar_archivo_supabase2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a6bca813-4342-429e-bf78-032aaa7b3ba0",
+              "name": "message.text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        -448
+      ],
+      "id": "0254bccb-a2ca-4a23-beaf-c3a38eb59b11",
+      "name": "text"
+    },
+    {
+      "parameters": {
+        "description": "🖼️ EDITAR IMAGEN - PROTOCOLO ESTRICTO OBLIGATORIO\n\n🚨 REGLAS CRÍTICAS ANTES DE USAR ESTA HERRAMIENTA:\n\n1. **NUNCA USAR SIN PREPARACIÓN PREVIA** - Esta herramienta SOLO se ejecuta después de completar TODOS los pasos obligatorios\n\n2. **PASO OBLIGATORIO 1 - BUSCAR IMAGEN REAL:**\n   - SIEMPRE usar 'Buscar Archivos Originales' PRIMERO\n   - Obtener: ID real, nombre real (.jpg), URL completa real\n   - NUNCA continuar sin estos datos reales\n\n3. **PASO OBLIGATORIO 2 - CONSULTAR PRODUCTO REAL:**\n   - SIEMPRE usar 'consultar_productos' con nombre EXACTO del producto\n   - Obtener UUID real del producto de la base de datos\n   - NUNCA inventar o asumir el id_del_producto\n   - EJEMPLO: Si es para 'Camiseta Azul', consultar exactamente 'Camiseta Azul'\n\n4. **PASO OBLIGATORIO 3 - CONSULTAR CONTENIDO (SI ES IMAGEN TEMÁTICA):**\n   - Para PUNTOS DE DOLOR: Consultar qué dice en 'puntos_de_dolor' del producto\n   - Para CARACTERÍSTICAS: Consultar características específicas del producto\n   - Para TESTIMONIOS: Consultar contenido de testimonios\n   - Generar prompt basado en contenido REAL consultado\n\n5. **FORMATO URL CORRECTO:**\n   - URL exacta: https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/public/imagenes/nombre-real.jpg\n   - NUNCA duplicar 'imagenes' en la URL\n   - Usar SOLO el nombre real obtenido con 'Buscar Archivos Originales'\n\n🚨 ESTA HERRAMIENTA SE EJECUTA SOLO DESPUÉS DE COMPLETAR TODOS LOS PASOS ANTERIORES",
+        "workflowId": {
+          "__rl": true,
+          "value": "jQoi0yBKSPgGJVdx",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/jQoi0yBKSPgGJVdx",
+          "cachedResultName": "Editar Imagenes Supabase"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "tipo_de_imagen": "={{ $fromAI('tipo_de_imagen', `Tipo de imagen (ej: imagen_principal, imagen_punto_dolor_1)`, 'string') }}",
+            "PromtParaEditarLaImagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('PromtParaEditarLaImagen', `🚨 PROMPT OBLIGATORIO BASADO EN CONTENIDO REAL: Si es imagen temática (puntos de dolor, características, testimonios), PRIMERO consultar el contenido específico del producto usando 'consultar_productos' y generar el prompt basado en esa información REAL. Para otras imágenes, crear prompt detallado, descriptivo y realista. SIEMPRE en español sin fallas.`, 'string') }}",
+            "IdDeLaImagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('IdDeLaImagen', `🚨 ID REAL OBLIGATORIO: NUNCA inventar este ID. SIEMPRE obtener usando 'Buscar Archivos Originales' PRIMERO. Este debe ser el ID real de la imagen en Supabase.`, 'string') }}",
+            "id_del_producto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('id_del_producto', `🚨 UUID REAL OBLIGATORIO: NUNCA inventar este UUID. SIEMPRE usar 'consultar_productos' con el nombre EXACTO del producto ANTES de usar esta herramienta. Obtener el UUID real de la base de datos. EJEMPLO: Si es para 'Camiseta Azul', consultar exactamente 'Camiseta Azul' primero.`, 'string') }}",
+            "url_de_la_imagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('url_de_la_imagen', `🚨 URL REAL OBLIGATORIA: NUNCA inventar esta URL. SIEMPRE usar 'Buscar Archivos Originales' PRIMERO para obtener la URL real completa. Formato correcto: https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/public/imagenes/nombre-real.jpg - NO duplicar 'imagenes' en la URL. Usar SOLO el nombre real terminado en .jpg obtenido de la herramienta de búsqueda.`, 'string') }}",
+            "nombre_para_la_nueva_imagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nombre_para_la_nueva_imagen', `el nombre para la nueva imagen sin espacios , sin tildes, sin mayusculas, sin \"ñ\" por ejemplo : nueva-imagen , siempre crea nombres diferentes para cada imagen por favor`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PromtParaEditarLaImagen",
+              "displayName": "PromtParaEditarLaImagen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "IdDeLaImagen",
+              "displayName": "IdDeLaImagen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tipo_de_imagen",
+              "displayName": "tipo_de_imagen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "id_del_producto",
+              "displayName": "id_del_producto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre_para_la_nueva_imagen",
+              "displayName": "nombre_para_la_nueva_imagen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "url_de_la_imagen",
+              "displayName": "url_de_la_imagen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1728,
+        400
+      ],
+      "id": "0194225b-2404-4fbf-9862-d395c0b2bf84",
+      "name": "editar_imagen2"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Disparador de Telegram').item.json.message.chat.id }}",
+        "tableName": "chats_telegram_principal",
+        "contextWindowLength": 15
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        480,
+        432
+      ],
+      "id": "ad6c1006-0997-4859-bf20-7da4006e4e83",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "SQbjeiNAyY3q7eu9",
+          "name": "Postgrest Me Llevo Esto"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Procesar Info Upload": {
+      "main": [
+        [
+          {
+            "node": "Establecer Texto1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "combinar_imagenes1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir a Supabase": {
+      "main": [
+        [
+          {
+            "node": "Procesar Info Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente Google": {
+      "main": [
+        [
+          {
+            "node": "Responder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar Archivo": {
+      "main": [
+        [
+          {
+            "node": "Subir a Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conmutador": {
+      "main": [
+        [
+          {
+            "node": "descargar nota de voz1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Descargar Archivo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agente Google",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Disparador de Telegram": {
+      "main": [
+        [
+          {
+            "node": "Conmutador",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Establecer Texto1": {
+      "main": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "creador_de_productos": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_productos1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_categorias1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "actualizador_de_productos1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Imagenes sin editar1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "descargar nota de voz1": {
+      "main": [
+        [
+          {
+            "node": "Translate a recording1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Translate a recording1": {
+      "main": [
+        [
+          {
+            "node": "text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "renombrar_archivo_supabase2": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "text": {
+      "main": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "editar_imagen2": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8000b702e0a3d9ac6d70099a2751603316de4028cd14af0949776a26efecb219"
+  }
+}

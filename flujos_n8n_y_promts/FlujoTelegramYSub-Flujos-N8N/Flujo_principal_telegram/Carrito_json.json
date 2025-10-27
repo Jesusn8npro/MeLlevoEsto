@@ -1,0 +1,298 @@
+{
+  "id": "044e8aef-1a97-4d5d-a360-62b2a5e99170",
+  "nombre": "Carrito del saborium",
+  "slug": "carrito-del-saborium",
+  "descripcion": "¡ATENCIÓN COLOMBIA y PERU!🤪🤪🤪🤪🤪 🇨🇴 ¿Quieres revolucionar la forma en que disfrutas la comida rápida? El CarroExpress VIP es la experiencia premium que transforma cualquier lugar en un restaurante gourmet móvil con atención 5 estrellas. 🚀 Este carro móvil de comida rápida premium ofrece un menú gourmet exclusivo, atención personalizada y pedidos súper fáciles a través de QR o tablets, ¡sin filas ni esperas! Además, cuenta con un barista integrado para ofrecerte café de alta calidad al instante y entrega rápida que encanta a todos los clientes. 💎 Imagina llevar tu negocio o evento al siguiente nivel con este concepto revolucionario que garantiza máxima calidad y comodidad. Más de 10,000 colombianos ya disfrutan de esta experiencia única. 🚨 ¡SOLO HOY! Aprovecha nuestra oferta exclusiva, con stock limitado, y sé parte del cambio. No te quedes atrás: el mejor negocio de comida callejera premium está a un clic de distancia. ¡COMPRA AHORA y comienza a ganar con estilo y rapidez! 🔥 fdsafdasfdsfd",
+  "precio": 4950325,
+  "precio_original": 17894,
+  "descuento": 89,
+  "categoria_id": "976d85fe-f4f1-4e19-8c19-fdfb940a0860",
+  "estado": "nuevo",
+  "ganchos": [
+    "🔥 Solo entregas en Bosa el recreo",
+    "💎 Precio Exclusivo para las perras",
+    "⭐ +25,000 músicos colombianos ya lo usan y confían",
+    "🚨 ¡QUEDAN SOLO 10 UNIDADES! Stock limitado, se agota rápido",
+    "✅ Garantía TOTAL y accesorios completamente nuevos incluidos"
+  ],
+  "beneficios": [
+    "Ofrece comida rápida gourmet con calidad y sabor inigualables",
+    "Atención 5 estrellas para sorprender a tus clientes desde el primer minuto",
+    "Sistema digital con pedidos vía QR y tablet para máxima rapidez",
+    "Barista integrado para preparar café premium en cualquier lugar",
+    "Entrega exprés garantizada para clientes felices y recurrentes",
+    "Convierte cualquier espacio en un punto de venta exclusivo y atractivo"
+  ],
+  "ventajas": [
+    "😍😍😍😍😍😍😍😍",
+    "💕😁👌✌️",
+    "😊😂"
+  ],
+  "palabras_clave": [
+    "carro-movil-comida",
+    "carroexpress-vip",
+    "comida-rapida-gourmet",
+    "venta-movil-premium",
+    "emprendimiento-colombia",
+    "barista-integrado",
+    "experiencia-5-estrellas",
+    "pedido-qr-tablet"
+  ],
+  "stock": 89,
+  "stock_minimo": 5,
+  "destacado": false,
+  "activo": true,
+  "landing_tipo": "temu",
+  "peso": "",
+  "dimensiones": null,
+  "marca": "",
+  "modelo": "",
+  "color": "",
+  "talla": "",
+  "material": "",
+  "meta_title": "CarroExpress VIP - Comida Rápida Premium Colombia | ME LLEVO ESTO",
+  "meta_description": "¡Oferta única! CarroExpress VIP con atención 5 estrellas y menú gourmet. Stock limitado. ¡Compra ahora y acelera tu negocio!",
+  "fotos_principales": [],
+  "fotos_secundarias": [],
+  "promociones": {
+    "titulo": "Promociones por Cantidad",
+    "subtitulo": "Configura descuentos automáticos por cantidad de productos",
+    "promociones": [
+      {
+        "id": 1760904247831,
+        "activa": true,
+        "descripcion": "Descuento por compra múltiple",
+        "cantidadMinima": 3,
+        "descuentoPorcentaje": 20
+      },
+      {
+        "id": 1760904647613,
+        "activa": true,
+        "descripcion": "Descuento por compra múltiple",
+        "cantidadMinima": 5,
+        "descuentoPorcentaje": 90
+      }
+    ]
+  },
+  "banner_animado": {
+    "mensajes": [
+      "🚚 ¡ENVÍO GRATIS a toda Colombia al comprar tu CarroExpress VIP!",
+      "💳Las mejores compras inseguras de esta monda hermano! ",
+      "Te amo mucho hermano!",
+      "⚡ Oferta limitada: solo quedan 5 unidades disponibles",
+      "🎁 ¡Recibe capacitación VIP exclusiva de forma gratuita!",
+      "📞 Soporte 24/7 para que tu negocio nunca se detenga",
+      "🏆 Miles de emprendedores ya aumentan sus ventas con CarroExpress VIP",
+      "💎 Calidad premium, diseño exclusivo y tecnología integrada"
+    ]
+  },
+  "puntos_dolor": {
+    "titulo": "¿Cansado de perder clientes por no valer monda?",
+    "timeline": [
+      {
+        "id": 1,
+        "icono": "💔",
+        "nombre": "Dificultad para vender tus putos productos en esa monda! Ombe ",
+        "posicion": "izquierda",
+        "solucion": "Nuestro carro móvil premium mantiene estándares de restaurante 5 estrellas donde sea.",
+        "textoBoton": "Compra esa verga cachon",
+        "descripcion": "Muchos negocios no logran transportar ni mantener la calidad en la calle."
+      },
+      {
+        "id": 2,
+        "icono": "😤",
+        "nombre": "Largas filas y lentitud en el pedido afectando ventas",
+        "posicion": "derecha",
+        "solucion": "Sistema digital con QR y tablet para un pedido rápido y sin estrés.",
+        "textoBoton": "La solucion es que chupes monda",
+        "descripcion": "Clientes frustrados por esperas que hacen que prefieran otra opción."
+      },
+      {
+        "id": 3,
+        "icono": "💸",
+        "nombre": "Dificultad para ofrecer café de calidad en la calle",
+        "posicion": "izquierda",
+        "solucion": "Barista integrado que ofrece café gourmet al instante en cualquier lugar.",
+        "textoBoton": "NUESTRA SOLUCIÓN",
+        "descripcion": "Falta de equipos adecuados para preparar bebidas premium fuera del local."
+      },
+      {
+        "id": 4,
+        "icono": "🚫",
+        "nombre": "Demoras en la entrega que afectan la experiencia y fidelidad",
+        "posicion": "derecha",
+        "solucion": "Entrega rápida garantizada que mantiene clientes felices y fieles.",
+        "textoBoton": "NUESTRA SOLUCIÓN",
+        "descripcion": "Para atraer clientes necesitas rapidez real y atención personalizada."
+      }
+    ],
+    "subtitulo": "El CarroExpress VIP resuelve estos problemas clave para tu emprendimiento o lo que te de tu puta gana:"
+  },
+  "caracteristicas": {
+    "cta": {
+      "texto": "¡QUIERO APROVECHAR ESTA OFERTA!",
+      "subtexto": "🔥 Stock limitado, no dejes pasar esta oportunidad"
+    },
+    "titulo": "POr que no lo chupas mejordsadas cachon",
+    "detalles": [
+      {
+        "id": 1,
+        "icono": "⚡",
+        "titulo": "Menú Gourmet Integrado fdasfasfdas",
+        "descripcion": "Ingredientes de alta calidad y recetas exclusivas para comida rápida premium."
+      },
+      {
+        "id": 2,
+        "icono": "🔧",
+        "titulo": "Sistema Digital Avanzado la mas recontra monda",
+        "descripcion": "Pedidos vía QR y tablet para agilizar las ventas y mejorar la atención."
+      },
+      {
+        "id": 3,
+        "icono": "💎",
+        "titulo": "Barista Incorporado",
+        "descripcion": "Café profesional para complementar la experiencia gastronómica móvil."
+      },
+      {
+        "id": 1760900889731,
+        "icono": "⚡",
+        "titulo": "Sabroso",
+        "descripcion": "Lo mejor de esta monda"
+      }
+    ],
+    "subtitulo": "Descubre las características exclusivas que marcan la diferencia",
+    "beneficios": [
+      {
+        "id": 1,
+        "icono": "🛡️",
+        "titulo": "Calidad Garantizada",
+        "descripcion": "Materiales resistentes y diseño pensado para uso intensivo y durabilidad."
+      },
+      {
+        "id": 2,
+        "icono": "🚚",
+        "titulo": "Movilidad Total",
+        "descripcion": "Podrás llevar tu negocio a eventos, ferias y diferentes puntos estratégicos."
+      },
+      {
+        "id": 3,
+        "icono": "💰",
+        "titulo": "Incrementa tus Ganancias",
+        "descripcion": "Atención premium que te diferencia y atrae más clientes rápidamente."
+      },
+      {
+        "id": 1760900910739,
+        "icono": "🛡️",
+        "titulo": "Firme hermano",
+        "descripcion": "Compra esta verga es por tu bien cachon! "
+      }
+    ]
+  },
+  "testimonios": {
+    "titulo": "¡+15.847 YA COMPRARON ESTA MONDA!",
+    "subtitulo": "Lee lo que dicen nuestros emprendedores colombianos satisfechos",
+    "testimonios": [
+      {
+        "id": 1,
+        "fecha": "Hace 2 días",
+        "likes": 234,
+        "nombre": "María González",
+        "rating": 5,
+        "ubicacion": "Bogotá, Colombia",
+        "comentario": "¡El CarroExpress VIP revolucionó mi emprendimiento! Ahora ofrezco comida gourmet en la calle con calidad de restaurante. Mis clientes felices y mis ventas crecieron un 50%. ¡Lo recomiendo 100%! ⭐⭐⭐⭐⭐",
+        "verificado": true,
+        "compraVerificada": true
+      },
+      {
+        "id": 2,
+        "fecha": "Hace 1 semana",
+        "likes": 189,
+        "nombre": "Carlos Rodríguez",
+        "rating": 5,
+        "ubicacion": "Medellín, Colombia",
+        "comentario": "Me encanta la facilidad para que mis clientes pidan desde la tablet. El barista integrado es la bomba. Definitivamente volvió mi negocio más profesional y rentable.",
+        "verificado": true,
+        "compraVerificada": true
+      }
+    ],
+    "estadisticas": {
+      "recomiendan": 98,
+      "satisfaccion": 4.9,
+      "totalClientes": 159
+    }
+  },
+  "faq": {
+    "titulo": "Preguntas Frecuentes",
+    "preguntas": [
+      {
+        "id": 1,
+        "pregunta": "¿Realmente funciona como prometen?",
+        "respuesta": "Sí, el CarroExpress VIP está diseñado con tecnología premium y está respaldado por miles de clientes satisfechos en Colombia con una calificación promedio de 4.9 estrellas. Además, ofrecemos garantía total de 2 años."
+      },
+      {
+        "id": 2,
+        "pregunta": "¿Cuánto tiempo tarda en llegar?",
+        "respuesta": "Tu CarroExpress VIP llega en máximo 48 horas hábiles a cualquier ciudad de Colombia, con envío gratuito y seguimiento en tiempo real para que estés tranquilo."
+      },
+      {
+        "id": 3,
+        "pregunta": "¿Es seguro comprar aquí?",
+        "respuesta": "Absolutamente. Contamos con pagos 100% seguros, opciones contraentrega y garantía de devolución completa para que tu compra sea sin riesgos."
+      },
+      {
+        "id": 4,
+        "pregunta": "¿Qué pasa si no me gusta?",
+        "respuesta": "Si el producto no cumple tus expectativas, tienes 30 días para devolverlo y recibir el reembolso total, sin preguntas y sin complicaciones."
+      },
+      {
+        "id": 5,
+        "pregunta": "¿Por qué es tan barato comparado con tiendas?",
+        "respuesta": "Ofrecemos precios directos sin intermediarios y promociones exclusivas para Colombia, manteniendo la calidad premium sin subir costos innecesarios."
+      },
+      {
+        "id": 6,
+        "pregunta": "¿Tienen soporte si necesito ayuda?",
+        "respuesta": "Sí, contamos con un equipo de soporte colombiano 24/7 que te acompañará antes, durante y después de tu compra para que tu negocio nunca se detenga."
+      }
+    ],
+    "subtitulo": "Resolvemos todas tus dudas para que compres con total confianza"
+  },
+  "garantias": {
+    "titulo": "Compra con Total Confianza",
+    "garantias": [
+      {
+        "id": 1,
+        "icono": "🛡️",
+        "titulo": "Garantía 2 Años",
+        "descripcion": "Si no funciona como prometemos, te devolvemos el 100% de tu dinero"
+      },
+      {
+        "id": 2,
+        "icono": "🚚",
+        "titulo": "Envío Gratis",
+        "descripcion": "Envío express gratuito en 24-48 horas a toda Colombia"
+      },
+      {
+        "id": 3,
+        "icono": "💳",
+        "titulo": "Pago Seguro",
+        "descripcion": "Paga contraentrega o con tarjeta. Transacciones 100% protegidas"
+      }
+    ],
+    "subtitulo": "Tu satisfacción y seguridad son nuestra prioridad #1"
+  },
+  "cta_final": {
+    "envio": "🚚 Envío GRATIS en 24-48 horas",
+    "titulo": "¡ÚLTIMA OPORTUNIDAD!",
+    "garantia": "🛡️ Garantía de satisfacción del 100% o te devolvemos tu dinero",
+    "urgencia": "⚡ Oferta válida solo por hoy",
+    "descuento": "70% OFF",
+    "subtitulo": "No dejes pasar esta oferta única. Miles ya han transformado su negocio con CarroExpress VIP.",
+    "botonTexto": "¡QUIERO MI TRANSFORMACIÓN AHORfdsadfasA!",
+    "precioActual": "4950325",
+    "precioAnterior": "16501083"
+  },
+  "timestamp": "2025-10-23T21:11:53.549Z",
+  "modo": "editar",
+  "errores": {}
+}

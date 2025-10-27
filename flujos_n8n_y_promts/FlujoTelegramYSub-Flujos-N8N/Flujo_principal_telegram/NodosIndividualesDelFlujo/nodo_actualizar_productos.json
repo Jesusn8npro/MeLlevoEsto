@@ -1,0 +1,783 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "description": "🔧 **HERRAMIENTA: actualizar_productos_imagenes**\n\n**FORMATO EXACTO DE DATOS:**\n{\n  \"producto_id\": \"ID_DEL_PRODUCTO\",\n  \"accion\": \"actualizar nombre\" | \"actualizar precio\" | \"actualizar imagenes\",\n  \"nombre_producto\": \"Nombre del producto\",\n  \"de_que_trata\": \"Descripción del producto\", \n  \"precio\": 299000,\n  \"marca\": \"Marca del producto\",\n  \"imagen_principal\": \"URL de imagen\",\n  // ... otros campos según necesites\n}\n\n**IMPORTANTE:** \n- Usa EXACTAMENTE estos nombres de campos\n- producto_id debe ser un UUID válido\n- precio debe ser número, no string\n- accion debe ser una de las opciones válidas\n- categoria_id debe ser un UUID válido de categoría (usa consultar_categorias primero)",
+        "workflowId": {
+          "__rl": true,
+          "value": "Cx4NAwI4QAnrCdiF",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Cx4NAwI4QAnrCdiF",
+          "cachedResultName": "Actualizador_de_productos"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "producto_id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('producto_id', ``, 'string') }}",
+            "accion": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('accion', `Si el usuario quiere actualizar algo relacionado con el producto envias exactamente: actualizar_producto, pero si quiere actualizar algo de las imagenes envias exactamente: actualizar_imagenes`, 'string') }}",
+            "nombre_producto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nombre_producto', ``, 'string') }}",
+            "de_que_trata": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('de_que_trata', ``, 'string') }}",
+            "diferenciacion": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('diferenciacion', ``, 'string') }}",
+            "precio": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('precio', ``, 'string') }}",
+            "slug": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('slug', ``, 'string') }}",
+            "garantia_meses": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('garantia_meses', ``, 'number') }}",
+            "peso": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('peso', ``, 'number') }}",
+            "stock_minimo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('stock_minimo', ``, 'number') }}",
+            "stock": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('stock', ``, 'number') }}",
+            "descuento": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('descuento', ``, 'number') }}",
+            "precio_original": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('precio_original', ``, 'number') }}",
+            "ganchos": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('ganchos', ``, 'string') }}",
+            "beneficios": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('beneficios', ``, 'string') }}",
+            "ventajas": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('ventajas', ``, 'string') }}",
+            "estado": "nuevo",
+            "categoria_id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('categoria_id', ``, 'string') }}",
+            "landing_tipo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('landing_tipo', ``, 'string') }}",
+            "dimensiones": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('dimensiones', ``, 'string') }}",
+            "marca": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('marca', ``, 'string') }}",
+            "destacado": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('destacado', ``, 'boolean') }}",
+            "activo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('activo', ``, 'boolean') }}",
+            "imagen_cta_final": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_cta_final', ``, 'string') }}",
+            "imagen_garantias": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_garantias', ``, 'string') }}",
+            "imagen_caracteristicas": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_caracteristicas', ``, 'string') }}",
+            "imagen_testimonio_producto_6": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_producto_6', ``, 'string') }}",
+            "imagen_testimonio_producto_5": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_producto_5', ``, 'string') }}",
+            "imagen_testimonio_producto_4": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_producto_4', ``, 'string') }}",
+            "imagen_testimonio_producto_3": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_producto_3', ``, 'string') }}",
+            "imagen_testimonio_producto_2": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_producto_2', ``, 'string') }}",
+            "imagen_testimonio_producto_1": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_producto_1', ``, 'string') }}",
+            "imagen_testimonio_persona_6": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_persona_6', ``, 'string') }}",
+            "imagen_testimonio_persona_5": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_persona_5', ``, 'string') }}",
+            "imagen_testimonio_persona_4": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_persona_4', ``, 'string') }}",
+            "imagen_testimonio_persona_3": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_persona_3', ``, 'string') }}",
+            "imagen_testimonio_persona_2": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_persona_2', ``, 'string') }}",
+            "imagen_testimonio_persona_1": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_testimonio_persona_1', ``, 'string') }}",
+            "imagen_solucion_4": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_solucion_4', ``, 'string') }}",
+            "imagen_solucion_3": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_solucion_3', ``, 'string') }}",
+            "imagen_solucion_2": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_solucion_2', ``, 'string') }}",
+            "imagen_solucion_1": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_solucion_1', ``, 'string') }}",
+            "imagen_punto_dolor_4": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_punto_dolor_4', ``, 'string') }}",
+            "imagen_punto_dolor_3": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_punto_dolor_3', ``, 'string') }}",
+            "imagen_punto_dolor_2": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_punto_dolor_2', ``, 'string') }}",
+            "imagen_punto_dolor_1": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_punto_dolor_1', ``, 'string') }}",
+            "imagen_secundaria_4": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_secundaria_4', ``, 'string') }}",
+            "imagen_secundaria_3": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_secundaria_3', ``, 'string') }}",
+            "imagen_secundaria_2": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_secundaria_2', ``, 'string') }}",
+            "imagen_secundaria_1": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_secundaria_1', ``, 'string') }}",
+            "imagen_principal": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen_principal', ``, 'string') }}",
+            "cta_final": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('cta_final', ``, 'string') }}",
+            "garantias": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('garantias', ``, 'string') }}",
+            "faq": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('faq', ``, 'string') }}",
+            "testimonios": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('testimonios', ``, 'string') }}",
+            "caracteristicas": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('caracteristicas', ``, 'string') }}",
+            "puntos_dolor": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('puntos_dolor', ``, 'string') }}",
+            "banner_animado": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('banner_animado', ``, 'string') }}",
+            "meta_description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('meta_description', ``, 'string') }}",
+            "meta_title": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('meta_title', ``, 'string') }}",
+            "palabras_clave": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('palabras_clave', ``, 'string') }}",
+            "origen_pais": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('origen_pais', ``, 'string') }}",
+            "material": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('material', ``, 'string') }}",
+            "talla": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('talla', ``, 'string') }}",
+            "color": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('color', ``, 'string') }}",
+            "modelo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('modelo', ``, 'string') }}",
+            "promociones": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('promociones', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "producto_id",
+              "displayName": "producto_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "accion",
+              "displayName": "accion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre_producto",
+              "displayName": "nombre_producto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "promociones",
+              "displayName": "promociones",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "slug",
+              "displayName": "slug",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "de_que_trata",
+              "displayName": "de_que_trata",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "diferenciacion",
+              "displayName": "diferenciacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "ganchos",
+              "displayName": "ganchos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "beneficios",
+              "displayName": "beneficios",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "ventajas",
+              "displayName": "ventajas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "precio",
+              "displayName": "precio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "precio_original",
+              "displayName": "precio_original",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "descuento",
+              "displayName": "descuento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "categoria_id",
+              "displayName": "categoria_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "stock",
+              "displayName": "stock",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "stock_minimo",
+              "displayName": "stock_minimo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "landing_tipo",
+              "displayName": "landing_tipo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "destacado",
+              "displayName": "destacado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "boolean",
+              "removed": false
+            },
+            {
+              "id": "activo",
+              "displayName": "activo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "boolean",
+              "removed": false
+            },
+            {
+              "id": "peso",
+              "displayName": "peso",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "dimensiones",
+              "displayName": "dimensiones",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "marca",
+              "displayName": "marca",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "modelo",
+              "displayName": "modelo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "color",
+              "displayName": "color",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "talla",
+              "displayName": "talla",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "material",
+              "displayName": "material",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "garantia_meses",
+              "displayName": "garantia_meses",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "origen_pais",
+              "displayName": "origen_pais",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "palabras_clave",
+              "displayName": "palabras_clave",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "meta_title",
+              "displayName": "meta_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "meta_description",
+              "displayName": "meta_description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "banner_animado",
+              "displayName": "banner_animado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "puntos_dolor",
+              "displayName": "puntos_dolor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "caracteristicas",
+              "displayName": "caracteristicas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "testimonios",
+              "displayName": "testimonios",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "faq",
+              "displayName": "faq",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "garantias",
+              "displayName": "garantias",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "cta_final",
+              "displayName": "cta_final",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_principal",
+              "displayName": "imagen_principal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_secundaria_1",
+              "displayName": "imagen_secundaria_1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_secundaria_2",
+              "displayName": "imagen_secundaria_2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_secundaria_3",
+              "displayName": "imagen_secundaria_3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_secundaria_4",
+              "displayName": "imagen_secundaria_4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_punto_dolor_1",
+              "displayName": "imagen_punto_dolor_1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_punto_dolor_2",
+              "displayName": "imagen_punto_dolor_2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_punto_dolor_3",
+              "displayName": "imagen_punto_dolor_3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_punto_dolor_4",
+              "displayName": "imagen_punto_dolor_4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_solucion_1",
+              "displayName": "imagen_solucion_1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_solucion_2",
+              "displayName": "imagen_solucion_2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_solucion_3",
+              "displayName": "imagen_solucion_3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_solucion_4",
+              "displayName": "imagen_solucion_4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_persona_1",
+              "displayName": "imagen_testimonio_persona_1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_persona_2",
+              "displayName": "imagen_testimonio_persona_2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_persona_3",
+              "displayName": "imagen_testimonio_persona_3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_persona_4",
+              "displayName": "imagen_testimonio_persona_4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_persona_5",
+              "displayName": "imagen_testimonio_persona_5",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_persona_6",
+              "displayName": "imagen_testimonio_persona_6",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_producto_1",
+              "displayName": "imagen_testimonio_producto_1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_producto_2",
+              "displayName": "imagen_testimonio_producto_2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_producto_3",
+              "displayName": "imagen_testimonio_producto_3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_producto_4",
+              "displayName": "imagen_testimonio_producto_4",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_producto_5",
+              "displayName": "imagen_testimonio_producto_5",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_testimonio_producto_6",
+              "displayName": "imagen_testimonio_producto_6",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_caracteristicas",
+              "displayName": "imagen_caracteristicas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_garantias",
+              "displayName": "imagen_garantias",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "imagen_cta_final",
+              "displayName": "imagen_cta_final",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1216,
+        400
+      ],
+      "id": "d567a9a6-fca1-40c8-acab-292b18b085d0",
+      "name": "actualizador_de_productos1"
+    }
+  ],
+  "connections": {
+    "actualizador_de_productos1": {
+      "ai_tool": [
+        []
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8000b702e0a3d9ac6d70099a2751603316de4028cd14af0949776a26efecb219"
+  }
+}

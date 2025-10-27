@@ -1,0 +1,126 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "create",
+        "tableId": "productos",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "descripcion",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('De_que_trata_el_producto', ``, 'string') }}"
+            },
+            {
+              "fieldId": "precio",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('precio', ``, 'number') }}"
+            },
+            {
+              "fieldId": "nombre",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nombre', ``, 'string') }}"
+            },
+            {
+              "fieldId": "especificaciones",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('caracteristicas', ``, 'object') }}"
+            },
+            {
+              "fieldId": "ventajas",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('propuesta_de_valor', ``, 'array') }}"
+            },
+            {
+              "fieldId": "id_usuario",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('id_usuario', ``, 'string') }}"
+            },
+            {
+              "fieldId": "categoria_id",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('categoria_sugerida', ``, 'string') }}"
+            },
+            {
+              "fieldId": "marca_id",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('marca', ``, 'string') }}"
+            },
+            {
+              "fieldId": "peso",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('peso_aproximado', ``, 'number') }}"
+            },
+            {
+              "fieldId": "dimensiones",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('dimensiones_aproximadas', ``, 'object') }}"
+            },
+            {
+              "fieldId": "garantia",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('garantia_meses', ``, 'string') }}"
+            },
+            {
+              "fieldId": "slug",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nombre', ``, 'string').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') }}"
+            },
+            {
+              "fieldId": "estado",
+              "fieldValue": "activo"
+            },
+            {
+              "fieldId": "activo",
+              "fieldValue": "true"
+            },
+            {
+              "fieldId": "nuevo",
+              "fieldValue": "true"
+            },
+            {
+              "fieldId": "stock_minimo",
+              "fieldValue": "10"
+            },
+            {
+              "fieldId": "landing_tipo",
+              "fieldValue": "basico"
+            },
+            {
+              "fieldId": "creado_el",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            },
+            {
+              "fieldId": "actualizado_el",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        },
+        "additionalFields": {
+          "metadata": {
+            "modelo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('modelo', ``, 'string') }}",
+            "color": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('color', ``, 'string') }}",
+            "material": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('material', ``, 'string') }}",
+            "origen_pais": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('origen_pais', ``, 'string') }}",
+            "contexto_adicional": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('contexto_adicional', ``, 'string') }}",
+            "nombre_usuario": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nombre_usuario', ``, 'string') }}"
+          }
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        976,
+        560
+      ],
+      "id": "c23f804a-af24-4fdb-8083-502157175431",
+      "name": "creador_supabase_simplificado",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "creador_supabase_simplificado": {
+      "ai_tool": [
+        []
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8000b702e0a3d9ac6d70099a2751603316de4028cd14af0949776a26efecb219"
+  }
+}

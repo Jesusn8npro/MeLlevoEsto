@@ -89,7 +89,7 @@ html, body, #root {
 
 .hero-temu-miniatura-vertical:hover {
   border-color: #0ea5e9;
-  transform: translateY(-1px);
+  /* transform eliminado para evitar delay */
   box-shadow: 0 4px 8px rgba(14, 165, 233, 0.2);
 }
 
@@ -124,7 +124,7 @@ html, body, #root {
 }
 
 .hero-temu-imagen-principal:hover .hero-temu-imagen-principal-img {
-  transform: scale(1.05);
+  /* transform eliminado para evitar delay en cambio de imagen */
 }
 
 /* ELEMENTOS SOBRE LA IMAGEN */
@@ -758,7 +758,7 @@ html, body, #root {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   transition: all 0.2s ease;
   font-size: 13px;
   text-align: center;
@@ -1058,7 +1058,7 @@ html, body, #root {
 }
 
 /* ============================================
-   POPUP DE GALERÍA
+   POPUP DE GALERÍA - ARREGLADO SIN SCROLL
    ============================================ */
 .hero-temu-popup-galeria {
   position: fixed;
@@ -1066,13 +1066,14 @@ html, body, #root {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.80);
+  background: rgba(0, 0, 0, 0.90);
   backdrop-filter: blur(8px);
   z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
   animation: hero-temu-popup-aparecer 0.3s ease;
+  overflow: hidden; /* CRÍTICO: Sin scroll */
 }
 
 .hero-temu-popup-contenido {
@@ -1083,7 +1084,7 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   border-radius: 0;
-  overflow: hidden;
+  overflow: hidden; /* CRÍTICO: Sin scroll */
   box-shadow: none;
 }
 
@@ -1157,6 +1158,7 @@ html, body, #root {
   border-color: rgba(255, 255, 255, 0.5);
 }
 
+/* IMAGEN PRINCIPAL CENTRADA PERFECTAMENTE */
 .hero-temu-popup-imagen-container {
   flex: 1;
   position: relative;
@@ -1164,18 +1166,42 @@ html, body, #root {
   align-items: center;
   justify-content: center;
   background: transparent;
-  padding: 20px;
+  padding: 5px; /* Menos padding para más espacio */
   min-height: 0;
+  overflow: hidden; /* CRÍTICO: Sin scroll */
+  max-height: calc(100vh - 160px); /* Más espacio para la imagen */
+  width: 100%;
 }
 
 .hero-temu-popup-imagen {
-  width: 100%;
-  height: 100%;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+  width: auto;
+  height: auto;
+  max-width: 95%; /* Usar casi todo el ancho disponible */
+  max-height: 95%; /* Usar casi toda la altura disponible */
+  object-fit: contain; /* CRÍTICO: Mantener proporciones sin cortar */
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  display: block;
+  margin: auto; /* Centrado adicional */
+}
+
+/* CONTENEDOR IMAGEN MOBILE - CENTRADO PERFECTO */
+.hero-temu-popup-imagen-container-mobile {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  padding: 5px; /* Menos padding para más espacio */
+  min-height: 0;
+  overflow: hidden; /* CRÍTICO: Sin scroll */
+  max-height: calc(100vh - 180px); /* Más espacio para imagen en mobile */
+  width: 100%;
+}
+
+.hero-temu-popup-imagen-container-mobile .hero-temu-popup-imagen {
+  max-width: 98%; /* Usar casi todo el ancho en mobile */
+  max-height: 98%; /* Usar casi toda la altura en mobile */
 }
 
 .hero-temu-popup-flecha {
@@ -1244,31 +1270,35 @@ html, body, #root {
 }
 
 /* ============================================
-   POPUP GALERÍA - LAYOUTS RESPONSIVE
+   POPUP GALERÍA - LAYOUTS RESPONSIVE SIN SCROLL
    ============================================ */
 
-/* Layout Desktop - Miniaturas al lado */
+/* Layout Desktop - Miniaturas al lado SIN SCROLL */
 .hero-temu-popup-layout-desktop {
   display: none; /* Oculto por defecto */
   flex: 1;
   gap: 20px;
   padding: 20px;
   min-height: 0;
+  overflow: hidden; /* CRÍTICO: Sin scroll */
+  max-height: calc(100vh - 120px); /* Espacio para header y acciones */
 }
 
 .hero-temu-popup-miniaturas-desktop {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  width: 120px;
-  max-height: 500px;
-  overflow-y: auto;
-  padding-right: 8px;
+  gap: 8px;
+  width: 100px; /* Más pequeño para que quepan más */
+  max-height: 100%; /* Usar todo el espacio disponible */
+  overflow: hidden; /* CRÍTICO: Sin scroll vertical */
+  padding-right: 0;
+  justify-content: flex-start;
+  flex-wrap: nowrap; /* No wrap para evitar desbordamiento */
 }
 
 .hero-temu-popup-miniatura-desktop {
-  width: 100px;
-  height: 100px;
+  width: 80px; /* Más pequeño */
+  height: 80px; /* Más pequeño */
   border: 2px solid transparent;
   border-radius: 8px;
   overflow: hidden;
@@ -1293,12 +1323,14 @@ html, body, #root {
   object-fit: cover;
 }
 
-/* Layout Móvil - Miniaturas abajo */
+/* Layout Móvil - Miniaturas abajo SIN SCROLL */
 .hero-temu-popup-layout-mobile {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-height: 0;
+  overflow: hidden; /* CRÍTICO: Sin scroll */
+  max-height: calc(100vh - 120px); /* Espacio para header y acciones */
 }
 
 .hero-temu-popup-imagen-container-mobile {
@@ -1307,30 +1339,31 @@ html, body, #root {
   align-items: center;
   justify-content: center;
   background: transparent;
-  padding: 20px;
+  padding: 10px;
   min-height: 0;
+  overflow: hidden; /* CRÍTICO: Sin scroll */
 }
 
 .hero-temu-popup-miniaturas-mobile {
   display: flex;
-  gap: 8px;
-  padding: 16px 20px;
+  gap: 6px;
+  padding: 12px 16px;
   background: transparent;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* CRÍTICO: Sin wrap para evitar múltiples filas */
   max-width: 100%;
-  overflow-x: auto;
+  overflow: hidden; /* CRÍTICO: Sin scroll horizontal */
+  max-height: 100px; /* Altura fija */
 }
 
 .hero-temu-popup-miniatura-mobile {
-  width: 80px;
-  height: 80px;
-  border: none;
+  width: 60px; /* Más pequeño para que quepan más */
+  height: 60px; /* Más pequeño */
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
   background: transparent;
-  /* Transición eliminada para cambio instantáneo */
   padding: 0;
   flex-shrink: 0;
 }

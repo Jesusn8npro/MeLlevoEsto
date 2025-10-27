@@ -1,0 +1,538 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "id_del_producto_para_actualizar"
+            },
+            {
+              "name": "campo_a_actualizar"
+            },
+            {
+              "name": "nuevo_valor"
+            },
+            {
+              "name": "tipo_actualizacion"
+            },
+            {
+              "name": "descripcion_producto"
+            }
+          ]
+        }
+      },
+      "id": "7bc7c3cc-0c03-439b-ba4c-434a5928418c",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        200,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1f5a4491-f1c0-4052-ab20-751290c155d7",
+              "name": "id_producto",
+              "value": "={{ $json.id_del_producto_para_actualizar }}",
+              "type": "string"
+            },
+            {
+              "id": "35d2de84-3f0b-48e6-9a5a-cec3f7702d49",
+              "name": "campo",
+              "value": "={{ $json.campo_a_actualizar }}",
+              "type": "string"
+            },
+            {
+              "id": "c67e1e95-bf7b-432f-a152-b8b18da2b7a5",
+              "name": "valor_usuario",
+              "value": "={{ $json.nuevo_valor }}",
+              "type": "string"
+            },
+            {
+              "id": "474260b7-7946-49c9-b3b2-ce44aa7f860e",
+              "name": "tipo",
+              "value": "={{ $json.tipo_actualizacion }}",
+              "type": "string"
+            },
+            {
+              "id": "8a9b1c2d-3e4f-5678-9abc-def012345678",
+              "name": "descripcion",
+              "value": "={{ $json.descripcion_producto }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        400
+      ],
+      "id": "8b7c0ad6-392c-45ac-b439-f12af2f853bb",
+      "name": "Preparar Datos"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "03840f2f-dd06-4001-a4b8-e49f1a82d9b6",
+              "leftValue": "={{ $json.tipo }}",
+              "rightValue": "imagen",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        600,
+        400
+      ],
+      "id": "40966fca-e86c-4e80-8076-276646845893",
+      "name": "¿Es Imagen?"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "producto_imagenes",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "producto_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Preparar Datos').item.json.id_producto }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        800,
+        300
+      ],
+      "id": "1653249b-5ec9-43c5-93a8-a67cb68e240b",
+      "name": "Consultar Imágenes",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "productos",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Preparar Datos').item.json.id_producto }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "={{ $('Preparar Datos').item.json.campo }}",
+              "fieldValue": "={{ $('Preparar Datos').item.json.valor_usuario }}"
+            },
+            {
+              "fieldId": "actualizado_el",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1000,
+        300
+      ],
+      "id": "4c7a67fa-3494-4d50-9946-eab55408647d",
+      "name": "Actualizar Imagen en Producto",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "producto_imagenes",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "producto_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Preparar Datos').item.json.id_producto }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "={{ $('Preparar Datos').item.json.campo }}",
+              "fieldValue": "={{ $('Preparar Datos').item.json.valor_usuario }}"
+            },
+            {
+              "fieldId": "total_imagenes_generadas",
+              "fieldValue": "={{ $('Consultar Imágenes').item.json.total_imagenes_generadas ? $('Consultar Imágenes').item.json.total_imagenes_generadas + 1 : 1 }}"
+            },
+            {
+              "fieldId": "estado",
+              "fieldValue": "completado"
+            },
+            {
+              "fieldId": "actualizado_el",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        300
+      ],
+      "id": "8bb6dadf-79d8-4c7e-bead-f9d78aef830b",
+      "name": "Actualizar Tabla Imágenes",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "productos",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Preparar Datos').item.json.id_producto }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        800,
+        500
+      ],
+      "id": "6077fd62-9466-4ffd-8565-795d145bc9d9",
+      "name": "Obtener Datos del Producto",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "producto-actual",
+              "name": "producto_actual",
+              "value": "={{ $('Obtener Datos del Producto').item.json }}",
+              "type": "object"
+            },
+            {
+              "id": "campo-actualizar",
+              "name": "campo_actualizar",
+              "value": "={{ $('Preparar Datos').item.json.campo }}",
+              "type": "string"
+            },
+            {
+              "id": "descripcion-contexto",
+              "name": "descripcion_contexto",
+              "value": "={{ $('Preparar Datos').item.json.descripcion }}",
+              "type": "string"
+            },
+            {
+              "id": "valor-inteligente",
+              "name": "valor_generado",
+              "value": "={{ \n  $('Preparar Datos').item.json.campo === 'nombre' ? \n    ($('Preparar Datos').item.json.descripcion ? \n      $('Preparar Datos').item.json.descripcion.split(' ').slice(0, 4).join(' ') + ' - Actualizado' : \n      ($('Obtener Datos del Producto').item.json.nombre || 'Producto') + ' - Mejorado'\n    ) :\n  $('Preparar Datos').item.json.campo === 'precio' ? \n    ($('Obtener Datos del Producto').item.json.precio ? \n      Math.round($('Obtener Datos del Producto').item.json.precio * (0.9 + Math.random() * 0.2)) : \n      Math.floor(Math.random() * 50000) + 10000\n    ) :\n  $('Preparar Datos').item.json.campo === 'descripcion' ? \n    ($('Preparar Datos').item.json.descripcion || \n      'Descripción mejorada para ' + ($('Obtener Datos del Producto').item.json.nombre || 'este producto')\n    ) :\n  $('Preparar Datos').item.json.campo === 'categoria_id' ? \n    ($('Obtener Datos del Producto').item.json.categoria_id || Math.floor(Math.random() * 10) + 1) :\n  $('Preparar Datos').item.json.campo === 'stock' ? \n    ($('Obtener Datos del Producto').item.json.stock ? \n      Math.max(1, $('Obtener Datos del Producto').item.json.stock + Math.floor(Math.random() * 20) - 10) : \n      Math.floor(Math.random() * 100) + 1\n    ) :\n  $('Preparar Datos').item.json.campo === 'estado' ? 'activo' :\n  $('Preparar Datos').item.json.campo === 'destacado' ? (Math.random() > 0.5 ? true : false) :\n  'Valor actualizado automáticamente'\n}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1000,
+        500
+      ],
+      "id": "auto-generator-node",
+      "name": "Generar Valor Inteligente"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "productos",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Preparar Datos').item.json.id_producto }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "={{ $('Preparar Datos').item.json.campo }}",
+              "fieldValue": "={{ $('Generar Valor Inteligente').item.json.valor_generado }}"
+            },
+            {
+              "fieldId": "fecha_actualizacion",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            },
+            {
+              "fieldId": "estado",
+              "fieldValue": "activo"
+            },
+            {
+              "fieldId": "version",
+              "fieldValue": "={{ ($('Obtener Datos del Producto').item.json.version || 0) + 1 }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        500
+      ],
+      "id": "12c2873c-4c5c-4f65-9279-007602b6ec01",
+      "name": "Actualizar Campo Producto",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "success-id",
+              "name": "resultado",
+              "value": "éxito",
+              "type": "string"
+            },
+            {
+              "id": "message-id",
+              "name": "mensaje",
+              "value": "={{ $('Preparar Datos').item.json.tipo === 'imagen' ? 'Imagen ' + $('Preparar Datos').item.json.campo + ' actualizada correctamente en el producto ' + $('Preparar Datos').item.json.id_producto : 'Campo ' + $('Preparar Datos').item.json.campo + ' actualizado correctamente en el producto ' + $('Preparar Datos').item.json.id_producto + ' con valor: ' + $('Generar Valor Inteligente').item.json.valor_generado }}",
+              "type": "string"
+            },
+            {
+              "id": "producto-id",
+              "name": "producto_id",
+              "value": "={{ $('Preparar Datos').item.json.id_producto }}",
+              "type": "string"
+            },
+            {
+              "id": "campo-actualizado",
+              "name": "campo_actualizado",
+              "value": "={{ $('Preparar Datos').item.json.campo }}",
+              "type": "string"
+            },
+            {
+              "id": "valor-anterior",
+              "name": "valor_anterior",
+              "value": "={{ $('Preparar Datos').item.json.tipo === 'imagen' ? 'N/A' : $('Obtener Datos del Producto').item.json[$('Preparar Datos').item.json.campo] || 'Sin valor previo' }}",
+              "type": "string"
+            },
+            {
+              "id": "valor-nuevo",
+              "name": "valor_nuevo",
+              "value": "={{ $('Preparar Datos').item.json.tipo === 'imagen' ? $('Preparar Datos').item.json.valor_usuario : $('Generar Valor Inteligente').item.json.valor_generado }}",
+              "type": "string"
+            },
+            {
+              "id": "tipo-actualizacion",
+              "name": "tipo_actualizacion",
+              "value": "={{ $('Preparar Datos').item.json.tipo }}",
+              "type": "string"
+            },
+            {
+              "id": "timestamp",
+              "name": "timestamp",
+              "value": "={{ new Date().toISOString() }}",
+              "type": "string"
+            },
+            {
+              "id": "version-producto",
+              "name": "version_producto",
+              "value": "={{ ($('Obtener Datos del Producto').item.json.version || 0) + 1 }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1400,
+        400
+      ],
+      "id": "b9365517-e941-40e9-96e9-cfeb0647dc59",
+      "name": "Resultado Final"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Preparar Datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Datos": {
+      "main": [
+        [
+          {
+            "node": "¿Es Imagen?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Imagen?": {
+      "main": [
+        [
+          {
+            "node": "Consultar Imágenes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Obtener Datos del Producto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar Imágenes": {
+      "main": [
+        [
+          {
+            "node": "Actualizar Imagen en Producto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar Imagen en Producto": {
+      "main": [
+        [
+          {
+            "node": "Actualizar Tabla Imágenes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar Tabla Imágenes": {
+      "main": [
+        [
+          {
+            "node": "Resultado Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener Datos del Producto": {
+      "main": [
+        [
+          {
+            "node": "Generar Valor Inteligente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generar Valor Inteligente": {
+      "main": [
+        [
+          {
+            "node": "Actualizar Campo Producto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar Campo Producto": {
+      "main": [
+        [
+          {
+            "node": "Resultado Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8000b702e0a3d9ac6d70099a2751603316de4028cd14af0949776a26efecb219"
+  }
+}

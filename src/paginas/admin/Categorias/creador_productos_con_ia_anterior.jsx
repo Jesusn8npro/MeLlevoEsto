@@ -202,7 +202,7 @@ IMPORTANTE: Responde SOLO con el JSON del producto completo actualizado, manteni
         categorias_disponibles: categorias || []
       }
 
-      const response = await fetch('https://velostrategix-n8n.lnrubg.easypanel.host/webhook-test/crear_productos_conversacional', {
+      const response = await fetch('https://velostrategix-n8n.lnrubg.easypanel.host/webhook/crear_productos_conversacional', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -296,7 +296,7 @@ IMPORTANTE: Responde SOLO con el JSON del producto completo actualizado, manteni
 
       console.log('ðŸš€ Enviando mensaje al webhook (formato N8N):', datosParaN8N)
 
-      const response = await fetch('https://velostrategix-n8n.lnrubg.easypanel.host/webhook-test/crear_productos_conversacional', {
+      const response = await fetch('https://velostrategix-n8n.lnrubg.easypanel.host/webhook/crear_productos_conversacional', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

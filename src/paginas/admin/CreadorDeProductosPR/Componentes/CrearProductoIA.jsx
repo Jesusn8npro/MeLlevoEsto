@@ -223,7 +223,7 @@ Por favor actualiza solo este campo manteniendo toda la demás información del 
         })
       }
       
-      const respuesta = await fetch('https://velostrategix-n8n.lnrubg.easypanel.host/webhook-test/crear_productos_conversacional', {
+      const respuesta = await fetch('https://velostrategix-n8n.lnrubg.easypanel.host/webhook/crear_productos_conversacional', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -347,7 +347,7 @@ Por favor actualiza solo este campo manteniendo toda la demás información del 
       console.log('🔍 DEBUG - producto_id que se enviará:', productoParaEditar?.id)
       console.log('🚀 Enviando mensaje al webhook (formato N8N):', datosParaN8N)
       
-      const respuesta = await fetch('https://velostrategix-n8n.lnrubg.easypanel.host/webhook-test/crear_productos_conversacional', {
+      const respuesta = await fetch('https://velostrategix-n8n.lnrubg.easypanel.host/webhook/crear_productos_conversacional', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,430 +1,112 @@
-
-
 {
   "nodes": [
     {
       "parameters": {
-        "updates": [
-          "message"
-        ],
-        "additionalFields": {}
+        "jsCode": "const uploadResponse = items[0].json;\nconst telegramData = $('Disparador de Telegram').item.json;\nconst fileId = telegramData.message.photo[1].file_id;\nconst timestamp = new Date().getTime();\nconst date = new Date().toISOString().split('T')[0];\n\n// Obtener el nombre del archivo desde la respuesta de Supabase\nconst actualFileName = uploadResponse.Key || uploadResponse.Id || uploadResponse.path || `${date}/${timestamp}-${fileId}.jpg`;\n\nconst publicUrl = `https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/public/imagenes/${actualFileName}`;\n\nreturn {\n  json: {\n    success: true,\n    id: actualFileName,\n    name: actualFileName.split('/').pop(),\n    fileName: actualFileName,\n    fullPath: actualFileName,\n    webViewLink: publicUrl,\n    publicUrl: publicUrl,\n    Key: actualFileName,\n    bucket: 'imagenes',\n    uploadedAt: new Date().toISOString(),\n    originalMessage: telegramData.message.caption || '',\n    chatId: telegramData.message.chat.id\n  }\n};"
       },
-      "type": "n8n-nodes-base.telegramTrigger",
-      "typeVersion": 1.2,
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
-        4464,
-        7104
+        192,
+        176
       ],
-      "id": "a5ad1c47-2158-46c9-a095-324d49de198e",
-      "name": "Disparador de Telegram",
-      "webhookId": "bea4843e-25e4-4d89-b3f6-4237798e9b42",
-      "credentials": {
-        "telegramApi": {
-          "id": "Tsll6EFLsILnT8d3",
-          "name": "Chat NANO BOT"
-        }
-      }
+      "id": "43ab76a4-1d7a-4952-861b-9f59bf4245d0",
+      "name": "Procesar Info Upload1"
     },
     {
       "parameters": {
-        "rules": {
-          "values": [
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "id": "e7211e46-0f49-46a0-9cb7-e83fed150efd",
-                    "leftValue": "={{ $json.message.photo }}",
-                    "rightValue": "",
-                    "operator": {
-                      "type": "array",
-                      "operation": "exists",
-                      "singleValue": true
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "Foto"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "id": "245c0d65-83f2-4de5-8755-b73a3a63eab2",
-                    "leftValue": "={{ $json.message.voice.mime_type }}",
-                    "rightValue": "audio/ogg",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              }
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.message.text }}",
-                    "rightValue": "",
-                    "operator": {
-                      "type": "string",
-                      "operation": "exists",
-                      "singleValue": true
-                    },
-                    "id": "85edf561-8f5e-4215-9e19-78ff0392068e"
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "Texto"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3.2,
-      "position": [
-        4848,
-        7088
-      ],
-      "id": "83b3e12d-ad34-4b57-a577-31c847ff02f9",
-      "name": "Conmutador"
-    },
-    {
-      "parameters": {
-        "resource": "file",
-        "fileId": "={{ $json.message.photo[1].file_id }}",
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        5040,
-        6608
-      ],
-      "id": "78db2fae-5f11-405a-9aff-6910e62ee957",
-      "name": "Descargar Archivo",
-      "webhookId": "fb18f65f-c1cf-4473-b59d-d59d6b96e9ea",
-      "credentials": {
-        "telegramApi": {
-          "id": "Tsll6EFLsILnT8d3",
-          "name": "Chat NANO BOT"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "name": "={{ $now.format('yyyy-MM-dd') }}",
-        "driveId": {
-          "__rl": true,
-          "value": "My Drive",
-          "mode": "list",
-          "cachedResultName": "My Drive",
-          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
-        },
-        "folderId": {
-          "__rl": true,
-          "value": "1pIVgWL1V2qYvLS6ElbOitip4W6YYEhTr",
-          "mode": "list",
-          "cachedResultName": "Imagenes N8N",
-          "cachedResultUrl": "https://drive.google.com/drive/folders/1pIVgWL1V2qYvLS6ElbOitip4W6YYEhTr"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleDrive",
-      "typeVersion": 3,
-      "position": [
-        5408,
-        6608
-      ],
-      "id": "3c3c3e31-b16c-469d-8303-c5fe2966f8b2",
-      "name": "Subir archivo",
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "JYFM1ZlxpvZ3MVli",
-          "name": "Drive Jesus Gonzalez"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "53de4eb0-6684-48f5-a5b5-2b3bedaff817",
-              "name": "message.text",
-              "value": "=El usuario acaba de enviar una imagen. Aquí está el ID de ese archivo en Google Drive: {{ $json.id }}",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        5744,
-        6608
-      ],
-      "id": "3f41e11d-29d3-47e8-9919-b3d78c18d4a9",
-      "name": "Establecer Texto"
-    },
-    {
-      "parameters": {
-        "chatId": "={{ $('Disparador de Telegram').item.json.message.chat.id }}",
-        "text": "={{ $json.output }}",
-        "additionalFields": {
-          "appendAttribution": false,
-          "parse_mode": "HTML"
-        }
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        7552,
-        7120
-      ],
-      "id": "7d92c6d0-ca12-4872-8398-171a0c94c658",
-      "name": "Responder",
-      "webhookId": "f9df111e-1004-4aff-b458-779444006ed8",
-      "credentials": {
-        "telegramApi": {
-          "id": "Tsll6EFLsILnT8d3",
-          "name": "Chat NANO BOT"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "update",
-        "fileId": {
-          "__rl": true,
-          "mode": "id",
-          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Archivo_a_Actualizar', ``, 'string') }}"
-        },
-        "newUpdatedFileName": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Nuevo_Nombre_Archivo_Actualizado', ``, 'string') }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleDriveTool",
-      "typeVersion": 3,
-      "position": [
-        7648,
-        7632
-      ],
-      "id": "b545bfad-24eb-427d-a91f-2fc240ae3df5",
-      "name": "Cambiar Nombre",
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "JYFM1ZlxpvZ3MVli",
-          "name": "Drive Jesus Gonzalez"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "resource": "fileFolder",
-        "queryString": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search_Query', ``, 'string') }}",
-        "returnAll": true,
-        "filter": {
-          "folderId": {
-            "__rl": true,
-            "value": "1pIVgWL1V2qYvLS6ElbOitip4W6YYEhTr",
-            "mode": "list",
-            "cachedResultName": "Imagenes N8N",
-            "cachedResultUrl": "https://drive.google.com/drive/folders/1pIVgWL1V2qYvLS6ElbOitip4W6YYEhTr"
-          },
-          "whatToSearch": "files"
-        },
+        "method": "POST",
+        "url": "=https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/imagenes/{{ $now.format('yyyy-MM-dd') }}/{{ $now.toUnixInteger() }}-{{ $json.result.file_id }}.jpg",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
         "options": {
-          "fields": [
-            "id",
-            "name",
-            "webViewLink"
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.googleDriveTool",
-      "typeVersion": 3,
-      "position": [
-        7792,
-        7632
-      ],
-      "id": "d5a2010d-733f-4482-a41b-1ef9fbbae2d2",
-      "name": "Buscar Archivos Originales",
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "JYFM1ZlxpvZ3MVli",
-          "name": "Drive Jesus Gonzalez"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "sessionIdType": "customKey",
-        "sessionKey": "={{ $('Disparador de Telegram').item.json.message.chat.id }}",
-        "contextWindowLength": 10
-      },
-      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
-      "typeVersion": 1.3,
-      "position": [
-        5904,
-        7648
-      ],
-      "id": "e6cb10a0-bf1c-4d1b-9dac-40d8a1fb3388",
-      "name": "Memoria Simple"
-    },
-    {
-      "parameters": {
-        "modelName": "models/gemini-2.0-flash",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
-      "typeVersion": 1,
-      "position": [
-        5632,
-        7648
-      ],
-      "id": "94dd4eba-8eb2-428b-bd2c-1a3e195b0144",
-      "name": "Google Gemini Chat Model",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "afEdUlo465aPlyDq",
-          "name": "Google Gemini(PaLM) Api account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "description": "Llama a esta herramienta para editar una imagen. Debes pasar un nuevo título de imagen, un prompt de imagen muy detallado/profesional y el ID de la imagen.",
-        "workflowId": {
-          "__rl": true,
-          "value": "jQoi0yBKSPgGJVdx",
-          "mode": "list",
-          "cachedResultName": "editar_imagen"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "imageTitle": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imageTitle', `El título de la nueva imagen`, 'string') }}",
-            "imagePrompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagePrompt', `El prompt de generación de imagen. Debe ser detallado y optimizado para la generación de imágenes por IA. Da la mayor cantidad de detalles y pregunta en que foormato se quiere la informacion, el idioma y todo para que funcione perfectamente por favor! Este prompt no debe contener \\\\n ni \"\".`, 'string') }}",
-            "imageID": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imageID', `El ID de la imagen a editar`, 'string') }}",
-            "tipo_de_imagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('tipo_de_imagen', `Tipo específico de imagen (ej: imagen_principal, imagen_punto_dolor_1, imagen_testimonio_persona_1)`, 'string') }}",
-            "producto_id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('producto_id', `UUID del producto al que pertenece la imagen`, 'string') }}"
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "imageTitle",
-              "displayName": "imageTitle",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string"
-            },
-            {
-              "id": "imagePrompt",
-              "displayName": "imagePrompt",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string"
-            },
-            {
-              "id": "imageID",
-              "displayName": "imageID",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string"
-            },
-            {
-              "id": "referencia_imagen",
-              "displayName": "referencia_imagen",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": true
-            },
-            {
-              "id": "tipo_de_imagen",
-              "displayName": "tipo_de_imagen",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "producto_id",
-              "displayName": "producto_id",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
+          "response": {
+            "response": {
+              "responseFormat": "json"
             }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
+          }
         }
       },
-      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -128,
+        176
+      ],
+      "id": "c7751480-f004-45b6-b8bd-d7a53e3916bd",
+      "name": "Subir a Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=# ?? AGENTE ORQUESTADOR - CREADOR DE PRODUCTOS GANADORES\n\n## ?? Tu Misi?n\nEres el **AGENTE MAESTRO** de ME LLEVO ESTO, especializado en crear productos de ecommerce ULTRA VENDEDORES que generen miles de ventas. Tu trabajo es orquestar TODO el proceso de creaci?n de productos exitosos de forma R?PIDA y EFICIENTE.\n\n## ?? Tu Personalidad\n- **EXPERTO EN ECOMMERCE** con a?os de experiencia en dropshipping\n- **DIRECTO Y EFICIENTE** - No preguntas demasiado, act?as r?pido\n- **ORIENTADO A RESULTADOS** - Cada producto debe ser un ?xito de ventas\n- **COLOMBIANO AUT?NTICO** - Hablas como: \"Mi hermano\", \"parcero\", \"care verga\", \"mi bro\"\n\n## ??? Herramientas Disponibles\n\n### ?? **CREACI?N DE PRODUCTOS**\n1. **creador_de_productos** - Crea toda la informaci?n completa del producto (landing page, solo la informacion por que l plantilla ya esta, copy, precios, etc.)\n\n### ?? **Actualizacion de productos**\n1.2 **actualizador_de_productos** - Utiliza esta herramienta para actualizar la informacion de los productos si el usuario lo solicita por favor\n\n### ??? **CONSULTA DE DATOS**\n2. **consultar_productos** - Consulta productos creados, busca por el nombre del producto,  obtiene producto_id y verifica informaci?n existente\n2.1 **consultar_categorias** - SIEMPRE usa esta herramienta ANTES de actualizar productos para obtener el categoria_id correcto. Busca la categor?a que mejor coincida con el producto.\nSolo debes consultar y respondes con un par de palabras, no debes soltar absolutamente toda la informacion que da el usuario hermano, para que lo tengas present y la herramienta de consulta de datos no nos de una respuesta exagerada que no se pueda responder.\n\n### ??? **GESTI?N DE IM?GENES**
+
+#### **HERRAMIENTAS DISPONIBLES:**
+3. **Cambiar Nombre** - Renombra archivos de im?genes en Supabase (necesitas el nombre actual completo del archivo)
+4. **Combinar Im?genes** - Une dos im?genes en una sola (necesitas los IDs de ambas im?genes)
+5. **Buscar Archivos Originales** - **OBLIGATORIO USAR PRIMERO** - Encuentra im?genes subidas por el usuario
+   - **RETORNA:** Nombre real del archivo (.jpg, .png, etc.), ID de la imagen, producto_id asociado
+   - **CU?NDO USAR:** SIEMPRE antes de editar cualquier imagen
+6. **Buscar Im?genes de IA** - Localiza im?genes generadas por IA anteriormente
+7. **Editar Imagen** - Modifica im?genes existentes con prompts de IA
+
+#### **FLUJO OBLIGATORIO PARA EDITAR IM?GENES:**
+**PASO 1:** SIEMPRE usa "Buscar Archivos Originales" primero para obtener:
+- ? **Nombre real** (ej: nueva-guitarra.jpg)
+- ? **ID de la imagen** (ej: 1761189888-AgACAgEAAxkBAAI...)
+- ? **producto_id** (UUID del producto)
+
+**PASO 2:** Con los datos del PASO 1, usa "Editar Imagen" con:
+- **Nombre_De_La_Imagen:** El nombre real obtenido (nueva-guitarra.jpg)
+- **Id_de_la_imagen:** El ID obtenido
+- **id_del_producto:** El producto_id obtenido
+- **tipo_de_imagen:** Especifica el tipo (imagen_principal, imagen_punto_dolor_1, etc.)
+- **Promt_imagen:** El prompt de edici?n
+
+#### **INSTRUCCIONES CR?TICAS:**
+- ? **NUNCA** uses IDs de Telegram directamente en "Editar Imagen"
+- ? **SIEMPRE** busca primero los archivos para obtener datos reales
+- ? **CONFIRMA** que tienes el nombre real (.jpg) antes de editar\n\n## ?? FLUJO DE TRABAJO OPTIMIZADO\n\n### **FASE 1: CREACI?N DEL PRODUCTO** ?\nCuando el usuario quiera crear un producto:\n1. **Pide SOLO la informaci?n esencial:**\n   - Nombre del producto\n   - De qu? trata (descripci?n b?sica)\n   - Diferenciaci?n (qu? lo hace ?nico)\n   - Precio sugerido\n2. **Ejecuta creador_de_productos INMEDIATAMENTE**\n3. **Confirma que el producto se cre? exitosamente**\n\n### **FASE 1.1: PROMOCIONES (Opcional)**\n- Pregunta: \"?Deseas a?adir promociones (2x, 3x, bundle o descuento)?\"\n- Si s?, genera `promociones` como un JSON (texto) con un arreglo de objetos por promoci?n.\n- Campos m?nimos por promoci?n: `tipo` (multipack|bundle|descuento|temporada), `titulo`, `descripcion`, `activo`, `desde` (YYYY-MM-DD), `hasta` (YYYY-MM-DD).\n- Campos espec?ficos:\n  - multipack: `multiplicador` (2|3|4), `precio_por_unidad` (opcional)\n  - descuento: `porcentaje` o `valor`\n  - bundle: `items` (resumen), `beneficio`.\n- Ejemplo: [{\"tipo\":\"multipack\",\"multiplicador\":2,\"titulo\":\"Ll?vate 2 con 15% OFF\",\"descripcion\":\"Aplica para todas las tallas\",\"activo\":true,\"desde\":\"2025-10-01\",\"hasta\":\"2025-10-31\"}]\n- Pasa este JSON en la variable `promociones` cuando ejecutes `creador_de_productos`.\n\n### **FASE 2: GESTI?N DE IM?GENES** ??\nDespu?s de crear el producto:\n1. **OBT?N EL PRODUCTO_ID:** Usa \"consultar_supabase\" para obtener el UUID del producto reci?n creado\n2. **Pregunta DIRECTAMENTE:** \"?Tienes im?genes de referencia para este producto?\"\n3. **Si sube im?genes:** Pregunta c?mo nombrarlas y usa \"Cambiar Nombre\"\n4. **Si necesita generar im?genes:** \n   - SIEMPRE incluye el **producto_id** obtenido en el paso 1\n   - SIEMPRE especifica el **tipo_de_imagen** (ej: imagen_principal, imagen_punto_dolor_1)\n   - Usa \"Editar Imagen\" con estos par?metros obligatorios\n5. **Organiza todas las im?genes** autom?ticamente en Supabase\n\n## ?? INSTRUCCIONES ESPEC?FICAS\n\n### ? **LO QUE S? DEBES HACER:**\n- **S? DIRECTO:** No hagas 10 preguntas, m?ximo 2-3 esenciales\n- **ACT?A R?PIDO:** Ejecuta herramientas tan pronto tengas la info m?nima\n- **CONFIRMA RESULTADOS:** Siempre verifica que todo funcion? correctamente\n- **BUSCA EFICIENTEMENTE:** Cuando busques archivos, usa t?rminos similares, no exactos\n\n### ? **LO QUE NO DEBES HACER:**\n- **NO preguntes demasiado** - El usuario quiere resultados r?pidos\n- **NO repitas informaci?n** - Una vez confirmado, contin?a\n- **NO te quedes esperando** - Si tienes la info m?nima, procede\n\n## ??? ESTILO DE COMUNICACI?N\n\n### **RESPUESTAS CORTAS Y EFECTIVAS:**\n- ? \"?Listo parcero! ?C?mo se llama el producto?\"\n- ? \"Perfecto hermano, creando el producto ahora...\"\n- ? \"?Producto creado exitosamente! ?Tienes im?genes?\"\n- ? \"Hola, soy tu asistente. Para ayudarte mejor necesito que me proporciones...\"\n\n### **LENGUAJE COLOMBIANO AUT?NTICO:**\n- \"Mi hermano\" / \"Parcero\" / \"Care verga\" / \"Mi bro\"\n- \"?Verraco!\" / \"?Chimba!\" / \"?Bacano!\"\n- \"Listo pues\" / \"Dale pues\" / \"Vamos a darle\"\n\n## ?? OBJETIVOS CLAVE\n1. **VELOCIDAD:** Crear productos completos en menos de 5 minutos\n2. **CALIDAD:** Cada producto debe ser vendedor y profesional\n3. **EFICIENCIA:** M?nimas preguntas, m?ximos resultados\n4. **ORGANIZACI?N:** Im?genes bien nombradas y organizadas\n\n---\n\n**?RECUERDA:** Tu trabajo es hacer que el usuario tenga productos GANADORES listos para vender YA! ??** \n\nLas respuestas no deben pasar las 500 caracteres por favor, lo mas resumido y al grano en todas tus respuestas\n\n{{ $json.message.chat.id }} ID del usuario",
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2.2,
       "position": [
-        7472,
-        7632
+        736,
+        400
       ],
-      "id": "732e807e-8951-4ce4-a331-80ed818b0b38",
-      "name": "editar_imagen"
+      "id": "9a8cf557-5835-4f7f-a6b5-fe2c4334b9b9",
+      "name": "Agente Google"
     },
     {
       "parameters": {
-        "description": "Llama a esta herramienta para combinar dos imágenes. Debes pasar un prompt de generación de imagen, los IDs de ambas imágenes y un título para esta nueva imagen.",
+        "description": "Llama a esta herramienta para combinar dos im?genes. Debes pasar un prompt de generaci?n de imagen, los IDs de ambas im?genes y un t?tulo para esta nueva imagen.",
         "workflowId": {
           "__rl": true,
-          "value": "Mwp4SQDxcbDxijRs",
+          "value": "iFiOdpjfe2ezqXnm",
           "mode": "list",
           "cachedResultName": "combinar_imagenes"
         },
         "workflowInputs": {
           "mappingMode": "defineBelow",
           "value": {
-            "prompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('prompt', `El prompt de generación de imagen. Debe estar optimizado para la generación de imágenes por IA y solo debe hacer referencia a las imágenes como imagen1 e imagen2. Este prompt no debe contener \\\\n ni \"\".`, 'string') }}",
+            "prompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('prompt', `El prompt de generaci?n de imagen. Debe estar optimizado para la generaci?n de im?genes por IA y solo debe hacer referencia a las im?genes como imagen1 e imagen2. Este prompt no debe contener \\\\n ni \"\".`, 'string') }}",
             "image1": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen1', `El ID de la imagen 1`, 'string') }}",
             "image2": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('imagen2', `El ID de la imagen 2`, 'string') }}",
-            "imageTitle": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('tituloImagen', `El título para la nueva imagen`, 'string') }}"
+            "imageTitle": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('tituloImagen', `El t?tulo para la nueva imagen`, 'string') }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -472,118 +154,66 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        7312,
-        7632
+        1552,
+        768
       ],
-      "id": "d35ba50f-4f0f-4dcb-942f-a541050ec4a0",
+      "id": "ead8dd7e-67fd-4945-8b2c-dfd173400155",
       "name": "combinar_imagenes"
     },
     {
       "parameters": {
-        "resource": "fileFolder",
-        "queryString": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search_Query', ``, 'string') }}",
-        "returnAll": true,
-        "filter": {
-          "folderId": {
-            "__rl": true,
-            "value": "1pIVgWL1V2qYvLS6ElbOitip4W6YYEhTr",
-            "mode": "list",
-            "cachedResultName": "Imagenes N8N",
-            "cachedResultUrl": "https://drive.google.com/drive/folders/1pIVgWL1V2qYvLS6ElbOitip4W6YYEhTr"
-          },
-          "whatToSearch": "files"
-        },
-        "options": {
-          "fields": [
-            "id",
-            "name",
-            "webViewLink"
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.googleDriveTool",
-      "typeVersion": 3,
-      "position": [
-        7936,
-        7632
-      ],
-      "id": "8a4e3149-10b0-4feb-b4e9-c7794dc88503",
-      "name": "Buscar Imagenes de IA",
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "JYFM1ZlxpvZ3MVli",
-          "name": "Drive Jesus Gonzalez"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "value": "gpt-5-mini",
-          "mode": "list",
-          "cachedResultName": "gpt-5-mini"
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.2,
-      "position": [
-        5472,
-        7648
-      ],
-      "id": "92a7214b-c9e3-42bf-9ca8-4569bf146733",
-      "name": "GPT 5 mini",
-      "credentials": {
-        "openAiApi": {
-          "id": "BF6TLMzAguxXUoJp",
-          "name": "Api Chat GPT"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "={{ $json.message.text }}{{ $json.text }}",
-        "needsFallback": true,
-        "options": {
-          "systemMessage": "=# 🚀 AGENTE ORQUESTADOR - CREADOR DE PRODUCTOS GANADORES\n\n## 🎯 Tu Misión\nEres el **AGENTE MAESTRO** de ME LLEVO ESTO, especializado en crear productos de ecommerce ULTRA VENDEDORES que generen miles de ventas. Tu trabajo es orquestar TODO el proceso de creación de productos exitosos de forma RÁPIDA y EFICIENTE.\n\n## 🧠 Tu Personalidad\n- **EXPERTO EN ECOMMERCE** con años de experiencia en dropshipping\n- **DIRECTO Y EFICIENTE** - No preguntas demasiado, actúas rápido\n- **ORIENTADO A RESULTADOS** - Cada producto debe ser un éxito de ventas\n- **COLOMBIANO AUTÉNTICO** - Hablas como: \"Mi hermano\", \"parcero\", \"care verga\", \"mi bro\"\n\n## 🛠️ Herramientas Disponibles\n\n### 📦 **CREACIÓN DE PRODUCTOS**\n1. **creador_de_productos** - Crea toda la información completa del producto (landing page, solo la informacion por que l plantilla ya esta, copy, precios, etc.)\n\n### 📦 **Actualizacion de productos**\n1.2 **actualizador_de_productos** - Utiliza esta herramienta para actualizar la informacion de los productos si el usuario lo solicita por favor\n\n### 🗄️ **CONSULTA DE DATOS**\n2. **consultar_productos** - Consulta productos creados, busca por el nombre del producto,  obtiene producto_id y verifica información existente\n2.1 **consultar_categorias** - SIEMPRE usa esta herramienta ANTES de actualizar productos para obtener el categoria_id correcto. Busca la categoría que mejor coincida con el producto.\nSolo debes consultar y respondes con un par de palabras, no debes soltar absolutamente toda la informacion que da el usuario hermano, para que lo tengas present y la herramienta de consulta de datos no nos de una respuesta exagerada que no se pueda responder.\n\n### 🖼️ **GESTIÓN DE IMÁGENES**\n3. **Cambiar Nombre** - Renombra archivos de imágenes en Google Drive (necesitas el ID del archivo)\n4. **Combinar Imágenes** - Une dos imágenes en una sola\n5. **Buscar Archivos Originales** - Encuentra imágenes que el usuario subió previamente\n6. **Buscar Imágenes de IA** - Localiza imágenes generadas por IA anteriormente\n7. **Editar Imagen** - Modifica imágenes existentes con prompts de IA (REQUIERE producto_id y tipo_de_imagen)\n\n## 🔄 FLUJO DE TRABAJO OPTIMIZADO\n\n### **FASE 1: CREACIÓN DEL PRODUCTO** ⚡\nCuando el usuario quiera crear un producto:\n1. **Pide SOLO la información esencial:**\n   - Nombre del producto\n   - De qué trata (descripción básica)\n   - Diferenciación (qué lo hace único)\n   - Precio sugerido\n2. **Ejecuta creador_de_productos INMEDIATAMENTE**\n3. **Confirma que el producto se creó exitosamente**\n\n### **FASE 2: GESTIÓN DE IMÁGENES** 📸\nDespués de crear el producto:\n1. **OBTÉN EL PRODUCTO_ID:** Usa \"consultar_supabase\" para obtener el UUID del producto recién creado\n2. **Pregunta DIRECTAMENTE:** \"¿Tienes imágenes de referencia para este producto?\"\n3. **Si sube imágenes:** Pregunta cómo nombrarlas y usa \"Cambiar Nombre\"\n4. **Si necesita generar imágenes:** \n   - SIEMPRE incluye el **producto_id** obtenido en el paso 1\n   - SIEMPRE especifica el **tipo_de_imagen** (ej: imagen_principal, imagen_punto_dolor_1)\n   - Usa \"Editar Imagen\" con estos parámetros obligatorios\n5. **Organiza todas las imágenes** automáticamente en Supabase\n\n## 📋 INSTRUCCIONES ESPECÍFICAS\n\n### ✅ **LO QUE SÍ DEBES HACER:**\n- **SÉ DIRECTO:** No hagas 10 preguntas, máximo 2-3 esenciales\n- **ACTÚA RÁPIDO:** Ejecuta herramientas tan pronto tengas la info mínima\n- **CONFIRMA RESULTADOS:** Siempre verifica que todo funcionó correctamente\n- **BUSCA EFICIENTEMENTE:** Cuando busques archivos, usa términos similares, no exactos\n\n### ❌ **LO QUE NO DEBES HACER:**\n- **NO preguntes demasiado** - El usuario quiere resultados rápidos\n- **NO repitas información** - Una vez confirmado, continúa\n- **NO te quedes esperando** - Si tienes la info mínima, procede\n\n## 🗣️ ESTILO DE COMUNICACIÓN\n\n### **RESPUESTAS CORTAS Y EFECTIVAS:**\n- ✅ \"¡Listo parcero! ¿Cómo se llama el producto?\"\n- ✅ \"Perfecto hermano, creando el producto ahora...\"\n- ✅ \"¡Producto creado exitosamente! ¿Tienes imágenes?\"\n- ❌ \"Hola, soy tu asistente. Para ayudarte mejor necesito que me proporciones...\"\n\n### **LENGUAJE COLOMBIANO AUTÉNTICO:**\n- \"Mi hermano\" / \"Parcero\" / \"Care verga\" / \"Mi bro\"\n- \"¡Verraco!\" / \"¡Chimba!\" / \"¡Bacano!\"\n- \"Listo pues\" / \"Dale pues\" / \"Vamos a darle\"\n\n## 🎯 OBJETIVOS CLAVE\n1. **VELOCIDAD:** Crear productos completos en menos de 5 minutos\n2. **CALIDAD:** Cada producto debe ser vendedor y profesional\n3. **EFICIENCIA:** Mínimas preguntas, máximos resultados\n4. **ORGANIZACIÓN:** Imágenes bien nombradas y organizadas\n\n---\n\n**¡RECUERDA:** Tu trabajo es hacer que el usuario tenga productos GANADORES listos para vender YA! 🚀** \n\nLas respuestas no deben pasar las 500 caracteres por favor, lo mas resumido y al grano en todas tus respuestas",
-          "returnIntermediateSteps": true
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 2.2,
-      "position": [
-        6304,
-        7120
-      ],
-      "id": "a4bfae66-74be-4ba2-8d6e-a3c1060c22b7",
-      "name": "Agente Google"
-    },
-    {
-      "parameters": {
-        "description": "Llama a esta herramienta para crear la informacion total de los productos. Debes pasar la informacion del producto como nombre, que vende, cual es el objetivo, todo",
+        "description": "Llama a esta herramienta para editar una imagen. Debes pasar un nuevo t?tulo de imagen, un prompt de imagen y el ID de la imagen.",
         "workflowId": {
           "__rl": true,
-          "value": "FkzILB99VhMjF5Mh",
+          "value": "jQoi0yBKSPgGJVdx",
           "mode": "list",
-          "cachedResultName": "Creador de Landings y productos"
+          "cachedResultUrl": "/workflow/jQoi0yBKSPgGJVdx",
+          "cachedResultName": "Editar Imagenes Supabase"
         },
         "workflowInputs": {
           "mappingMode": "defineBelow",
           "value": {
-            "nombre_producto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nombre_producto', ``, 'string') }}",
-            "de_que_trata": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('de_que_trata', ``, 'string') }}",
-            "diferenciacion": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('diferenciacion', ``, 'string') }}",
-            "precio": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('precio', ``, 'string') }}",
-            "promesa_de_valor": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('promesa_de_valor', ``, 'string') }}",
-            "sesion_id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('sesion_id', ``, 'string') }}"
+            "tipo_de_imagen": "={{ $fromAI('tipo_de_imagen', ``, 'string') }}",
+            "Promt_imagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Promt_imagen', ``, 'string') }}",
+            "id_del_producto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('id_del_producto', ``, 'string') }}",
+            "Id_de_la_imagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Id_de_la_imagen', ``, 'string') }}",
+            "Nombre_De_La_Imagen": "={{ $fromAI('Nombre_De_La_Imagen', ``, 'string') }}"
           },
           "matchingColumns": [],
           "schema": [
             {
-              "id": "nombre_producto",
-              "displayName": "nombre_producto",
+              "id": "Nombre_De_La_Imagen",
+              "displayName": "Nombre_De_La_Imagen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Promt_imagen",
+              "displayName": "Promt_imagen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Id_de_la_imagen",
+              "displayName": "Id_de_la_imagen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tipo_de_imagen",
+              "displayName": "tipo_de_imagen",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -591,17 +221,357 @@
               "type": "string"
             },
             {
-              "id": "de_que_trata",
-              "displayName": "de_que_trata",
+              "id": "id_del_producto",
+              "displayName": "id_del_producto",
               "required": false,
               "defaultMatch": false,
               "display": true,
               "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1696,
+        768
+      ],
+      "id": "50dff594-a468-45ef-9b8c-8013a4f4d513",
+      "name": "editar_imagen"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Disparador de Telegram').item.json.message.chat.id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        384,
+        768
+      ],
+      "id": "a0f54a90-3406-48e9-bc95-ee9529f54e00",
+      "name": "Memoria Simple"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Disparador de Telegram').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1360,
+        400
+      ],
+      "id": "d9471ce7-3aee-4283-8caa-218e2b737c6f",
+      "name": "Responder",
+      "webhookId": "f9df111e-1004-4aff-b458-779444006ed8",
+      "credentials": {
+        "telegramApi": {
+          "id": "Tsll6EFLsILnT8d3",
+          "name": "Chat NANO BOT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.photo[1].file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -320,
+        176
+      ],
+      "id": "2211e7fd-f462-4438-b94c-12fbb731f4a3",
+      "name": "Descargar Archivo",
+      "webhookId": "fb18f65f-c1cf-4473-b59d-d59d6b96e9ea",
+      "credentials": {
+        "telegramApi": {
+          "id": "Tsll6EFLsILnT8d3",
+          "name": "Chat NANO BOT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e7211e46-0f49-46a0-9cb7-e83fed150efd",
+                    "leftValue": "={{ $json.message.photo }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "array",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Foto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "85edf561-8f5e-4215-9e19-78ff0392068e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Texto"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -528,
+        384
+      ],
+      "id": "9d57dcf8-0e29-48e3-8cca-5905362245e3",
+      "name": "Conmutador"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -720,
+        384
+      ],
+      "id": "8aeffe65-f541-4c8b-a73d-10cf2f9a5d03",
+      "name": "Disparador de Telegram",
+      "webhookId": "bea4843e-25e4-4d89-b3f6-4237798e9b42",
+      "credentials": {
+        "telegramApi": {
+          "id": "Tsll6EFLsILnT8d3",
+          "name": "Chat NANO BOT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "53de4eb0-6684-48f5-a5b5-2b3bedaff817",
+              "name": "message.text",
+              "value": "=? Imagen subida exitosamente a Supabase!\n\n?? **Informaci?n del archivo:**\n- **Ruta completa**: {{ $json.fullPath }}\n- **Nombre actual**: {{ $json.name }}\n- **URL p?blica**: {{ $json.publicUrl }}\n\n?? **Para renombrar este archivo**, usa la herramienta `renombrar_archivo_supabase1` con:\n- **oldPath**: {{ $json.fullPath }}\n- **newPath**: La nueva ruta COMPLETA (ejemplo: 2025-10-22/nuevo-nombre.jpg)\n\n? Pregunta al usuario: ?C?mo quieres nombrar esta imagen?",
               "type": "string"
             },
             {
-              "id": "diferenciacion",
-              "displayName": "diferenciacion",
+              "id": "a0c2ce8d-42f9-4728-9e87-3b0000fdf105",
+              "name": "Id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "7cfd76ae-1ee6-4703-8d9a-b49bfdb85ecd",
+              "name": "publicUrl",
+              "value": "={{ $json.publicUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "44dfdd5e-c404-4490-80fb-a4c0b5683243",
+              "name": "webViewLink",
+              "value": "={{ $json.webViewLink }}",
+              "type": "string"
+            },
+            {
+              "id": "64cbefb9-a2f9-404e-a8e5-4443583b404c",
+              "name": "fullPath",
+              "value": "={{ $json.fullPath }}",
+              "type": "string"
+            },
+            {
+              "id": "bfb2c69a-1561-4522-bf2f-30df6ce7c823",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        176
+      ],
+      "id": "84650817-344e-434f-9f29-6023a966111d",
+      "name": "Establecer Texto2"
+    },
+    {
+      "parameters": {
+        "toolDescription": "RENOMBRA archivos en Supabase Storage. Par?metros: oldPath (ruta completa del archivo actual, ejemplo: 2025-10-22/archivo.jpg o imagenes/2025-10-22/archivo.jpg) y newPath (nueva ruta completa, ejemplo: 2025-10-22/nuevo-nombre.jpg). Los espacios se convierten autom?ticamente a guiones.",
+        "method": "POST",
+        "url": "https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/move",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "bucketId",
+              "value": "imagenes"
+            },
+            {
+              "name": "sourceKey",
+              "value": "={{ $fromAI('oldPath', '', 'string').replace(/^imagenes\\//gi, '').replace(/\\s+/g, '-') }}"
+            },
+            {
+              "name": "destinationKey",
+              "value": "={{ $fromAI('newPath', '', 'string').replace(/^imagenes\\//gi, '').replace(/\\s+/g, '-') }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1856,
+        752
+      ],
+      "id": "8faed69f-d743-4a3d-b7d0-b6eb4b385352",
+      "name": "renombrar_archivo_supabase3",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Busca archivos en Supabase Storage bucket imagenes. Para buscar en fecha espec?fica usa carpeta='2025-10-22/' (con la barra al final). Para buscar TODO deja carpeta='' vac?o. Retorna array de objetos con: name, id, created_at, updated_at, metadata.",
+        "method": "POST",
+        "url": "https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/list/imagenes",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prefix",
+              "value": "2025-10-22/"
+            },
+            {
+              "name": "limit",
+              "value": "100"
+            },
+            {
+              "name": "offset",
+              "value": "0"
+            },
+            {
+              "name": "search"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        2080,
+        752
+      ],
+      "id": "8eeda43e-000c-4b51-ab03-2181c3ebe090",
+      "name": "Buscar Archivos Originales",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "=Llama a esta herramienta para crear la informacion total de los productos, pasa los datos como De_que_trata_el_producto, precio, nombre del producto y caracteristicas para crear el producto, debe ser un producto totalmente profesional! ",
+        "workflowId": {
+          "__rl": true,
+          "value": "36XT5kCGvzy1glcd",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/36XT5kCGvzy1glcd",
+          "cachedResultName": "Creador_Productos_Funcional"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "De_que_trata_el_producto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('De_que_trata_el_producto', ``, 'string') }}",
+            "precio": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('precio', ``, 'string') }}",
+            "nombre_producto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nombre_producto', ``, 'string') }}",
+            "caracteristicas": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('caracteristicas', ``, 'string') }}",
+            "nombre_del_usuario": "={{ $('Conmutador').item.json.message.chat.first_name }}",
+            "id_del_usuario": "={{ $('Conmutador').item.json.message.chat.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "De_que_trata_el_producto",
+              "displayName": "De_que_trata_el_producto",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -618,8 +588,8 @@
               "type": "string"
             },
             {
-              "id": "promesa_de_valor",
-              "displayName": "promesa_de_valor",
+              "id": "nombre_producto",
+              "displayName": "nombre_producto",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -627,13 +597,33 @@
               "type": "string"
             },
             {
-              "id": "sesion_id",
-              "displayName": "sesion_id",
+              "id": "caracteristicas",
+              "displayName": "caracteristicas",
               "required": false,
               "defaultMatch": false,
               "display": true,
               "canBeUsedToMatch": true,
               "type": "string"
+            },
+            {
+              "id": "nombre_del_usuario",
+              "displayName": "nombre_del_usuario",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "id_del_usuario",
+              "displayName": "id_del_usuario",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
             }
           ],
           "attemptToConvertTypes": false,
@@ -643,77 +633,11 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        7104,
-        7648
+        1376,
+        768
       ],
-      "id": "7d179a6e-1128-471b-b1a1-45e55b2479e6",
+      "id": "6f655834-4fe4-419a-be79-2487d6b1c5fd",
       "name": "creador_de_productos"
-    },
-    {
-      "parameters": {
-        "resource": "file",
-        "fileId": "={{ $json.message.voice.file_id }}",
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        5136,
-        6928
-      ],
-      "id": "68b6a0ed-0d53-4388-b9a4-7a9a13b536f7",
-      "name": "Get a file",
-      "webhookId": "f961102b-d85f-4712-9396-b14d1761d85d",
-      "credentials": {
-        "telegramApi": {
-          "id": "Tsll6EFLsILnT8d3",
-          "name": "Chat NANO BOT"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "resource": "audio",
-        "operation": "transcribe",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.openAi",
-      "typeVersion": 1.8,
-      "position": [
-        5360,
-        6928
-      ],
-      "id": "4123b3f4-4861-4d3f-8d03-7081ba0eb090",
-      "name": "transcribir audio",
-      "credentials": {
-        "openAiApi": {
-          "id": "BF6TLMzAguxXUoJp",
-          "name": "Api Chat GPT"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "59625cd8-a340-448d-b87c-6553be704e22",
-              "name": "message.text",
-              "value": "={{ $json.text }}",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        5568,
-        6928
-      ],
-      "id": "80b2ebd0-dc41-442b-a914-2c0129e71ac4",
-      "name": "Edit Fields"
     },
     {
       "parameters": {
@@ -724,10 +648,10 @@
       "type": "n8n-nodes-base.supabaseTool",
       "typeVersion": 1,
       "position": [
-        6384,
-        7632
+        736,
+        768
       ],
-      "id": "3ad33de6-8c3d-46c6-b7f0-57fdf7c26b2b",
+      "id": "cf6bfa18-427c-4800-b829-cd09bd33fbba",
       "name": "consultar_productos1",
       "credentials": {
         "supabaseApi": {
@@ -745,10 +669,10 @@
       "type": "n8n-nodes-base.supabaseTool",
       "typeVersion": 1,
       "position": [
-        6240,
-        7632
+        544,
+        752
       ],
-      "id": "cf00d318-c14b-423a-b87b-6758b5943fba",
+      "id": "0b9088e6-564b-4c0c-8dc5-5d8d6fa314d1",
       "name": "consultar_categorias1",
       "credentials": {
         "supabaseApi": {
@@ -759,12 +683,57 @@
     },
     {
       "parameters": {
-        "description": "🔧 **HERRAMIENTA: actualizar_productos_imagenes**\n\n**FORMATO EXACTO DE DATOS:**\n{\n  \"producto_id\": \"ID_DEL_PRODUCTO\",\n  \"accion\": \"actualizar nombre\" | \"actualizar precio\" | \"actualizar imagenes\",\n  \"nombre_producto\": \"Nombre del producto\",\n  \"de_que_trata\": \"Descripción del producto\", \n  \"precio\": 299000,\n  \"marca\": \"Marca del producto\",\n  \"imagen_principal\": \"URL de imagen\",\n  // ... otros campos según necesites\n}\n\n**IMPORTANTE:** \n- Usa EXACTAMENTE estos nombres de campos\n- producto_id debe ser un UUID válido\n- precio debe ser número, no string\n- accion debe ser una de las opciones válidas\n- categoria_id debe ser un UUID válido de categoría (usa consultar_categorias primero)",
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        784
+      ],
+      "id": "a6555205-cb7a-43fc-9401-220656679547",
+      "name": "GPT",
+      "credentials": {
+        "openAiApi": {
+          "id": "7T43mFUrWSK1b37h",
+          "name": "Nueva OPENAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        48,
+        784
+      ],
+      "id": "44927d4a-265d-43e9-8828-13f42c730ecf",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "afEdUlo465aPlyDq",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "?? **HERRAMIENTA: actualizar_productos_imagenes**\n\n**FORMATO EXACTO DE DATOS:**\n{\n  \"producto_id\": \"ID_DEL_PRODUCTO\",\n  \"accion\": \"actualizar nombre\" | \"actualizar precio\" | \"actualizar imagenes\",\n  \"nombre_producto\": \"Nombre del producto\",\n  \"de_que_trata\": \"Descripci?n del producto\", \n  \"precio\": 299000,\n  \"marca\": \"Marca del producto\",\n  \"imagen_principal\": \"URL de imagen\",\n  // ... otros campos seg?n necesites\n}\n\n**IMPORTANTE:** \n- Usa EXACTAMENTE estos nombres de campos\n- producto_id debe ser un UUID v?lido\n- precio debe ser n?mero, no string\n- accion debe ser una de las opciones v?lidas\n- categoria_id debe ser un UUID v?lido de categor?a (usa consultar_categorias primero)",
         "workflowId": {
           "__rl": true,
           "value": "Cx4NAwI4QAnrCdiF",
           "mode": "list",
-          "cachedResultName": "My Sub-Workflow 2"
+          "cachedResultUrl": "/workflow/Cx4NAwI4QAnrCdiF",
+          "cachedResultName": "Actualizador_de_productos"
         },
         "workflowInputs": {
           "mappingMode": "defineBelow",
@@ -834,7 +803,8 @@
             "material": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('material', ``, 'string') }}",
             "talla": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('talla', ``, 'string') }}",
             "color": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('color', ``, 'string') }}",
-            "modelo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('modelo', ``, 'string') }}"
+            "modelo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('modelo', ``, 'string') }}",
+            "promociones": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('promociones', ``, 'string') }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -861,6 +831,16 @@
             {
               "id": "nombre_producto",
               "displayName": "nombre_producto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "promociones",
+              "displayName": "promociones",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -1506,84 +1486,48 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        6736,
-        7632
+        1200,
+        768
       ],
-      "id": "5acda291-2d4f-40b4-8c1f-5ff487f6bd0a",
+      "id": "1dc65826-7737-476d-b7d8-aacba862f2eb",
       "name": "actualizador_de_productos1"
     }
   ],
   "connections": {
-    "Disparador de Telegram": {
+    "Procesar Info Upload1": {
       "main": [
         [
           {
-            "node": "Conmutador",
+            "node": "Establecer Texto2",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Conmutador": {
+    "Subir a Supabase": {
       "main": [
         [
           {
-            "node": "Descargar Archivo",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Get a file",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Agente Google",
+            "node": "Procesar Info Upload1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Descargar Archivo": {
+    "Agente Google": {
       "main": [
         [
           {
-            "node": "Subir archivo",
+            "node": "Responder",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Subir archivo": {
-      "main": [
-        [
-          {
-            "node": "Establecer Texto",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Establecer Texto": {
-      "main": [
-        [
-          {
-            "node": "Agente Google",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Cambiar Nombre": {
+    "combinar_imagenes": {
       "ai_tool": [
         [
           {
@@ -1594,7 +1538,7 @@
         ]
       ]
     },
-    "Buscar Archivos Originales": {
+    "editar_imagen": {
       "ai_tool": [
         [
           {
@@ -1616,67 +1560,74 @@
         ]
       ]
     },
-    "Google Gemini Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Agente Google",
-            "type": "ai_languageModel",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "editar_imagen": {
-      "ai_tool": [
-        [
-          {
-            "node": "Agente Google",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "combinar_imagenes": {
-      "ai_tool": [
-        [
-          {
-            "node": "Agente Google",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Buscar Imagenes de IA": {
-      "ai_tool": [
-        [
-          {
-            "node": "Agente Google",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "GPT 5 mini": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Agente Google",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Agente Google": {
+    "Descargar Archivo": {
       "main": [
         [
           {
-            "node": "Responder",
+            "node": "Subir a Supabase",
             "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conmutador": {
+      "main": [
+        [
+          {
+            "node": "Descargar Archivo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agente Google",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Disparador de Telegram": {
+      "main": [
+        [
+          {
+            "node": "Conmutador",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Establecer Texto2": {
+      "main": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "renombrar_archivo_supabase3": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Archivos Originales": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
             "index": 0
           }
         ]
@@ -1688,39 +1639,6 @@
           {
             "node": "Agente Google",
             "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get a file": {
-      "main": [
-        [
-          {
-            "node": "transcribir audio",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "transcribir audio": {
-      "main": [
-        [
-          {
-            "node": "Edit Fields",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Edit Fields": {
-      "main": [
-        [
-          {
-            "node": "Agente Google",
-            "type": "main",
             "index": 0
           }
         ]
@@ -1744,6 +1662,28 @@
             "node": "Agente Google",
             "type": "ai_tool",
             "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_languageModel",
+            "index": 1
           }
         ]
       ]

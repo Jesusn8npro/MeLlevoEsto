@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react'
+import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { 
   Star, 
   ShoppingCart, 
@@ -159,6 +159,7 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
   
   // Estados del componente
   const [imagenSeleccionada, setImagenSeleccionada] = useState(0)
+  const [imagenHover, setImagenHover] = useState(null) // Nueva: para manejar hover temporal
   const [cantidad, setCantidad] = useState(1)
   const [varianteSeleccionada, setVarianteSeleccionada] = useState(null)
   const [tiempoRestante, setTiempoRestante] = useState('04:15:08:52')
@@ -280,6 +281,26 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
     return imagenes
   }, [producto?.imagenes, producto?.fotos_principales, producto?.nombre])
 
+  // PRELOAD DE IMÁGENES PARA ELIMINAR LATENCIA
+  useEffect(() => {
+    if (imagenesFinales.length > 0) {
+      console.log('🚀 Iniciando preload de imágenes para eliminar latencia...')
+      
+      imagenesFinales.forEach((url, index) => {
+        const img = new Image()
+        img.onload = () => {
+          console.log(`✅ Imagen ${index + 1} precargada:`, url.substring(0, 50) + '...')
+        }
+        img.onerror = () => {
+          console.warn(`❌ Error al precargar imagen ${index + 1}:`, url.substring(0, 50) + '...')
+        }
+        // Precargar con alta prioridad
+        img.loading = 'eager'
+        img.src = url
+      })
+    }
+  }, [imagenesFinales])
+
   // Calcular descuento con useMemo
   const descuento = useMemo(() => {
     return producto?.precio_original && producto?.precio 
@@ -314,50 +335,92 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
     return vars
   }, [producto?.color, producto?.material, producto?.talla])
 
-  // Manejadores de eventos
-  const manejarCambioImagen = (index) => {
+  // Manejadores de eventos - ULTRA OPTIMIZADO CON useCallback
+  const manejarCambioImagen = useCallback((index) => {
+    // Cambio inmediato sin validaciones innecesarias
     setImagenSeleccionada(index)
+    setImagenHover(null) // Limpiar hover al hacer click
     
-    // En móvil, hacer scroll automático para centrar la miniatura seleccionada
+    // En móvil, scroll instantáneo sin animaciones
     if (esMobile && sliderRef.current) {
       const slider = sliderRef.current
       const miniatura = slider.children[index]
       
       if (miniatura) {
-        const sliderRect = slider.getBoundingClientRect()
-        const miniaturaRect = miniatura.getBoundingClientRect()
-        
-        // Calcular la posición para centrar la miniatura
-        const scrollLeft = miniatura.offsetLeft - (sliderRect.width / 2) + (miniaturaRect.width / 2)
-        
-        // Cambio instantáneo sin animación suave
-        slider.scrollTo({
-          left: scrollLeft,
-          behavior: 'auto'
-        })
+        // Cálculo directo y scroll inmediato
+        const scrollLeft = miniatura.offsetLeft - (slider.clientWidth / 2) + (miniatura.clientWidth / 2)
+        slider.scrollLeft = scrollLeft // Asignación directa para máxima velocidad
       }
     }
-  }
+  }, [esMobile])
 
-  const manejarImagenAnterior = () => {
-    setImagenSeleccionada(prev => 
-      prev === 0 ? imagenesFinales.length - 1 : prev - 1
-    )
-  }
+  // Función para hover temporal - ULTRA OPTIMIZADA
+  const manejarHoverMiniatura = useCallback((index) => {
+    // Cambio inmediato sin validaciones complejas
+    if (!esMobile && !popupGaleriaAbierto) {
+      setImagenHover(index)
+    }
+  }, [esMobile, popupGaleriaAbierto])
 
-  const manejarImagenSiguiente = () => {
-    setImagenSeleccionada(prev => 
-      prev === imagenesFinales.length - 1 ? 0 : prev + 1
-    )
-  }
+  // Función para salir del hover - ULTRA OPTIMIZADA
+  const manejarSalirHover = useCallback(() => {
+    // Cambio inmediato al salir del hover
+    if (imagenHover !== null) {
+      setImagenSeleccionada(imagenHover)
+      setImagenHover(null)
+    }
+  }, [imagenHover])
 
-  const abrirPopupGaleria = () => {
+  // Función para obtener la imagen actual - ULTRA OPTIMIZADA
+  const obtenerImagenActual = useCallback(() => {
+    if (imagenHover !== null && !popupGaleriaAbierto) {
+      return imagenHover
+    }
+    return imagenSeleccionada
+  }, [imagenHover, popupGaleriaAbierto, imagenSeleccionada])
+  // Navegación con flechas - ULTRA OPTIMIZADA
+  const manejarImagenAnterior = useCallback(() => {
+    const imagenActual = obtenerImagenActual()
+    const nuevoIndice = imagenActual === 0 ? imagenesFinales.length - 1 : imagenActual - 1
+    
+    // Cambio inmediato según el contexto
+    if (popupGaleriaAbierto) {
+      setImagenSeleccionada(nuevoIndice)
+    } else {
+      setImagenHover(nuevoIndice)
+    }
+  }, [obtenerImagenActual, imagenesFinales.length, popupGaleriaAbierto])
+
+  const manejarImagenSiguiente = useCallback(() => {
+    const imagenActual = obtenerImagenActual()
+    const nuevoIndice = imagenActual === imagenesFinales.length - 1 ? 0 : imagenActual + 1
+    
+    // Cambio inmediato según el contexto
+    if (popupGaleriaAbierto) {
+      setImagenSeleccionada(nuevoIndice)
+    } else {
+      setImagenHover(nuevoIndice)
+    }
+  }, [obtenerImagenActual, imagenesFinales.length, popupGaleriaAbierto])
+
+  // Funciones de galería - ULTRA OPTIMIZADAS
+  const abrirPopupGaleria = useCallback(() => {
+    // Si hay imagen en hover, usarla como seleccionada
+    if (imagenHover !== null) {
+      setImagenSeleccionada(imagenHover)
+      setImagenHover(null)
+    }
     setPopupGaleriaAbierto(true)
-  }
+    // Prevenir scroll inmediatamente
+    document.body.style.overflow = 'hidden'
+  }, [imagenHover])
 
-  const cerrarPopupGaleria = () => {
+  const cerrarPopupGaleria = useCallback(() => {
     setPopupGaleriaAbierto(false)
-  }
+    setImagenHover(null)
+    // Restaurar scroll inmediatamente
+    document.body.style.overflow = 'unset'
+  }, [])
 
   const manejarCambioCantidad = (operacion) => {
     if (operacion === 'incrementar') {
@@ -441,19 +504,28 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                   className="hero-temu-miniaturas-verticales"
                   role="tablist"
                   aria-label="Galería de imágenes del producto"
+                  onMouseLeave={manejarSalirHover}
                 >
                   {imagenesFinales.map((imagen, index) => (
                       <button
                         key={index}
-                        className={`hero-temu-miniatura-vertical ${index === imagenSeleccionada ? 'activa' : ''}`}
-                        onMouseEnter={() => !esMobile && manejarCambioImagen(index)}
+                        className={`hero-temu-miniatura-vertical ${index === obtenerImagenActual() ? 'activa' : ''}`}
+                        onMouseEnter={() => {
+                          if (!esMobile) {
+                            if (popupGaleriaAbierto) {
+                              manejarCambioImagen(index)
+                            } else {
+                              manejarHoverMiniatura(index)
+                            }
+                          }
+                        }}
                         onClick={() => manejarCambioImagen(index)}
                         role="tab"
-                        aria-selected={index === imagenSeleccionada}
+                        aria-selected={index === obtenerImagenActual()}
                         aria-label={`Ver imagen ${index + 1} de ${imagenesFinales.length}`}
-                        tabIndex={index === imagenSeleccionada ? 0 : -1}
+                        tabIndex={index === obtenerImagenActual() ? 0 : -1}
                       >
-                        <ImagenInteligente
+                        <img
                           src={imagen}
                           alt={`Vista ${index + 1}`}
                           className=""
@@ -462,6 +534,7 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                             height: '100%',
                             objectFit: 'cover'
                           }}
+                          loading="eager"
                         />
                       </button>
                   ))}
@@ -469,7 +542,7 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                   {/* Indicador de scroll solo en móvil */}
                   {esMobile && imagenesFinales.length > 3 && (
                     <div className="hero-temu-slider-indicador">
-                      {imagenSeleccionada + 1} / {imagenesFinales.length}
+                      {obtenerImagenActual() + 1} / {imagenesFinales.length}
                     </div>
                   )}
                 </div>
@@ -510,8 +583,8 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                   setTouchEnd(null);
                 }}
               >
-                <ImagenInteligente
-                  src={imagenesFinales[imagenSeleccionada]}
+                <img
+                  src={imagenesFinales[obtenerImagenActual()]}
                   alt={producto?.nombre || 'Producto'}
                   className="hero-temu-imagen-principal-img"
                   style={{
@@ -519,6 +592,7 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                     height: '100%',
                     objectFit: 'cover'
                   }}
+                  loading="eager"
                 />
                 
                 {/* Badge de descuento */}
@@ -900,10 +974,11 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                       className={`hero-temu-popup-miniatura-desktop ${index === imagenSeleccionada ? 'activa' : ''}`}
                       onClick={() => manejarCambioImagen(index)}
                     >
-                      <ImagenInteligente 
+                      <img 
                         src={imagen} 
                         alt={`Vista ${index + 1}`} 
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        loading="eager"
                       />
                     </button>
                   ))}
@@ -911,10 +986,11 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
               )}
 
               <div className="hero-temu-popup-imagen-container">
-                <ImagenInteligente 
+                <img 
                   src={imagenesFinales[imagenSeleccionada]} 
                   alt={producto?.nombre || 'Producto'}
                   className="hero-temu-popup-imagen"
+                  loading="eager"
                 />
 
                 {imagenesFinales.length > 1 && (
@@ -966,10 +1042,11 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
               }}
             >
               <div className="hero-temu-popup-imagen-container-mobile">
-                <ImagenInteligente 
+                <img 
                   src={imagenesFinales[imagenSeleccionada]} 
                   alt={producto?.nombre || 'Producto'}
                   className="hero-temu-popup-imagen"
+                  loading="eager"
                 />
               </div>
 
@@ -981,10 +1058,11 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                       className={`hero-temu-popup-miniatura-mobile ${index === imagenSeleccionada ? 'activa' : ''}`}
                       onClick={() => manejarCambioImagen(index)}
                     >
-                      <ImagenInteligente 
+                      <img 
                         src={imagen} 
                         alt={`Vista ${index + 1}`} 
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        loading="eager"
                       />
                     </button>
                   ))}
