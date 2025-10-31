@@ -237,16 +237,16 @@ const PaginaCarrito = () => {
           id: pedidoCreado.id, // ID del pedido creado en Supabase
           referencia: numeroPedido,
           descripcion: items.length === 1 
-            ? `${items[0].nombre} (x${items[0].cantidad}) - MeLlevoEsto.com`
+            ? `${items[0].productos?.nombre || 'Producto'} (x${items[0].cantidad}) - MeLlevoEsto.com`
             : items.length <= 3 
-              ? `${items.map(item => `${item.nombre} (x${item.cantidad})`).join(', ')} - MeLlevoEsto.com`
-              : `${items.slice(0, 2).map(item => `${item.nombre} (x${item.cantidad})`).join(', ')} y ${items.length - 2} productos más - MeLlevoEsto.com`,
+              ? `${items.map(item => `${item.productos?.nombre || 'Producto'} (x${item.cantidad})`).join(', ')} - MeLlevoEsto.com`
+              : `${items.slice(0, 2).map(item => `${item.productos?.nombre || 'Producto'} (x${item.cantidad})`).join(', ')} y ${items.length - 2} productos más - MeLlevoEsto.com`,
           valor: totalFinal,
           moneda: 'COP',
           items: items.map(item => ({
-            nombre: item.nombre,
+            nombre: item.productos?.nombre || 'Producto',
             cantidad: item.cantidad,
-            precio: item.precio
+            precio: item.precio_unitario || item.productos?.precio || 0
           })),
           // Información adicional
           subtotal: subtotal,
