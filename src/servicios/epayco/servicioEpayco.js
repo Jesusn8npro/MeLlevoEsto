@@ -246,15 +246,7 @@ class ServicioEpayco {
   async registrarTransaccion(datosTransaccion) {
     try {
       console.log('🔄 Intentando registrar transacción en BD...');
-      console.log('📊 Datos a insertar:', {
-        pedido_id: datosTransaccion.pedidoId,
-        epayco_ref_payco: datosTransaccion.referenciaPago,
-        epayco_transaction_id: datosTransaccion.respuestaCompleta?.x_transaction_id || null,
-        tipo_evento: datosTransaccion.tipo || 'response',
-        estado_nuevo: datosTransaccion.estado,
-        cod_response: datosTransaccion.respuestaCompleta?.x_cod_response || null,
-        mensaje_response: datosTransaccion.respuestaCompleta?.x_response_reason_text || null
-      });
+      console.log('📊 Referencia ePayco recibida:', datosTransaccion.referenciaPago);
 
       // Verificar configuración del cliente Supabase
       if (!clienteSupabase) {
@@ -262,21 +254,55 @@ class ServicioEpayco {
         return;
       }
 
+      // Determinar el pedidoId real
+      let pedidoIdReal = null;
+      
+      // Si se proporciona un pedidoId y parece ser un UUID válido, usarlo
+      if (datosTransaccion.pedidoId && 
+          typeof datosTransaccion.pedidoId === 'string' && 
+          datosTransaccion.pedidoId.length === 36 && 
+          datosTransaccion.pedidoId.includes('-')) {
+        pedidoIdReal = datosTransaccion.pedidoId;
+        console.log('✅ Usando pedidoId proporcionado:', pedidoIdReal);
+      } else {
+        // Intentar encontrar el pedido real por la referencia de ePayco
+        try {
+          const { data: pedidoEncontrado } = await clienteSupabase
+            .from('pedidos')
+            .select('id')
+            .eq('epayco_ref_payco', datosTransaccion.referenciaPago)
+            .single();
+          
+          if (pedidoEncontrado) {
+            pedidoIdReal = pedidoEncontrado.id;
+            console.log('✅ Pedido encontrado por referencia con UUID:', pedidoIdReal);
+          } else {
+            console.log('⚠️ No se encontró pedido con referencia:', datosTransaccion.referenciaPago);
+            console.log('⚠️ Se guardará el log sin asociar a un pedido específico');
+          }
+        } catch (errorBusqueda) {
+          console.log('⚠️ Error al buscar pedido:', errorBusqueda.message);
+        }
+      }
+
+      // Preparar datos para insertar
+      const datosParaInsertar = {
+        pedido_id: pedidoIdReal, // UUID válido o null
+        epayco_ref_payco: datosTransaccion.referenciaPago,
+        epayco_transaction_id: datosTransaccion.respuestaCompleta?.x_transaction_id || null,
+        tipo_evento: datosTransaccion.tipo || 'response',
+        estado_nuevo: datosTransaccion.estado,
+        cod_response: datosTransaccion.respuestaCompleta?.x_cod_response || null,
+        mensaje_response: datosTransaccion.respuestaCompleta?.x_response_reason_text || null,
+        datos_completos: datosTransaccion.respuestaCompleta,
+        creado_el: new Date().toISOString()
+      };
+
+      console.log('📊 Datos finales a insertar:', datosParaInsertar);
+
       const { data, error } = await clienteSupabase
         .from('transacciones_epayco_logs')
-        .insert([
-          {
-            pedido_id: datosTransaccion.pedidoId,
-            epayco_ref_payco: datosTransaccion.referenciaPago,
-            epayco_transaction_id: datosTransaccion.respuestaCompleta?.x_transaction_id || null,
-            tipo_evento: datosTransaccion.tipo || 'response',
-            estado_nuevo: datosTransaccion.estado,
-            cod_response: datosTransaccion.respuestaCompleta?.x_cod_response || null,
-            mensaje_response: datosTransaccion.respuestaCompleta?.x_response_reason_text || null,
-            datos_completos: datosTransaccion.respuestaCompleta,
-            creado_el: new Date().toISOString()
-          }
-        ])
+        .insert([datosParaInsertar])
         .select(); // Agregar select para obtener los datos insertados
 
       if (error) {

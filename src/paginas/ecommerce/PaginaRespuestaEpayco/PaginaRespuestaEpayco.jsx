@@ -83,7 +83,6 @@ const PaginaRespuestaEpayco = () => {
 
         // Registrar la transacción en nuestra base de datos con TODOS los datos
         await servicioEpayco.registrarTransaccion({
-          pedidoId: ref_payco,
           referenciaPago: ref_payco,
           estado: estado,
           tipo: 'response',
@@ -149,7 +148,7 @@ const PaginaRespuestaEpayco = () => {
               id: 1,
               nombre: 'Producto de Ejemplo',
               cantidad: 1,
-              precio: valor ? parseFloat(valor) : 0,
+              precio: x_amount ? parseFloat(x_amount) : 0,
               imagen: '/images/producto-ejemplo.jpg'
             }
           ]

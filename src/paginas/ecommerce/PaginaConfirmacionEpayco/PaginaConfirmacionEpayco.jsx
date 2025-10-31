@@ -97,7 +97,6 @@ const PaginaConfirmacionEpayco = () => {
 
         // Registrar la transacción en nuestra base de datos con TODOS los datos
         await servicioEpayco.registrarTransaccion({
-          pedidoId: ref_payco,
           referenciaPago: ref_payco,
           estado: estado_transaccion,
           tipo: 'confirmation',
