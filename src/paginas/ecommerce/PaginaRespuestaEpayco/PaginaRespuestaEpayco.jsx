@@ -51,6 +51,7 @@ const PaginaRespuestaEpayco = () => {
         const x_bank_name = searchParams.get('x_bank_name')
         const x_cardnumber = searchParams.get('x_cardnumber')
         const x_quotas = searchParams.get('x_quotas')
+        const x_receipt = searchParams.get('x_receipt')
         const x_response = searchParams.get('x_response')
         const x_response_reason_text = searchParams.get('x_response_reason_text')
         const x_approval_code = searchParams.get('x_approval_code')
@@ -139,6 +140,7 @@ const PaginaRespuestaEpayco = () => {
           x_bank_name: x_bank_name || '',
           x_cardnumber: x_cardnumber || '',
           x_quotas: x_quotas || '',
+          x_receipt: x_receipt || '',
           x_franchise: x_franchise || '',
           
           // Respuesta de la transacción
