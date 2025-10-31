@@ -214,6 +214,19 @@ const PaginaRespuestaEpayco = () => {
           console.error('❌ Error al buscar pedido:', error)
         }
 
+        // Generar descripción del producto basada en los datos del pedido
+          let descripcionProducto = 'Producto no encontrado'
+          if (pedidoEncontrado?.productos && pedidoEncontrado.productos.length > 0) {
+            if (pedidoEncontrado.productos.length === 1) {
+              const producto = pedidoEncontrado.productos[0]
+              descripcionProducto = `${producto.nombre} (x${producto.cantidad}) - MeLlevoEsto.com`
+            } else if (pedidoEncontrado.productos.length <= 3) {
+              descripcionProducto = `${pedidoEncontrado.productos.map(item => `${item.nombre} (x${item.cantidad})`).join(', ')} - MeLlevoEsto.com`
+            } else {
+              descripcionProducto = `${pedidoEncontrado.productos.slice(0, 2).map(item => `${item.nombre} (x${item.cantidad})`).join(', ')} y ${pedidoEncontrado.productos.length - 2} productos más - MeLlevoEsto.com`
+            }
+          }
+
         // Configurar datos para mostrar
         const datosCompletos = {
           ref_payco,
@@ -229,7 +242,7 @@ const PaginaRespuestaEpayco = () => {
           recibo: x_receipt,
           franquicia: x_franchise,
           cod_respuesta: x_cod_response,
-          descripcion: x_description,
+          descripcion: descripcionProducto,
           transaction_id: x_transaction_id,
           approval_code: x_approval_code,
           signature: x_signature,
