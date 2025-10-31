@@ -245,6 +245,7 @@ class ServicioEpayco {
    */
   async registrarTransaccion(datosTransaccion) {
     try {
+      console.log('📝 Iniciando registro de transacción:', datosTransaccion);
       console.log('🔄 Intentando registrar transacción en BD...');
       console.log('📊 Referencia ePayco recibida:', datosTransaccion.referenciaPago);
 
@@ -252,6 +253,25 @@ class ServicioEpayco {
       if (!clienteSupabase) {
         console.error('❌ Cliente Supabase no está configurado');
         return;
+      }
+
+      // Verificar que la tabla existe
+      console.log('🔍 Verificando conexión a Supabase...');
+      const { data: tablaInfo, error: errorTabla } = await clienteSupabase
+        .from('transacciones_epayco_logs')
+        .select('count', { count: 'exact', head: true });
+      
+      if (errorTabla) {
+        console.error('❌ Error al verificar tabla:', errorTabla);
+        console.error('📋 Detalles del error de tabla:', {
+          code: errorTabla.code,
+          message: errorTabla.message,
+          details: errorTabla.details,
+          hint: errorTabla.hint
+        });
+        return;
+      } else {
+        console.log('✅ Tabla transacciones_epayco_logs accesible');
       }
 
       // Determinar el pedidoId real
@@ -299,11 +319,14 @@ class ServicioEpayco {
       };
 
       console.log('📊 Datos finales a insertar:', datosParaInsertar);
+      console.log('🔄 Ejecutando inserción en Supabase...');
 
       const { data, error } = await clienteSupabase
         .from('transacciones_epayco_logs')
         .insert([datosParaInsertar])
         .select(); // Agregar select para obtener los datos insertados
+
+      console.log('📋 Resultado de la inserción:', { data, error });
 
       if (error) {
         console.error('❌ Error al registrar transacción en BD:', error);

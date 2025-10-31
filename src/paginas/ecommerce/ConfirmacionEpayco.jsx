@@ -13,35 +13,93 @@ const ConfirmacionEpayco = () => {
 
   const procesarConfirmacion = async () => {
     try {
-      // Obtener todos los parámetros de ePayco
+      // Obtener TODOS los parámetros de ePayco según documentación oficial
       const parametros = {
-        ref_payco: searchParams.get('ref_payco'),
-        response: searchParams.get('response'),
-        transaction_id: searchParams.get('transaction_id'),
-        approval_code: searchParams.get('approval_code'),
-        franchise: searchParams.get('franchise'),
-        bank_name: searchParams.get('bank_name'),
-        cod_response: searchParams.get('cod_response'),
-        signature: searchParams.get('signature'),
-        test_request: searchParams.get('test_request'),
-        x_amount: searchParams.get('x_amount'),
-        x_currency_code: searchParams.get('x_currency_code'),
+        // Parámetros principales
+        x_cust_id_cliente: searchParams.get('x_cust_id_cliente'),
+        x_ref_payco: searchParams.get('x_ref_payco'),
+        x_id_invoice: searchParams.get('x_id_invoice'),
         x_description: searchParams.get('x_description'),
-        x_id_invoice: searchParams.get('x_id_invoice')
+        x_amount: searchParams.get('x_amount'),
+        x_amount_country: searchParams.get('x_amount_country'),
+        x_amount_ok: searchParams.get('x_amount_ok'),
+        x_tax: searchParams.get('x_tax'),
+        x_tax_ico: searchParams.get('x_tax_ico'),
+        x_amount_base: searchParams.get('x_amount_base'),
+        x_currency_code: searchParams.get('x_currency_code'),
+        x_bank_name: searchParams.get('x_bank_name'),
+        x_cardnumber: searchParams.get('x_cardnumber'),
+        x_quotas: searchParams.get('x_quotas'),
+        x_response: searchParams.get('x_response'),
+        x_response_reason_text: searchParams.get('x_response_reason_text'),
+        x_approval_code: searchParams.get('x_approval_code'),
+        x_transaction_id: searchParams.get('x_transaction_id'),
+        x_fecha_transaccion: searchParams.get('x_fecha_transaccion'),
+        x_transaction_date: searchParams.get('x_transaction_date'),
+        x_cod_response: searchParams.get('x_cod_response'),
+        x_cod_transaction_state: searchParams.get('x_cod_transaction_state'),
+        x_transaction_state: searchParams.get('x_transaction_state'),
+        x_errorcode: searchParams.get('x_errorcode'),
+        x_franchise: searchParams.get('x_franchise'),
+        x_business: searchParams.get('x_business'),
+        x_customer_doctype: searchParams.get('x_customer_doctype'),
+        x_customer_document: searchParams.get('x_customer_document'),
+        x_customer_name: searchParams.get('x_customer_name'),
+        x_customer_lastname: searchParams.get('x_customer_lastname'),
+        x_customer_email: searchParams.get('x_customer_email'),
+        x_customer_phone: searchParams.get('x_customer_phone'),
+        x_customer_movil: searchParams.get('x_customer_movil'),
+        x_customer_ind_pais: searchParams.get('x_customer_ind_pais'),
+        x_customer_country: searchParams.get('x_customer_country'),
+        x_customer_city: searchParams.get('x_customer_city'),
+        x_customer_address: searchParams.get('x_customer_address'),
+        x_customer_ip: searchParams.get('x_customer_ip'),
+        x_signature: searchParams.get('x_signature'),
+        x_test_request: searchParams.get('x_test_request'),
+        x_extra1: searchParams.get('x_extra1'),
+        x_extra2: searchParams.get('x_extra2'),
+        x_extra3: searchParams.get('x_extra3'),
+        x_extra4: searchParams.get('x_extra4'),
+        x_extra5: searchParams.get('x_extra5'),
+        x_extra6: searchParams.get('x_extra6'),
+        x_extra7: searchParams.get('x_extra7'),
+        x_extra8: searchParams.get('x_extra8'),
+        x_extra9: searchParams.get('x_extra9'),
+        x_extra10: searchParams.get('x_extra10'),
+        
+        // Parámetros de compatibilidad (formato anterior)
+        ref_payco: searchParams.get('ref_payco') || searchParams.get('x_ref_payco'),
+        response: searchParams.get('response') || searchParams.get('x_response'),
+        transaction_id: searchParams.get('transaction_id') || searchParams.get('x_transaction_id'),
+        approval_code: searchParams.get('approval_code') || searchParams.get('x_approval_code'),
+        franchise: searchParams.get('franchise') || searchParams.get('x_franchise'),
+        bank_name: searchParams.get('bank_name') || searchParams.get('x_bank_name'),
+        cod_response: searchParams.get('cod_response') || searchParams.get('x_cod_response'),
+        signature: searchParams.get('signature') || searchParams.get('x_signature'),
+        test_request: searchParams.get('test_request') || searchParams.get('x_test_request')
       };
 
       console.log('🔔 Confirmación de ePayco recibida:', parametros);
 
-      // Registrar en logs de transacciones
+      // Registrar en logs de transacciones con TODOS los datos
       const logData = {
-        epayco_ref_payco: parametros.ref_payco,
-        epayco_transaction_id: parametros.transaction_id,
+        epayco_ref_payco: parametros.x_ref_payco || parametros.ref_payco,
+        epayco_transaction_id: parametros.x_transaction_id || parametros.transaction_id,
         tipo_evento: 'confirmation',
-        cod_response: parametros.cod_response,
-        mensaje_response: parametros.response,
+        cod_response: parametros.x_cod_response || parametros.cod_response,
+        mensaje_response: parametros.x_response || parametros.response,
         signature_valida: true, // TODO: Implementar validación de firma
         datos_completos: parametros,
-        creado_el: new Date().toISOString()
+        creado_el: new Date().toISOString(),
+        
+        // Campos adicionales para mejor tracking
+        x_amount: parametros.x_amount,
+        x_currency_code: parametros.x_currency_code,
+        x_franchise: parametros.x_franchise,
+        x_bank_name: parametros.x_bank_name,
+        x_approval_code: parametros.x_approval_code,
+        x_customer_email: parametros.x_customer_email,
+        x_test_request: parametros.x_test_request
       };
 
       // Insertar log en Supabase

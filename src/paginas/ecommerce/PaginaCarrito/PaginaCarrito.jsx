@@ -205,6 +205,7 @@ const PaginaCarrito = () => {
         estado: 'pendiente',
         metodo_pago: 'epayco',
         referencia_pago: numeroPedido,
+        epayco_ref_payco: numeroPedido, // Usar el número de pedido como referencia inicial
         notas_cliente: datosEnvio.instrucciones || null,
         epayco_test_request: true // Cambiar a false en producción
       }
@@ -235,7 +236,11 @@ const PaginaCarrito = () => {
         pedido: {
           id: pedidoCreado.id, // ID del pedido creado en Supabase
           referencia: numeroPedido,
-          descripcion: `Compra de ${totalItems} productos en MeLlevoEsto.com`,
+          descripcion: items.length === 1 
+            ? `${items[0].nombre} (x${items[0].cantidad}) - MeLlevoEsto.com`
+            : items.length <= 3 
+              ? `${items.map(item => `${item.nombre} (x${item.cantidad})`).join(', ')} - MeLlevoEsto.com`
+              : `${items.slice(0, 2).map(item => `${item.nombre} (x${item.cantidad})`).join(', ')} y ${items.length - 2} productos más - MeLlevoEsto.com`,
           valor: totalFinal,
           moneda: 'COP',
           items: items.map(item => ({

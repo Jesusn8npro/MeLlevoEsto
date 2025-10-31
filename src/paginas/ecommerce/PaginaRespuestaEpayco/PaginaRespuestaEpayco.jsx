@@ -23,6 +23,7 @@ import {
 import { useCarrito } from '../../../contextos/CarritoContext'
 import { formatearPrecioCOP } from '../../../utilidades/formatoPrecio'
 import servicioEpayco from '../../../servicios/epayco/servicioEpayco'
+import { pedidosServicio } from '../../../servicios/pedidosServicio'
 import './PaginaRespuestaEpayco.css'
 
 const PaginaRespuestaEpayco = () => {
@@ -35,22 +36,57 @@ const PaginaRespuestaEpayco = () => {
   useEffect(() => {
     const procesarRespuestaEpayco = async () => {
       try {
-        // Obtener parámetros de la URL - USANDO LOS NOMBRES CORRECTOS DE EPAYCO
+        // Obtener TODOS los parámetros de ePayco según documentación oficial
+        const x_cust_id_cliente = searchParams.get('x_cust_id_cliente')
         const x_ref_payco = searchParams.get('x_ref_payco')
+        const x_id_invoice = searchParams.get('x_id_invoice')
+        const x_description = searchParams.get('x_description')
+        const x_amount = searchParams.get('x_amount')
+        const x_amount_country = searchParams.get('x_amount_country')
+        const x_amount_ok = searchParams.get('x_amount_ok')
+        const x_tax = searchParams.get('x_tax')
+        const x_tax_ico = searchParams.get('x_tax_ico')
+        const x_amount_base = searchParams.get('x_amount_base')
+        const x_currency_code = searchParams.get('x_currency_code')
+        const x_bank_name = searchParams.get('x_bank_name')
+        const x_cardnumber = searchParams.get('x_cardnumber')
+        const x_quotas = searchParams.get('x_quotas')
         const x_response = searchParams.get('x_response')
         const x_response_reason_text = searchParams.get('x_response_reason_text')
-        const x_amount = searchParams.get('x_amount')
-        const x_fecha_transaccion = searchParams.get('x_fecha_transaccion')
-        const x_bank_name = searchParams.get('x_bank_name')
-        const x_receipt = searchParams.get('x_receipt')
-        const x_franchise = searchParams.get('x_franchise')
-        const x_cod_response = searchParams.get('x_cod_response')
-        const x_description = searchParams.get('x_description')
-        const x_transaction_id = searchParams.get('x_transaction_id')
         const x_approval_code = searchParams.get('x_approval_code')
+        const x_transaction_id = searchParams.get('x_transaction_id')
+        const x_fecha_transaccion = searchParams.get('x_fecha_transaccion')
+        const x_transaction_date = searchParams.get('x_transaction_date')
+        const x_cod_response = searchParams.get('x_cod_response')
+        const x_cod_transaction_state = searchParams.get('x_cod_transaction_state')
+        const x_transaction_state = searchParams.get('x_transaction_state')
+        const x_errorcode = searchParams.get('x_errorcode')
+        const x_franchise = searchParams.get('x_franchise')
+        const x_business = searchParams.get('x_business')
+        const x_customer_doctype = searchParams.get('x_customer_doctype')
+        const x_customer_document = searchParams.get('x_customer_document')
+        const x_customer_name = searchParams.get('x_customer_name')
+        const x_customer_lastname = searchParams.get('x_customer_lastname')
+        const x_customer_email = searchParams.get('x_customer_email')
+        const x_customer_phone = searchParams.get('x_customer_phone')
+        const x_customer_movil = searchParams.get('x_customer_movil')
+        const x_customer_ind_pais = searchParams.get('x_customer_ind_pais')
+        const x_customer_country = searchParams.get('x_customer_country')
+        const x_customer_city = searchParams.get('x_customer_city')
+        const x_customer_address = searchParams.get('x_customer_address')
+        const x_customer_ip = searchParams.get('x_customer_ip')
         const x_signature = searchParams.get('x_signature')
-        const x_currency_code = searchParams.get('x_currency_code')
         const x_test_request = searchParams.get('x_test_request')
+        const x_extra1 = searchParams.get('x_extra1')
+        const x_extra2 = searchParams.get('x_extra2')
+        const x_extra3 = searchParams.get('x_extra3')
+        const x_extra4 = searchParams.get('x_extra4')
+        const x_extra5 = searchParams.get('x_extra5')
+        const x_extra6 = searchParams.get('x_extra6')
+        const x_extra7 = searchParams.get('x_extra7')
+        const x_extra8 = searchParams.get('x_extra8')
+        const x_extra9 = searchParams.get('x_extra9')
+        const x_extra10 = searchParams.get('x_extra10')
 
         // También capturar parámetros alternativos por compatibilidad
         const ref_payco = x_ref_payco || searchParams.get('ref_payco')
@@ -81,34 +117,102 @@ const PaginaRespuestaEpayco = () => {
           return
         }
 
+        // Crear objeto con todos los datos de la transacción
+        const datosTransaccion = {
+          // Datos principales
+          ref_payco: x_ref_payco || ref_payco || '',
+          x_ref_payco: x_ref_payco || '',
+          x_cust_id_cliente: x_cust_id_cliente || '',
+          x_id_invoice: x_id_invoice || '',
+          x_description: x_description || '',
+          
+          // Montos y moneda
+          x_amount: x_amount || '',
+          x_amount_country: x_amount_country || '',
+          x_amount_ok: x_amount_ok || '',
+          x_tax: x_tax || '',
+          x_tax_ico: x_tax_ico || '',
+          x_amount_base: x_amount_base || '',
+          x_currency_code: x_currency_code || '',
+          
+          // Información del banco y tarjeta
+          x_bank_name: x_bank_name || '',
+          x_cardnumber: x_cardnumber || '',
+          x_quotas: x_quotas || '',
+          x_franchise: x_franchise || '',
+          
+          // Respuesta de la transacción
+          x_response: x_response || '',
+          x_response_reason_text: x_response_reason_text || '',
+          x_approval_code: x_approval_code || '',
+          x_transaction_id: x_transaction_id || '',
+          x_fecha_transaccion: x_fecha_transaccion || '',
+          x_transaction_date: x_transaction_date || '',
+          x_cod_response: x_cod_response || '',
+          x_cod_transaction_state: x_cod_transaction_state || '',
+          x_transaction_state: x_transaction_state || '',
+          x_errorcode: x_errorcode || '',
+          
+          // Información del cliente
+          x_customer_doctype: x_customer_doctype || '',
+          x_customer_document: x_customer_document || '',
+          x_customer_name: x_customer_name || '',
+          x_customer_lastname: x_customer_lastname || '',
+          x_customer_email: x_customer_email || '',
+          x_customer_phone: x_customer_phone || '',
+          x_customer_movil: x_customer_movil || '',
+          x_customer_ind_pais: x_customer_ind_pais || '',
+          x_customer_country: x_customer_country || '',
+          x_customer_city: x_customer_city || '',
+          x_customer_address: x_customer_address || '',
+          x_customer_ip: x_customer_ip || '',
+          
+          // Datos adicionales
+          x_business: x_business || '',
+          x_signature: x_signature || '',
+          x_test_request: x_test_request || '',
+          
+          // Campos extra
+          x_extra1: x_extra1 || '',
+          x_extra2: x_extra2 || '',
+          x_extra3: x_extra3 || '',
+          x_extra4: x_extra4 || '',
+          x_extra5: x_extra5 || '',
+          x_extra6: x_extra6 || '',
+          x_extra7: x_extra7 || '',
+          x_extra8: x_extra8 || '',
+          x_extra9: x_extra9 || '',
+          x_extra10: x_extra10 || '',
+          
+          // Estados procesados
+          estado: x_response === '1' ? 'Aceptada' : x_response === '2' ? 'Rechazada' : x_response === '3' ? 'Pendiente' : x_response === '4' ? 'Fallida' : null,
+          respuesta: x_response || '',
+          timestamp: new Date().toISOString()
+        }
+
         // Registrar la transacción en nuestra base de datos con TODOS los datos
         await servicioEpayco.registrarTransaccion({
           referenciaPago: ref_payco,
           estado: estado,
           tipo: 'response',
-          respuestaCompleta: {
-            x_ref_payco,
-            x_transaction_id,
-            x_cod_response,
-            x_response_reason_text,
-            x_amount,
-            x_fecha_transaccion,
-            x_bank_name,
-            x_receipt,
-            x_franchise,
-            x_description,
-            x_approval_code,
-            x_signature,
-            x_currency_code,
-            x_test_request,
-            x_response,
-            // Datos adicionales para compatibilidad
-            ref_payco,
-            estado,
-            respuesta,
-            timestamp: new Date().toISOString()
-          }
+          respuestaCompleta: datosTransaccion
         })
+
+        // Obtener datos reales del pedido desde la base de datos
+        let pedidoReal = null
+        try {
+          // Intentar buscar por referencia de ePayco primero
+          pedidoReal = await pedidosServicio.buscarPedidoPorRefEpayco(ref_payco)
+          
+          // Si no se encuentra, intentar buscar por número de pedido
+          if (!pedidoReal && ref_payco) {
+            pedidoReal = await pedidosServicio.buscarPedidoPorNumero(ref_payco)
+          }
+          
+          console.log('📦 Pedido encontrado:', pedidoReal)
+        } catch (error) {
+          console.error('❌ Error al buscar pedido:', error)
+        }
 
         // Configurar datos para mostrar
         const datosCompletos = {
@@ -131,27 +235,42 @@ const PaginaRespuestaEpayco = () => {
           signature: x_signature,
           currency_code: x_currency_code,
           test_request: x_test_request,
-          // Datos simulados del pedido (en producción vendrían de tu backend)
-          cliente: {
-            nombre: 'Cliente de Prueba',
-            email: 'cliente@ejemplo.com',
-            telefono: '+57 300 123 4567'
+          // Datos reales del pedido obtenidos de la base de datos
+          cliente: pedidoReal ? {
+            nombre: pedidoReal.nombre_cliente,
+            email: pedidoReal.email_cliente,
+            telefono: pedidoReal.telefono_cliente || 'No especificado'
+          } : {
+            nombre: 'Cliente no encontrado',
+            email: 'No disponible',
+            telefono: 'No disponible'
           },
-          direccion: {
-            direccion: 'Calle 123 #45-67',
-            ciudad: 'Bogotá',
-            departamento: 'Cundinamarca',
-            codigoPostal: '110111'
+          direccion: pedidoReal?.direccion_envio ? {
+            direccion: pedidoReal.direccion_envio.direccion || 'No especificada',
+            ciudad: pedidoReal.direccion_envio.ciudad || 'No especificada',
+            departamento: pedidoReal.direccion_envio.departamento || 'No especificado',
+            codigoPostal: pedidoReal.direccion_envio.codigoPostal || 'No especificado'
+          } : {
+            direccion: 'No disponible',
+            ciudad: 'No disponible',
+            departamento: 'No disponible',
+            codigoPostal: 'No disponible'
           },
-          productos: [
+          productos: pedidoReal?.productos || [
             {
-              id: 1,
-              nombre: 'Producto de Ejemplo',
+              id: 'unknown',
+              nombre: 'Producto no encontrado',
               cantidad: 1,
               precio: x_amount ? parseFloat(x_amount) : 0,
-              imagen: '/images/producto-ejemplo.jpg'
+              imagen: '/images/producto-placeholder.jpg'
             }
-          ]
+          ],
+          // Información adicional del pedido
+          numeroPedido: pedidoReal?.numero_pedido || 'No disponible',
+          subtotal: pedidoReal?.subtotal || 0,
+          descuentos: pedidoReal?.descuento_aplicado || 0,
+          costoEnvio: pedidoReal?.costo_envio || 0,
+          total: pedidoReal?.total || (x_amount ? parseFloat(x_amount) : 0)
         }
 
         setDatosTransaccion(datosCompletos)
