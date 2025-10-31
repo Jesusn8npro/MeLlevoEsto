@@ -13,6 +13,7 @@ import {
   Star
 } from 'lucide-react'
 import { useCarrito } from '../../contextos/CarritoContext'
+import { formatearPrecioCOP } from '../../utilidades/formatoPrecio'
 import ItemCarrito from './ItemCarrito'
 import './CarritoFlotante.css'
 
@@ -25,7 +26,6 @@ const ModalCarrito = ({ abierto, onCerrar }) => {
     descuentos,
     envio,
     total,
-    formatearPrecio,
     actualizarCantidad,
     eliminarDelCarrito,
     limpiarCarrito
@@ -156,13 +156,13 @@ const ModalCarrito = ({ abierto, onCerrar }) => {
               <div className="modal-carrito-resumen">
                 <div className="resumen-linea">
                   <span>Subtotal ({totalItems} productos)</span>
-                  <span className="precio">{formatearPrecio(subtotal)}</span>
+                  <span className="precio">{formatearPrecioCOP(subtotal)}</span>
                 </div>
 
                 {descuentos > 0 && (
                   <div className="resumen-linea descuento">
                     <span>Descuentos</span>
-                    <span className="precio">-{formatearPrecio(descuentos)}</span>
+                    <span className="precio">-{formatearPrecioCOP(descuentos)}</span>
                   </div>
                 )}
 
@@ -172,7 +172,7 @@ const ModalCarrito = ({ abierto, onCerrar }) => {
                     {envio === 0 ? (
                       <span className="envio-gratis">¡GRATIS!</span>
                     ) : (
-                      formatearPrecio(envio)
+                      formatearPrecioCOP(envio)
                     )}
                   </span>
                 </div>
@@ -181,14 +181,14 @@ const ModalCarrito = ({ abierto, onCerrar }) => {
                   <div className="mensaje-envio-gratis">
                     <Truck size={16} />
                     <span>
-                      Agrega {formatearPrecio(50000 - subtotal)} más para envío gratis
+                      Agrega {formatearPrecioCOP(50000 - subtotal)} más para envío gratis
                     </span>
                   </div>
                 )}
 
                 <div className="resumen-total">
                   <span>Total</span>
-                  <span className="precio-total">{formatearPrecio(total)}</span>
+                  <span className="precio-total">{formatearPrecioCOP(total)}</span>
                 </div>
               </div>
             </>

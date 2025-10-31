@@ -16,10 +16,34 @@ export default function PaginaPerfil() {
 
   const alias = useMemo(() => {
     if (!usuario) return 'Invitado'
-    const nombre = usuario?.nombre?.trim()
-    if (nombre) return nombre.split(' ')[0]
-    const emailAlias = usuario?.email?.split('@')[0]
-    return usuario?.user_metadata?.nombre || emailAlias || 'Usuario'
+    
+    // Función para extraer el nombre real del usuario
+    const obtenerNombreReal = () => {
+      // Si usuario.nombre es un string válido y no contiene JSON
+      if (typeof usuario.nombre === 'string' && usuario.nombre.trim() && !usuario.nombre.includes('{')) {
+        return usuario.nombre.trim();
+      }
+      
+      // Si usuario.nombre contiene JSON, intentar extraer el nombre
+      if (typeof usuario.nombre === 'string' && usuario.nombre.includes('{')) {
+        try {
+          const parsed = JSON.parse(usuario.nombre);
+          if (parsed.nombre) return parsed.nombre;
+          if (parsed.apellido) return parsed.apellido;
+        } catch (e) {
+          // Si no se puede parsear, continuar con otras opciones
+        }
+      }
+      
+      // Fallback a email o user_metadata
+      return usuario.email?.split('@')[0] || 
+             usuario.user_metadata?.nombre || 
+             'Usuario';
+    };
+    
+    const nombre = obtenerNombreReal();
+    if (nombre && nombre !== 'Usuario') return nombre.split(' ')[0];
+    return nombre;
   }, [usuario])
 
   const [tab, setTab] = useState('resumen')
@@ -379,8 +403,31 @@ export default function PaginaPerfil() {
 
         if (error && !data) throw error
 
+        // Función para extraer el nombre real de los datos
+        const extraerNombreReal = (nombreData) => {
+          if (!nombreData) return '';
+          
+          // Si es un string válido y no contiene JSON
+          if (typeof nombreData === 'string' && nombreData.trim() && !nombreData.includes('{')) {
+            return nombreData.trim();
+          }
+          
+          // Si contiene JSON, intentar extraer el nombre
+          if (typeof nombreData === 'string' && nombreData.includes('{')) {
+            try {
+              const parsed = JSON.parse(nombreData);
+              if (parsed.nombre) return parsed.nombre;
+              if (parsed.apellido) return parsed.apellido;
+            } catch (e) {
+              // Si no se puede parsear, devolver string vacío
+            }
+          }
+          
+          return '';
+        };
+
         setFormUsuario({
-          nombre: data?.nombre || '',
+          nombre: extraerNombreReal(data?.nombre),
           email: data?.email || usuario.email || '',
           telefono: data?.telefono || data?.telefono_envio || '',
           direccion_linea_1: data?.direccion_linea_1 || '',

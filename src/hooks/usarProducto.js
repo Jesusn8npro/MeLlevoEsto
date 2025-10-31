@@ -4,7 +4,7 @@ import { procesarImagenesProducto } from '../utilidades/googleDrive'
 
 export function usarProducto(slug) {
   const [producto, setProducto] = useState(null)
-  const [cargando, setCargando] = useState(true)
+  const [cargando, setCargando] = useState(false) // ⚡ Iniciamos en false para evitar flash de carga
   const [error, setError] = useState(null)
 
   useEffect(() => {
@@ -18,6 +18,7 @@ export function usarProducto(slug) {
     setError(null)
 
     try {
+      // ⚡ Consulta optimizada con solo los campos necesarios
       const { data, error: errorConsulta } = await clienteSupabase
         .from('productos')
         .select(`
@@ -60,15 +61,11 @@ export function usarProducto(slug) {
         throw errorConsulta
       }
 
-      // Procesar los datos para incluir las imágenes correctamente
+      // ⚡ Procesamiento optimizado de datos
       if (data) {
         console.log('🎯 PRODUCTO CARGADO DESDE SUPABASE:', data.nombre)
-        console.log('📦 DATOS COMPLETOS DEL PRODUCTO:', data)
-        console.log('🎁 PROMOCIONES DEL PRODUCTO:', data.promociones)
         
-        // Procesar imágenes del producto
-        
-        // Si hay datos de producto_imagenes, los agregamos al objeto producto
+        // ⚡ Procesar imágenes de forma más eficiente
         if (data.producto_imagenes && data.producto_imagenes.length > 0) {
           const imagenesRaw = data.producto_imagenes[0] // Tomar el primer registro de imágenes
           

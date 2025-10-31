@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react'
-import ImagenInteligente from '../../../../../componentes/ui/ImagenInteligente'
 import './TestimoniosTemu.css'
 
 const TestimoniosTemu = ({ 
@@ -231,7 +230,7 @@ const TestimoniosTemu = ({
             
             <div className="temu-testimonials-ultra-card-header">
               <div className="temu-testimonials-ultra-avatar-wrapper">
-                <ImagenInteligente 
+                <img 
                   src={testimonio.imagen} 
                   alt={testimonio.nombre}
                   className="temu-testimonials-ultra-person-avatar"
@@ -265,7 +264,7 @@ const TestimoniosTemu = ({
 
             {testimonio.imagenProducto && (
               <div className="temu-testimonials-ultra-product-image-container">
-                <ImagenInteligente 
+                <img 
                   src={testimonio.imagenProducto} 
                   alt="Cliente usando el producto"
                   className="temu-testimonials-ultra-product-image"
@@ -327,7 +326,7 @@ const TestimoniosTemu = ({
             </button>
             
             <div className="temu-testimonials-ultra-modal-header">
-              <ImagenInteligente 
+              <img 
                 src={testimonioActivo.imagen} 
                 alt={testimonioActivo.nombre}
                 className="temu-testimonials-ultra-modal-avatar"
@@ -345,7 +344,7 @@ const TestimoniosTemu = ({
             </div>
 
             {testimonioActivo.imagenProducto && (
-              <ImagenInteligente 
+              <img 
                 src={testimonioActivo.imagenProducto} 
                 alt="Producto en uso"
                 className="temu-testimonials-ultra-modal-image"

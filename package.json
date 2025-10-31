@@ -23,6 +23,7 @@
     "@supabase/supabase-js": "^2.57.4",
     "apexcharts": "^5.3.5",
     "clsx": "^2.0.0",
+    "epayco-sdk-node": "^1.4.4",
     "flatpickr": "^4.6.13",
     "lucide-react": "^0.263.1",
     "react": "^18.2.0",
@@ -31,6 +32,7 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.3.8",
+    "react-epayco": "^0.1.5",
     "react-helmet-async": "^2.0.5",
     "react-router-dom": "^6.8.1",
     "serve": "^14.2.1",
@@ -53,24 +55,3 @@
     "vite-plugin-svgr": "^4.5.0"
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

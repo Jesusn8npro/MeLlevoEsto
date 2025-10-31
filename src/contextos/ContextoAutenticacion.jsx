@@ -15,18 +15,56 @@ export const ProveedorAutenticacion = ({ children }) => {
   // Función optimizada para obtener datos del usuario desde la base de datos
   const obtenerDatosUsuario = useCallback(async (userId) => {
     try {
+      // 1. Intentar obtener usuario existente
       const { data, error } = await clienteSupabase
         .from('usuarios')
         .select('*')
         .eq('id', userId)
         .single()
 
-      if (error) {
-        console.error('Error obteniendo datos del usuario:', error)
+      if (!error && data) {
+        console.log('✅ Usuario encontrado en tabla usuarios:', data.email)
+        return data
+      }
+
+      // 2. Si no existe, obtener datos del auth para crear el usuario
+      console.log('⚠️ Usuario no encontrado en tabla, creando desde auth...')
+      const { data: { user }, error: authError } = await clienteSupabase.auth.getUser()
+      
+      if (authError || !user) {
+        console.error('❌ Error obteniendo usuario de auth:', authError)
         return null
       }
 
-      return data
+      // 3. Crear usuario básico en la tabla usuarios
+      const usuarioBasico = {
+        id: user.id,
+        email: user.email,
+        nombre: user.user_metadata?.nombre || 
+                user.user_metadata?.full_name || 
+                user.email.split('@')[0],
+        rol: user.email === 'shalom@gmail.com' ? 'admin' : 'cliente',
+        telefono: user.user_metadata?.telefono || null,
+        creado_el: new Date().toISOString(),
+        actualizado_el: new Date().toISOString()
+      }
+
+      // 4. Insertar en la tabla usuarios
+      const { data: usuarioCreado, error: errorCreacion } = await clienteSupabase
+        .from('usuarios')
+        .insert([usuarioBasico])
+        .select()
+        .single()
+
+      if (errorCreacion) {
+        console.error('❌ Error creando usuario en tabla:', errorCreacion)
+        // Retornar datos básicos aunque falle la inserción
+        return usuarioBasico
+      }
+
+      console.log('✅ Usuario creado exitosamente en tabla usuarios:', usuarioCreado.email)
+      return usuarioCreado
+
     } catch (error) {
       console.error('Error en obtenerDatosUsuario:', error)
       return null

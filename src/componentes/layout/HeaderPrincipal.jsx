@@ -393,7 +393,30 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
                   <User className="icono-usuario-header" />
                   <div className="usuario-info">
                     <span className="usuario-texto">
-                      {usuario.nombre || usuario.email?.split('@')[0] || usuario.user_metadata?.nombre || 'Usuario'}
+                      {
+                        (() => {
+                          // Si usuario.nombre es un string válido y no contiene JSON
+                          if (typeof usuario.nombre === 'string' && usuario.nombre.trim() && !usuario.nombre.includes('{')) {
+                            return usuario.nombre;
+                          }
+                          
+                          // Si usuario.nombre contiene JSON, intentar extraer el nombre
+                          if (typeof usuario.nombre === 'string' && usuario.nombre.includes('{')) {
+                            try {
+                              const parsed = JSON.parse(usuario.nombre);
+                              if (parsed.nombre) return parsed.nombre;
+                              if (parsed.apellido) return parsed.apellido;
+                            } catch (e) {
+                              // Si no se puede parsear, continuar con otras opciones
+                            }
+                          }
+                          
+                          // Fallback a email o user_metadata
+                          return usuario.email?.split('@')[0] || 
+                                 usuario.user_metadata?.nombre || 
+                                 'Usuario';
+                        })()
+                      }
                     </span>
                     <span className="usuario-subtexto">Mi Cuenta</span>
                   </div>

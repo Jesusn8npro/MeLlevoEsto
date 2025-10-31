@@ -1,25 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { AlertCircle, ArrowLeft } from 'lucide-react'
 import { usarProducto } from '../../../hooks/usarProducto'
 import { usarLandingData } from '../../../hooks/usarLandingData'
 import LandingPage from '../../../componentes/landing/LandingPage'
-import { 
-  ArrowLeft, 
-  Star, 
-  ShoppingCart, 
-  Heart, 
-  Share2,
-  Package,
-  Truck,
-  Shield,
-  CheckCircle,
-  AlertCircle,
-  Eye,
-  Calendar,
-  Tag,
-  Globe,
-  User
-} from 'lucide-react'
 
 /**
  * PaginaProducto - Página que detecta automáticamente la plantilla del producto
@@ -35,8 +19,11 @@ export default function PaginaProducto() {
   const { slug } = useParams()
   const navigate = useNavigate()
   
-  // Usar los hooks para cargar datos
-  const { producto, cargando, error } = usarProducto(slug)
+  // ⚡ Estado de carga paralela optimizada
+  const [cargaCompleta, setCargaCompleta] = useState(false)
+  
+  // Usar los hooks para cargar datos EN PARALELO
+  const { producto, cargando: cargandoProducto, error } = usarProducto(slug)
   const { 
     landingConfig, 
     reviews, 
@@ -44,8 +31,22 @@ export default function PaginaProducto() {
     cargando: cargandoLanding 
   } = usarLandingData(producto?.id)
 
-  // Estado de carga
-  if (cargando || cargandoLanding) {
+  // ⚡ Efecto para detectar cuando ambas cargas están completas
+  useEffect(() => {
+    if (!cargandoProducto && !cargandoLanding && producto) {
+      // Pequeño delay para suavizar la transición (opcional)
+      const timer = setTimeout(() => {
+        setCargaCompleta(true)
+      }, 50) // 50ms para transición suave
+      
+      return () => clearTimeout(timer)
+    }
+  }, [cargandoProducto, cargandoLanding, producto])
+
+  // ⚡ Estado de carga ultra optimizado - solo mientras ambos cargan
+  const estasCargando = cargandoProducto || cargandoLanding || !cargaCompleta
+  
+  if (estasCargando) {
     return (
       <div style={{ 
         display: 'flex', 
@@ -56,14 +57,20 @@ export default function PaginaProducto() {
         gap: '1rem'
       }}>
         <div style={{ 
-          width: '40px', 
-          height: '40px', 
-          border: '4px solid #f3f3f3',
-          borderTop: '4px solid #3498db',
+          width: '32px', 
+          height: '32px', 
+          border: '3px solid #f3f3f3',
+          borderTop: '3px solid #ff6b35',
           borderRadius: '50%',
-          animation: 'spin 1s linear infinite'
+          animation: 'ultraSpin 0.6s linear infinite' // ⚡ Animación más rápida
         }}></div>
-        <p>Cargando producto y detectando plantilla...</p>
+        <p style={{ 
+          fontSize: '14px', 
+          color: '#666',
+          fontWeight: '500'
+        }}>
+          Cargando...
+        </p>
       </div>
     )
   }
@@ -108,7 +115,6 @@ export default function PaginaProducto() {
   
   console.log('🎨 Auto-detectando plantilla para producto:', producto.nombre)
   console.log('📋 Tipo de plantilla detectado:', tipoPlantilla)
-  console.log('📊 Datos de landing cargados:', { landingConfig, reviews, notificaciones })
 
   // 🚀 RENDERIZAR AUTOMÁTICAMENTE LA PLANTILLA CORRECTA
   return (
@@ -120,12 +126,22 @@ export default function PaginaProducto() {
         notificaciones={notificaciones}
       />
 
-      {/* Estilos para animación de carga */}
+      {/* ⚡ Estilos optimizados para animación ultra rápida */}
       <style>
         {`
-          @keyframes spin {
+          @keyframes ultraSpin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+          }
+          
+          /* ⚡ Optimización para transiciones suaves */
+          .pagina-producto-auto {
+            animation: fadeIn 0.2s ease-in-out;
+          }
+          
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
           }
         `}
       </style>

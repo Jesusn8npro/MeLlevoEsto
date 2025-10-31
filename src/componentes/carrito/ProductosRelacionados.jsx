@@ -10,14 +10,13 @@ import {
 } from 'lucide-react'
 import { useCarrito } from '../../contextos/CarritoContext'
 import { usarProductos } from '../../hooks/usarProductos'
-import ImagenInteligente from '../ui/ImagenInteligente'
 import { convertirUrlGoogleDrive } from '../../utilidades/googleDrive'
 import { obtenerImagenPlaceholder } from '../../utilidades/imagenesAlternativas'
 import BotonCarritoAnimado from '../ui/BotonCarritoAnimado'
 import './ProductosRelacionados.css'
 
 const ProductosRelacionados = ({ categoriaId, onCerrarModal }) => {
-  const { agregarItem, alternarModal, mostrarNotificacion, items } = useCarrito()
+  const { agregarAlCarrito, alternarModal, mostrarNotificacion, items } = useCarrito()
   const { productos, cargando } = usarProductos({
     // Si quieres limitar por categoría, descomenta la línea siguiente
     // categoria: categoriaId,
@@ -82,7 +81,7 @@ const ProductosRelacionados = ({ categoriaId, onCerrarModal }) => {
       console.log('🛒 Agregando producto relacionado al carrito:', producto)
       
       // Usar el producto completo tal como viene de la base de datos
-      const resultado = await agregarItem(producto, cantidad || 1, variante)
+      const resultado = await agregarAlCarrito(producto, cantidad || 1, variante)
       
       console.log('✅ Resultado de agregar producto relacionado:', resultado)
       
@@ -174,7 +173,7 @@ const ProductosRelacionados = ({ categoriaId, onCerrarModal }) => {
                 <div key={producto.id} className="producto-relacionado">
                   <div className="producto-imagen-container">
                     <Link to={`/producto/${producto.id}`} onClick={onCerrarModal}>
-                      <ImagenInteligente
+                      <img
                         src={obtenerImagenPrincipal(producto)}
                         alt={producto.nombre}
                         className="producto-imagen"

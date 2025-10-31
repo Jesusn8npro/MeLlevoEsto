@@ -56,7 +56,7 @@ export const convertirUrlGoogleDrive = (url) => {
     // Mantener alternativa thumbnail por compatibilidad
     const alternativa = `https://drive.google.com/thumbnail?id=${fileId}&sz=w400-h400`
     console.log('🔄 URL convertida (preferida):', url, '->', principal)
-    // Retornar la preferida; el componente ImagenInteligente probará alternativas si falla
+    // Retornar la URL preferida; los componentes pueden implementar alternativas si falla
     return principal || alternativa
   } catch (error) {
     console.error('❌ Error convirtiendo URL de Google Drive:', error)

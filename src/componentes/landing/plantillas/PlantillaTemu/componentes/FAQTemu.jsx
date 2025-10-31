@@ -104,23 +104,23 @@ const FAQTemu = ({
       <div className="faq-temu-contenedor">
         {datos.preguntas.map((item, index) => (
           <div 
-            key={item.id}
+            key={item.id || index}
             className="faq-temu-item"
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             <button 
-              className={`faq-temu-pregunta ${preguntaAbierta === item.id ? 'faq-temu-abierta' : ''}`}
-              onClick={() => togglePregunta(item.id)}
+              className={`faq-temu-pregunta ${preguntaAbierta === (item.id || index) ? 'faq-temu-abierta' : ''}`}
+              onClick={() => togglePregunta(item.id || index)}
             >
               <span className="faq-temu-pregunta-texto">
                 {item.pregunta}
               </span>
               <span className="faq-temu-icono">
-                {preguntaAbierta === item.id ? '−' : '+'}
+                {preguntaAbierta === (item.id || index) ? '−' : '+'}
               </span>
             </button>
             
-            <div className={`faq-temu-respuesta ${preguntaAbierta === item.id ? 'faq-temu-respuesta-abierta' : ''}`}>
+            <div className={`faq-temu-respuesta ${preguntaAbierta === (item.id || index) ? 'faq-temu-respuesta-abierta' : ''}`}>
               <div className="faq-temu-respuesta-contenido">
                 <p>{item.respuesta}</p>
               </div>

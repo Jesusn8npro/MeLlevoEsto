@@ -35,6 +35,28 @@ const toInt = (value) => {
   return isNaN(num) ? null : num
 }
 
+// Helper para manejar dimensiones que pueden ser objeto o string
+const procesarDimensiones = (dimensiones) => {
+  if (!dimensiones) return null
+  
+  // Si es un objeto, convertirlo a string o mantenerlo como objeto según necesidad
+  if (typeof dimensiones === 'object') {
+    // Si es un objeto con propiedades de dimensiones, mantenerlo como objeto
+    if (dimensiones.alto !== undefined || dimensiones.ancho !== undefined || dimensiones.profundidad !== undefined) {
+      return dimensiones
+    }
+    // Si es otro tipo de objeto, convertir a string
+    return JSON.stringify(dimensiones)
+  }
+  
+  // Si es string, hacer trim
+  if (typeof dimensiones === 'string') {
+    return dimensiones.trim() || null
+  }
+  
+  return null
+}
+
 const CreadorProductosPR = ({ modo = 'crear', slug = null, onSuccess = null }) => {
   const navigate = useNavigate()
   const { generarSlug } = usarFormato()
@@ -432,7 +454,7 @@ const CreadorProductosPR = ({ modo = 'crear', slug = null, onSuccess = null }) =
         
         // Especificaciones físicas
         peso: toNum(datosProducto.peso),
-        dimensiones: datosProducto.dimensiones ? datosProducto.dimensiones.trim() : null,
+        dimensiones: procesarDimensiones(datosProducto.dimensiones),
         marca: datosProducto.marca ? datosProducto.marca.trim() : null,
         modelo: datosProducto.modelo ? datosProducto.modelo.trim() : null,
         color: datosProducto.color ? datosProducto.color.trim() : null,

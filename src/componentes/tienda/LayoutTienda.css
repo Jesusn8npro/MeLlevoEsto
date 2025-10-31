@@ -58,13 +58,15 @@
 
 /* Sidebar */
 .layout-sidebar {
-  width: 280px;
+  width: 300px;
   background: white;
   border-right: 1px solid #e9ecef;
   position: relative;
   min-height: 100vh;
   z-index: 1001;
   transition: transform 0.3s ease;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .layout-sidebar::-webkit-scrollbar {
@@ -131,8 +133,12 @@
 
 /* Contenido de filtros */
 .sidebar-filtros-contenido {
-  padding: 16px 20px;
+  padding: 20px 24px;
   background: white;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 /* Sidebar sticky activo */
@@ -178,7 +184,7 @@
 /* Estados responsivos */
 @media (max-width: 1200px) {
   .layout-sidebar {
-    width: 260px;
+    width: 280px;
   }
   
   .sidebar-header-interno {

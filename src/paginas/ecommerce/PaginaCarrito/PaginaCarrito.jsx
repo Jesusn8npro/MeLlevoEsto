@@ -24,7 +24,12 @@ import {
 } from 'lucide-react'
 import { useCarrito } from '../../../contextos/CarritoContext'
 import { useAuth } from '../../../contextos/ContextoAutenticacion'
+import { usarCupones } from '../../../hooks/usarCupones'
+import { usarEpayco } from '../../../hooks/usarEpayco'
+import { generarNumeroFactura } from '../../../servicios/epayco'
+import { pedidosServicio } from '../../../servicios/pedidosServicio'
 import ItemCarrito from '../../../componentes/carrito/ItemCarrito'
+import { formatearPrecioCOP } from '../../../utilidades/formatoPrecio'
 import './PaginaCarrito.css'
 
 const PaginaCarrito = () => {
@@ -38,11 +43,34 @@ const PaginaCarrito = () => {
     descuentos,
     envio,
     total,
-    formatearPrecio,
     actualizarCantidad,
     eliminarDelCarrito,
     limpiarCarrito
   } = useCarrito()
+
+  // Hook de cupones
+  const {
+    codigoCupon,
+    setCodigoCupon,
+    cuponValido,
+    cuponAplicado,
+    descuentoCupon,
+    cargandoCupon,
+    errorCupon,
+    validarCupon,
+    aplicarCupon,
+    limpiarCupon,
+    calcularDescuento
+  } = usarCupones()
+
+  // Hook de ePayco
+  const {
+    procesarPagoOnPage,
+    cargando: cargandoPago,
+    error: errorPago,
+    servicioListo,
+    limpiarError
+  } = usarEpayco()
 
   const [stepActual, setStepActual] = useState(1)
   const [datosEnvio, setDatosEnvio] = useState({
@@ -54,11 +82,27 @@ const PaginaCarrito = () => {
     ciudad: '',
     departamento: '',
     codigoPostal: '',
-    instrucciones: ''
+    instrucciones: '',
+    // Campos adicionales para ePayco
+    tipoDocumento: '',
+    numeroDocumento: ''
   })
   const [metodoPago, setMetodoPago] = useState('')
-  const [cuponAplicado, setCuponAplicado] = useState('')
-  const [codigoCupon, setCodigoCupon] = useState('')
+
+  // Datos de prueba predefinidos
+  const datosPrueba = {
+    nombre: 'Juan Carlos',
+    apellido: 'Rodríguez Pérez',
+    email: 'juan.rodriguez@ejemplo.com',
+    telefono: '3001234567',
+    direccion: 'Carrera 15 # 93-47 Apto 501',
+    ciudad: 'Bogotá',
+    departamento: 'Cundinamarca',
+    codigoPostal: '110221',
+    instrucciones: 'Portería principal, edificio Torre Norte',
+    tipoDocumento: 'CC',
+    numeroDocumento: '1234567890'
+  }
 
   // Steps del checkout
   const steps = [
@@ -89,18 +133,138 @@ const PaginaCarrito = () => {
     }))
   }
 
-  // Aplicar cupón
-  const aplicarCupon = () => {
-    // Lógica para aplicar cupón
-    if (codigoCupon.toLowerCase() === 'descuento10') {
-      setCuponAplicado('DESCUENTO10 - 10% de descuento')
+  // Cargar datos de prueba
+  const cargarDatosPrueba = () => {
+    setDatosEnvio(datosPrueba)
+    alert('✅ Datos de prueba cargados correctamente')
+  }
+
+  // Manejar aplicación de cupón
+  const manejarAplicarCupon = async () => {
+    if (!codigoCupon.trim()) return
+    
+    try {
+      // Primero validar el cupón
+      const esValido = await validarCupon(codigoCupon, subtotal, items)
+      
+      if (esValido) {
+        // Si es válido, aplicarlo
+        await aplicarCupon(codigoCupon, subtotal, items)
+      }
+    } catch (error) {
+      console.error('Error al aplicar cupón:', error)
     }
   }
 
-  // Procesar pago
-  const procesarPago = () => {
-    // Aquí iría la lógica de pago real
-    setStepActual(4)
+  // Procesar pago con ePayco
+  const procesarPagoEpayco = async () => {
+    try {
+      // Validar que todos los datos estén completos
+      if (!datosEnvio.nombre || !datosEnvio.apellido || !datosEnvio.email || 
+          !datosEnvio.telefono || !datosEnvio.tipoDocumento || !datosEnvio.numeroDocumento ||
+          !datosEnvio.direccion || !datosEnvio.ciudad || !datosEnvio.departamento) {
+        alert('Por favor completa todos los campos obligatorios')
+        return
+      }
+
+      // Calcular total final con descuentos
+      const totalFinal = total - (descuentoCupon || 0)
+      const numeroPedido = generarNumeroFactura('PEDIDO')
+
+      console.log('🛒 Iniciando proceso de creación de pedido y pago...')
+
+      // 1. CREAR EL PEDIDO EN SUPABASE PRIMERO
+      const datosPedido = {
+        numero_pedido: numeroPedido,
+        usuario_id: usuario?.id || null,
+        nombre_cliente: `${datosEnvio.nombre} ${datosEnvio.apellido}`,
+        email_cliente: datosEnvio.email,
+        telefono_cliente: datosEnvio.telefono,
+        direccion_envio: {
+          nombre: datosEnvio.nombre,
+          apellido: datosEnvio.apellido,
+          direccion: datosEnvio.direccion,
+          ciudad: datosEnvio.ciudad,
+          departamento: datosEnvio.departamento,
+          codigoPostal: datosEnvio.codigoPostal || '',
+          tipoDocumento: datosEnvio.tipoDocumento,
+          numeroDocumento: datosEnvio.numeroDocumento,
+          instrucciones: datosEnvio.instrucciones || ''
+        },
+        productos: items.map(item => ({
+          id: item.id,
+          nombre: item.nombre,
+          cantidad: item.cantidad,
+          precio: item.precio,
+          subtotal: item.cantidad * item.precio
+        })),
+        subtotal: subtotal,
+        descuento_aplicado: descuentos + (descuentoCupon || 0),
+        costo_envio: envio,
+        total: totalFinal,
+        estado: 'pendiente',
+        metodo_pago: 'epayco',
+        referencia_pago: numeroPedido,
+        notas_cliente: datosEnvio.instrucciones || null,
+        epayco_test_request: true // Cambiar a false en producción
+      }
+
+      console.log('📝 Creando pedido en Supabase...', datosPedido)
+      
+      // Crear el pedido en Supabase
+      const pedidoCreado = await pedidosServicio.crearPedido(datosPedido)
+      
+      console.log('✅ Pedido creado exitosamente:', pedidoCreado)
+
+      // 2. PREPARAR DATOS PARA EPAYCO CON EL ID DEL PEDIDO CREADO
+      const datosEpayco = {
+        // Información del cliente
+        cliente: {
+          nombre: datosEnvio.nombre,
+          apellido: datosEnvio.apellido,
+          email: datosEnvio.email,
+          telefono: datosEnvio.telefono,
+          tipoDocumento: datosEnvio.tipoDocumento,
+          numeroDocumento: datosEnvio.numeroDocumento,
+          direccion: datosEnvio.direccion,
+          ciudad: datosEnvio.ciudad,
+          departamento: datosEnvio.departamento,
+          codigoPostal: datosEnvio.codigoPostal || ''
+        },
+        // Información del pedido (ahora con el ID real del pedido creado)
+        pedido: {
+          id: pedidoCreado.id, // ID del pedido creado en Supabase
+          referencia: numeroPedido,
+          descripcion: `Compra de ${totalItems} productos en MeLlevoEsto.com`,
+          valor: totalFinal,
+          moneda: 'COP',
+          items: items.map(item => ({
+            nombre: item.nombre,
+            cantidad: item.cantidad,
+            precio: item.precio
+          })),
+          // Información adicional
+          subtotal: subtotal,
+          descuentos: descuentos + (descuentoCupon || 0),
+          envio: envio,
+          cuponAplicado: cuponAplicado?.codigo || null
+        },
+        // URLs de respuesta
+        urls: {
+          respuesta: `${window.location.origin}/respuesta-epayco`,
+          confirmacion: `${window.location.origin}/confirmacion-epayco`
+        }
+      }
+
+      console.log('💳 Iniciando pago con ePayco:', datosEpayco)
+
+      // 3. PROCESAR PAGO CON EPAYCO
+      await procesarPagoOnPage(datosEpayco)
+
+    } catch (error) {
+      console.error('❌ Error al procesar el pedido y pago:', error)
+      alert(`Error al procesar el pedido: ${error.message}. Por favor intenta nuevamente.`)
+    }
   }
 
   // Si el carrito está vacío
@@ -194,6 +358,28 @@ const PaginaCarrito = () => {
                   <Truck size={24} />
                   Información de envío
                 </h3>
+
+                {/* Botón para cargar datos de prueba */}
+                <div className="datos-prueba-container" style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '8px', border: '1px dashed #007bff' }}>
+                  <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#6c757d' }}>
+                    🧪 <strong>Modo de pruebas:</strong> Carga datos predefinidos para testear más rápido
+                  </p>
+                  <button
+                    type="button"
+                    onClick={cargarDatosPrueba}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: '#007bff',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '14px'
+                    }}
+                  >
+                    🚀 Cargar datos de prueba
+                  </button>
+                </div>
                 
                 <form className="formulario-envio">
                   <div className="fila-formulario">
@@ -237,6 +423,37 @@ const PaginaCarrito = () => {
                         value={datosEnvio.telefono}
                         onChange={(e) => manejarCambioEnvio('telefono', e.target.value)}
                         placeholder="300 123 4567"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {/* Campos adicionales para ePayco */}
+                  <div className="fila-formulario">
+                    <div className="campo-formulario">
+                      <label>Tipo de Documento *</label>
+                      <select
+                        value={datosEnvio.tipoDocumento}
+                        onChange={(e) => manejarCambioEnvio('tipoDocumento', e.target.value)}
+                        required
+                      >
+                        <option value="">Seleccionar tipo</option>
+                        <option value="CC">Cédula de Ciudadanía</option>
+                        <option value="CE">Cédula de Extranjería</option>
+                        <option value="TI">Tarjeta de Identidad</option>
+                        <option value="PP">Pasaporte</option>
+                        <option value="NIT">NIT</option>
+                        <option value="SSN">SSN</option>
+                        <option value="LIC">Licencia de Conducción</option>
+                      </select>
+                    </div>
+                    <div className="campo-formulario">
+                      <label>Número de Documento *</label>
+                      <input
+                        type="text"
+                        value={datosEnvio.numeroDocumento}
+                        onChange={(e) => manejarCambioEnvio('numeroDocumento', e.target.value)}
+                        placeholder="Ej: 12345678"
                         required
                       />
                     </div>
@@ -303,71 +520,119 @@ const PaginaCarrito = () => {
               </div>
             )}
 
-            {/* Step 3: Método de pago */}
+            {/* Step 3: Pago con ePayco */}
             {stepActual === 3 && (
               <div className="step-contenido">
                 <h3>
-                  <CreditCard size={24} />
-                  Método de pago
+                  <Shield size={24} />
+                  Pago Seguro con ePayco
                 </h3>
 
-                <div className="metodos-pago">
-                  <div 
-                    className={`metodo-pago ${metodoPago === 'tarjeta' ? 'seleccionado' : ''}`}
-                    onClick={() => setMetodoPago('tarjeta')}
-                  >
-                    <CreditCard size={24} />
-                    <div>
-                      <h4>Tarjeta de crédito/débito</h4>
-                      <p>Visa, Mastercard, American Express</p>
+                <div className="epayco-info">
+                  <div className="info-seguridad">
+                    <div className="icono-seguridad">
+                      <Shield size={32} />
+                    </div>
+                    <div className="texto-seguridad">
+                      <h4>Pago 100% Seguro</h4>
+                      <p>Tu información está protegida con certificación PCI DSS Nivel 1</p>
                     </div>
                   </div>
 
-                  <div 
-                    className={`metodo-pago ${metodoPago === 'pse' ? 'seleccionado' : ''}`}
-                    onClick={() => setMetodoPago('pse')}
-                  >
-                    <Shield size={24} />
-                    <div>
-                      <h4>PSE</h4>
-                      <p>Pago seguro en línea</p>
+                  <div className="metodos-disponibles">
+                    <h4>Métodos de pago disponibles:</h4>
+                    <div className="metodos-grid">
+                      <div className="metodo-item">
+                        <CreditCard size={20} />
+                        <span>Tarjetas de Crédito/Débito</span>
+                      </div>
+                      <div className="metodo-item">
+                        <Shield size={20} />
+                        <span>PSE</span>
+                      </div>
+                      <div className="metodo-item">
+                        <Star size={20} />
+                        <span>Efecty</span>
+                      </div>
+                      <div className="metodo-item">
+                        <Clock size={20} />
+                        <span>Baloto</span>
+                      </div>
                     </div>
                   </div>
 
-                  <div 
-                    className={`metodo-pago ${metodoPago === 'contraentrega' ? 'seleccionado' : ''}`}
-                    onClick={() => setMetodoPago('contraentrega')}
-                  >
-                    <Truck size={24} />
-                    <div>
-                      <h4>Pago contraentrega</h4>
-                      <p>Paga cuando recibas tu pedido</p>
+                  <div className="resumen-pago">
+                    <h4>Resumen de tu compra:</h4>
+                    <div className="resumen-detalles">
+                      <div className="detalle-linea">
+                        <span>Productos ({totalItems})</span>
+                        <span>{formatearPrecioCOP(subtotal)}</span>
+                      </div>
+                      {descuentos > 0 && (
+                        <div className="detalle-linea descuento">
+                          <span>Descuentos</span>
+                          <span>-{formatearPrecioCOP(descuentos)}</span>
+                        </div>
+                      )}
+                      {cuponAplicado && descuentoCupon > 0 && (
+                        <div className="detalle-linea descuento">
+                          <span>Cupón ({cuponAplicado.codigo})</span>
+                          <span>-{formatearPrecioCOP(descuentoCupon)}</span>
+                        </div>
+                      )}
+                      <div className="detalle-linea">
+                        <span>Envío</span>
+                        <span>{envio === 0 ? 'Gratis' : formatearPrecioCOP(envio)}</span>
+                      </div>
+                      <div className="detalle-linea total">
+                        <span>Total a pagar</span>
+                        <span>{formatearPrecioCOP(total - (descuentoCupon || 0))}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {errorPago && (
+                    <div className="error-pago">
+                      <AlertCircle size={20} />
+                      <span>{errorPago}</span>
+                    </div>
+                  )}
+
+                  <div className="boton-pagar-container">
+                    <button 
+                      onClick={procesarPagoEpayco}
+                      className="boton-pagar-epayco"
+                      disabled={cargandoPago}
+                    >
+                      {cargandoPago ? (
+                        <>
+                          <div className="spinner"></div>
+                          Procesando pago...
+                        </>
+                      ) : (
+                        <>
+                          <Shield size={20} />
+                          Pagar {formatearPrecioCOP(total - (descuentoCupon || 0))}
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="garantias-pago">
+                    <div className="garantia">
+                      <Shield size={16} />
+                      <span>Certificación PCI DSS</span>
+                    </div>
+                    <div className="garantia">
+                      <Star size={16} />
+                      <span>Garantía de satisfacción</span>
+                    </div>
+                    <div className="garantia">
+                      <CheckCircle size={16} />
+                      <span>Soporte 24/7</span>
                     </div>
                   </div>
                 </div>
-
-                {metodoPago === 'tarjeta' && (
-                  <div className="formulario-tarjeta">
-                    <div className="campo-formulario">
-                      <label>Número de tarjeta</label>
-                      <input type="text" placeholder="1234 5678 9012 3456" />
-                    </div>
-                    <div className="fila-formulario">
-                      <div className="campo-formulario">
-                        <label>Fecha de vencimiento</label>
-                        <input type="text" placeholder="MM/AA" />
-                      </div>
-                      <div className="campo-formulario">
-                        <label>CVV</label>
-                        <input type="text" placeholder="123" />
-                      </div>
-                    </div>
-                    <div className="campo-formulario">
-                      <label>Nombre en la tarjeta</label>
-                      <input type="text" placeholder="Como aparece en la tarjeta" />
-                    </div>
-                  </div>
-                )}
               </div>
             )}
 
@@ -383,7 +648,15 @@ const PaginaCarrito = () => {
                     <h4>Detalles del pedido:</h4>
                     <p><strong>Email:</strong> {datosEnvio.email}</p>
                     <p><strong>Dirección:</strong> {datosEnvio.direccion}, {datosEnvio.ciudad}</p>
-                    <p><strong>Total:</strong> {formatearPrecio(total)}</p>
+                    <p><strong>Subtotal:</strong> {formatearPrecioCOP(subtotal)}</p>
+                    {descuentos > 0 && (
+                      <p><strong>Descuentos:</strong> -{formatearPrecioCOP(descuentos)}</p>
+                    )}
+                    {cuponAplicado && descuentoCupon > 0 && (
+                      <p><strong>Cupón ({cuponAplicado.codigo}):</strong> -{formatearPrecioCOP(descuentoCupon)}</p>
+                    )}
+                    <p><strong>Envío:</strong> {envio === 0 ? 'Gratis' : formatearPrecioCOP(envio)}</p>
+                    <p><strong>Total:</strong> {formatearPrecioCOP(total - (descuentoCupon || 0))}</p>
                   </div>
 
                   <div className="acciones-confirmacion">
@@ -407,24 +680,35 @@ const PaginaCarrito = () => {
               <div className="resumen-lineas">
                 <div className="resumen-linea">
                   <span>Subtotal ({totalItems} productos)</span>
-                  <span>{formatearPrecio(subtotal)}</span>
+                  <span>{formatearPrecioCOP(subtotal)}</span>
                 </div>
                 
+                {/* Descuentos del carrito */}
                 {descuentos > 0 && (
                   <div className="resumen-linea descuento">
                     <span>Descuentos</span>
-                    <span>-{formatearPrecio(descuentos)}</span>
+                    <span>-{formatearPrecioCOP(descuentos)}</span>
+                  </div>
+                )}
+                
+                {/* Descuento del cupón */}
+                {cuponAplicado && descuentoCupon > 0 && (
+                  <div className="resumen-linea descuento">
+                    <span>Cupón: {cuponAplicado.codigo}</span>
+                    <span>-{formatearPrecioCOP(descuentoCupon)}</span>
                   </div>
                 )}
                 
                 <div className="resumen-linea">
                   <span>Envío</span>
-                  <span>{envio === 0 ? 'Gratis' : formatearPrecio(envio)}</span>
+                  <span>{envio === 0 ? 'Gratis' : formatearPrecioCOP(envio)}</span>
                 </div>
                 
                 <div className="resumen-linea total">
                   <span>Total</span>
-                  <span className="precio-total">{formatearPrecio(total)}</span>
+                  <span className="precio-total">
+                    {formatearPrecioCOP(total - (descuentoCupon || 0))}
+                  </span>
                 </div>
               </div>
 
@@ -441,13 +725,42 @@ const PaginaCarrito = () => {
                       value={codigoCupon}
                       onChange={(e) => setCodigoCupon(e.target.value)}
                       placeholder="Ingresa tu código"
+                      disabled={cargandoCupon}
                     />
-                    <button onClick={aplicarCupon}>Aplicar</button>
+                    <button 
+                      onClick={manejarAplicarCupon}
+                      disabled={cargandoCupon || !codigoCupon.trim()}
+                    >
+                      {cargandoCupon ? 'Validando...' : 'Aplicar'}
+                    </button>
                   </div>
+                  
+                  {/* Mensaje de error */}
+                  {errorCupon && (
+                    <div className="cupon-error">
+                      <AlertCircle size={16} />
+                      {errorCupon}
+                    </div>
+                  )}
+                  
+                  {/* Cupón aplicado exitosamente */}
                   {cuponAplicado && (
                     <div className="cupon-aplicado">
                       <CheckCircle size={16} />
-                      {cuponAplicado}
+                      <span>
+                        {cuponAplicado.codigo} - {cuponAplicado.nombre}
+                        {cuponAplicado.tipo_descuento === 'porcentaje' 
+                          ? ` (${cuponAplicado.valor_descuento}% de descuento)`
+                          : ` (-${formatearPrecioCOP(cuponAplicado.valor_descuento)})`
+                        }
+                      </span>
+                      <button 
+                        onClick={limpiarCupon}
+                        className="boton-quitar-cupon"
+                        title="Quitar cupón"
+                      >
+                        ×
+                      </button>
                     </div>
                   )}
                 </div>
@@ -476,16 +789,7 @@ const PaginaCarrito = () => {
                     </button>
                   )}
                   
-                  {stepActual === 3 && (
-                    <button 
-                      onClick={procesarPago}
-                      className="boton-pagar"
-                      disabled={!metodoPago}
-                    >
-                      Confirmar pedido
-                      <CheckCircle size={16} />
-                    </button>
-                  )}
+
                 </div>
               )}
 

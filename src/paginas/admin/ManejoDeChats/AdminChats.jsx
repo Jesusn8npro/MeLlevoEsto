@@ -490,13 +490,16 @@ const AdminChats = () => {
                     </div>
                   )}
                   
-                  {lead.productos_consultados && (
+                  {lead.productos_consultados && lead.productos_consultados.length > 0 && (
                     <div className="productos-consultados">
                       <span className="productos-label">🛍️ Productos consultados:</span>
                       <div className="productos-tags">
-                        {lead.productos_consultados.split(',').map((producto, index) => (
+                        {(Array.isArray(lead.productos_consultados) 
+                          ? lead.productos_consultados 
+                          : lead.productos_consultados.split(',')
+                        ).map((producto, index) => (
                           <span key={index} className="producto-tag">
-                            {producto.trim()}
+                            {typeof producto === 'string' ? producto.trim() : producto}
                           </span>
                         ))}
                       </div>
@@ -604,11 +607,31 @@ const AdminChats = () => {
             
             <div className="modal-body">
               <div className="detalle-grid">
+                {/* Información Básica del Lead */}
+                <div className="detalle-seccion">
+                  <h4>🆔 Información del Sistema</h4>
+                  <div className="detalle-items">
+                    <div className="detalle-item">
+                      <strong>ID Lead:</strong>
+                      <span>{leadSeleccionado.id}</span>
+                    </div>
+                    <div className="detalle-item">
+                      <strong>Chat ID:</strong>
+                      <span>{leadSeleccionado.chat_id}</span>
+                    </div>
+                    <div className="detalle-item">
+                      <strong>Fuente:</strong>
+                      <span className="source-badge">{leadSeleccionado.source || 'web'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Información Personal */}
                 <div className="detalle-seccion">
                   <h4>👤 Información Personal</h4>
                   <div className="detalle-items">
                     <div className="detalle-item">
-                      <strong>Nombre:</strong>
+                      <strong>Nombre Completo:</strong>
                       <span>{leadSeleccionado.nombre} {leadSeleccionado.apellido}</span>
                     </div>
                     <div className="detalle-item">
@@ -619,20 +642,62 @@ const AdminChats = () => {
                       <strong>WhatsApp:</strong>
                       <span>{leadSeleccionado.whatsapp || 'No proporcionado'}</span>
                     </div>
+                  </div>
+                </div>
+
+                {/* Ubicación y Envío */}
+                <div className="detalle-seccion">
+                  <h4>📍 Ubicación y Envío</h4>
+                  <div className="detalle-items">
                     <div className="detalle-item">
-                      <strong>Ubicación:</strong>
-                      <span>{leadSeleccionado.ubicacion_usuario || 'No especificada'}</span>
+                      <strong>Ciudad:</strong>
+                      <span>{leadSeleccionado.ciudad || 'No especificada'}</span>
                     </div>
+                    <div className="detalle-item">
+                      <strong>Dirección:</strong>
+                      <span>{leadSeleccionado.direccion || 'No especificada'}</span>
+                    </div>
+                    {leadSeleccionado.datos_envio && (
+                      <div className="detalle-item full-width">
+                        <strong>Datos de Envío:</strong>
+                        <div className="json-display">
+                          {typeof leadSeleccionado.datos_envio === 'object' 
+                            ? JSON.stringify(leadSeleccionado.datos_envio, null, 2)
+                            : leadSeleccionado.datos_envio
+                          }
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
+                {/* Información Comercial */}
                 <div className="detalle-seccion">
-                  <h4>💬 Información de Consulta</h4>
+                  <h4>💰 Información Comercial</h4>
                   <div className="detalle-items">
                     <div className="detalle-item">
                       <strong>Tipo de consulta:</strong>
                       <span>{leadSeleccionado.tipo_consulta || 'General'}</span>
                     </div>
+                    <div className="detalle-item">
+                      <strong>Método de pago preferido:</strong>
+                      <span>{leadSeleccionado.metodo_pago_preferido || 'No especificado'}</span>
+                    </div>
+                    <div className="detalle-item">
+                      <strong>Precio máximo mencionado:</strong>
+                      <span>{leadSeleccionado.precio_maximo_mencionado ? formatearPrecio(leadSeleccionado.precio_maximo_mencionado) : 'No especificado'}</span>
+                    </div>
+                    <div className="detalle-item">
+                      <strong>Urgencia de compra:</strong>
+                      <span>{leadSeleccionado.urgencia_compra || 'No especificada'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Estado y Conversión */}
+                <div className="detalle-seccion">
+                  <h4>📊 Estado y Conversión</h4>
+                  <div className="detalle-items">
                     <div className="detalle-item">
                       <strong>Estado:</strong>
                       <span className={`estado-badge ${obtenerColorEstado(leadSeleccionado.estado)}`}>
@@ -648,6 +713,7 @@ const AdminChats = () => {
                   </div>
                 </div>
                 
+                {/* Métricas y Análisis */}
                 <div className="detalle-seccion">
                   <h4>📈 Métricas y Análisis</h4>
                   <div className="detalle-items">
@@ -665,13 +731,37 @@ const AdminChats = () => {
                       <strong>Valor potencial:</strong>
                       <span>{formatearPrecio(leadSeleccionado.valor_potencial)}</span>
                     </div>
-                    <div className="detalle-item">
-                      <strong>Urgencia de compra:</strong>
-                      <span>{leadSeleccionado.urgencia_compra || 'No especificada'}</span>
-                    </div>
                   </div>
                 </div>
+
+                {/* Análisis Psicológico */}
+                {(leadSeleccionado.principales_objeciones || leadSeleccionado.miedos_cliente || leadSeleccionado.tecnicas_persuasion) && (
+                  <div className="detalle-seccion full-width">
+                    <h4>🧠 Análisis Psicológico</h4>
+                    <div className="detalle-items">
+                      {leadSeleccionado.principales_objeciones && (
+                        <div className="detalle-item full-width">
+                          <strong>Principales Objeciones:</strong>
+                          <div className="texto-largo">{leadSeleccionado.principales_objeciones}</div>
+                        </div>
+                      )}
+                      {leadSeleccionado.miedos_cliente && (
+                        <div className="detalle-item full-width">
+                          <strong>Miedos del Cliente:</strong>
+                          <div className="texto-largo">{leadSeleccionado.miedos_cliente}</div>
+                        </div>
+                      )}
+                      {leadSeleccionado.tecnicas_persuasion && (
+                        <div className="detalle-item full-width">
+                          <strong>Técnicas de Persuasión:</strong>
+                          <div className="texto-largo">{leadSeleccionado.tecnicas_persuasion}</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
                 
+                {/* Contexto Inicial */}
                 {leadSeleccionado.contexto_inicial && (
                   <div className="detalle-seccion full-width">
                     <h4>💭 Contexto Inicial</h4>
@@ -681,6 +771,7 @@ const AdminChats = () => {
                   </div>
                 )}
                 
+                {/* Productos Consultados */}
                 {leadSeleccionado.productos_consultados && leadSeleccionado.productos_consultados.length > 0 && (
                   <div className="detalle-seccion full-width">
                     <h4>🛍️ Productos Consultados</h4>
@@ -693,14 +784,21 @@ const AdminChats = () => {
                     </div>
                   </div>
                 )}
+
+                {/* Notas Adicionales */}
+                {leadSeleccionado.notas_adicionales && (
+                  <div className="detalle-seccion full-width">
+                    <h4>📝 Notas Adicionales</h4>
+                    <div className="notas-box">
+                      {leadSeleccionado.notas_adicionales}
+                    </div>
+                  </div>
+                )}
                 
+                {/* Fechas Importantes */}
                 <div className="detalle-seccion">
                   <h4>📅 Fechas Importantes</h4>
                   <div className="detalle-items">
-                    <div className="detalle-item">
-                      <strong>Primer contacto:</strong>
-                      <span>{formatearFecha(leadSeleccionado.fecha_primer_contacto)}</span>
-                    </div>
                     <div className="detalle-item">
                       <strong>Creado:</strong>
                       <span>{formatearFecha(leadSeleccionado.created_at)}</span>

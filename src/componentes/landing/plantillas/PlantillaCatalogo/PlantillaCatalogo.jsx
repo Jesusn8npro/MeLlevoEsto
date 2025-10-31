@@ -1,5 +1,4 @@
 import React from 'react'
-import ImagenInteligente from '../../../ui/ImagenInteligente'
 import { useNavigate } from 'react-router-dom'
 import { formatearPrecioCOP } from '../../../../utilidades/formatoPrecio'
 import { 
@@ -123,7 +122,7 @@ const PlantillaCatalogo = ({ producto, config, reviews, notificaciones }) => {
           {/* Imagen principal */}
           {producto.fotos_principales && producto.fotos_principales.length > 0 ? (
             <div style={{ marginBottom: '1rem' }}>
-              <ImagenInteligente 
+              <img 
                 src={producto.fotos_principales[0]} 
                 alt={producto.nombre}
                 style={{ 
@@ -157,7 +156,7 @@ const PlantillaCatalogo = ({ producto, config, reviews, notificaciones }) => {
               <h4>Más imágenes:</h4>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '0.5rem' }}>
                 {producto.fotos_secundarias.map((foto, index) => (
-                  <ImagenInteligente 
+                  <img 
                     key={index}
                     src={foto} 
                     alt={`${producto.nombre} - ${index + 1}`}

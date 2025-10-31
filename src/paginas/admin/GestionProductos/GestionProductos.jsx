@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { clienteSupabase } from '../../../configuracion/supabase'
 import { useAuth } from '../../../contextos/ContextoAutenticacion'
-import ImagenInteligente from '../../../componentes/ui/ImagenInteligente'
 import './GestionProductos.css'
 import { Search, Filter, Plus, Edit, Trash2, Eye, Package, DollarSign, TrendingUp, AlertCircle } from 'lucide-react'
 
@@ -299,7 +298,7 @@ const GestionProductos = () => {
                         <div className="gestion-producto">
                           <div className="gestion-imagen">
                             {producto.fotos_principales?.[0] ? (
-                              <ImagenInteligente src={producto.fotos_principales[0]} alt={producto.nombre} className="gestion-miniatura" />
+                              <img src={producto.fotos_principales[0]} alt={producto.nombre} className="gestion-miniatura" />
                             ) : (
                               <div className="gestion-placeholder"><Package /></div>
                             )}

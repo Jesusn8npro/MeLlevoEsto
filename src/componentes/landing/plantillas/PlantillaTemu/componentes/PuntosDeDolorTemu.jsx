@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react'
-import ImagenInteligente from '../../../../../componentes/ui/ImagenInteligente'
 import './PuntosDeDolorTemu.css'
 
 const PuntosDeDolorTemu = ({ 
@@ -147,7 +146,7 @@ const PuntosDeDolorTemu = ({
                     onKeyDown={(e) => { if (e.key === 'Enter') abrirModalImagen(punto.imagen) }}
                     aria-label={`Ver ${punto.nombre} en grande`}
                   >
-                    <ImagenInteligente 
+                    <img 
                       src={punto.imagen} 
                       alt={punto.nombre}
                       className="puntos-dolor-temu-imagen"

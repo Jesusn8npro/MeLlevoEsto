@@ -17,6 +17,8 @@ import PaginaPerfil from './paginas/autenticacion/PaginaPerfil/PaginaPerfil'
 import PaginaRestablecerContrasena from './paginas/autenticacion/PaginaResetPassword/PaginaResetPassword'
 import PaginaSesionCerrada from './paginas/autenticacion/PaginaSesionCerrada/PaginaSesionCerrada'
 import PaginaNoEncontrada from './paginas/sistema/PaginaNoEncontrada/PaginaNoEncontrada'
+import PaginaRespuestaEpayco from './paginas/ecommerce/PaginaRespuestaEpayco/PaginaRespuestaEpayco'
+import PaginaConfirmacionEpayco from './paginas/ecommerce/PaginaConfirmacionEpayco/PaginaConfirmacionEpayco'
 import Contacto from './paginas/empresa/Contacto/Contacto'
 import QuienesSomos from './paginas/empresa/QuienesSomos/QuienesSomos'
 import TerminosCondiciones from './paginas/legal/TerminosCondiciones/TerminosCondiciones'
@@ -39,13 +41,13 @@ import AdminChats from './paginas/admin/ManejoDeChats/AdminChats'
 import GenericaAdmin from './paginas/admin/GenericaAdmin'
 import CalendarioTareas from './paginas/admin/calendario_tareas/CalendarioTareas'
 import TableroTareas from './paginas/admin/calendario_tareas/TableroTareas'
+import ManejoCupones from './paginas/admin/ManejoCupones/ManejoCupones'
 import LandingProducto from './paginas/LandingProducto'
 import PlantillaTemu from './componentes/landing/plantillas/PlantillaTemu/PlantillaTemu'
-import TestImagenes from './paginas/TestImagenes'
-import ProductosDemo from './componentes/producto/ProductosDemo'
 import PaginaTienda from './paginas/ecommerce/PaginaTienda/PaginaTienda'
 import NotificacionCarritoWrapper from './componentes/ui/NotificacionCarritoWrapper'
 import ChatEnVivo from './componentes/chat/ChatEnVivo'
+import BotonWhatsapp from './componentes/BotonWhatsapp/BotonWhatsapp'
 // import MigrarImagenes from './paginas/MigrarImagenes' // Eliminado
 
 function App() {
@@ -56,6 +58,8 @@ function App() {
         <div className="app">
         {/* Chat flotante visible en toda la aplicación */}
         <ChatEnVivo />
+        {/* Botón de WhatsApp flotante súper vendedor */}
+        <BotonWhatsapp />
         {/* <ProteccionAvanzada /> */}
         <Routes>
         {/* Admin Dashboard Real - Protegido por autenticación y rol */}
@@ -99,6 +103,13 @@ function App() {
           <RutaAdmin>
             <DisposicionAdmin>
               <Categorias />
+            </DisposicionAdmin>
+          </RutaAdmin>
+        } />
+        <Route path="/admin/cupones" element={
+          <RutaAdmin>
+            <DisposicionAdmin>
+              <ManejoCupones />
             </DisposicionAdmin>
           </RutaAdmin>
         } />
@@ -272,12 +283,6 @@ function App() {
         {/* Landing Pages - Sin header para máxima conversión */}
         <Route path="/landing/:slug" element={<LandingProducto />} />
         
-        {/* Test de Imágenes */}
-        <Route path="/test-imagenes" element={<TestImagenes />} />
-        
-        {/* Demo de Productos Ultra Vendedores */}
-        <Route path="/productos-demo" element={<ProductosDemo />} />
-        
         {/* Página Principal de la Tienda */}
         <Route path="/tienda" element={
           <>
@@ -361,6 +366,26 @@ function App() {
           </>
         } />
         
+        {/* Páginas de ePayco */}
+        <Route path="/respuesta-epayco" element={
+          <>
+            <HeaderPrincipal />
+            <main className="contenido-principal">
+              <PaginaRespuestaEpayco />
+            </main>
+          </>
+        } />
+        
+        <Route path="/confirmacion-epayco" element={
+          <>
+            <HeaderPrincipal />
+            <main className="contenido-principal">
+              <PaginaConfirmacionEpayco />
+            </main>
+          </>
+        } />
+        
+        {/* Prueba de ePayco - Solo para desarrollo */}
         {/* Autenticación */}
         <Route path="/login" element={
           <>

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { Heart, ShoppingCart, Eye, Star, Clock, Zap, Flame, Users, Truck, Shield, CreditCard, Ticket } from 'lucide-react'
 import { useFavoritos } from '../../contextos/FavoritosContext'
 import { useCarrito } from '../../contextos/CarritoContext'
-import ImagenInteligente from '../ui/ImagenInteligente'
 import BotonCarritoAnimado from '../ui/BotonCarritoAnimado'
 import './TarjetaProductoVendedora.css'
 
@@ -31,7 +30,7 @@ const TarjetaProductoVendedora = ({
   vistaLista = false // Nueva prop para vista de lista
 }) => {
   const { esFavorito, alternarFavorito } = useFavoritos()
-  const { agregarItem, alternarModal, mostrarNotificacion } = useCarrito()
+  const { agregarAlCarrito, alternarModal, mostrarNotificacion } = useCarrito()
   const [tiempoRestante, setTiempoRestante] = useState(null)
   const [hover, setHover] = useState(false)
   const [imagenActual, setImagenActual] = useState(0)
@@ -130,7 +129,7 @@ const TarjetaProductoVendedora = ({
       console.log('🛒 Agregando producto al carrito:', producto)
       
       // Usar el producto completo tal como viene de la base de datos
-      const resultado = await agregarItem(producto, cantidad || 1, variante)
+      const resultado = await agregarAlCarrito(producto, cantidad || 1, variante)
       
       console.log('✅ Resultado de agregar al carrito:', resultado)
       
@@ -178,7 +177,7 @@ const TarjetaProductoVendedora = ({
         <div className="lista-imagen-container">
           <Link to={`/producto/${producto.slug}`}>
             {producto.fotos_principales?.[0] ? (
-              <ImagenInteligente 
+              <img 
                 src={producto.fotos_principales[0]} 
                 alt={producto.nombre}
                 className="lista-imagen"
@@ -315,7 +314,7 @@ const TarjetaProductoVendedora = ({
       <div className="imagen-container">
         <Link to={`/producto/${producto.slug}`} className="imagen-link">
           {producto.fotos_principales?.[imagenActual] ? (
-            <ImagenInteligente 
+            <img 
               src={producto.fotos_principales[imagenActual]} 
               alt={producto.nombre}
               className="imagen-producto"

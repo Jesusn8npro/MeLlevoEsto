@@ -21,7 +21,6 @@ import {
 import { useCarrito } from '../../../../../contextos/CarritoContext'
 import { useFavoritos } from '../../../../../contextos/FavoritosContext'
 import BotonCarritoAnimado from '../../../../../componentes/ui/BotonCarritoAnimado'
-import ImagenInteligente from '../../../../../componentes/ui/ImagenInteligente'
 import { convertirUrlGoogleDrive, convertirArrayUrlsGoogleDrive, procesarImagenesProducto } from '../../../../../utilidades/googleDrive'
 // Eliminado ImagenConFallback - usaremos <img> directo
 import './HeroTemu.css'
@@ -154,7 +153,7 @@ function IndicadorModoSticky() {
 /* ============== COMPONENTE PRINCIPAL HERO TEMU ============== */
 const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
   // Hooks del carrito y favoritos
-  const { agregarItem, alternarModal, mostrarNotificacion } = useCarrito()
+  const { agregarAlCarrito, alternarModal, mostrarNotificacion } = useCarrito()
   const { esFavorito, alternarFavorito } = useFavoritos()
   
   // Estados del componente
@@ -437,7 +436,7 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
       console.log('🛒 Agregando producto desde HeroTemu al carrito:', producto)
       
       // Usar el producto completo tal como viene de la base de datos
-      const resultado = await agregarItem(producto, cantidad, variante)
+      const resultado = await agregarAlCarrito(producto, cantidad, variante)
       
       console.log('✅ Resultado de agregar desde HeroTemu:', resultado)
       

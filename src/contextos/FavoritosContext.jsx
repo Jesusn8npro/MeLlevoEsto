@@ -140,19 +140,38 @@ const FavoritosProvider = ({ children }) => {
       return []
     }
 
+    // Validar que el usuario ID sea un UUID válido
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (!uuidRegex.test(usuario.id)) {
+      console.warn('❌ Usuario ID no es un UUID válido:', usuario.id)
+      return []
+    }
+
     try {
       console.log('📡 Consultando tabla favoritos en Supabase...')
-      const { data: favoritosRaw, error: errorFavoritos } = await clienteSupabase
+      const { data: favoritosDB, error: errorFavoritos } = await clienteSupabase
         .from('favoritos')
-        .select('producto_id, usuario_id, creado_el')
+        .select('producto_id,usuario_id,created_at')
         .eq('usuario_id', usuario.id)
 
       if (errorFavoritos) {
-        console.warn('⚠️ No se pudieron cargar favoritos desde DB:', errorFavoritos?.message || errorFavoritos)
+        console.error('❌ Error al cargar favoritos desde DB:', {
+          message: errorFavoritos?.message,
+          details: errorFavoritos?.details,
+          hint: errorFavoritos?.hint,
+          code: errorFavoritos?.code,
+          fullError: errorFavoritos
+        })
+        
+        // Si la tabla no existe, mostrar mensaje específico
+        if (errorFavoritos?.code === 'PGRST116' || errorFavoritos?.message?.includes('relation "favoritos" does not exist')) {
+          console.warn('⚠️ La tabla "favoritos" no existe en Supabase. Ejecuta el script crear_tabla_favoritos.sql')
+        }
+        
         return []
       }
 
-      const ids = Array.from(new Set((favoritosRaw || []).map(f => f.producto_id))).filter(Boolean)
+      const ids = Array.from(new Set((favoritosDB || []).map(f => f.producto_id))).filter(Boolean)
       if (ids.length === 0) {
         return []
       }
@@ -187,14 +206,14 @@ const FavoritosProvider = ({ children }) => {
         mapaImagenes.set(img.producto_id, img)
       }
 
-      const combinados = (favoritosRaw || []).map(fav => {
+      const combinados = (favoritosDB || []).map(fav => {
         const p = mapaProductos.get(fav.producto_id) || {}
         const img = mapaImagenes.get(fav.producto_id) || {}
         return {
           // base favorito
           producto_id: fav.producto_id,
           usuario_id: fav.usuario_id,
-          created_at: fav.creado_el || new Date().toISOString(),
+          created_at: fav.created_at || new Date().toISOString(),
           // campos de producto
           producto_nombre: p.nombre || null,
           slug: p.slug || null,

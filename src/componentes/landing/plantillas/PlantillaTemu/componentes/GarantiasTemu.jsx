@@ -96,7 +96,7 @@ const GarantiasTemu = ({
       <div className="garantias-temu-grid">
         {datos.garantias.map((garantia, index) => (
           <div 
-            key={garantia.id}
+            key={garantia.id || index}
             className="garantias-temu-item"
             style={{ animationDelay: `${index * 0.1}s` }}
           >

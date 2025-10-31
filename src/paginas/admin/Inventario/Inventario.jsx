@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { clienteSupabase } from '../../../configuracion/supabase'
 import { useAuth } from '../../../contextos/ContextoAutenticacion'
-import ImagenInteligente from '../../../componentes/ui/ImagenInteligente'
 import { 
   Search, 
   Filter, 

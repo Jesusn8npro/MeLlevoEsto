@@ -32,6 +32,7 @@ const elementosNavegacion = [
       { nombre: 'Gestión de Productos', ruta: '/admin/gestion-productos', pro: false },
       { nombre: 'Crear productos', ruta: '/admin/productos/creador-pr', pro: false },
       { nombre: 'Categorías', ruta: '/admin/categorias', pro: false },
+      { nombre: 'Cupones de Descuento', ruta: '/admin/cupones', pro: false },
       { nombre: 'Pedidos', ruta: '/admin/pedidos', pro: false },
       { nombre: 'Inventario', ruta: '/admin/inventario', pro: false },
     ],

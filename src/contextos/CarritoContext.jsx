@@ -279,8 +279,17 @@ export const CarritoProvider = ({ children }) => {
   // Memoizar funciones para evitar re-renders innecesarios
   const agregarAlCarrito = useCallback(async (producto, cantidad = 1) => {
     try {
+      // Debug: Mostrar estructura completa del producto
+      console.log('🔍 DEBUG - Producto recibido en agregarAlCarrito:', {
+        producto,
+        tieneId: !!producto?.id,
+        id: producto?.id,
+        keys: producto ? Object.keys(producto) : 'producto es null/undefined'
+      })
+
       // Validaciones de entrada
       if (!producto || !producto.id) {
+        console.error('❌ Producto inválido:', { producto, id: producto?.id })
         throw new Error('Producto no válido')
       }
 
@@ -314,18 +323,19 @@ export const CarritoProvider = ({ children }) => {
       if (itemExistente) {
         console.log('🔍 Item existente encontrado:', {
           itemExistente,
-          hasId: !!itemExistente.id,
-          id: itemExistente.id
+          hasId: !!itemExistente?.id,
+          id: itemExistente?.id
         })
         
-        const nuevaCantidad = itemExistente.cantidad + cantidad
-        if (nuevaCantidad > CANTIDAD_MAXIMA_POR_PRODUCTO) {
-          throw new Error(`Ya tienes ${itemExistente.cantidad} unidades. No puedes agregar más de ${CANTIDAD_MAXIMA_POR_PRODUCTO} en total`)
+        // Verificar que el item tenga ID antes de continuar
+        if (!itemExistente?.id) {
+          console.error('❌ Item existente sin ID válido:', itemExistente)
+          throw new Error('Error interno: El item del carrito no tiene ID válido')
         }
         
-        // Verificar que el item tenga ID antes de actualizar
-        if (!itemExistente.id) {
-          throw new Error('Error interno: El item del carrito no tiene ID válido')
+        const nuevaCantidad = (itemExistente.cantidad || 0) + cantidad
+        if (nuevaCantidad > CANTIDAD_MAXIMA_POR_PRODUCTO) {
+          throw new Error(`Ya tienes ${itemExistente.cantidad || 0} unidades. No puedes agregar más de ${CANTIDAD_MAXIMA_POR_PRODUCTO} en total`)
         }
         
         // Si ya existe, actualizar cantidad
@@ -658,6 +668,7 @@ export const CarritoProvider = ({ children }) => {
     eliminarDelCarrito,
     limpiarCarrito,
     toggleModal: () => dispatch({ type: TIPOS_ACCION.TOGGLE_MODAL }),
+    alternarModal: () => dispatch({ type: TIPOS_ACCION.TOGGLE_MODAL }), // Alias para compatibilidad
     mostrarNotificacion,
     ocultarNotificacion
   }), [estado, agregarAlCarrito, actualizarCantidad, eliminarDelCarrito, limpiarCarrito, mostrarNotificacion, ocultarNotificacion])

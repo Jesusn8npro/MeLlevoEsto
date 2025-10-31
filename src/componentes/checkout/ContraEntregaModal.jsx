@@ -147,6 +147,74 @@ const ContraEntregaModal = ({
     return password
   }
 
+  // Función auxiliar para asegurar que un valor sea string
+  const asegurarString = (valor) => {
+    if (!valor) return ''
+    
+    // Si es un objeto, intentar extraer el valor string
+    if (typeof valor === 'object') {
+      // Si tiene una propiedad 'value', usarla
+      if (valor.value !== undefined) return String(valor.value)
+      // Si tiene una propiedad 'target' (evento), usar target.value
+      if (valor.target && valor.target.value !== undefined) return String(valor.target.value)
+      // Si es un array, tomar el primer elemento
+      if (Array.isArray(valor) && valor.length > 0) return String(valor[0])
+      // Si no se puede extraer un valor válido del objeto, retornar string vacío
+      // NUNCA convertir el objeto completo a string para evitar JSON
+      console.warn('⚠️ asegurarString: No se pudo extraer valor string del objeto:', valor)
+      return ''
+    }
+    
+    return String(valor)
+  }
+
+  // Función para sincronizar datos del pedido con la tabla usuarios
+  const sincronizarDatosUsuario = async (datosFormulario, usuarioId) => {
+    try {
+      if (!usuarioId) {
+        console.log('No hay usuario autenticado, omitiendo sincronización')
+        return
+      }
+
+      // Extraer valores directamente del formulario
+      const nombre = datosFormulario.nombre || ''
+      const apellido = datosFormulario.apellido || ''
+      const telefono = datosFormulario.telefono || ''
+      const direccion = datosFormulario.direccion || ''
+      const ciudad = datosFormulario.ciudad || ''
+      const departamento = datosFormulario.departamento || ''
+
+      // Construir nombre completo
+      const nombreCompleto = `${nombre} ${apellido}`.trim()
+
+      // Preparar datos para actualizar en la tabla usuarios
+      const datosActualizacion = {
+        nombre: nombreCompleto,
+        telefono: telefono,
+        direccion_linea_1: direccion,
+        ciudad: ciudad,
+        departamento: departamento,
+        actualizado_el: new Date().toISOString()
+      }
+
+      console.log('🔄 Sincronizando datos del usuario:', datosActualizacion)
+
+      // Actualizar la tabla usuarios
+      const { error } = await clienteSupabase
+        .from('usuarios')
+        .update(datosActualizacion)
+        .eq('id', usuarioId)
+
+      if (error) {
+        console.error('❌ Error sincronizando datos del usuario:', error)
+      } else {
+        console.log('✅ Datos del usuario sincronizados correctamente')
+      }
+    } catch (error) {
+      console.error('❌ Error en sincronizarDatosUsuario:', error)
+    }
+  }
+
   const manejarConfirmar = async (e) => {
     e.preventDefault()
     
@@ -187,38 +255,46 @@ const ContraEntregaModal = ({
       const upsellTotal = agregarUpsell ? PRECIO_UPSELL : 0
       const total = subtotal + upsellTotal
 
+      // Asegurar que nombre, apellido y teléfono sean strings antes de guardar
+      const nombreString = asegurarString(form.nombre)
+      const apellidoString = asegurarString(form.apellido)
+      const telefonoString = asegurarString(form.telefono)
+      
       const payload = {
         usuario_id: usuarioId,
-        producto_id: producto.id,
-        cantidad: ofertaSeleccionada?.cantidad || 1,
-        precio_unitario: precioUnitario,
-        descuento_porcentaje: ofertaSeleccionada?.descuento || 0,
-        precio_con_descuento: precioConDescuento,
-        subtotal: subtotal,
-        upsell_agregado: agregarUpsell,
-        upsell_precio: agregarUpsell ? PRECIO_UPSELL : 0,
-        total: total,
-        estado: 'pendiente',
-        metodo_pago: 'contra_entrega',
         numero_pedido: `COD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        oferta: {
-          id: ofertaSeleccionada?.id,
-          titulo: ofertaSeleccionada?.titulo,
-          cantidad: ofertaSeleccionada?.cantidad,
-          descuento: ofertaSeleccionada?.descuento
-        },
-        formulario: {
-          nombre: form.nombre,
-          apellido: form.apellido,
-          email: form.email,
-          telefono: form.telefono,
+        nombre_cliente: `${nombreString} ${apellidoString}`.trim(),
+        email_cliente: form.email,
+        telefono_cliente: telefonoString,
+        direccion_envio: {
           direccion: form.direccion,
           apto: form.apto,
           barrio: form.barrio,
-          departamento: form.departamento,
-          ciudad: form.ciudad
+          ciudad: form.ciudad,
+          departamento: form.departamento
         },
-        created_at: new Date().toISOString()
+        productos: [{
+          id: producto.id,
+          nombre: producto.nombre,
+          cantidad: ofertaSeleccionada?.cantidad || 1,
+          precio_unitario: precioUnitario,
+          descuento_porcentaje: ofertaSeleccionada?.descuento || 0,
+          precio_con_descuento: precioConDescuento,
+          oferta: {
+            id: ofertaSeleccionada?.id,
+            titulo: ofertaSeleccionada?.titulo,
+            cantidad: ofertaSeleccionada?.cantidad,
+            descuento: ofertaSeleccionada?.descuento
+          },
+          upsell_agregado: agregarUpsell,
+          upsell_precio: agregarUpsell ? PRECIO_UPSELL : 0
+        }],
+        subtotal: subtotal,
+        descuento_aplicado: (precioUnitario * (ofertaSeleccionada?.cantidad || 1)) - subtotal,
+        costo_envio: 0,
+        total: total,
+        estado: 'pendiente',
+        metodo_pago: 'contra_entrega'
       }
 
       const { data, error } = await clienteSupabase
@@ -232,6 +308,9 @@ const ContraEntregaModal = ({
         return
       }
 
+      // Sincronizar datos del pedido con la tabla usuarios
+      await sincronizarDatosUsuario(form, usuarioId)
+
       setCompraConfirmada(data[0])
       if (onConfirmar) onConfirmar(data[0])
 
@@ -242,7 +321,9 @@ const ContraEntregaModal = ({
   }
 
   const manejarCambioForm = (campo, valor) => {
-    setForm(prev => ({ ...prev, [campo]: valor }))
+    // Asegurar que el valor sea siempre un string
+    const valorString = asegurarString(valor)
+    setForm(prev => ({ ...prev, [campo]: valorString }))
     if (errores[campo]) {
       setErrores(prev => ({ ...prev, [campo]: '' }))
     }
@@ -274,7 +355,7 @@ const ContraEntregaModal = ({
         `💰 Total: ${formatearPrecioCOP(calcularTotal())}\n` +
         `📋 Pedido: ${compraConfirmada.numero_pedido}\n\n` +
         `📍 Dirección de entrega:\n${form.direccion}, ${form.ciudad}, ${form.departamento}\n\n` +
-        `👤 Datos de contacto:\n${form.nombre} ${form.apellido}\n📱 ${form.telefono}`
+        `👤 Datos de contacto:\n${nombreString} ${apellidoString}\n📱 ${form.telefono}`
 
       const url = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensaje)}`
       window.open(url, '_blank')
@@ -516,7 +597,7 @@ const ContraEntregaModal = ({
                     `💰 Total: ${formatearPrecioCOP(calcularTotal())}\n` +
                     `📋 Pedido: ${compraConfirmada.numero_pedido}\n\n` +
                     `📍 Dirección de entrega:\n${form.direccion}, ${form.ciudad}, ${form.departamento}\n\n` +
-                    `👤 Datos de contacto:\n${form.nombre} ${form.apellido}\n📱 ${form.telefono}`
+                    `👤 Datos de contacto:\n${asegurarString(form.nombre)} ${asegurarString(form.apellido)}\n📱 ${form.telefono}`
 
                   const url = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(mensaje)}`
                   window.open(url, '_blank')

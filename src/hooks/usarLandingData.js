@@ -10,7 +10,7 @@ export function usarLandingData(productoId) {
   const [landingConfig, setLandingConfig] = useState({})
   const [reviews, setReviews] = useState([])
   const [notificaciones, setNotificaciones] = useState([])
-  const [cargando, setCargando] = useState(true)
+  const [cargando, setCargando] = useState(false) // ⚡ Cambiado a false para carga instantánea
 
   useEffect(() => {
     if (productoId) {
@@ -19,7 +19,7 @@ export function usarLandingData(productoId) {
   }, [productoId])
 
   const cargarDatosLanding = async () => {
-    setCargando(true)
+    // ⚡ NO ponemos cargando en true para datos simulados
     
     try {
       // Por ahora, simulamos datos hasta que implementemos las tablas reales
@@ -48,7 +48,7 @@ export function usarLandingData(productoId) {
       //   .order('creado_el', { ascending: false })
       //   .limit(10)
 
-      // Datos simulados por ahora
+      // ⚡ Datos simulados cargados instantáneamente
       setLandingConfig({
         mostrar_contador: true,
         mostrar_stock_bajo: true,
@@ -93,9 +93,8 @@ export function usarLandingData(productoId) {
 
     } catch (error) {
       console.error('Error cargando datos de landing:', error)
-    } finally {
-      setCargando(false)
     }
+    // ⚡ NO ponemos finally con setCargando(false) porque nunca fue true
   }
 
   return {

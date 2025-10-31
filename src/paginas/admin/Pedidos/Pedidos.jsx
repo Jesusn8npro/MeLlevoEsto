@@ -277,7 +277,9 @@ export default function Pedidos() {
                       const emailCliente = (p.usuarios?.email || p.email_cliente || '—')
                       const metodo = p.metodo_pago || '—'
                       const referencia = p.referencia_pago || '—'
-                      const telefono = p.telefono_cliente || '—'
+                      const telefono = typeof p.telefono_cliente === 'object' 
+                        ? (p.telefono_cliente?.telefono || p.telefono_cliente?.numero || '—')
+                        : (p.telefono_cliente || '—')
                       return (
                         <tr key={p.id}>
                           <td><input type="checkbox" /></td>

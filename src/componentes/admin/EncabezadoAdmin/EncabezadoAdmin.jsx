@@ -191,7 +191,34 @@ const EncabezadoAdmin = () => {
                 </svg>
               </div>
               <div className="encabezado-info-usuario">
-                <span className="encabezado-nombre-usuario">{usuario?.nombre || 'Usuario'}</span>
+                <span className="encabezado-nombre-usuario">
+                  {
+                    (() => {
+                      if (!usuario) return 'Usuario';
+                      
+                      // Si usuario.nombre es un string válido y no contiene JSON
+                      if (typeof usuario.nombre === 'string' && usuario.nombre.trim() && !usuario.nombre.includes('{')) {
+                        return usuario.nombre;
+                      }
+                      
+                      // Si usuario.nombre contiene JSON, intentar extraer el nombre
+                      if (typeof usuario.nombre === 'string' && usuario.nombre.includes('{')) {
+                        try {
+                          const parsed = JSON.parse(usuario.nombre);
+                          if (parsed.nombre) return parsed.nombre;
+                          if (parsed.apellido) return parsed.apellido;
+                        } catch (e) {
+                          // Si no se puede parsear, continuar con otras opciones
+                        }
+                      }
+                      
+                      // Fallback a email o user_metadata
+                      return usuario.email?.split('@')[0] || 
+                             usuario.user_metadata?.nombre || 
+                             'Usuario';
+                    })()
+                  }
+                </span>
                 <span className="encabezado-rol-usuario">{usuario?.rol || 'admin'}</span>
               </div>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

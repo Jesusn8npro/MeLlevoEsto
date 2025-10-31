@@ -1,181 +1,204 @@
-import { useState, useEffect, useRef } from 'react'
-import { X, Send, MessageCircle } from 'lucide-react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { X, Send, MessageCircle, Bot } from 'lucide-react'
 import { useAuth } from '../../contextos/ContextoAutenticacion'
 import './ChatEnVivo.css'
 import { clienteSupabase, obtenerSessionId } from '../../configuracion/supabase'
 
-interface Mensaje {
-  id: string
-  texto: string
-  esUsuario: boolean
-  timestamp: Date
-  tipo?: 'texto' | 'sistema' | 'recomendacion'
-}
+const WEBHOOK_URL = 'https://velostrategix-n8n.lnrubg.easypanel.host/webhook/chat_en_vivo'
 
-interface DatosGuest {
-  nombre: string
-  email: string
-  whatsapp: string
-  tipoConsulta: string
-}
-
-interface Pais {
-  codigo: string
-  pais: string
-  bandera: string
-  digitos: number
-  formato: string
-}
+const tiposConsulta = [
+  { valor: 'general', texto: 'Consulta general' },
+  { valor: 'productos', texto: 'Información sobre productos' },
+  { valor: 'precios', texto: 'Precios y ofertas' },
+  { valor: 'envios', texto: 'Envíos y entregas' },
+  { valor: 'devolucion', texto: 'Devoluciones' },
+  { valor: 'tecnico', texto: 'Soporte técnico' },
+  { valor: 'otro', texto: 'Otro tema' }
+]
 
 export default function ChatEnVivo() {
-  const { usuario, sesionInicializada } = useAuth()
-  const sesionIniciada = sesionInicializada
+  const { usuario } = useAuth()
   
-  // Estados del chat
+  // Estados principales
   const [chatAbierto, setChatAbierto] = useState(false)
-  const [chatPuedeIniciar, setChatPuedeIniciar] = useState(false)
-  const [mensajes, setMensajes] = useState<Mensaje[]>([])
+  const [mensajes, setMensajes] = useState([])
   const [nuevoMensaje, setNuevoMensaje] = useState('')
   const [escribiendo, setEscribiendo] = useState(false)
   const [chatId, setChatId] = useState('')
+  const [contadorNoLeidos, setContadorNoLeidos] = useState(0)
+  const [imagenPopup, setImagenPopup] = useState(null)
   
-  // Datos guest y captura progresiva (sin modal)
-  const [datosGuest, setDatosGuest] = useState<DatosGuest>({
+  // Datos usuario
+  const [datosUsuario, setDatosUsuario] = useState({
     nombre: '',
     email: '',
     whatsapp: '',
     tipoConsulta: 'general'
   })
-  const pasosCaptura: Array<keyof DatosGuest> = ['nombre', 'email', 'whatsapp', 'tipoConsulta']
-  const [pasoActual, setPasoActual] = useState<keyof DatosGuest | null>(null)
+  const [mostrarModalDatos, setMostrarModalDatos] = useState(false)
   const [perfilCompleto, setPerfilCompleto] = useState(false)
-  const leadRegistradoRef = useRef(false)
   
-  const contenedorMensajesRef = useRef<HTMLDivElement>(null)
-  const inputMensajeRef = useRef<HTMLInputElement>(null)
-  
-  const tiposConsulta = [
-    { valor: 'general', texto: 'Consulta general' },
-    { valor: 'productos', texto: 'Información sobre productos' },
-    { valor: 'precios', texto: 'Precios y ofertas' },
-    { valor: 'envios', texto: 'Envíos y entregas' },
-    { valor: 'devolucion', texto: 'Devoluciones' },
-    { valor: 'tecnico', texto: 'Soporte técnico' },
-    { valor: 'otro', texto: 'Otro tema' }
-  ]
+  const contenedorMensajesRef = useRef(null)
+  const inputMensajeRef = useRef(null)
 
-  // Utilidades para renderizar imágenes dentro del mensaje
-  const extraerUrls = (texto: string): string[] => {
-    const urls = texto.match(/https?:\/\/[^\s)]+/g) || []
-    // Eliminar duplicados manteniendo orden
-    return Array.from(new Set(urls))
+  // Utilidades
+  const esUrlImagen = (url) => {
+    if (!url || typeof url !== 'string') return false
+    const patronesImagen = [
+      /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)(\?.*)?$/i,
+      /\/image\//i,
+      /cloudinary\.com/i,
+      /imgur\.com/i,
+      /unsplash\.com/i,
+      /supabase\.co.*storage/i
+    ]
+    return patronesImagen.some(patron => patron.test(url))
   }
 
-  const obtenerDriveId = (url: string): string | null => {
-    const m1 = url.match(/drive\.google\.com\/file\/d\/([^/]+)/)
-    if (m1?.[1]) return m1[1]
-    const m2 = url.match(/drive\.google\.com\/(?:open|uc)\?[^#]*id=([^&]+)/)
-    if (m2?.[1]) return m2[1]
-    return null
+  const extraerUrls = (texto) => {
+    if (!texto) return []
+    const urls = texto.match(/(https?:\/\/[^\s]+)/g) || []
+    return urls.map(url => ({
+      url: url.replace(/[.,;!?)\]}]+$/, ''),
+      esImagen: esUrlImagen(url)
+    }))
   }
 
-  const transformarDriveUrl = (url: string): string => {
-    // URL primaria para mostrar imagen inline
-    const id = obtenerDriveId(url)
-    if (id) return `https://drive.google.com/uc?export=view&id=${id}`
-    return url
+  const limpiarTextoDescriptivo = (texto) => {
+    if (!texto) return texto
+    const patronesDescriptivos = [
+      /\*\*Imagen Principal\*\*:?\s*/gi,
+      /\*\*Imagen Secundaria \d+\*\*:?\s*/gi,
+      /\d+\.\s*\*\*Imagen Secundaria \d+\*\*:?\s*/gi,
+      /¡Detalle\s*/gi,
+      /Te muestro las fotos:?\s*/gi,
+      /Aquí tienes las imágenes:?\s*/gi,
+      /\)\s*$/g
+    ]
+    
+    let textoLimpio = texto
+    patronesDescriptivos.forEach(patron => {
+      textoLimpio = textoLimpio.replace(patron, '')
+    })
+    return textoLimpio.trim()
   }
 
-  const transformarDriveUrlFallback = (url: string): string => {
-    // Fallback robusto: miniatura directa
-    const id = obtenerDriveId(url)
-    if (id) return `https://drive.google.com/thumbnail?id=${id}&sz=w1200`
-    return url
-  }
-
-  const esImagenUrl = (url: string): boolean => {
-    return (
-      /\.(png|jpg|jpeg|gif|webp|svg)(\?.*)?$/i.test(url) ||
-      /drive\.google\.com\/file\/d\//.test(url) ||
-      /drive\.google\.com\/(?:open|uc)\?/.test(url)
-    )
-  }
-
-  // Renderiza el contenido del mensaje intercalando texto, enlaces y
-  // reemplazando URLs de imagen por la imagen embebida.
-  const renderContenidoMensaje = (texto: string) => {
-    const elementos: JSX.Element[] = []
-    const regex = /https?:\/\/[^\s)]+/g
-    let ultimo = 0
-    const matches = texto.matchAll(regex)
-    for (const m of matches) {
-      const idx = m.index || 0
-      const urlOriginal = m[0]
-      // Texto previo
-      if (idx > ultimo) {
-        elementos.push(<span key={`t-${idx}`}>{texto.slice(ultimo, idx)}</span>)
-      }
-      // Imagen o enlace
-      if (esImagenUrl(urlOriginal)) {
-        const src = transformarDriveUrl(urlOriginal)
-        elementos.push(
-          <a
-            key={`img-${idx}`}
-            href={urlOriginal}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="imagen-chat-link"
-          >
-            <img
-              src={src}
-              alt="Imagen compartida"
-              className="imagen-chat"
-              loading="lazy"
-              decoding="async"
-              referrerPolicy="no-referrer"
-              onError={(e) => {
-                const fallback = transformarDriveUrlFallback(urlOriginal)
-                if (fallback && e.currentTarget.src !== fallback) {
-                  e.currentTarget.src = fallback
-                }
-              }}
-            />
-          </a>
-        )
-      } else {
-        elementos.push(
-          <a
-            key={`a-${idx}`}
-            href={urlOriginal}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mensaje-link"
-          >
-            {urlOriginal}
-          </a>
-        )
-      }
-      ultimo = idx + urlOriginal.length
+  // Renderizado de contenido con imágenes
+  const renderizarContenidoMensaje = (texto) => {
+    if (!texto) return null
+    
+    const textoLimpio = limpiarTextoDescriptivo(texto)
+    const urls = extraerUrls(textoLimpio)
+    const urlsImagen = urls.filter(u => u.esImagen)
+    
+    if (urlsImagen.length === 0) {
+      return <span>{textoLimpio}</span>
     }
-    // Texto restante
-    if (ultimo < texto.length) {
-      elementos.push(<span key={`t-end`}>{texto.slice(ultimo)}</span>)
-    }
-    return elementos
-  }
-  
-  // Webhook URL de n8n (usar el mismo del componente original)
-const WEBHOOK_URL = 'https://velostrategix-n8n.lnrubg.easypanel.host/webhook/chat_web_mellevoesto'
+    
+    const soloImagenes = urlsImagen.length > 0 && 
+                        textoLimpio.split(/\s+/).every(palabra => 
+                          urlsImagen.some(u => palabra.includes(u.url)) || palabra.trim() === ''
+                        )
 
-  // Mapear registro de Supabase a estructura de Mensaje
-  const mapRegistroAMensaje = (registro: any): Mensaje | null => {
+    if (soloImagenes) {
+      return (
+        <div>
+          {urlsImagen.map((urlInfo, index) => (
+            <div key={index} className="contenedor-imagen-chat">
+              <img 
+                src={urlInfo.url}
+                alt=""
+                className="imagen-chat"
+                onClick={() => setImagenPopup(urlInfo.url)}
+                onError={(e) => e.target.style.display = 'none'}
+                onLoad={() => {
+                  setTimeout(() => {
+                    if (contenedorMensajesRef.current) {
+                      contenedorMensajesRef.current.scrollTop = contenedorMensajesRef.current.scrollHeight
+                    }
+                  }, 100)
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      )
+    }
+    
+    let contenido = textoLimpio
+    const elementos = []
+    
+    urlsImagen.forEach((urlInfo, index) => {
+      const placeholder = `__IMAGEN_${index}__`
+      contenido = contenido.replace(urlInfo.url, placeholder)
+    })
+    
+    const partes = contenido.split(/(__IMAGEN_\d+__)/g)
+    
+    partes.forEach((parte, index) => {
+      const matchImagen = parte.match(/^__IMAGEN_(\d+)__$/)
+      
+      if (matchImagen) {
+        const indiceImagen = parseInt(matchImagen[1])
+        const urlImagen = urlsImagen[indiceImagen]?.url
+        
+        if (urlImagen) {
+          elementos.push(
+            <div key={index} className="contenedor-imagen-chat">
+              <img 
+                src={urlImagen}
+                alt=""
+                className="imagen-chat"
+                onClick={() => setImagenPopup(urlImagen)}
+                onError={(e) => e.target.style.display = 'none'}
+                onLoad={() => {
+                  setTimeout(() => {
+                    if (contenedorMensajesRef.current) {
+                      contenedorMensajesRef.current.scrollTop = contenedorMensajesRef.current.scrollHeight
+                    }
+                  }, 100)
+                }}
+              />
+            </div>
+          )
+        }
+      } else if (parte.trim() && !urlsImagen.some(u => parte.includes(u.url))) {
+        elementos.push(<span key={index}>{parte}</span>)
+      }
+    })
+    
+    return elementos.length > 0 ? elementos : <span>{textoLimpio}</span>
+  }
+
+  // Persistencia local
+  const guardarDatosLocal = useCallback((datos) => {
+    try {
+      localStorage.setItem('mellevesto_chat_datos', JSON.stringify(datos))
+    } catch (error) {
+      console.warn('Error guardando datos:', error)
+    }
+  }, [])
+
+  const cargarDatosLocal = useCallback(() => {
+    try {
+      const datos = localStorage.getItem('mellevesto_chat_datos')
+      return datos ? JSON.parse(datos) : null
+    } catch (error) {
+      return null
+    }
+  }, [])
+
+  // Mapeo de datos
+  const mapRegistroAMensaje = (registro) => {
     try {
       const raw = registro?.message ?? registro?.message_json
       const msg = typeof raw === 'string' ? JSON.parse(raw) : raw
       if (!msg) return null
+      
       const esUsuario = msg.type === 'human' || msg.type === 'user'
       const texto = msg.content ?? msg.text ?? ''
       const ts = msg.timestamp ?? registro.created_at ?? new Date().toISOString()
+      
       return {
         id: `sb_${registro.id}`,
         texto,
@@ -188,634 +211,446 @@ const WEBHOOK_URL = 'https://velostrategix-n8n.lnrubg.easypanel.host/webhook/cha
     }
   }
 
-  // Cargar historial de mensajes por session/chat id
-  const cargarHistorialSupabase = async (sessionId: string): Promise<Mensaje[]> => {
+  // Carga de datos
+  const cargarHistorial = async (sessionId) => {
     try {
       if (!sessionId) return []
+      
       const { data, error } = await clienteSupabase
         .from('chats_de_la_web')
         .select('id, session_id, message, message_json, created_at')
         .eq('session_id', sessionId)
         .order('id', { ascending: true })
-        .limit(500)
+        .limit(100)
+        
       if (error || !data) return []
-      const mensajesMapeados = data.map(mapRegistroAMensaje).filter(Boolean) as Mensaje[]
-      return mensajesMapeados
+      
+      return data.map(mapRegistroAMensaje).filter(Boolean)
     } catch {
       return []
     }
   }
 
-  // Recuperar chat_id anterior por email (para usuarios autenticados)
-  const recuperarChatIdAnteriorPorEmail = async (email?: string | null): Promise<string | null> => {
+  const registrarLead = async (datos, sessionId) => {
     try {
-      if (!email) return null
-      const { data, error } = await clienteSupabase
-        .from('leads_chat')
-        .select('chat_id, updated_at')
-        .eq('email', email)
-        .order('updated_at', { ascending: false })
-        .limit(1)
-      if (error || !data || !data.length) return null
-      return data[0].chat_id || null
-    } catch {
-      return null
-    }
-  }
-
-  const obtenerLeadPorChatId = async (idChat: string): Promise<any | null> => {
-    try {
-      const { data, error } = await clienteSupabase
-        .from('leads_chat')
-        .select('*')
-        .eq('chat_id', idChat)
-        .limit(1)
-      if (error || !data || !data.length) return null
-      return data[0]
-    } catch {
-      return null
-    }
-  }
-
-  // Persistencia en Supabase
-  const registrarMensajeSupabase = async (sessionId: string, payload: any) => {
-    try {
-      if (!sessionId) return
       await clienteSupabase
-        .from('chats_de_la_web')
-        .insert({
-          session_id: sessionId,
-          message_json: payload,
-          created_at: new Date().toISOString()
-        })
-    } catch (e) {
-      console.warn('⚠️ No se pudo registrar mensaje en Supabase:', e)
+        .from('leadschat')
+        .upsert({
+          chat_id: sessionId,
+          nombre: datos.nombre,
+          email: datos.email,
+          whatsapp: datos.whatsapp,
+          tipo_consulta: datos.tipoConsulta,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'email' })
+    } catch (error) {
+      console.warn('Error registrando lead:', error)
     }
   }
 
-  const registrarLeadSupabase = async (primerMensaje?: string, chatIdOverride?: string) => {
+  // Webhook
+  const enviarMensajeWebhook = async (mensaje, sessionId, datos) => {
     try {
-      const effectiveId = chatIdOverride || chatId
-      if (!effectiveId) return
-      const payload: any = {
-        chat_id: effectiveId,
-        nombre: sesionIniciada ? (usuario?.nombre || null) : (datosGuest.nombre || null),
-        email: sesionIniciada ? (usuario?.email || null) : (datosGuest.email || null),
-        whatsapp: sesionIniciada ? null : (datosGuest.whatsapp || null),
-        tipo_consulta: sesionIniciada ? 'general' : (datosGuest.tipoConsulta || 'general'),
-        converted: !!sesionIniciada,
-        first_message: primerMensaje || null,
-        source: 'web'
-      }
-      await clienteSupabase
-        .from('leads_chat')
-        .upsert([payload], { onConflict: 'chat_id' })
-      leadRegistradoRef.current = true
-    } catch (e) {
-      console.warn('⚠️ No se pudo registrar/actualizar lead en Supabase:', e)
-    }
-  }
-  
-  // Inicializar chat
-  useEffect(() => {
-    if (chatAbierto && !chatPuedeIniciar) {
-      inicializarChat()
-    }
-  }, [chatAbierto])
-  
-  // Scroll automático al final
-  useEffect(() => {
-    if (contenedorMensajesRef.current) {
-      contenedorMensajesRef.current.scrollTop = contenedorMensajesRef.current.scrollHeight
-    }
-  }, [mensajes])
-
-  // Auto-focus en el input cuando el chat puede iniciar
-  useEffect(() => {
-    if (chatPuedeIniciar && inputMensajeRef.current) {
-      // Usar setTimeout para asegurar que el DOM esté completamente renderizado
-      setTimeout(() => {
-        if (inputMensajeRef.current) {
-          inputMensajeRef.current.focus()
-          // En móvil, también intentar hacer scroll al input
-          inputMensajeRef.current.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-          })
-        }
-      }, 100)
-    }
-  }, [chatPuedeIniciar])
-  
-  const inicializarChat = async () => {
-    if (sesionIniciada && usuario) {
-      // Usuario autenticado
-      setChatPuedeIniciar(true)
-      // Intentar reutilizar conversación anterior por email
-      const anterior = await recuperarChatIdAnteriorPorEmail(usuario?.email)
-      const nuevoId = anterior || `user_${usuario.id}`
-      setChatId(nuevoId)
+      const datosCompletos = datos || datosUsuario
       
-      // Mensaje de bienvenida personalizado
-      const mensajeBienvenida: Mensaje = {
-        id: `msg_${Date.now()}`,
-        texto: `¡Hola ${usuario.nombre}! 👋 Soy tu asistente virtual de ME LLEVO ESTO. ¿En qué puedo ayudarte hoy?`,
-        esUsuario: false,
-        timestamp: new Date(),
-        tipo: 'sistema'
-      }
-      
-      // Cargar historial si existe; si no, mostrar bienvenida
-      const historial = await cargarHistorialSupabase(nuevoId)
-      if (historial.length) {
-        setMensajes(historial)
-      } else {
-        setMensajes([mensajeBienvenida])
+      const payload = {
+        chat_id: sessionId,
+        mensaje_del_usuario: mensaje,
+        email_usuario: datosCompletos.email || usuario?.email || '',
+        nombre: datosCompletos.nombre || usuario?.user_metadata?.full_name || '',
+        apellido: '',
+        whatsapp: datosCompletos.whatsapp || '',
+        ciudad: '',
+        direccion: '',
+        pagina_origen: window.location.href,
+        timestamp: new Date().toISOString(),
+        autenticado: !!usuario
       }
 
-      // Registrar lead autenticado en Supabase (sin bloquear UI) con el ID correcto
-      registrarLeadSupabase(undefined, nuevoId).catch(() => {})
-    } else {
-      // Usuario guest - iniciar captura progresiva dentro del chat
-      setChatPuedeIniciar(true)
-      const sid = obtenerSessionId()
-      const nuevoId = `guest_${sid}`
-      setChatId(nuevoId)
-      const bienvenida: Mensaje = {
-        id: `msg_${Date.now()}`,
-        texto: '¡Hola! 👋 Soy tu asistente virtual. Para ayudarte mejor, te haré unas preguntas rápidas.',
-        esUsuario: false,
-        timestamp: new Date(),
-        tipo: 'sistema'
+      const response = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
       }
-      const preguntaNombre: Mensaje = {
-        id: `msg_${Date.now()}_q1`,
-        texto: '¿Cuál es tu nombre?',
-        esUsuario: false,
-        timestamp: new Date(),
-        tipo: 'sistema'
-      }
-      // Cargar historial si existe
-      const historial = await cargarHistorialSupabase(nuevoId)
-      if (historial.length) {
-        setMensajes(historial)
-        const lead = await obtenerLeadPorChatId(nuevoId)
-        if (lead) {
-          setDatosGuest({
-            nombre: lead.nombre || '',
-            email: lead.email || '',
-            whatsapp: lead.whatsapp || '',
-            tipoConsulta: lead.tipo_consulta || 'general'
-          })
-          const completo = !!(lead.nombre && lead.email && lead.whatsapp)
-          setPerfilCompleto(completo)
-          setPasoActual(completo ? null : 'nombre')
-        } else {
-          setPasoActual('nombre')
-        }
-      } else {
-        setMensajes([bienvenida, preguntaNombre])
-        setPasoActual('nombre')
-      }
+
+      return await response.json()
+    } catch (error) {
+      console.error('Error enviando mensaje al webhook:', error)
+      throw error
     }
   }
-  
-  // Validaciones básicas para captura progresiva
-  const esEmailValido = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-  const esTelefonoValido = (tel: string) => {
-    const limpio = tel.replace(/\s/g, '')
-    return /^\+?\d{7,15}$/.test(limpio)
-  }
-  
-  const enviarMensaje = async () => {
-    if (!nuevoMensaje.trim() || !chatPuedeIniciar) return
+
+  // Manejo de mensajes
+  const agregarMensaje = useCallback((mensaje) => {
+    setMensajes(prev => {
+      const existe = prev.some(m => m.id === mensaje.id)
+      if (existe) return prev
+      return [...prev, mensaje]
+    })
+  }, [])
+
+  const manejarEnvio = async (e) => {
+    e.preventDefault()
     
-    // Agregar mensaje del usuario
-    const mensajeUsuario: Mensaje = {
-      id: `msg_${Date.now()}`,
+    if (!nuevoMensaje.trim()) return
+
+    const mensaje = {
+      id: `user_${Date.now()}`,
       texto: nuevoMensaje.trim(),
       esUsuario: true,
       timestamp: new Date(),
       tipo: 'texto'
     }
-    
-    setMensajes(prev => [...prev, mensajeUsuario])
+
+    agregarMensaje(mensaje)
     setNuevoMensaje('')
     setEscribiendo(true)
-    const contenido = mensajeUsuario.texto
 
-    // Crear/actualizar registro de lead en el primer mensaje si aún no existe
-    if (!leadRegistradoRef.current) {
-      registrarLeadSupabase(contenido).catch(() => {})
-    }
-
-    // Guardar mensaje del usuario en Supabase (no bloqueante)
-    registrarMensajeSupabase(chatId, { type: 'human', content: contenido }).catch(() => {})
-    
-    // Captura progresiva para usuarios guest
-    if (!sesionIniciada && !perfilCompleto && pasoActual) {
-      const respuesta = contenido
-      let siguientePaso: keyof DatosGuest | null = null
-
-      if (pasoActual === 'nombre') {
-        setDatosGuest(prev => ({ ...prev, nombre: respuesta }))
-        siguientePaso = 'email'
-        setMensajes(prev => [...prev, {
-          id: `msg_${Date.now()}_sys_email`,
-          texto: `Gracias, ${respuesta}. ¿Cuál es tu email?`,
-          esUsuario: false,
-          timestamp: new Date(),
-          tipo: 'sistema'
-        }])
-      } else if (pasoActual === 'email') {
-        if (!esEmailValido(respuesta)) {
-          setMensajes(prev => [...prev, {
-            id: `msg_${Date.now()}_sys_email_invalid`,
-            texto: 'El email no parece válido. Por favor intenta de nuevo (ej: tu@correo.com).',
-            esUsuario: false,
-            timestamp: new Date(),
-            tipo: 'sistema'
-          }])
-          setEscribiendo(false)
-          return
-        }
-        setDatosGuest(prev => ({ ...prev, email: respuesta }))
-        siguientePaso = 'whatsapp'
-        setMensajes(prev => [...prev, {
-          id: `msg_${Date.now()}_sys_tel`,
-          texto: 'Perfecto. ¿Cuál es tu WhatsApp con indicativo (ej: +57 3001234567)?',
-          esUsuario: false,
-          timestamp: new Date(),
-          tipo: 'sistema'
-        }])
-      } else if (pasoActual === 'whatsapp') {
-        if (!esTelefonoValido(respuesta)) {
-          setMensajes(prev => [...prev, {
-            id: `msg_${Date.now()}_sys_tel_invalid`,
-            texto: 'Ese número no parece válido. Incluye indicativo y solo números (ej: +57 3001234567).',
-            esUsuario: false,
-            timestamp: new Date(),
-            tipo: 'sistema'
-          }])
-          setEscribiendo(false)
-          return
-        }
-        setDatosGuest(prev => ({ ...prev, whatsapp: respuesta }))
-        siguientePaso = 'tipoConsulta'
-        setMensajes(prev => [...prev, {
-          id: `msg_${Date.now()}_sys_tipo`,
-          texto: 'Gracias. ¿Cuál es el tema de tu consulta? (general, productos, precios, envios, devolucion, tecnico, otro)',
-          esUsuario: false,
-          timestamp: new Date(),
-          tipo: 'sistema'
-        }])
-      } else if (pasoActual === 'tipoConsulta') {
-        const valor = respuesta.toLowerCase()
-        const valido = tiposConsulta.some(t => t.valor === valor)
-        setDatosGuest(prev => ({ ...prev, tipoConsulta: valido ? valor : 'general' }))
-        setPerfilCompleto(true)
-        setPasoActual(null)
-        setMensajes(prev => [...prev, {
-          id: `msg_${Date.now()}_sys_ready`,
-          texto: '¡Excelente! Ya tengo tus datos y continuaré con tu consulta. ¿En qué puedo ayudarte?',
-          esUsuario: false,
-          timestamp: new Date(),
-          tipo: 'sistema'
-        }])
-
-        // Registrar lead guest una vez completado el perfil
-        if (!leadRegistradoRef.current) {
-          registrarLeadSupabase(contenido).catch(() => {})
-        }
-      }
-
-      if (siguientePaso) setPasoActual(siguientePaso)
-    }
-    
     try {
-      // Preparar datos para el webhook
-      const datosWebhook = {
-        chatId,
-        mensaje: contenido,
-        usuario: sesionIniciada ? {
-          id: usuario?.id,
-          nombre: usuario?.nombre,
-          email: usuario?.email,
-          autenticado: true
-        } : {
-          nombre: datosGuest.nombre,
-          email: datosGuest.email,
-          whatsapp: datosGuest.whatsapp,
-          tipoConsulta: datosGuest.tipoConsulta,
-          autenticado: false
-        },
-        perfilCompleto,
-        pasoActual,
-        timestamp: new Date().toISOString(),
-        plataforma: 'ME LLEVO ESTO',
-        url: window.location.href
+      const respuestaWebhook = await enviarMensajeWebhook(mensaje.texto, chatId, datosUsuario)
+      
+      // Extraer respuesta del bot
+      let textoRespuesta = null
+      
+      if (respuestaWebhook) {
+        if (respuestaWebhook.respuesta_final) {
+          textoRespuesta = respuestaWebhook.respuesta_final
+        } else if (respuestaWebhook.response) {
+          textoRespuesta = respuestaWebhook.response
+        } else if (respuestaWebhook.message) {
+          textoRespuesta = respuestaWebhook.message
+        } else if (respuestaWebhook.texto) {
+          textoRespuesta = respuestaWebhook.texto
+        } else if (typeof respuestaWebhook === 'string') {
+          textoRespuesta = respuestaWebhook
+        } else if (respuestaWebhook.data) {
+          textoRespuesta = respuestaWebhook.data.respuesta_final || 
+                          respuestaWebhook.data.response || 
+                          respuestaWebhook.data.message
+        } else {
+          // Buscar en todas las propiedades
+          const keys = Object.keys(respuestaWebhook)
+          for (const key of keys) {
+            const value = respuestaWebhook[key]
+            if (typeof value === 'string' && value.trim().length > 0) {
+              textoRespuesta = value
+              break
+            }
+          }
+        }
       }
       
-      console.log('📤 Enviando mensaje al webhook:', datosWebhook)
-      
-      // Enviar al webhook de n8n
-      const response = await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(datosWebhook)
-      })
-      
-      if (response.ok) {
-        // Manejo robusto de distintos formatos de respuesta del webhook
-        const contentType = response.headers.get('content-type') || ''
-        let data: any = null
-        let bodyText = ''
-
-        try {
-          if (contentType.includes('application/json')) {
-            // Intentar parsear como JSON directo
-            data = await response.json()
-          } else if (response.status !== 204) {
-            // Intentar como texto y parsear si es JSON embebido
-            bodyText = await response.text()
-            try {
-              data = JSON.parse(bodyText)
-            } catch {
-              data = { mensaje: bodyText }
-            }
-          } else {
-            data = null
-          }
-        } catch (e) {
-          // Fallback: si falló json(), intentar leer como texto
-          console.warn('⚠️ No se pudo parsear la respuesta del webhook. Intentando fallback a texto.', e)
-          try {
-            bodyText = await response.text()
-            try {
-              data = JSON.parse(bodyText)
-            } catch {
-              data = { mensaje: bodyText }
-            }
-          } catch (e2) {
-            console.warn('⚠️ Falló también el fallback a texto.', e2)
-            data = null
-          }
-        }
-
-        // Extraer mensaje del bot desde diferentes estructuras posibles (n8n / custom)
-        const extraerTextoBot = (d: any): string | undefined => {
-          if (!d) return undefined
-          if (typeof d === 'string') return d
-          if (Array.isArray(d)) {
-            // n8n a veces devuelve arrays de items
-            const item = d[0]
-            return (
-              item?.json?.bot ||
-              item?.json?.mensaje ||
-              item?.json?.output ||
-              item?.json?.respuesta_final ||
-              item?.bot ||
-              item?.mensaje ||
-              item?.output ||
-              item?.respuesta_final ||
-              undefined
-            )
-          }
-          return (
-            d.mensaje ||
-            d.bot ||
-            d.output ||
-            d.respuesta_final ||
-            d.message ||
-            d?.data?.mensaje ||
-            d?.data?.bot ||
-            d?.data?.output ||
-            d?.data?.respuesta_final ||
-            d?.json?.bot ||
-            d?.json?.mensaje ||
-            d?.json?.output ||
-            d?.json?.respuesta_final ||
-            undefined
-          )
-        }
-
-        const textoBot = extraerTextoBot(data) || '¡Gracias por tu mensaje! Te responderemos pronto.'
-        const tipoBot: Mensaje['tipo'] = (data && (data.tipo || data?.json?.tipo)) || 'texto'
-
-        console.log('✅ Respuesta webhook', {
-          status: response.status,
-          contentType,
-          dataPreview: typeof data === 'string' ? data : (data ? JSON.stringify(data).slice(0, 300) : null)
-        })
-
-        // Agregar respuesta del bot
-        const mensajeBot: Mensaje = {
-          id: `msg_${Date.now()}_bot`,
-          texto: textoBot,
+      if (textoRespuesta && textoRespuesta.trim()) {
+        const mensajeBot = {
+          id: `bot_${Date.now()}`,
+          texto: textoRespuesta.trim(),
           esUsuario: false,
           timestamp: new Date(),
-          tipo: tipoBot
+          tipo: 'texto'
         }
-
-        setTimeout(() => {
-          setMensajes(prev => [...prev, mensajeBot])
-          setEscribiendo(false)
-        }, 800)
-
-        // Guardar mensaje del bot en Supabase (no bloqueante)
-        registrarMensajeSupabase(chatId, { type: 'ai', content: textoBot, metadata: { tipo: tipoBot } }).catch(() => {})
-
+        agregarMensaje(mensajeBot)
       } else {
-        throw new Error('Error en la respuesta del servidor')
+        const mensajeFallback = {
+          id: `bot_${Date.now()}`,
+          texto: 'Disculpa, hubo un problema procesando tu mensaje. ¿Podrías intentar de nuevo?',
+          esUsuario: false,
+          timestamp: new Date(),
+          tipo: 'texto'
+        }
+        agregarMensaje(mensajeFallback)
       }
-      
     } catch (error) {
-      console.error('❌ Error enviando mensaje:', error)
+      console.error('Error procesando respuesta del webhook:', error)
       
-      // Mensaje de error
-      const mensajeError: Mensaje = {
-        id: `msg_${Date.now()}_error`,
-        texto: 'Lo siento, hay un problema técnico. Por favor intenta de nuevo o contáctanos por WhatsApp.',
+      const mensajeError = {
+        id: `bot_${Date.now()}`,
+        texto: 'Lo siento, no pude procesar tu mensaje en este momento. Por favor, inténtalo de nuevo.',
         esUsuario: false,
         timestamp: new Date(),
-        tipo: 'sistema'
+        tipo: 'texto'
       }
-      
-      setTimeout(() => {
-        setMensajes(prev => [...prev, mensajeError])
-        setEscribiendo(false)
-      }, 1000)
+      agregarMensaje(mensajeError)
+    } finally {
+      setEscribiendo(false)
     }
   }
-  
-  const manejarEnvio = (e: React.FormEvent) => {
-    e.preventDefault()
-    enviarMensaje()
-  }
-  
-  const seleccionarPais = (pais: Pais) => {
-    setPaisSeleccionado(pais)
-    setNumeroTelefono('')
-    setSelectorVisible(false)
-  }
-  
-  const validarNumeroTelefono = (numero: string) => {
-    const numeroLimpio = numero.replace(/\D/g, '')
-    
-    if (numeroLimpio.length === paisSeleccionado.digitos) {
-      setDatosGuest(prev => ({
-        ...prev,
-        whatsapp: paisSeleccionado.codigo + numeroLimpio
-      }))
-      return true
+
+  // Inicialización
+  const inicializarChat = useCallback(async () => {
+    try {
+      const sessionId = await obtenerSessionId()
+      setChatId(sessionId)
+
+      const datosGuardados = cargarDatosLocal()
+      if (datosGuardados) {
+        setDatosUsuario(datosGuardados)
+        setPerfilCompleto(true)
+      } else if (usuario?.email) {
+        setDatosUsuario(prev => ({
+          ...prev,
+          email: usuario.email || '',
+          nombre: usuario.user_metadata?.full_name || ''
+        }))
+      }
+
+      const historial = await cargarHistorial(sessionId)
+      if (historial.length > 0) {
+        setMensajes(historial)
+      } else {
+        const bienvenida = {
+          id: 'bienvenida',
+          texto: '¡Hola! 👋 Soy tu asistente virtual de ME LLEVO ESTO. ¿En qué puedo ayudarte hoy?',
+          esUsuario: false,
+          timestamp: new Date(),
+          tipo: 'sistema'
+        }
+        setMensajes([bienvenida])
+      }
+    } catch (error) {
+      console.warn('Error inicializando chat:', error)
     }
-    return false
-  }
-  
-  const formatearNumeroInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let valor = e.target.value.replace(/\D/g, '')
-    
-    if (valor.length > paisSeleccionado.digitos) {
-      valor = valor.slice(0, paisSeleccionado.digitos)
+  }, [usuario, cargarDatosLocal])
+
+  // Scroll automático
+  const scrollAlFinal = useCallback(() => {
+    if (contenedorMensajesRef.current) {
+      contenedorMensajesRef.current.scrollTop = contenedorMensajesRef.current.scrollHeight
     }
+  }, [])
+
+  // Efectos
+  useEffect(() => {
+    if (chatAbierto) {
+      inicializarChat()
+    }
+  }, [chatAbierto, inicializarChat])
+
+  useEffect(() => {
+    scrollAlFinal()
+  }, [mensajes, scrollAlFinal])
+
+  useEffect(() => {
+    if (chatAbierto && inputMensajeRef.current) {
+      inputMensajeRef.current.focus()
+    }
+  }, [chatAbierto])
+
+  // Manejo de modal
+  const manejarDatosModal = async (datos) => {
+    setDatosUsuario(datos)
+    setPerfilCompleto(true)
+    guardarDatosLocal(datos)
+    setMostrarModalDatos(false)
     
-    setNumeroTelefono(valor)
-    validarNumeroTelefono(valor)
+    await registrarLead(datos, chatId)
+    
+    const confirmacion = {
+      id: `confirmacion_${Date.now()}`,
+      texto: `¡Perfecto, ${datos.nombre}! 🎉 Ya tengo tus datos. ¿En qué más puedo ayudarte?`,
+      esUsuario: false,
+      timestamp: new Date(),
+      tipo: 'sistema'
+    }
+    agregarMensaje(confirmacion)
   }
-  
-  const cerrarChat = () => {
-    setChatAbierto(false)
-    // No resetear chatPuedeIniciar ni mensajes para mantener el estado
-    // Solo resetear si es necesario para la funcionalidad
+
+  const toggleChat = () => {
+    setChatAbierto(!chatAbierto)
+    if (!chatAbierto) {
+      setContadorNoLeidos(0)
+    }
   }
-  
+
   return (
     <>
-      {/* Botón flotante del chat */}
-      <div className={`chat-widget-container ${chatAbierto ? 'chat-abierto' : ''}`}>
-        <button
-          className="chat-toggle-btn"
-          onClick={() => setChatAbierto(!chatAbierto)}
-          aria-label={chatAbierto ? 'Cerrar chat' : 'Abrir chat'}
-        >
-          {chatAbierto ? <X size={24} /> : <MessageCircle size={24} />}
-          {!chatAbierto && (
-            <div className="chat-notification-badge">
-              <span>💬</span>
-            </div>
-          )}
-        </button>
-        
-        {/* Ventana del chat */}
+      <div className={`contenedor-widget-chat ${chatAbierto ? 'chat-abierto' : ''}`}>
+        {!chatAbierto && (
+          <button
+            onClick={toggleChat}
+            className="boton-toggle-chat"
+            aria-label="Abrir chat"
+          >
+            <MessageCircle size={28} />
+            {contadorNoLeidos > 0 && (
+              <span className="badge-notificacion-chat">
+                {contadorNoLeidos > 9 ? '9+' : contadorNoLeidos}
+              </span>
+            )}
+          </button>
+        )}
+
         {chatAbierto && (
-          <div className="chat-window">
-            {/* Header del chat */}
-            <div className="chat-header">
-              <div className="chat-header-info">
-                <div className="chat-avatar">
-                  <MessageCircle size={20} />
-                </div>
-                <div>
-                  <h3>ME LLEVO ESTO</h3>
-                  <p>Asistente Virtual</p>
-                </div>
+          <div className="ventana-chat">
+            <div className="header-chat">
+              <div className="avatar-chat">
+                <Bot size={24} />
+              </div>
+              <div className="info-chat">
+                <h3>ME LLEVO ESTO</h3>
+                <p>Asistente Virtual</p>
               </div>
               <button
-                className="chat-close-btn"
-                onClick={cerrarChat}
+                onClick={toggleChat}
+                className="boton-cerrar-chat"
                 aria-label="Cerrar chat"
               >
                 <X size={20} />
               </button>
             </div>
-            
-            {/* Contenido del chat */}
-            <div className="chat-content">
-              {!chatPuedeIniciar ? (
-                <div className="chat-welcome">
-                  <div className="welcome-icon">👋</div>
-                  <h3>¡Hola! Bienvenido a ME LLEVO ESTO</h3>
-                  <p>Estamos aquí para ayudarte con cualquier consulta sobre nuestros productos y servicios.</p>
-                  <button
-                    className="start-chat-btn"
-                    onClick={inicializarChat}
-                  >
-                    Iniciar Chat
-                  </button>
+
+            <div className="mensajes-chat" ref={contenedorMensajesRef}>
+              {mensajes.length === 0 ? (
+                <div className="pantalla-bienvenida">
+                  <h3>¡Hola! 👋</h3>
+                  <p>Soy tu asistente virtual. ¿En qué puedo ayudarte?</p>
                 </div>
               ) : (
-                <>
-                  {/* Mensajes */}
-                  <div className="chat-messages" ref={contenedorMensajesRef}>
-                    {mensajes.map((mensaje) => {
-                      const urls = extraerUrls(mensaje.texto)
-                      const imagenes = urls.filter(esImagenUrl).map(transformarDriveUrl)
-                      return (
-                        <div
-                          key={mensaje.id}
-                          className={`mensaje ${mensaje.esUsuario ? 'usuario' : 'bot'} ${mensaje.tipo}`}
-                        >
-                          <div className="mensaje-contenido">
-                            <div className="mensaje-cuerpo">{renderContenidoMensaje(mensaje.texto)}</div>
-                            <span className="mensaje-tiempo">
-                              {mensaje.timestamp.toLocaleTimeString([], { 
-                                hour: '2-digit', 
-                                minute: '2-digit' 
-                              })}
-                            </span>
-                          </div>
-                        </div>
-                      )
-                    })}
-                    
-                    {escribiendo && (
-                      <div className="mensaje bot">
-                        <div className="mensaje-contenido escribiendo">
-                          <div className="typing-indicator">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                mensajes.map((mensaje) => (
+                  <div 
+                    key={mensaje.id} 
+                    className={`mensaje ${mensaje.esUsuario ? 'usuario' : 'bot'}`}
+                  >
+                    <div className="contenido-mensaje">
+                      {renderizarContenidoMensaje(mensaje.texto)}
+                    </div>
                   </div>
-                  
-                  {/* Input de mensaje */}
-                  <form className="chat-input-form" onSubmit={manejarEnvio}>
-                    <input
-                      ref={inputMensajeRef}
-                      type="text"
-                      value={nuevoMensaje}
-                      onChange={(e) => setNuevoMensaje(e.target.value)}
-                      placeholder="Escribe tu mensaje..."
-                      className="chat-input"
-                      disabled={escribiendo}
-                      autoComplete="off"
-                      autoCorrect="off"
-                      autoCapitalize="sentences"
-                      spellCheck="true"
-                      inputMode="text"
-                      enterKeyHint="send"
-                    />
-                    <button
-                      type="submit"
-                      className="chat-send-btn"
-                      disabled={!nuevoMensaje.trim() || escribiendo}
-                    >
-                      <Send size={20} />
-                    </button>
-                  </form>
-                </>
+                ))
+              )}
+
+              {escribiendo && (
+                <div className="mensaje bot">
+                  <div className="escribiendo">
+                    <div className="puntos-escribiendo">
+                      <div className="punto"></div>
+                      <div className="punto"></div>
+                      <div className="punto"></div>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
+
+            <form onSubmit={manejarEnvio} className="formulario-entrada-chat">
+              <input
+                ref={inputMensajeRef}
+                type="text"
+                value={nuevoMensaje}
+                onChange={(e) => setNuevoMensaje(e.target.value)}
+                placeholder="Escribe tu mensaje..."
+                className="entrada-chat"
+                disabled={escribiendo}
+              />
+              <button
+                type="submit"
+                className="boton-enviar-chat"
+                disabled={!nuevoMensaje.trim() || escribiendo}
+                aria-label="Enviar mensaje"
+              >
+                <Send size={18} />
+              </button>
+            </form>
           </div>
         )}
       </div>
-      
-      {/* Modal eliminado: la captura de datos ahora ocurre dentro del chat */}
+
+      {/* Popup de imagen */}
+      {imagenPopup && (
+        <div className="popup-imagen-overlay" onClick={() => setImagenPopup(null)}>
+          <div className="popup-imagen-contenido" onClick={(e) => e.stopPropagation()}>
+            <button 
+              className="boton-cerrar-popup"
+              onClick={() => setImagenPopup(null)}
+              aria-label="Cerrar imagen"
+            >
+              <X size={24} />
+            </button>
+            <img 
+              src={imagenPopup} 
+              alt="Imagen ampliada" 
+              className="imagen-popup"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Modal de datos de usuario */}
+      {mostrarModalDatos && (
+        <div className="modal-overlay">
+          <div className="modal-contenido">
+            <h3>Cuéntanos sobre ti</h3>
+            <form onSubmit={(e) => {
+              e.preventDefault()
+              manejarDatosModal(datosUsuario)
+            }}>
+              <div className="grupo-input">
+                <label>Nombre completo</label>
+                <input
+                  type="text"
+                  value={datosUsuario.nombre}
+                  onChange={(e) => setDatosUsuario(prev => ({ ...prev, nombre: e.target.value }))}
+                  required
+                />
+              </div>
+              
+              <div className="grupo-input">
+                <label>Email</label>
+                <input
+                  type="email"
+                  value={datosUsuario.email}
+                  onChange={(e) => setDatosUsuario(prev => ({ ...prev, email: e.target.value }))}
+                  required
+                />
+              </div>
+              
+              <div className="grupo-input">
+                <label>WhatsApp</label>
+                <input
+                  type="tel"
+                  value={datosUsuario.whatsapp}
+                  onChange={(e) => setDatosUsuario(prev => ({ ...prev, whatsapp: e.target.value }))}
+                  placeholder="3001234567"
+                  required
+                />
+              </div>
+              
+              <div className="grupo-input">
+                <label>Tipo de consulta</label>
+                <select
+                  value={datosUsuario.tipoConsulta}
+                  onChange={(e) => setDatosUsuario(prev => ({ ...prev, tipoConsulta: e.target.value }))}
+                  required
+                >
+                  {tiposConsulta.map(tipo => (
+                    <option key={tipo.valor} value={tipo.valor}>
+                      {tipo.texto}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="botones-modal">
+                <button
+                  type="button"
+                  onClick={() => setMostrarModalDatos(false)}
+                  className="boton-modal boton-secundario"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="boton-modal boton-primario"
+                >
+                  Continuar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   )
 }

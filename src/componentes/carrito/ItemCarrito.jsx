@@ -11,7 +11,6 @@ import {
   ShoppingCart,
   AlertCircle
 } from 'lucide-react'
-import ImagenInteligente from '../ui/ImagenInteligente'
 import './ItemCarrito.css'
 
 const ItemCarrito = ({ 
@@ -133,7 +132,7 @@ const ItemCarrito = ({
       {/* Imagen del producto */}
       <div className="item-imagen-container">
         <Link to={`/producto/${item.productos?.id}`}>
-          <ImagenInteligente 
+          <img 
             src={imagenPrincipal}
             alt={item.productos?.nombre}
             className="item-imagen"
@@ -228,11 +227,6 @@ const ItemCarrito = ({
             <span className="precio-unitario">
               {formatearPrecio(item.precio_unitario)}
             </span>
-            {!compacto && (
-              <span className="precio-total">
-                Total: {formatearPrecio(precioTotal)}
-              </span>
-            )}
           </div>
 
           {/* Controles de cantidad */}

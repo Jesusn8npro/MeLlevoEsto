@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react'
-import ImagenInteligente from '../../../../../componentes/ui/ImagenInteligente'
 import './CaracteristicasTemu.css'
 
 /**
@@ -174,7 +173,7 @@ const CaracteristicasTemu = ({
             style={{ cursor: 'pointer' }}
             title="Haz clic para ver el producto completo"
           >
-            <ImagenInteligente 
+            <img 
               src={imagenCaracteristicas} 
               alt="Producto principal"
               className="caracteristicas-temu-imagen"

@@ -104,6 +104,46 @@ const FormularioProducto = ({
     return placeholders[campo] || '{}'
   }, [])
 
+  // Función para manejar cambios en campos numéricos (decimales)
+  const manejarCambioNumerico = useCallback((campo, valor) => {
+    // Permitir valores vacíos
+    if (valor === '') {
+      actualizarDatosProducto({ [campo]: '' })
+      return
+    }
+    
+    // Convertir a número y validar
+    const numero = parseFloat(valor)
+    if (!isNaN(numero)) {
+      actualizarDatosProducto({ [campo]: numero })
+    }
+    
+    // Limpiar error si existe
+    if (errores[campo]) {
+      setErrores(prev => ({ ...prev, [campo]: null }))
+    }
+  }, [errores])
+
+  // Función para manejar cambios en campos enteros
+  const manejarCambioEntero = useCallback((campo, valor) => {
+    // Permitir valores vacíos
+    if (valor === '') {
+      actualizarDatosProducto({ [campo]: '' })
+      return
+    }
+    
+    // Convertir a entero y validar
+    const entero = parseInt(valor, 10)
+    if (!isNaN(entero)) {
+      actualizarDatosProducto({ [campo]: entero })
+    }
+    
+    // Limpiar error si existe
+    if (errores[campo]) {
+      setErrores(prev => ({ ...prev, [campo]: null }))
+    }
+  }, [errores])
+
   const validarFormulario = useCallback(() => {
     const nuevosErrores = {}
     

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import ImagenInteligente from '../../../../ui/ImagenInteligente'
 import './CTAFinalTemu.css'
 
 const CTAFinalTemu = ({ 
@@ -136,7 +135,7 @@ const CTAFinalTemu = ({
 
         {producto?.imagenes?.imagen_cta_final && (
           <div className="cta-final-temu-imagen-container">
-            <ImagenInteligente
+            <img
               src={producto.imagenes.imagen_cta_final}
               alt="Llamada a la acción final"
               className="cta-final-temu-imagen"
