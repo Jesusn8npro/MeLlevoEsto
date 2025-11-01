@@ -480,7 +480,7 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
   }
 
   return (
-    <div className="hero-temu-contenedor">
+    <div className="hero-temu-contenedor hero-section">
       {/* DEBUG eliminado */}
 
       {/* Indicador del modo sticky */}
@@ -594,6 +594,13 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                   loading="eager"
                 />
                 
+                {/* Etiqueta VENDIDO */}
+                {producto?.estado === 'vendido' && (
+                  <div className="hero-temu-etiqueta-vendido">
+                    <span>VENDIDO</span>
+                  </div>
+                )}
+                
                 {/* Badge de descuento */}
                 {descuento > 0 && (
                   <div className="hero-temu-badge-descuento">
@@ -601,18 +608,20 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                   </div>
                 )}
                 
-                {/* Botón de favoritos */}
-                <button 
-                  className={`hero-temu-boton-favoritos ${esFavorito(producto?.id) ? 'activo' : ''}`}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    if (producto) {
-                      alternarFavorito(producto)
-                    }
-                  }}
-                >
-                  <Heart size={20} fill={esFavorito(producto?.id) ? '#ff4757' : 'none'} />
-                </button>
+                {/* Botón de favoritos - Solo mostrar si el producto NO está vendido */}
+                {producto?.estado !== 'vendido' && (
+                  <button 
+                    className={`hero-temu-boton-favoritos ${esFavorito(producto?.id) ? 'activo' : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      if (producto) {
+                        alternarFavorito(producto)
+                      }
+                    }}
+                  >
+                    <Heart size={20} fill={esFavorito(producto?.id) ? '#ff4757' : 'none'} />
+                  </button>
+                )}
 
                 {/* Flechas de navegación en hover */}
                 {mostrarFlechas && imagenesFinales.length > 1 && (
@@ -762,26 +771,35 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
             </div>
           </div>
 
-          {/* Oferta relámpago mejorada */}
-          <div className="hero-temu-oferta-relampago">
-            <div className="hero-temu-oferta-header">
-              <span className="hero-temu-oferta-titulo">⚡ Oferta relámpago</span>
-              <div className="hero-temu-contador-tiempo">
-                <span className="hero-temu-icono-reloj">⏰</span>
-                <span>Termina en</span>
-                <span className="hero-temu-tiempo-numero">{tiempoRestante}</span>
+          {/* Oferta relámpago mejorada - Solo mostrar si el producto NO está vendido */}
+          {producto?.estado !== 'vendido' && (
+            <div className="hero-temu-oferta-relampago">
+              <div className="hero-temu-oferta-header">
+                <span className="hero-temu-oferta-titulo">⚡ Oferta relámpago</span>
+                <div className="hero-temu-contador-tiempo">
+                  <span className="hero-temu-icono-reloj">⏰</span>
+                  <span>Termina en</span>
+                  <span className="hero-temu-tiempo-numero">{tiempoRestante}</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Botones de acción principales */}
           <div className="hero-temu-botones-accion">
-            {producto?.activo === false ? (
+            {producto?.activo === false || producto?.estado === 'vendido' ? (
               // Botones deshabilitados cuando el producto está vendido
               <div className="hero-temu-botones-vendido">
-                <button className="hero-temu-boton-vendido" disabled>
-                  <span>❌</span>
-                  Producto Vendido
+                <button 
+                  onClick={() => {
+                    // Redirigir a la categoría del producto
+                    const categoriaSlug = producto?.categorias?.slug || 'productos'
+                    window.location.href = `/tienda/categoria/${categoriaSlug}`
+                  }}
+                  className="hero-temu-boton-producto-vendido"
+                >
+                  <Package size={18} />
+                  Este producto ya fue vendido - Ver más productos
                 </button>
                 <button className="hero-temu-boton-notificar">
                   <span>🔔</span>

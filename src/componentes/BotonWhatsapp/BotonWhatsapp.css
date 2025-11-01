@@ -196,21 +196,6 @@
 /* Tablets */
 @media (max-width: 768px) {
   .boton-whatsapp {
-    left: 20px;
-    bottom: 20px;
-    width: 60px;
-    height: 60px;
-  }
-  
-  .mensaje-promocional {
-    font-size: 10px;
-    padding: 6px 10px;
-  }
-}
-
-/* Móviles */
-@media (max-width: 480px) {
-  .boton-whatsapp {
     left: 15px;
     bottom: 90px; /* Más arriba para no interferir con navegación móvil */
     width: 55px;
@@ -218,24 +203,8 @@
   }
   
   .mensaje-promocional {
-    top: -40px;
-    font-size: 9px;
-    padding: 5px 8px;
-  }
-  
-  .badge-notificacion {
-    font-size: 9px;
-    padding: 1px 6px;
-  }
-}
-
-/* Móviles muy pequeños */
-@media (max-width: 360px) {
-  .boton-whatsapp {
-    left: 10px;
-    bottom: 85px;
-    width: 50px;
-    height: 50px;
+    font-size: 10px;
+    padding: 6px 10px;
   }
 }
 

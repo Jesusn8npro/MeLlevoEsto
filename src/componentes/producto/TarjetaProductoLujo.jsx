@@ -5,6 +5,7 @@ import { clienteSupabase } from '../../configuracion/supabase'
 import { useFavoritos } from '../../contextos/FavoritosContext'
 import { useCarrito } from '../../contextos/CarritoContext'
 import { convertirUrlGoogleDrive, convertirUrlGoogleDriveAlternativo } from '../../utilidades/googleDrive'
+import EtiquetaVendido from './EtiquetaVendido'
 import './TarjetaProductoLujo.es.css'
 
 /**
@@ -288,6 +289,16 @@ export default function TarjetaProductoLujo({ producto, modoAccion = 'auto' }) {
 
       {/* Imagen con cambio al hover */}
       <Link to={slug ? `/producto/${slug}` : '#'} className="zona-imagen-lujo" aria-label={`Ver ${nombre}`}>
+        {/* Etiqueta VENDIDO */}
+        {estado === 'vendido' && (
+          <EtiquetaVendido 
+            tamaño="normal"
+            posicion="superior-derecha"
+            mostrarIcono={true}
+            variante="premium"
+          />
+        )}
+        
         <img 
           src={srcPrincipal} 
           alt={nombre} 

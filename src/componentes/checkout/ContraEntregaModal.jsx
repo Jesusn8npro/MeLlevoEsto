@@ -5,6 +5,7 @@ import { validarNombre, validarTelefono, validarDireccion, validarEmail } from '
 import { useAuth } from '../../contextos/ContextoAutenticacion'
 import { clienteSupabase } from '../../configuracion/supabase'
 import { useNavigate } from 'react-router-dom'
+import Portal from '../ui/Portal'
 import './ContraEntregaModal.css'
 
 const ContraEntregaModal = ({
@@ -376,7 +377,8 @@ const ContraEntregaModal = ({
   if (!abierto) return null
 
   return (
-    <div className={`cod-modal-overlay ${cerrandoAuto ? 'cod-cerrando' : ''}`}>
+    <Portal>
+      <div className={`cod-modal-overlay ${cerrandoAuto ? 'cod-cerrando' : ''}`}>
       <div className="cod-modal">
         <button className="cod-cerrar" onClick={onCerrar}>
           <X size={24} />
@@ -642,6 +644,7 @@ const ContraEntregaModal = ({
         )}
       </div>
     </div>
+    </Portal>
   )
 }
 

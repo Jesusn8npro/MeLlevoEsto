@@ -36,6 +36,19 @@ const PaginaRespuestaEpayco = () => {
   useEffect(() => {
     const procesarRespuestaEpayco = async () => {
       try {
+        // Ejecutar diagnóstico de conectividad primero
+        console.log('🔧 Ejecutando diagnóstico de Supabase...')
+        const diagnostico = await pedidosServicio.diagnosticarConectividad()
+        console.log('📋 Resultado del diagnóstico:', diagnostico)
+        
+        if (!diagnostico.conectividad) {
+          console.error('🚨 Sin conectividad a Supabase:', diagnostico.error)
+        } else if (!diagnostico.campoEpayco) {
+          console.error('🚨 Campo epayco_ref_payco no accesible:', diagnostico.solucion)
+        } else {
+          console.log('✅ Diagnóstico exitoso, procediendo con la consulta...')
+        }
+
         // Obtener TODOS los parámetros de ePayco según documentación oficial
         const x_cust_id_cliente = searchParams.get('x_cust_id_cliente')
         const x_ref_payco = searchParams.get('x_ref_payco')
@@ -211,21 +224,35 @@ const PaginaRespuestaEpayco = () => {
             pedidoReal = await pedidosServicio.buscarPedidoPorNumero(ref_payco)
           }
           
+          // Si aún no se encuentra, usar método alternativo
+          if (!pedidoReal && ref_payco) {
+            console.log('🔄 Intentando búsqueda alternativa...')
+            pedidoReal = await pedidosServicio.buscarPedidoAlternativo(ref_payco)
+          }
+          
           console.log('📦 Pedido encontrado:', pedidoReal)
         } catch (error) {
           console.error('❌ Error al buscar pedido:', error)
+          
+          // Como último recurso, intentar búsqueda alternativa
+          try {
+            console.log('🔄 Intentando búsqueda alternativa como último recurso...')
+            pedidoReal = await pedidosServicio.buscarPedidoAlternativo(ref_payco)
+          } catch (fallbackError) {
+            console.error('❌ Error en búsqueda alternativa:', fallbackError)
+          }
         }
 
         // Generar descripción del producto basada en los datos del pedido
           let descripcionProducto = 'Producto no encontrado'
-          if (pedidoEncontrado?.productos && pedidoEncontrado.productos.length > 0) {
-            if (pedidoEncontrado.productos.length === 1) {
-              const producto = pedidoEncontrado.productos[0]
+          if (pedidoReal?.productos && pedidoReal.productos.length > 0) {
+            if (pedidoReal.productos.length === 1) {
+              const producto = pedidoReal.productos[0]
               descripcionProducto = `${producto.nombre} (x${producto.cantidad}) - MeLlevoEsto.com`
-            } else if (pedidoEncontrado.productos.length <= 3) {
-              descripcionProducto = `${pedidoEncontrado.productos.map(item => `${item.nombre} (x${item.cantidad})`).join(', ')} - MeLlevoEsto.com`
+            } else if (pedidoReal.productos.length <= 3) {
+              descripcionProducto = `${pedidoReal.productos.map(item => `${item.nombre} (x${item.cantidad})`).join(', ')} - MeLlevoEsto.com`
             } else {
-              descripcionProducto = `${pedidoEncontrado.productos.slice(0, 2).map(item => `${item.nombre} (x${item.cantidad})`).join(', ')} y ${pedidoEncontrado.productos.length - 2} productos más - MeLlevoEsto.com`
+              descripcionProducto = `${pedidoReal.productos.slice(0, 2).map(item => `${item.nombre} (x${item.cantidad})`).join(', ')} y ${pedidoReal.productos.length - 2} productos más - MeLlevoEsto.com`
             }
           }
 
@@ -291,7 +318,7 @@ const PaginaRespuestaEpayco = () => {
         setDatosTransaccion(datosCompletos)
 
         // Si el pago fue exitoso, limpiar el carrito
-        if (estado === 'Aceptada' || cod_respuesta === '1') {
+        if (estado === 'Aceptada' || x_cod_response === '1') {
           limpiarCarrito()
         }
 

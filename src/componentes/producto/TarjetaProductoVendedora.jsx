@@ -4,6 +4,7 @@ import { Heart, ShoppingCart, Eye, Star, Clock, Zap, Flame, Users, Truck, Shield
 import { useFavoritos } from '../../contextos/FavoritosContext'
 import { useCarrito } from '../../contextos/CarritoContext'
 import BotonCarritoAnimado from '../ui/BotonCarritoAnimado'
+import EtiquetaVendido from './EtiquetaVendido'
 import './TarjetaProductoVendedora.css'
 
 /**
@@ -312,6 +313,15 @@ const TarjetaProductoVendedora = ({
 
       {/* Imagen del producto */}
       <div className="imagen-container">
+        {/* Etiqueta VENDIDO */}
+        {producto.estado === 'vendido' && (
+          <EtiquetaVendido 
+            tamaño={tamaño === 'pequeño' ? 'pequeño' : 'normal'}
+            posicion="superior-derecha"
+            mostrarIcono={true}
+          />
+        )}
+        
         <Link to={`/producto/${producto.slug}`} className="imagen-link">
           {producto.fotos_principales?.[imagenActual] ? (
             <img 

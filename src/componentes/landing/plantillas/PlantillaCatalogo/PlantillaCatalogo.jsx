@@ -121,7 +121,7 @@ const PlantillaCatalogo = ({ producto, config, reviews, notificaciones }) => {
           
           {/* Imagen principal */}
           {producto.fotos_principales && producto.fotos_principales.length > 0 ? (
-            <div style={{ marginBottom: '1rem' }}>
+            <div style={{ marginBottom: '1rem', position: 'relative' }}>
               <img 
                 src={producto.fotos_principales[0]} 
                 alt={producto.nombre}
@@ -133,6 +133,28 @@ const PlantillaCatalogo = ({ producto, config, reviews, notificaciones }) => {
                   border: '1px solid #dee2e6'
                 }}
               />
+              {/* Etiqueta VENDIDO */}
+              {producto?.estado === 'vendido' && (
+                <div style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  background: 'linear-gradient(135deg, #e74c3c, #c0392b)',
+                  color: 'white',
+                  padding: '15px 30px',
+                  borderRadius: '8px',
+                  fontWeight: '900',
+                  fontSize: '20px',
+                  textAlign: 'center',
+                  boxShadow: '0 8px 24px rgba(231, 76, 60, 0.6)',
+                  zIndex: 10,
+                  border: '3px solid white',
+                  letterSpacing: '2px'
+                }}>
+                  VENDIDO
+                </div>
+              )}
             </div>
           ) : (
             <div style={{ 
@@ -144,9 +166,32 @@ const PlantillaCatalogo = ({ producto, config, reviews, notificaciones }) => {
               justifyContent: 'center',
               borderRadius: '8px',
               border: '1px solid #dee2e6',
-              marginBottom: '1rem'
+              marginBottom: '1rem',
+              position: 'relative'
             }}>
               <Package size={64} color="#6c757d" />
+              {/* Etiqueta VENDIDO para placeholder */}
+              {producto?.estado === 'vendido' && (
+                <div style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  background: 'linear-gradient(135deg, #e74c3c, #c0392b)',
+                  color: 'white',
+                  padding: '15px 30px',
+                  borderRadius: '8px',
+                  fontWeight: '900',
+                  fontSize: '20px',
+                  textAlign: 'center',
+                  boxShadow: '0 8px 24px rgba(231, 76, 60, 0.6)',
+                  zIndex: 10,
+                  border: '3px solid white',
+                  letterSpacing: '2px'
+                }}>
+                  VENDIDO
+                </div>
+              )}
             </div>
           )}
 
@@ -211,16 +256,32 @@ const PlantillaCatalogo = ({ producto, config, reviews, notificaciones }) => {
               
               <div>
                 <strong>Estado:</strong> 
-                <span style={{ 
-                  marginLeft: '0.5rem',
-                  padding: '0.25rem 0.75rem',
-                  backgroundColor: producto.activo ? '#d4edda' : '#f8d7da',
-                  color: producto.activo ? '#155724' : '#721c24',
-                  borderRadius: '20px',
-                  fontSize: '0.875rem'
-                }}>
-                  {producto.activo ? '✅ Activo' : '❌ Inactivo'}
-                </span>
+                {producto?.estado === 'vendido' ? (
+                  <span style={{ 
+                    marginLeft: '0.5rem',
+                    padding: '0.5rem 1rem',
+                    background: 'linear-gradient(135deg, #e74c3c, #c0392b)',
+                    color: 'white',
+                    borderRadius: '20px',
+                    fontSize: '0.875rem',
+                    fontWeight: 'bold',
+                    letterSpacing: '1px',
+                    boxShadow: '0 2px 8px rgba(231, 76, 60, 0.3)'
+                  }}>
+                    🚫 VENDIDO
+                  </span>
+                ) : (
+                  <span style={{ 
+                    marginLeft: '0.5rem',
+                    padding: '0.25rem 0.75rem',
+                    backgroundColor: producto.activo ? '#d4edda' : '#f8d7da',
+                    color: producto.activo ? '#155724' : '#721c24',
+                    borderRadius: '20px',
+                    fontSize: '0.875rem'
+                  }}>
+                    {producto.activo ? '✅ Activo' : '❌ Inactivo'}
+                  </span>
+                )}
               </div>
               
               <div>

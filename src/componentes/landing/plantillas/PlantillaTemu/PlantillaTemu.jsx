@@ -7,6 +7,7 @@ import TestimoniosTemu from './componentes/TestimoniosTemu'
 import FAQTemu from './componentes/FAQTemu'
 import GarantiasTemu from './componentes/GarantiasTemu'
 import CTAFinalTemu from './componentes/CTAFinalTemu'
+import StickyProducto from '../../StickyProducto/StickyProducto'
 import './estilos/PlantillaTemu.css'
 
 /**
@@ -79,6 +80,19 @@ const PlantillaTemu = ({ producto, config, reviews, notificaciones }) => {
         mostrarTimer={true}
         mostrarStock={true}
         producto={producto}
+      />
+
+      {/* Componente Sticky del Producto */}
+      <StickyProducto 
+        producto={producto}
+        mostrar={true}
+        onComprarAhora={() => {
+          // Scroll hacia la sección de compra o abrir modal de pago
+          const seccionCompra = document.querySelector('.hero-section, .cta-final-section')
+          if (seccionCompra) {
+            seccionCompra.scrollIntoView({ behavior: 'smooth' })
+          }
+        }}
       />
 
     </>

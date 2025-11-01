@@ -115,15 +115,28 @@ export const usarEpayco = () => {
         referencia: datosEpayco.pedido.referencia
       });
 
+      // Validar parámetros obligatorios según documentación oficial de ePayco
+      if (!EPAYCO_CONFIG.PUBLIC_KEY) {
+        throw new Error('PUBLIC_KEY de ePayco no configurada. Verifica las variables de entorno.');
+      }
+
+      if (!datosEpayco.pedido.valor || datosEpayco.pedido.valor <= 0) {
+        throw new Error('El valor del pedido debe ser mayor a 0.');
+      }
+
+      if (!datosEpayco.pedido.referencia) {
+        throw new Error('La referencia del pedido es obligatoria.');
+      }
+
       // Configurar los datos para ePayco OnPage Checkout según documentación oficial
       const datosPago = {
         // Información del producto/pedido (obligatorio)
-        name: datosEpayco.pedido.descripcion,
-        description: datosEpayco.pedido.descripcion,
+        name: datosEpayco.pedido.descripcion || 'Compra en MeLlevoEsto.com',
+        description: datosEpayco.pedido.descripcion || 'Compra en MeLlevoEsto.com',
         invoice: datosEpayco.pedido.referencia,
         currency: EPAYCO_CONFIG.CURRENCY.toLowerCase(), // debe ser minúscula
-        amount: datosEpayco.pedido.valor.toString(),
-        tax_base: (datosEpayco.pedido.subtotal || datosEpayco.pedido.valor).toString(),
+        amount: Math.round(datosEpayco.pedido.valor).toString(), // Redondear para evitar decimales
+        tax_base: Math.round(datosEpayco.pedido.subtotal || datosEpayco.pedido.valor).toString(),
         tax: "0", // Sin IVA por ahora
         tax_ico: "0", // Sin impuesto al consumo
         country: EPAYCO_CONFIG.COUNTRY.toLowerCase(), // debe ser minúscula
@@ -137,8 +150,8 @@ export const usarEpayco = () => {
         confirmation: EPAYCO_CONFIG.CONFIRMATION_URL,
         
         // Información del cliente (billing)
-        name_billing: `${datosEpayco.cliente.nombre} ${datosEpayco.cliente.apellido}`,
-        address_billing: datosEpayco.cliente.direccion,
+        name_billing: `${datosEpayco.cliente.nombre || ''} ${datosEpayco.cliente.apellido || ''}`.trim(),
+        address_billing: datosEpayco.cliente.direccion || 'No especificada',
         type_doc_billing: (datosEpayco.cliente.tipoDocumento || 'CC').toLowerCase(),
         mobilephone_billing: datosEpayco.cliente.telefono,
         number_doc_billing: datosEpayco.cliente.numeroDocumento,
@@ -155,23 +168,45 @@ export const usarEpayco = () => {
       // Crear una promesa para manejar el resultado del pago
       return new Promise((resolve, reject) => {
         try {
-          // Configurar el handler de ePayco con la clave pública (separado de los datos)
+          console.log('🔧 Configurando handler de ePayco...');
+          
+          // Configurar el handler de ePayco con las credenciales según documentación oficial
           const handler = window.ePayco.checkout.configure({
             key: EPAYCO_CONFIG.PUBLIC_KEY,
             test: EPAYCO_CONFIG.TEST_MODE
           });
 
-          console.log('✅ Handler de ePayco configurado correctamente');
+          // Verificar que el handler se configuró correctamente
+          if (!handler || typeof handler.open !== 'function') {
+            throw new Error('Error al configurar el handler de ePayco. Verifica las credenciales.');
+          }
 
-          // Configurar listener para la respuesta ANTES de abrir el checkout
-          const manejarRespuesta = async (event) => {
+          console.log('✅ Handler configurado exitosamente');
+          console.log('📊 Datos del pago a enviar:', datosPago);
+
+          // Declarar variable para timeout
+          let timeoutId;
+
+          // Crear función que maneja respuesta y limpia timeout
+          const manejarRespuestaConTimeout = async (event) => {
             // Verificar origen por seguridad
             if (event.origin !== 'https://checkout.epayco.co') return;
             
             console.log('✅ Respuesta de ePayco recibida:', event.data);
             
-            // Remover el listener para evitar múltiples llamadas
-            window.removeEventListener('message', manejarRespuesta);
+            // Limpiar timeout y remover listener
+            if (timeoutId) clearTimeout(timeoutId);
+            window.removeEventListener('message', manejarRespuestaConTimeout);
+            
+            // Validar que la respuesta tenga los datos mínimos necesarios
+            if (!event.data || (!event.data.ref_payco && !event.data.x_ref_payco)) {
+              console.error('❌ Respuesta de ePayco incompleta:', event.data);
+              reject({
+                exito: false,
+                error: 'Respuesta de ePayco incompleta'
+              });
+              return;
+            }
             
             // Actualizar estado de la transacción
             const transaccionData = {
@@ -182,85 +217,108 @@ export const usarEpayco = () => {
             
             setTransaccionActual(transaccionData);
 
-            // Guardar transacción en Supabase
-            try {
-              console.log('💾 Guardando transacción en Supabase...');
-              console.log('📊 Datos completos de ePayco recibidos:', event.data);
-              console.log('🔍 Datos que se enviarán a registrarTransaccion:', {
-                pedidoId: datosEpayco.pedido.id || datosPago.invoice || null,
-                referenciaPago: event.data.ref_payco || event.data.x_ref_payco,
-                estado: event.data.x_response || 'pendiente',
-                respuestaCompleta: event.data,
-                tipo: 'onpage_checkout'
-              });
-              
-              const resultado = await servicioEpayco.registrarTransaccion({
-                pedidoId: datosEpayco.pedido.id || datosPago.invoice || null, // Usar el ID real del pedido
-                referenciaPago: event.data.ref_payco || event.data.x_ref_payco,
-                estado: event.data.x_response || 'pendiente',
-                respuestaCompleta: event.data,
-                tipo: 'onpage_checkout'
-              });
-              
-              console.log('✅ Transacción guardada exitosamente en Supabase');
-              console.log('📋 Resultado del guardado:', resultado);
-              
-            } catch (errorGuardado) {
-              console.error('❌ Error al guardar transacción en Supabase:', errorGuardado);
-              console.error('📋 Detalles completos del error:', {
-                name: errorGuardado.name,
-                message: errorGuardado.message,
-                stack: errorGuardado.stack,
-                code: errorGuardado.code
-              });
-              // No fallar el proceso por error de guardado
-            }
+             // Guardar transacción en Supabase
+             try {
+               console.log('💾 Guardando transacción en Supabase...');
+               console.log('📊 Datos completos de ePayco recibidos:', event.data);
+               console.log('🔍 Datos que se enviarán a registrarTransaccion:', {
+                 pedidoId: datosEpayco.pedido.id || datosPago.invoice || null,
+                 referenciaPago: event.data.ref_payco || event.data.x_ref_payco,
+                 estado: event.data.x_response || 'pendiente',
+                 respuestaCompleta: event.data,
+                 tipo: 'onpage_checkout'
+               });
+               
+               const resultado = await servicioEpayco.registrarTransaccion({
+                 pedidoId: datosEpayco.pedido.id || datosPago.invoice || null,
+                 referenciaPago: event.data.ref_payco || event.data.x_ref_payco,
+                 estado: event.data.x_response || 'pendiente',
+                 respuestaCompleta: event.data,
+                 tipo: 'onpage_checkout'
+               });
+               
+               console.log('✅ Transacción guardada exitosamente en Supabase');
+               console.log('📋 Resultado del guardado:', resultado);
+               
+             } catch (errorGuardado) {
+               console.error('❌ Error al guardar transacción en Supabase:', errorGuardado);
+               console.error('📋 Detalles completos del error:', {
+                 name: errorGuardado.name,
+                 message: errorGuardado.message,
+                 stack: errorGuardado.stack,
+                 code: errorGuardado.code
+               });
+               // No fallar el proceso por error de guardado
+             }
 
-            // Actualizar el pedido con los datos de ePayco
-            try {
-              const pedidoId = datosEpayco.pedido.id || datosPago.invoice;
-              if (pedidoId) {
-                console.log('🔄 Actualizando pedido con datos de ePayco...', { pedidoId });
-                
-                const pedidoActualizado = await pedidosServicio.actualizarPedidoConEpayco(pedidoId, event.data);
-                
-                console.log('✅ Pedido actualizado exitosamente con datos de ePayco:', pedidoActualizado);
-              } else {
-                console.warn('⚠️ No se pudo obtener el ID del pedido para actualizar con datos de ePayco');
-              }
-            } catch (errorActualizacion) {
-              console.error('❌ Error al actualizar pedido con datos de ePayco:', errorActualizacion);
-              console.error('📋 Detalles del error de actualización:', {
-                name: errorActualizacion.name,
-                message: errorActualizacion.message,
-                stack: errorActualizacion.stack
-              });
-              // No fallar el proceso por error de actualización
-            }
+             // Actualizar el pedido con los datos de ePayco
+             try {
+               const pedidoId = datosEpayco.pedido.id || datosPago.invoice;
+               if (pedidoId) {
+                 console.log('🔄 Actualizando pedido con datos de ePayco...', { pedidoId });
+                 
+                 const pedidoActualizado = await pedidosServicio.actualizarPedidoConEpayco(pedidoId, event.data);
+                 
+                 console.log('✅ Pedido actualizado exitosamente con datos de ePayco:', pedidoActualizado);
+               } else {
+                 console.warn('⚠️ No se pudo obtener el ID del pedido para actualizar con datos de ePayco');
+               }
+             } catch (errorActualizacion) {
+               console.error('❌ Error al actualizar pedido con datos de ePayco:', errorActualizacion);
+               console.error('📋 Detalles del error de actualización:', {
+                 name: errorActualizacion.name,
+                 message: errorActualizacion.message,
+                 stack: errorActualizacion.stack
+               });
+               // No fallar el proceso por error de actualización
+             }
+             
+             // Resolver la promesa con los datos de la transacción
+             resolve({
+               exito: true,
+               transaccion: event.data,
+               mensaje: 'Pago procesado correctamente'
+             });
+          };
 
-            resolve({
-              exito: true,
-              transaccion: event.data,
-              mensaje: 'Pago procesado correctamente'
+          // Configurar manejador de cierre del modal
+          handler.onCloseModal = function() {
+            console.log('🔒 Modal de ePayco cerrado por el usuario');
+            if (timeoutId) clearTimeout(timeoutId);
+            window.removeEventListener('message', manejarRespuestaConTimeout);
+            reject({
+              exito: false,
+              error: 'Pago cancelado por el usuario'
             });
           };
 
           // Agregar listener
-          window.addEventListener('message', manejarRespuesta);
+          window.addEventListener('message', manejarRespuestaConTimeout);
 
-          // Abrir el checkout con los datos del pago
-          handler.open(datosPago);
-
-          console.log('🎯 Checkout de ePayco abierto exitosamente');
-
-          // Timeout de seguridad
-          setTimeout(() => {
-            window.removeEventListener('message', manejarRespuesta);
+          // Configurar timeout de seguridad
+          timeoutId = setTimeout(() => {
+            console.warn('⏰ Timeout del checkout de ePayco');
+            window.removeEventListener('message', manejarRespuestaConTimeout);
             reject({
               exito: false,
               error: 'Timeout: El checkout no respondió en el tiempo esperado (30s)'
             });
           }, 30000); // 30 segundos
+
+          // Abrir el checkout con los datos del pago
+          try {
+            handler.open(datosPago);
+            console.log('🎯 Checkout de ePayco abierto exitosamente');
+          } catch (openError) {
+            console.error('❌ Error al abrir el checkout:', openError);
+            if (timeoutId) clearTimeout(timeoutId);
+            window.removeEventListener('message', manejarRespuestaConTimeout);
+            reject({
+              exito: false,
+              error: 'Error al abrir el checkout: ' + openError.message
+            });
+            return;
+          }
 
         } catch (handlerError) {
           console.error('❌ Error al configurar el handler de ePayco:', handlerError);

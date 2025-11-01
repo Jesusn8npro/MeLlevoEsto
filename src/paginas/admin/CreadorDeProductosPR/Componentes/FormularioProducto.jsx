@@ -514,13 +514,27 @@ const FormularioProducto = ({
             </div>
 
             <div className="campo">
-              <label>Estado</label>
+              <label>Estado del Producto</label>
               <select
-                value={datosProducto.activo ? 'true' : 'false'}
+                value={datosProducto.estado || 'nuevo'}
+                onChange={(e) => manejarCambio('estado', e.target.value)}
+              >
+                <option value="nuevo">🆕 Nuevo</option>
+                <option value="usado">♻️ Usado</option>
+                <option value="vendido">✅ Vendido</option>
+                <option value="agotado">📦 Agotado</option>
+                <option value="descontinuado">❌ Descontinuado</option>
+              </select>
+            </div>
+
+            <div className="campo">
+              <label>Activo</label>
+              <select
+                value={datosProducto.activo !== false ? 'true' : 'false'}
                 onChange={(e) => manejarCambio('activo', e.target.value === 'true')}
               >
-                <option value="true">Activo</option>
-                <option value="false">Inactivo</option>
+                <option value="true">✅ Activo</option>
+                <option value="false">❌ Inactivo</option>
               </select>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import HeaderPrincipal from './componentes/layout/HeaderPrincipal'
 import RutaAdmin from './componentes/autenticacion/RutaAdmin'
 import FavoritosProvider from './contextos/FavoritosContext'
@@ -18,7 +18,7 @@ import PaginaRestablecerContrasena from './paginas/autenticacion/PaginaResetPass
 import PaginaSesionCerrada from './paginas/autenticacion/PaginaSesionCerrada/PaginaSesionCerrada'
 import PaginaNoEncontrada from './paginas/sistema/PaginaNoEncontrada/PaginaNoEncontrada'
 import PaginaRespuestaEpayco from './paginas/ecommerce/PaginaRespuestaEpayco/PaginaRespuestaEpayco'
-import PaginaConfirmacionEpayco from './paginas/ecommerce/PaginaConfirmacionEpayco/PaginaConfirmacionEpayco'
+import ConfirmacionEpayco from './paginas/ecommerce/ConfirmacionEpayco'
 import Contacto from './paginas/empresa/Contacto/Contacto'
 import QuienesSomos from './paginas/empresa/QuienesSomos/QuienesSomos'
 import TerminosCondiciones from './paginas/legal/TerminosCondiciones/TerminosCondiciones'
@@ -51,15 +51,29 @@ import BotonWhatsapp from './componentes/BotonWhatsapp/BotonWhatsapp'
 // import MigrarImagenes from './paginas/MigrarImagenes' // Eliminado
 
 function App() {
+  const location = useLocation()
+  
+  // Rutas donde NO queremos mostrar los chats (páginas de productos)
+  const rutasSinChats = [
+    '/landing/', // Landing de productos
+    '/producto/', // Páginas individuales de productos
+    '/test-sticky' // Página de prueba con PlantillaTemu
+  ]
+  
+  // Verificar si la ruta actual es una página de producto
+  const esRutaDeProducto = rutasSinChats.some(ruta => 
+    location.pathname.startsWith(ruta) || location.pathname === ruta
+  )
+  
   return (
     <ChatProvider>
       <CarritoProvider>
         <FavoritosProvider>
         <div className="app">
-        {/* Chat flotante visible en toda la aplicación */}
-        <ChatEnVivo />
-        {/* Botón de WhatsApp flotante súper vendedor */}
-        <BotonWhatsapp />
+        {/* Chat flotante visible en toda la aplicación EXCEPTO en páginas de productos */}
+        {!esRutaDeProducto && <ChatEnVivo />}
+        {/* Botón de WhatsApp flotante súper vendedor EXCEPTO en páginas de productos */}
+        {!esRutaDeProducto && <BotonWhatsapp />}
         {/* <ProteccionAvanzada /> */}
         <Routes>
         {/* Admin Dashboard Real - Protegido por autenticación y rol */}
@@ -380,7 +394,7 @@ function App() {
           <>
             <HeaderPrincipal />
             <main className="contenido-principal">
-              <PaginaConfirmacionEpayco />
+              <ConfirmacionEpayco />
             </main>
           </>
         } />

@@ -14,7 +14,7 @@ const TarjetasPromocionales = ({ tarjetas: tarjetasProp }) => {
   const defaultTarjetas = [
     {
       id: 1,
-      titulo: "Banner 1",
+      titulo: "",
       descuento: "",
       descripcion: "",
       imagen: "/images/Home/Banner%20de%20oferta%201.jpg",
@@ -24,7 +24,7 @@ const TarjetasPromocionales = ({ tarjetas: tarjetasProp }) => {
     },
     {
       id: 2,
-      titulo: "Banner 2",
+      titulo: "",
       descuento: "",
       descripcion: "",
       imagen: "/images/Home/Banner%202.jpg",

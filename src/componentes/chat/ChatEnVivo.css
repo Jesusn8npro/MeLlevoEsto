@@ -529,7 +529,7 @@
 /* Responsive */
 @media (max-width: 767px) {
   .contenedor-widget-chat:not(.chat-abierto) {
-    bottom: 95px; /* Mantiene la posición baja */
+    bottom: max(110px, calc(95px + env(safe-area-inset-bottom, 0px))); /* Más espacio inferior y respeta área segura */
     right: 25px; /* Chat se mantiene en el lado derecho, separado del WhatsApp */
   }
   
@@ -572,6 +572,7 @@
   
   .formulario-entrada-chat {
     border-radius: 0;
-    padding: 1rem;
+    padding: 1rem 1rem 2rem 1rem; /* Más padding inferior en móvil */
+    padding-bottom: max(2rem, env(safe-area-inset-bottom, 1rem)); /* Respeta el área segura del dispositivo */
   }
 }

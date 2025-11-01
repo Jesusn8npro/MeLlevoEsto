@@ -624,8 +624,9 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
         usuario={usuario}
       />
 
-      {/* Navegación Móvil Inferior */}
-      <div className={`navegacion-movil-inferior ${chatAbierto ? 'chat-abierto' : ''}`}>
+      {/* Navegación Móvil Inferior - Oculta en páginas de productos */}
+      {!esPaginaProducto && (
+        <div className={`navegacion-movil-inferior ${chatAbierto ? 'chat-abierto' : ''}`}>
         <button className="nav-movil-item" onClick={alternarMenuMovil}>
           <div className="nav-icono-contenedor">
             <Menu size={22} />
@@ -663,7 +664,8 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
           </div>
           <span>Favoritos</span>
         </Link>
-      </div>
+        </div>
+      )}
 
       {/* Modales */}
       <ModalBusqueda 
@@ -675,6 +677,20 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
         onCerrar={() => setModalAutenticacionAbierto(false)} 
       />
       <ModalCarrito abierto={modalAbierto} onCerrar={alternarModal} />
+
+      {/* Overlay para ocultar elementos cuando el modal de búsqueda está abierto */}
+      {modalBusquedaAbierto && (
+        <style>
+          {`
+            .boton-whatsapp,
+            .contenedor-widget-chat {
+              opacity: 0 !important;
+              pointer-events: none !important;
+              transition: opacity 0.3s ease !important;
+            }
+          `}
+        </style>
+      )}
     </header>
   )
 }

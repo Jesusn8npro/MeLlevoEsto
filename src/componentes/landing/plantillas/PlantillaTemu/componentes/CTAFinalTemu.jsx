@@ -159,9 +159,22 @@ const CTAFinalTemu = ({
         )}
 
         <div className="cta-final-temu-boton-container">
-          <button className="cta-final-temu-boton">
-            {datos.botonTexto}
-          </button>
+          {producto?.estado === 'vendido' ? (
+            <button 
+              className="cta-final-temu-boton cta-final-temu-boton-vendido"
+              onClick={() => {
+                if (producto?.categorias?.slug) {
+                  window.location.href = `/categoria/${producto.categorias.slug}`
+                }
+              }}
+            >
+              🔍 Ver productos similares disponibles
+            </button>
+          ) : (
+            <button className="cta-final-temu-boton">
+              {datos.botonTexto}
+            </button>
+          )}
         </div>
 
         <div className="cta-final-temu-garantias">

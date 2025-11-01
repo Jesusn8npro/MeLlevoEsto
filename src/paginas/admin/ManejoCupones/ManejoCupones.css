@@ -935,17 +935,17 @@
     border-radius: 15px;
   }
   
-  .header-cupones {
+  .manejo-cupones .header-cupones {
     padding: 1rem;
   }
   
-  .titulo-seccion {
+  .manejo-cupones .titulo-seccion {
     flex-direction: column;
     text-align: center;
     gap: 0.5rem;
   }
   
-  .acciones-header {
+  .manejo-cupones .acciones-header {
     flex-direction: column;
     width: 100%;
   }

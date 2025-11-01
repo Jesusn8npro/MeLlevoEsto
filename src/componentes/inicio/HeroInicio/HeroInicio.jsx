@@ -9,16 +9,14 @@ import TarjetasPromocionales from './TarjetasPromocionales'
  * - Mantiene el mismo patrón de disposición (desktop y móvil)
  */
 
-// Imágenes del Home desde public/images/Home
-const homeImages = [
+// Imágenes para el slider principal (3 imágenes)
+const sliderImages = [
   '/images/Home/Imagen%20Principal%20HOME.jpg',
-  '/images/Home/Banner%202.jpg',
   '/images/Home/Banner%202%20Oferta.jpg',
-  '/images/Home/Banner%20de%20oferta%201.jpg',
   '/images/Home/Venta%20de%20camionetas.jpg',
 ]
 
-const defaultSlides = homeImages.map((src, idx) => ({ id: idx + 1, imagen: src, alt: 'Imagen Home' }))
+const defaultSlides = sliderImages.map((src, idx) => ({ id: idx + 1, imagen: src, alt: 'Imagen Home' }))
 
 const HeroInicio = ({ slides }) => {
   const dataset = Array.isArray(slides) && slides.length > 0 ? slides : defaultSlides
