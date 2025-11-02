@@ -21,7 +21,6 @@ import {
 import { useCarrito } from '../../../../../contextos/CarritoContext'
 import { useFavoritos } from '../../../../../contextos/FavoritosContext'
 import BotonCarritoAnimado from '../../../../../componentes/ui/BotonCarritoAnimado'
-import { convertirUrlGoogleDrive, convertirArrayUrlsGoogleDrive, procesarImagenesProducto } from '../../../../../utilidades/googleDrive'
 // Eliminado ImagenConFallback - usaremos <img> directo
 import './HeroTemu.css'
 import ContraEntregaModal from '../../../../../componentes/checkout/ContraEntregaModal'
@@ -233,10 +232,9 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
     console.log('🖼️ Procesando imágenes del producto:', producto?.nombre)
     console.log('📦 Producto completo:', producto)
     
-    // Agregar imágenes desde el objeto producto.imagenes (convertidas)
+    // Agregar imágenes desde el objeto producto.imagenes (directamente)
     if (producto?.imagenes) {
       console.log('✅ Producto tiene campo imagenes:', producto.imagenes)
-      const imagenesProcesadas = procesarImagenesProducto(producto.imagenes)
       const camposImagenes = [
         'imagen_principal',
         'imagen_secundaria_1', 
@@ -246,9 +244,9 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
       ]
 
       camposImagenes.forEach(campo => {
-        const imagen = imagenesProcesadas[campo]
+        const imagen = producto.imagenes[campo]
         if (imagen && imagen.trim() !== '') {
-          console.log(`📸 Agregando imagen convertida ${campo}:`, imagen)
+          console.log(`📸 Agregando imagen ${campo}:`, imagen)
           imagenes.push(imagen.trim())
         }
       })
@@ -257,8 +255,7 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
     // También verificar si hay fotos_principales (nuevo formato)
     if (producto?.fotos_principales && Array.isArray(producto.fotos_principales)) {
       console.log('✅ Producto tiene fotos_principales:', producto.fotos_principales)
-      const convertidas = convertirArrayUrlsGoogleDrive(producto.fotos_principales)
-      convertidas.forEach(foto => {
+      producto.fotos_principales.forEach(foto => {
         if (foto && foto.trim() !== '') {
           imagenes.push(foto.trim())
         }

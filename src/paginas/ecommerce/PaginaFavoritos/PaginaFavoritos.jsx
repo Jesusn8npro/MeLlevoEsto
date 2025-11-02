@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { Heart, Search, Grid, List, ShoppingCart, Eye, Trash2, Star } from 'lucide-react'
 import { useFavoritos } from '../../../contextos/FavoritosContext'
 import TarjetaProductoVendedora from '../../../componentes/producto/TarjetaProductoVendedora'
-import { convertirUrlGoogleDrive } from '../../../utilidades/googleDrive'
 import './PaginaFavoritos.css'
 
 const PaginaFavoritos = () => {
@@ -135,29 +134,24 @@ const PaginaFavoritos = () => {
     
     // Agregar imagen principal si existe
     if (favorito.imagen_principal) {
-      const urlConvertida = convertirUrlGoogleDrive(favorito.imagen_principal)
-      if (urlConvertida) imagenesReales.push(urlConvertida)
+      imagenesReales.push(favorito.imagen_principal)
     }
     
     // Agregar imágenes secundarias si existen
     if (favorito.imagen_secundaria_1) {
-      const urlConvertida = convertirUrlGoogleDrive(favorito.imagen_secundaria_1)
-      if (urlConvertida) imagenesReales.push(urlConvertida)
+      imagenesReales.push(favorito.imagen_secundaria_1)
     }
     
     if (favorito.imagen_secundaria_2) {
-      const urlConvertida = convertirUrlGoogleDrive(favorito.imagen_secundaria_2)
-      if (urlConvertida) imagenesReales.push(urlConvertida)
+      imagenesReales.push(favorito.imagen_secundaria_2)
     }
     
     if (favorito.imagen_secundaria_3) {
-      const urlConvertida = convertirUrlGoogleDrive(favorito.imagen_secundaria_3)
-      if (urlConvertida) imagenesReales.push(urlConvertida)
+      imagenesReales.push(favorito.imagen_secundaria_3)
     }
     
     if (favorito.imagen_secundaria_4) {
-      const urlConvertida = convertirUrlGoogleDrive(favorito.imagen_secundaria_4)
-      if (urlConvertida) imagenesReales.push(urlConvertida)
+      imagenesReales.push(favorito.imagen_secundaria_4)
     }
     
     // Calcular descuento si no está presente

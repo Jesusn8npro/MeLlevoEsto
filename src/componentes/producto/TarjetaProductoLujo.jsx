@@ -4,7 +4,6 @@ import { Heart, Eye, ShoppingCart, Star, BadgePercent, Flame, Clock, CircleDolla
 import { clienteSupabase } from '../../configuracion/supabase'
 import { useFavoritos } from '../../contextos/FavoritosContext'
 import { useCarrito } from '../../contextos/CarritoContext'
-import { convertirUrlGoogleDrive, convertirUrlGoogleDriveAlternativo } from '../../utilidades/googleDrive'
 import EtiquetaVendido from './EtiquetaVendido'
 import './TarjetaProductoLujo.es.css'
 
@@ -49,12 +48,12 @@ export default function TarjetaProductoLujo({ producto, modoAccion = 'auto' }) {
   let imagenSecundaria = null
   if (Array.isArray(producto?.producto_imagenes) && producto.producto_imagenes.length > 0) {
     const img = producto.producto_imagenes[0]
-    imagenPrincipal = img?.imagen_principal ? convertirUrlGoogleDrive(img.imagen_principal) : null
-    imagenSecundaria = img?.imagen_secundaria_1 ? convertirUrlGoogleDrive(img.imagen_secundaria_1) : null
+    imagenPrincipal = img?.imagen_principal || null
+    imagenSecundaria = img?.imagen_secundaria_1 || null
   }
   if (!imagenPrincipal && Array.isArray(producto?.fotos_principales) && producto.fotos_principales.length > 0) {
-    imagenPrincipal = convertirUrlGoogleDrive(producto.fotos_principales[0])
-    imagenSecundaria = producto.fotos_principales[1] ? convertirUrlGoogleDrive(producto.fotos_principales[1]) : imagenSecundaria
+    imagenPrincipal = producto.fotos_principales[0]
+    imagenSecundaria = producto.fotos_principales[1] || imagenSecundaria
   }
 
   // Placeholders simples si falta imagen
@@ -125,41 +124,9 @@ export default function TarjetaProductoLujo({ producto, modoAccion = 'auto' }) {
     ? `Ahorro disponible: ${descuentoCalculado}%`
     : (destacado ? 'Vendedor estrella' : (estadoValido || 'Entrega rápida'))
 
-  // Fallback rápido en caso de error de carga (p.ej., permisos de Google Drive)
+  // Fallback rápido en caso de error de carga
   const manejarErrorImagen = (e) => {
-    try {
-      const intentosPrevios = Number(e.currentTarget.getAttribute('data-intentos') || '0')
-      if (intentosPrevios >= 2) {
-        e.currentTarget.src = placeholder
-        return
-      }
-
-      const actual = e.currentTarget.src
-      let siguiente = actual
-
-      // Si es una URL de Drive, intentar formato alternativo
-      if (actual.includes('drive.google.com')) {
-        const alternativo = convertirUrlGoogleDriveAlternativo(actual)
-        if (alternativo && alternativo !== actual) {
-          siguiente = alternativo
-        } else {
-          // Intento adicional: forzar thumbnail tamaño medio
-          const match = actual.match(/id=([a-zA-Z0-9_-]+)/)
-          const fileId = match?.[1]
-          if (fileId) {
-            siguiente = `https://drive.google.com/thumbnail?id=${fileId}&sz=w600-h600`
-          }
-        }
-      } else {
-        siguiente = placeholder
-      }
-
-      e.currentTarget.setAttribute('data-intentos', String(intentosPrevios + 1))
-      const sep = siguiente.includes('?') ? '&' : '?'
-      e.currentTarget.src = `${siguiente}${sep}cb=${Date.now()}`
-    } catch {
-      e.currentTarget.src = placeholder
-    }
+    e.currentTarget.src = placeholder
   }
 
   // Futuros campos: score y ventas (robusto con distintos nombres/tipos)

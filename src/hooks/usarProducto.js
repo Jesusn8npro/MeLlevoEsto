@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { clienteSupabase } from '../configuracion/supabase'
-import { procesarImagenesProducto } from '../utilidades/googleDrive'
 
 export function usarProducto(slug) {
   const [producto, setProducto] = useState(null)
@@ -69,8 +68,8 @@ export function usarProducto(slug) {
         if (data.producto_imagenes && data.producto_imagenes.length > 0) {
           const imagenesRaw = data.producto_imagenes[0] // Tomar el primer registro de imágenes
           
-          // Usar la utilidad centralizada para procesar las imágenes
-          data.imagenes = procesarImagenesProducto(imagenesRaw)
+          // Asignar las imágenes directamente sin procesamiento de Google Drive
+          data.imagenes = imagenesRaw
         } else {
           // Si no hay imágenes en la tabla producto_imagenes, crear objeto vacío
           data.imagenes = {}

@@ -1,6 +1,4 @@
 import React, { useState } from 'react'
-import { obtenerImagenPlaceholder } from '../../utilidades/imagenesAlternativas'
-import { convertirUrlGoogleDrive } from '../../utilidades/googleDrive'
 import { Link } from 'react-router-dom'
 import { 
   Plus, 
@@ -94,35 +92,31 @@ const ItemCarrito = ({
     let desdeProductoImagenes = null
     if (Array.isArray(producto?.producto_imagenes) && producto.producto_imagenes.length > 0) {
       const primera = producto.producto_imagenes[0]
-      const raw = primera?.imagen_principal || primera?.imagen_secundaria_1
-      desdeProductoImagenes = raw ? convertirUrlGoogleDrive(raw) : null
+      desdeProductoImagenes = primera?.imagen_principal || primera?.imagen_secundaria_1
     } else if (producto?.producto_imagenes) {
-      const raw = producto.producto_imagenes?.imagen_principal || producto.producto_imagenes?.imagen_secundaria_1
-      desdeProductoImagenes = raw ? convertirUrlGoogleDrive(raw) : null
+      desdeProductoImagenes = producto.producto_imagenes?.imagen_principal || producto.producto_imagenes?.imagen_secundaria_1
     }
 
     // Fallback adicional: cuando Supabase devuelve producto_imagenes al mismo nivel del item
     if (!desdeProductoImagenes) {
       if (Array.isArray(item?.producto_imagenes) && item.producto_imagenes.length > 0) {
         const primera = item.producto_imagenes[0]
-        const raw = primera?.imagen_principal || primera?.imagen_secundaria_1
-        desdeProductoImagenes = raw ? convertirUrlGoogleDrive(raw) : null
+        desdeProductoImagenes = primera?.imagen_principal || primera?.imagen_secundaria_1
       } else if (item?.producto_imagenes) {
-        const raw = item.producto_imagenes?.imagen_principal || item.producto_imagenes?.imagen_secundaria_1
-        desdeProductoImagenes = raw ? convertirUrlGoogleDrive(raw) : null
+        desdeProductoImagenes = item.producto_imagenes?.imagen_principal || item.producto_imagenes?.imagen_secundaria_1
       }
     }
 
-    // Fallback a fotos_principales (convertir si son de Google Drive)
+    // Fallback a fotos_principales
     const desdeArray = Array.isArray(producto?.fotos_principales) && producto.fotos_principales[0]
-      ? convertirUrlGoogleDrive(producto.fotos_principales[0])
+      ? producto.fotos_principales[0]
       : null
 
     // Otros posibles campos directos
     const otros = producto?.imagen_principal || producto?.imagen_url || producto?.imagen
 
     const candidato = desdeImagenes || desdeProductoImagenes || desdeArray || otros
-    return candidato || obtenerImagenPlaceholder()
+    return candidato || '/placeholder-producto.jpg'
   }
 
   const imagenPrincipal = obtenerImagenPrincipal(item.productos)

@@ -16,8 +16,7 @@ import {
   Hash,
   Package
 } from 'lucide-react'
-import { convertirUrlGoogleDrive } from '../../../utilidades/googleDrive'
-import { obtenerImagenPlaceholder } from '../../../utilidades/imagenesAlternativas'
+
 import './Categorias.css'
 
 const Categorias = () => {
@@ -541,10 +540,10 @@ const Categorias = () => {
                 <div className="categoria-imagen">
                   {categoria.imagen_url ? (
                     <img 
-                      src={convertirUrlGoogleDrive(categoria.imagen_url)} 
+                      src={categoria.imagen_url} 
                       alt={categoria.nombre} 
                       className="categoria-imagen-img"
-                      onError={(e) => { e.currentTarget.src = obtenerImagenPlaceholder() }}
+                      onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/150x150?text=Sin+Imagen' }}
                     />
                   ) : (
                     <div className="categoria-imagen-placeholder">
@@ -667,11 +666,11 @@ const Categorias = () => {
                     <div className="producto-miniatura">
                       {producto.fotos_principales?.[0] ? (
                         <img
-                          src={convertirUrlGoogleDrive(producto.fotos_principales[0])}
+                          src={producto.fotos_principales[0]}
                           alt={producto.nombre}
                           className="producto-miniatura-img"
                           loading="lazy"
-                          onError={(e) => { e.currentTarget.src = obtenerImagenPlaceholder() }}
+                          onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/150x150?text=Sin+Imagen' }}
                         />
                       ) : (
                         <div className="producto-miniatura-placeholder">

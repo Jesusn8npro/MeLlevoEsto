@@ -7,6 +7,9 @@ import BotonCarritoAnimado from '../ui/BotonCarritoAnimado'
 import EtiquetaVendido from './EtiquetaVendido'
 import './TarjetaProductoVendedora.css'
 
+// 🚀 OPTIMIZACIÓN DE IMÁGENES ACTIVADA
+import ImagenOptimizada from '../ImagenOptimizada'
+
 /**
  * TarjetaProductoVendedora - Tarjeta ultra vendedora estilo Temu/Shein
  * 
@@ -178,10 +181,13 @@ const TarjetaProductoVendedora = ({
         <div className="lista-imagen-container">
           <Link to={`/producto/${producto.slug}`}>
             {producto.fotos_principales?.[0] ? (
-              <img 
+              <ImagenOptimizada 
                 src={producto.fotos_principales[0]} 
                 alt={producto.nombre}
                 className="lista-imagen"
+                tamaño="thumbnail"
+                lazy={true}
+                placeholder="blur"
               />
             ) : (
               <div className="imagen-placeholder">
@@ -324,10 +330,14 @@ const TarjetaProductoVendedora = ({
         
         <Link to={`/producto/${producto.slug}`} className="imagen-link">
           {producto.fotos_principales?.[imagenActual] ? (
-            <img 
+            <ImagenOptimizada 
               src={producto.fotos_principales[imagenActual]} 
               alt={producto.nombre}
               className="imagen-producto"
+              tamaño="mediano"
+              lazy={true}
+              placeholder="blur"
+              mostrarInfo={false}
             />
           ) : (
             <div className="imagen-placeholder">

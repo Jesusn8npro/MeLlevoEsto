@@ -10,8 +10,6 @@ import {
 } from 'lucide-react'
 import { useCarrito } from '../../contextos/CarritoContext'
 import { usarProductos } from '../../hooks/usarProductos'
-import { convertirUrlGoogleDrive } from '../../utilidades/googleDrive'
-import { obtenerImagenPlaceholder } from '../../utilidades/imagenesAlternativas'
 import BotonCarritoAnimado from '../ui/BotonCarritoAnimado'
 import './ProductosRelacionados.css'
 
@@ -56,18 +54,16 @@ const ProductosRelacionados = ({ categoriaId, onCerrarModal }) => {
     let desdeProductoImagenes = null
     if (Array.isArray(producto?.producto_imagenes) && producto.producto_imagenes.length > 0) {
       const primera = producto.producto_imagenes[0]
-      const raw = primera?.imagen_principal || primera?.imagen_secundaria_1
-      desdeProductoImagenes = raw ? convertirUrlGoogleDrive(raw) : null
+      desdeProductoImagenes = primera?.imagen_principal || primera?.imagen_secundaria_1
     } else if (producto?.producto_imagenes) {
-      const raw = producto.producto_imagenes?.imagen_principal || producto.producto_imagenes?.imagen_secundaria_1
-      desdeProductoImagenes = raw ? convertirUrlGoogleDrive(raw) : null
+      desdeProductoImagenes = producto.producto_imagenes?.imagen_principal || producto.producto_imagenes?.imagen_secundaria_1
     }
 
     const array = Array.isArray(producto?.fotos_principales) && producto.fotos_principales[0]
-      ? convertirUrlGoogleDrive(producto.fotos_principales[0])
+      ? producto.fotos_principales[0]
       : null
 
-    return principal || secundaria || directa || desdeProductoImagenes || array || obtenerImagenPlaceholder()
+    return principal || secundaria || directa || desdeProductoImagenes || array || '/placeholder-producto.jpg'
   }
 
   // Filtrar productos para mostrar solo los que no están en el carrito

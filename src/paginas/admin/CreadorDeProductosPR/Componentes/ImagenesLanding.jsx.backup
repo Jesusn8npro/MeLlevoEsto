@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { clienteSupabase } from '../../../../configuracion/supabase'
 
-// 🚀 OPTIMIZACIÓN DE IMÁGENES ACTIVADA
-import { comprimirParaEditor, obtenerInfoImagen } from '../../../../utilidades/compresionImagenes'
-import { InfoImagenWidget } from '../../../../utilidades/infoImagenes'
+// Componentes optimizados
+import { ImagenOptimizada, ImagenProducto, ImagenMiniatura } from '../../../../componentes/ImagenOptimizada'
+import { useOptimizacionImagenes } from '../../../../hooks/useOptimizacionImagenes'
+
+// Utilidades de optimización
+import { 
+  comprimirImagen, 
+  formatearTamanoArchivo, 
+  validarYObtenerInfoImagen,
+  detectarTipoImagen,
+  calcularMetricasOptimizacion
+} from '../../../../utilidades/optimizacionImagenes'
 
 // Iconos
 import { 
@@ -25,7 +34,10 @@ import {
   X,
   Bug,
   Database,
-  Zap // Icono para optimización
+  Zap,
+  BarChart3,
+  FileImage,
+  HardDrive
 } from 'lucide-react'
 
 // Estilos
@@ -86,10 +98,22 @@ const ImagenesLanding = ({
   const [busqueda, setBusqueda] = useState('')
   const [imagenSeleccionada, setImagenSeleccionada] = useState(null)
   
-  // 🚀 Estados para optimización de imágenes
-  const [optimizandoImagen, setOptimizandoImagen] = useState(false)
-  const [estadisticasOptimizacion, setEstadisticasOptimizacion] = useState(null)
-  const [archivoSeleccionado, setArchivoSeleccionado] = useState(null)
+  // ===== SISTEMA DE OPTIMIZACIÓN DE IMÁGENES =====
+  const {
+    procesarImagen,
+    progreso: progresoOptimizacion,
+    metricas: metricasOptimizacion,
+    cargando: optimizandoImagen,
+    obtenerResumenOptimizacion
+  } = useOptimizacionImagenes({
+    compresionAutomatica: true,
+    mostrarProgreso: true,
+    tipoImagenPorDefecto: 'principal'
+  })
+
+  // Estados para métricas de rendimiento
+  const [metricasImagenes, setMetricasImagenes] = useState({})
+  const [mostrarMetricas, setMostrarMetricas] = useState(false)
   
   // ===== SISTEMA DE LOGGING Y DEBUG =====
   const [mostrarDebug, setMostrarDebug] = useState(true)
@@ -242,15 +266,10 @@ const ImagenesLanding = ({
     const archivo = event.target.files[0]
     if (!archivo) return
 
-    // 🚀 MOSTRAR INFO DE LA IMAGEN ORIGINAL
-    setArchivoSeleccionado(archivo)
-    const infoOriginal = await obtenerInfoImagen(archivo)
-    
     agregarLog('info', `📤 Iniciando subida de imagen tipo: ${tipoImagen}`, { 
       nombre: archivo.name, 
-      tamaño: archivo.size, 
-      tipo: archivo.type,
-      dimensiones: `${infoOriginal.ancho}x${infoOriginal.alto}`
+      tamaño: formatearTamanoArchivo(archivo.size), 
+      tipo: archivo.type 
     })
 
     // Validar tipo de archivo
@@ -260,55 +279,53 @@ const ImagenesLanding = ({
       return
     }
 
-    // Validar tamaño (máximo 5MB)
-    if (archivo.size > 5 * 1024 * 1024) {
-      agregarLog('error', '❌ Archivo demasiado grande', { tamaño: archivo.size })
-      manejarError('La imagen es demasiado grande. Máximo 5MB permitido')
-      return
-    }
-
     setSubiendoImagenLanding(true)
-    setOptimizandoImagen(true)
-
-    // 🚀 COMPRIMIR IMAGEN AUTOMÁTICAMENTE
-    let archivoFinal = archivo
-    try {
-      agregarLog('info', '🚀 Comprimiendo imagen automáticamente...', { 
-        tamañoOriginal: archivo.size 
-      })
-      
-      const resultado = await comprimirParaEditor(archivo)
-      archivoFinal = resultado.archivoComprimido
-      setEstadisticasOptimizacion(resultado.estadisticas)
-      
-      agregarLog('success', `✅ Imagen optimizada: ${resultado.estadisticas.porcentajeReduccion}% más pequeña`, {
-        tamañoOriginal: resultado.estadisticas.tamañoOriginal,
-        tamañoComprimido: resultado.estadisticas.tamañoComprimido,
-        reduccion: resultado.estadisticas.porcentajeReduccion
-      })
-      
-    } catch (errorCompresion) {
-      agregarLog('warning', '⚠️ No se pudo comprimir, usando imagen original', errorCompresion)
-      // Continuar con la imagen original si falla la compresión
-    }
-    
-    setOptimizandoImagen(false)
 
     try {
-      const extension = archivoFinal.name.split('.').pop()
-      const nombreArchivo = `${productoId}_${tipoImagen}_${Date.now()}.${extension}`
-      
-      agregarLog('info', `🗂️ Subiendo imagen optimizada a bucket 'imagenes_tienda'`, { 
-        nombreArchivo,
-        tamañoFinal: archivoFinal.size,
-        optimizada: archivoFinal !== archivo
+      // ===== PASO 1: VALIDAR Y OBTENER INFO DE LA IMAGEN =====
+      const infoImagen = await validarYObtenerInfoImagen(archivo)
+      agregarLog('info', '📊 Información de imagen obtenida', {
+        dimensiones: `${infoImagen.ancho}×${infoImagen.alto}`,
+        tamanoOriginal: formatearTamanoArchivo(infoImagen.tamano),
+        aspectRatio: infoImagen.aspectRatio
       })
+
+      // ===== PASO 2: COMPRIMIR IMAGEN AUTOMÁTICAMENTE =====
+      const tipoDetectado = detectarTipoImagen(tipoImagen)
+      agregarLog('info', `🔧 Comprimiendo imagen (tipo: ${tipoDetectado})`)
+      
+      const resultadoCompresion = await procesarImagen(archivo, {
+        tipo: tipoDetectado,
+        calidad: tipoImagen.includes('principal') ? 0.9 : 0.8
+      })
+
+      const archivoOptimizado = resultadoCompresion.archivoComprimido
+      const metricas = resultadoCompresion.metricas
+
+      // Guardar métricas para mostrar al usuario
+      setMetricasImagenes(prev => ({
+        ...prev,
+        [tipoImagen]: metricas
+      }))
+
+      agregarLog('success', '✅ Imagen comprimida exitosamente', {
+        reduccion: `${metricas.porcentajeReduccion}%`,
+        tamanoFinal: formatearTamanoArchivo(metricas.tamanoComprimido),
+        ahorro: formatearTamanoArchivo(metricas.reduccionBytes)
+      })
+
+      // ===== PASO 3: SUBIR IMAGEN OPTIMIZADA =====
+      const extension = 'jpg' // Siempre usar JPG para mejor compatibilidad
+      const nombreArchivo = `${productoId}_${tipoImagen}_${Date.now()}_optimizado.${extension}`
+      
+      agregarLog('info', `🗂️ Subiendo imagen optimizada a bucket 'imagenes_tienda'`, { nombreArchivo })
       
       const { data, error } = await clienteSupabase.storage
         .from('imagenes_tienda')
-        .upload(nombreArchivo, archivoFinal, {
+        .upload(nombreArchivo, archivoOptimizado, {
           cacheControl: '3600',
-          upsert: false
+          upsert: false,
+          contentType: 'image/jpeg'
         })
 
       if (error) {
@@ -316,7 +333,7 @@ const ImagenesLanding = ({
         throw error
       }
 
-      agregarLog('success', '✅ Archivo subido al storage', data)
+      agregarLog('success', '✅ Archivo optimizado subido al storage', data)
 
       const { data: { publicUrl } } = clienteSupabase.storage
         .from('imagenes_tienda')
@@ -436,132 +453,188 @@ const ImagenesLanding = ({
     return todasLasImagenes
   }
 
-  const renderizarTarjetaImagen = (imagen) => (
-    <div key={imagen.key} className="tarjeta-imagen">
-      <div className="tarjeta-imagen-header">
-        <div className="tarjeta-imagen-info">
-          <h4 className="tarjeta-imagen-titulo">{imagen.label}</h4>
-          <p className="tarjeta-imagen-descripcion">{imagen.descripcion}</p>
-          <span className="tarjeta-imagen-categoria">{imagen.categoriaLabel}</span>
+  const renderizarTarjetaImagen = (imagen) => {
+    const metricas = metricasImagenes[imagen.key]
+    
+    return (
+      <div key={imagen.key} className="tarjeta-imagen">
+        <div className="tarjeta-imagen-header">
+          <div className="tarjeta-imagen-info">
+            <h4 className="tarjeta-imagen-titulo">{imagen.label}</h4>
+            <p className="tarjeta-imagen-descripcion">{imagen.descripcion}</p>
+            <span className="tarjeta-imagen-categoria">{imagen.categoriaLabel}</span>
+            
+            {/* Mostrar métricas de optimización si están disponibles */}
+            {metricas && (
+              <div className="metricas-optimizacion">
+                <div className="metrica-item">
+                  <Zap className="icono-metrica" />
+                  <span>Reducido {metricas.porcentajeReduccion}%</span>
+                </div>
+                <div className="metrica-item">
+                  <HardDrive className="icono-metrica" />
+                  <span>{formatearTamanoArchivo(metricas.tamanoComprimido)}</span>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="tarjeta-imagen-estado">
+            {imagen.valor ? (
+              <CheckCircle className="icono-estado activo" />
+            ) : (
+              <AlertCircle className="icono-estado inactivo" />
+            )}
+          </div>
         </div>
-        <div className="tarjeta-imagen-estado">
+
+        <div className="tarjeta-imagen-contenido">
           {imagen.valor ? (
-            <CheckCircle className="icono-estado activo" />
+            <div className="imagen-existente">
+              <ImagenProducto
+                src={imagen.valor}
+                alt={imagen.label}
+                className="imagen-preview-grande"
+                onClick={() => setImagenSeleccionada(imagen.valor)}
+                mostrarMetricas={true}
+                placeholder="blur"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+              <div className="imagen-acciones">
+                <button
+                  type="button"
+                  className="boton-accion ver"
+                  onClick={() => setImagenSeleccionada(imagen.valor)}
+                  title="Ver imagen completa"
+                >
+                  <Eye className="icono" />
+                </button>
+                <button
+                  type="button"
+                  className="boton-accion descargar"
+                  onClick={() => window.open(imagen.valor, '_blank')}
+                  title="Abrir en nueva pestaña"
+                >
+                  <Download className="icono" />
+                </button>
+                <button
+                  type="button"
+                  className="boton-accion eliminar"
+                  onClick={() => eliminarImagen(imagen.key)}
+                  title="Eliminar imagen"
+                >
+                  <Trash2 className="icono" />
+                </button>
+              </div>
+            </div>
           ) : (
-            <AlertCircle className="icono-estado inactivo" />
+            <div className="zona-subida">
+              <div className="zona-subida-contenido">
+                <Upload className="icono-subida" />
+                <p>Arrastra una imagen aquí o haz clic para seleccionar</p>
+                <small>Se optimizará automáticamente al subir</small>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => manejarSubidaImagen(e, imagen.key)}
+                  className="input-file-oculto"
+                  disabled={subiendoImagenLanding || !productoId}
+                />
+              </div>
+              
+              {/* Mostrar progreso de optimización si está en proceso */}
+              {progresoOptimizacion > 0 && progresoOptimizacion < 100 && (
+                <div className="progreso-optimizacion">
+                  <div className="progreso-barra">
+                    <div 
+                      className="progreso-relleno" 
+                      style={{ width: `${progresoOptimizacion}%` }}
+                    />
+                  </div>
+                  <span className="progreso-texto">
+                    Optimizando... {progresoOptimizacion}%
+                  </span>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
+    )
+  }
 
-      <div className="tarjeta-imagen-contenido">
-        {imagen.valor ? (
-          <div className="imagen-existente">
-            <img 
-              src={imagen.valor} 
-              alt={imagen.label}
-              className="imagen-preview-grande"
-              onClick={() => setImagenSeleccionada(imagen.valor)}
-            />
-            <div className="imagen-acciones">
+  const renderizarFilaImagen = (imagen) => {
+    const metricas = metricasImagenes[imagen.key]
+    
+    return (
+      <div key={imagen.key} className="fila-imagen">
+        <div className="fila-imagen-info">
+          <div className="fila-imagen-miniatura">
+            {imagen.valor ? (
+              <ImagenMiniatura
+                src={imagen.valor}
+                alt={imagen.label}
+                className="miniatura"
+                onClick={() => setImagenSeleccionada(imagen.valor)}
+                placeholder="blur"
+                sizes="80px"
+              />
+            ) : (
+              <div className="miniatura-vacia">
+                <Image className="icono" />
+              </div>
+            )}
+          </div>
+          <div className="fila-imagen-detalles">
+            <h4 className="fila-imagen-titulo">{imagen.label}</h4>
+            <p className="fila-imagen-descripcion">{imagen.descripcion}</p>
+            <span className="fila-imagen-categoria">{imagen.categoriaLabel}</span>
+            
+            {/* Mostrar métricas compactas en vista de lista */}
+            {metricas && (
+              <div className="metricas-compactas">
+                <span className="metrica-compacta">
+                  <Zap className="icono-pequeno" />
+                  -{metricas.porcentajeReduccion}%
+                </span>
+                <span className="metrica-compacta">
+                  <HardDrive className="icono-pequeno" />
+                  {formatearTamanoArchivo(metricas.tamanoComprimido)}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <div className="fila-imagen-acciones">
+          {imagen.valor ? (
+            <>
               <button
                 type="button"
-                className="boton-accion ver"
+                className="boton-accion-pequeno ver"
                 onClick={() => setImagenSeleccionada(imagen.valor)}
-                title="Ver imagen completa"
+                title="Ver imagen"
               >
                 <Eye className="icono" />
               </button>
               <button
                 type="button"
-                className="boton-accion descargar"
-                onClick={() => window.open(imagen.valor, '_blank')}
-                title="Abrir en nueva pestaña"
-              >
-                <Download className="icono" />
-              </button>
-              <button
-                type="button"
-                className="boton-accion eliminar"
+                className="boton-accion-pequeno eliminar"
                 onClick={() => eliminarImagen(imagen.key)}
-                title="Eliminar imagen"
+                title="Eliminar"
               >
                 <Trash2 className="icono" />
               </button>
-            </div>
-          </div>
-        ) : (
-          <div className="zona-subida">
-            <div className="zona-subida-contenido">
-              <Upload className="icono-subida" />
-              <p>Arrastra una imagen aquí o haz clic para seleccionar</p>
+            </>
+          ) : (
+            <label className="boton-subir-pequeno">
+              <Upload className="icono" />
+              Subir
               <input
                 type="file"
                 accept="image/*"
                 onChange={(e) => manejarSubidaImagen(e, imagen.key)}
-                className="input-file-oculto"
+                style={{ display: 'none' }}
                 disabled={subiendoImagenLanding || !productoId}
-              />
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  )
-
-  const renderizarFilaImagen = (imagen) => (
-    <div key={imagen.key} className="fila-imagen">
-      <div className="fila-imagen-info">
-        <div className="fila-imagen-miniatura">
-          {imagen.valor ? (
-            <img 
-              src={imagen.valor} 
-              alt={imagen.label}
-              className="miniatura"
-              onClick={() => setImagenSeleccionada(imagen.valor)}
-            />
-          ) : (
-            <div className="miniatura-vacia">
-              <Image className="icono" />
-            </div>
-          )}
-        </div>
-        <div className="fila-imagen-detalles">
-          <h4 className="fila-imagen-titulo">{imagen.label}</h4>
-          <p className="fila-imagen-descripcion">{imagen.descripcion}</p>
-          <span className="fila-imagen-categoria">{imagen.categoriaLabel}</span>
-        </div>
-      </div>
-      
-      <div className="fila-imagen-acciones">
-        {imagen.valor ? (
-          <>
-            <button
-              type="button"
-              className="boton-accion-pequeno ver"
-              onClick={() => setImagenSeleccionada(imagen.valor)}
-              title="Ver imagen"
-            >
-              <Eye className="icono" />
-            </button>
-            <button
-              type="button"
-              className="boton-accion-pequeno eliminar"
-              onClick={() => eliminarImagen(imagen.key)}
-              title="Eliminar"
-            >
-              <Trash2 className="icono" />
-            </button>
-          </>
-        ) : (
-          <label className="boton-subir-pequeno">
-            <Upload className="icono" />
-            Subir
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => manejarSubidaImagen(e, imagen.key)}
-              style={{ display: 'none' }}
-              disabled={subiendoImagenLanding || !productoId}
             />
           </label>
         )}
@@ -595,7 +668,15 @@ const ImagenesLanding = ({
             >
               <X className="icono" />
             </button>
-            <img src={imagenSeleccionada} alt="Imagen ampliada" className="imagen-ampliada" />
+            <ImagenOptimizada
+              src={imagenSeleccionada}
+              alt="Imagen ampliada"
+              className="imagen-ampliada"
+              mostrarMetricas={true}
+              placeholder="blur"
+              sizes="90vw"
+              priority={true}
+            />
           </div>
         </div>
       )}
@@ -615,27 +696,6 @@ const ImagenesLanding = ({
             <div className="estadistica-numero">{imagenesLanding.estado === 'validado' ? '✅' : imagenesLanding.estado === 'generado' ? '🔄' : '📋'}</div>
             <div className="estadistica-label">Estado</div>
           </div>
-          
-          {/* 🚀 WIDGET DE OPTIMIZACIÓN EN TIEMPO REAL */}
-          {estadisticasOptimizacion && (
-            <div className="estadistica-card optimizacion-activa">
-              <div className="estadistica-numero">
-                <Zap className="icono-optimizacion" />
-                -{estadisticasOptimizacion.porcentajeReduccion}%
-              </div>
-              <div className="estadistica-label">Última optimización</div>
-            </div>
-          )}
-          
-          {optimizandoImagen && (
-            <div className="estadistica-card optimizando">
-              <div className="estadistica-numero">
-                <Loader className="icono-girando" />
-                🚀
-              </div>
-              <div className="estadistica-label">Optimizando...</div>
-            </div>
-          )}
         </div>
 
         <div className="controles-vista">
@@ -731,33 +791,6 @@ const ImagenesLanding = ({
           <Search className="icono" />
           <h3>No se encontraron imágenes</h3>
           <p>Intenta cambiar los filtros o la búsqueda</p>
-        </div>
-      )}
-
-      {/* 🚀 WIDGET DE INFORMACIÓN DE IMAGEN */}
-      {archivoSeleccionado && (
-        <div className="widget-info-imagen">
-          <h4>📊 Información de la imagen seleccionada</h4>
-          <InfoImagenWidget archivo={archivoSeleccionado} />
-          {estadisticasOptimizacion && (
-            <div className="estadisticas-optimizacion">
-              <h5>🚀 Resultados de la optimización:</h5>
-              <div className="metricas-optimizacion">
-                <div className="metrica">
-                  <span className="label">Tamaño original:</span>
-                  <span className="valor">{(estadisticasOptimizacion.tamañoOriginal / 1024).toFixed(1)} KB</span>
-                </div>
-                <div className="metrica">
-                  <span className="label">Tamaño optimizado:</span>
-                  <span className="valor">{(estadisticasOptimizacion.tamañoComprimido / 1024).toFixed(1)} KB</span>
-                </div>
-                <div className="metrica destacada">
-                  <span className="label">Reducción:</span>
-                  <span className="valor">-{estadisticasOptimizacion.porcentajeReduccion}%</span>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       )}
 

@@ -5,6 +5,28 @@
    ============================================ */
 
 /* ============================================
+   RESET Y CONFIGURACIÓN GLOBAL
+   ============================================ */
+* { 
+  box-sizing: border-box; 
+}
+
+html, body, #root { 
+  height: auto; 
+  margin: 0; 
+  padding: 0; 
+  width: 100%; 
+  display: flex;
+  justify-content: center;
+}
+
+.app, .layout-principal, .contenido-principal {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ============================================
    CONTENEDOR PRINCIPAL
    ============================================ */
 .hero-temu-contenedor {

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { clienteSupabase } from '../../configuracion/supabase'
+import TarjetaProductoVendedora from './TarjetaProductoVendedora'
 import TarjetaProductoLujo from './TarjetaProductoLujo'
-import { convertirUrlGoogleDrive } from '../../utilidades/googleDrive'
 import { Filter, Grid, List, ChevronDown, Loader, AlertCircle, Zap, Flame, TrendingUp } from 'lucide-react'
 import './GridProductosVendedor.css'
+
+// 🚀 OPTIMIZACIÓN DE IMÁGENES ACTIVADA
+import ImagenOptimizada from '../ImagenOptimizada'
 
 /**
  * GridProductosVendedor - Grid ultra vendedor de productos estilo Temu/Shein
@@ -204,11 +207,11 @@ const GridProductosVendedor = ({
           const imagenes = producto.producto_imagenes[0]
           
           // Agregar imágenes en orden de prioridad
-          if (imagenes.imagen_principal) imagenesReales.push(convertirUrlGoogleDrive(imagenes.imagen_principal))
-          if (imagenes.imagen_secundaria_1) imagenesReales.push(convertirUrlGoogleDrive(imagenes.imagen_secundaria_1))
-          if (imagenes.imagen_secundaria_2) imagenesReales.push(convertirUrlGoogleDrive(imagenes.imagen_secundaria_2))
-          if (imagenes.imagen_secundaria_3) imagenesReales.push(convertirUrlGoogleDrive(imagenes.imagen_secundaria_3))
-          if (imagenes.imagen_secundaria_4) imagenesReales.push(convertirUrlGoogleDrive(imagenes.imagen_secundaria_4))
+          if (imagenes.imagen_principal) imagenesReales.push(imagenes.imagen_principal)
+          if (imagenes.imagen_secundaria_1) imagenesReales.push(imagenes.imagen_secundaria_1)
+          if (imagenes.imagen_secundaria_2) imagenesReales.push(imagenes.imagen_secundaria_2)
+          if (imagenes.imagen_secundaria_3) imagenesReales.push(imagenes.imagen_secundaria_3)
+          if (imagenes.imagen_secundaria_4) imagenesReales.push(imagenes.imagen_secundaria_4)
         }
         
         // Si no hay imágenes reales, usar fotos_principales del producto
