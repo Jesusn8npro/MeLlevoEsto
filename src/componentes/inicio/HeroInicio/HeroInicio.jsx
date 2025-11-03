@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import './HeroInicio.css'
 import TarjetasPromocionales from './TarjetasPromocionales'
 
@@ -22,6 +23,15 @@ const HeroInicio = ({ slides }) => {
   const dataset = Array.isArray(slides) && slides.length > 0 ? slides : defaultSlides
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
+
+  // Funciones de navegación
+  const irAnterior = () => {
+    setIndex((i) => (i - 1 + dataset.length) % dataset.length)
+  }
+
+  const irSiguiente = () => {
+    setIndex((i) => (i + 1) % dataset.length)
+  }
 
   useEffect(() => {
     let t
@@ -70,6 +80,26 @@ const HeroInicio = ({ slides }) => {
           alt={slide.alt || 'Imagen Home'}
           loading="lazy"
         />
+        
+        {/* Botones de navegación */}
+        {dataset.length > 1 && (
+          <>
+            <button 
+              className="hero-flecha-navegacion hero-flecha-izquierda"
+              onClick={irAnterior}
+              aria-label="Imagen anterior"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button 
+              className="hero-flecha-navegacion hero-flecha-derecha"
+              onClick={irSiguiente}
+              aria-label="Imagen siguiente"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </>
+        )}
         </div>
 
         {/* Tarjetas promocionales al lado derecho en escritorio */}

@@ -6,8 +6,9 @@ import StickyProductoEscritorio from "./StickyProductoEscritorio";
 import "./StickyProducto.css";
 
 const StickyProducto = ({ producto, mostrar }) => {
-  // Usar detección de scroll para mostrar el sticky después de la imagen de pagos
-  const { mostrarSticky } = useDeteccionScroll('.hero-temu-metodos-pago', 50);
+  // Usar detección de scroll para mostrar el sticky después de la sección de precios
+  // En móvil usamos .hero-temu-seccion-precios-vendedora ya que .hero-temu-metodos-pago está oculto
+  const { mostrarSticky } = useDeteccionScroll('.hero-temu-seccion-precios-vendedora', 50);
   
   // Estado para controlar la animación de aparición
   const [visible, setVisible] = useState(false);

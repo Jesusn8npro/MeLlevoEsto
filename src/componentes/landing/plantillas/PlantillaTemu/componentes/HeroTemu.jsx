@@ -458,10 +458,11 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
     setModalPromocionesAbierto(true)
   }
 
-  // Función para truncar texto a 120 palabras
-  const truncarTexto = (texto, limitePalabras = 120) => {
+  // Función para truncar texto al 50%
+  const truncarTexto = (texto, porcentaje = 50) => {
     if (!texto) return ''
     const palabras = texto.split(' ')
+    const limitePalabras = Math.floor(palabras.length * (porcentaje / 100))
     if (palabras.length <= limitePalabras) return texto
     return palabras.slice(0, limitePalabras).join(' ') + '...'
   }
@@ -597,6 +598,20 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                     <span>VENDIDO</span>
                   </div>
                 )}
+
+                {/* Indicadores de puntos debajo de la imagen */}
+                {imagenesFinales.length > 1 && (
+                  <div className="hero-temu-indicadores-puntos">
+                    {imagenesFinales.map((_, index) => (
+                      <button
+                        key={index}
+                        className={`hero-temu-punto-indicador ${index === obtenerImagenActual() ? 'activo' : ''}`}
+                        onClick={() => manejarCambioImagen(index)}
+                        aria-label={`Ir a imagen ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
                 
                 {/* Badge de descuento */}
                 {descuento > 0 && (
@@ -668,7 +683,7 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
           </div>
           
           {/* Título del producto mejorado */}
-          <h1 className="hero-temu-titulo-producto">
+          <h1 className="hero-temu-titulo-producto mobile-order-2">
             {producto?.nombre || 'Bolso Morral al vacío viral Amazon'}
           </h1>
           
@@ -708,36 +723,26 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
             </div>
           </div>
 
-          {/* Sección de valoración mejorada */}
-          <div className="hero-temu-seccion-valoracion">
-            <div className="hero-temu-valoracion-principal">
-              <div className="hero-temu-estrellas-grandes">
-                <span className="hero-temu-estrella">⭐</span>
-                <span className="hero-temu-estrella">⭐</span>
-                <span className="hero-temu-estrella">⭐</span>
-                <span className="hero-temu-estrella">⭐</span>
-                <span className="hero-temu-estrella">⭐</span>
-              </div>
-              <span className="hero-temu-rating-numero">
-                {producto?.testimonios?.estadisticas?.satisfaccion || 4.9}/5.0
-              </span>
-              <span className="hero-temu-total-resenas">
-                | +{producto?.testimonios?.estadisticas?.totalClientes?.toLocaleString() || '2.547'} Clientes felices
-              </span>
+          {/* Bloque único: (opiniones) ⭐⭐⭐⭐⭐ Verificado */}
+          <div className="hero-temu-opiniones-verificado mobile-order-1" aria-label="Opiniones y verificación">
+            <span className="hero-temu-opiniones-count">
+              ({producto?.testimonios?.estadisticas?.totalResenas?.toLocaleString?.() || '1.559'} opiniones)
+            </span>
+            <div className="hero-temu-opiniones-stars" aria-hidden="true">
+              <span>⭐</span>
+              <span>⭐</span>
+              <span>⭐</span>
+              <span>⭐</span>
+              <span>⭐</span>
             </div>
-          </div>
-
-          {/* Nueva llegada y categoría */}
-          <div className="hero-temu-seccion-nueva-llegada">
-            <span className="hero-temu-badge-nueva-llegada">#1 NUEVA LLEGADA</span>
-            <div className="hero-temu-info-ventas">
-              <span>7.8K+ ventas | Vendido por 😊</span>
-              <span className="hero-temu-vendedor-estrella">⭐ Vendedor estrella</span>
-            </div>
+            <span className="hero-temu-opiniones-verified">
+              <span className="hero-temu-verified-icon" aria-hidden="true">✓</span>
+              <span className="hero-temu-verified-text">Verificado</span>
+            </span>
           </div>
           
           {/* Sección de precios súper vendedora */}
-          <div className="hero-temu-seccion-precios-vendedora">
+          <div className="hero-temu-seccion-precios-vendedora mobile-order-3">
             {/* Etiqueta VENDIDO - Solo se muestra si el producto no está activo */}
             {producto?.activo === false && (
               <div className="hero-temu-etiqueta-vendido">
@@ -757,20 +762,32 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
               <span className="hero-temu-precio-original-tachado">
                 {formatearPrecioCOP(producto?.precio_original || 22480)}
               </span>
+              {/* Ahorro a la derecha (móvil visible) */}
+              {producto?.precio_original && producto?.precio && producto.precio_original > producto.precio && (
+                <span className="hero-temu-ahorro-label">
+                  Ahorras: {formatearPrecioCOP(producto.precio_original - producto.precio)}
+                </span>
+              )}
+              {/* Badge de descuento se oculta en móvil vía CSS */}
               <span className="hero-temu-badge-descuento-grande">
                 -62% DE DESCUENTO tiempo limitado
               </span>
             </div>
             
-            <div className="hero-temu-opciones-pago">
-              <span>36 × $236</span>
-              <span>💳 💳 💳 ❓</span>
-            </div>
+
+          </div>
+
+          {/* Imagen de pagos solo para móvil - aparece después del precio */}
+          <div className="hero-temu-imagen-pagos-movil mobile-order-4">
+            <img 
+              src="/images/Imagen para los pagos.jpg" 
+              alt="Métodos de pago disponibles"
+            />
           </div>
 
           {/* Oferta relámpago mejorada - Solo mostrar si el producto NO está vendido */}
           {producto?.estado !== 'vendido' && (
-            <div className="hero-temu-oferta-relampago">
+            <div className="hero-temu-oferta-relampago mobile-order-6">
               <div className="hero-temu-oferta-header">
                 <span className="hero-temu-oferta-titulo">⚡ Oferta relámpago</span>
                 <div className="hero-temu-contador-tiempo">
@@ -783,7 +800,7 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
           )}
 
           {/* Botones de acción principales */}
-          <div className="hero-temu-botones-accion">
+          <div className="hero-temu-botones-accion mobile-order-5">
             {producto?.activo === false || producto?.estado === 'vendido' ? (
               // Botones deshabilitados cuando el producto está vendido
               <div className="hero-temu-botones-vendido">
@@ -846,17 +863,17 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
           </div>
 
           {producto?.descripcion && (
-            <div className="hero-temu-seccion-descripcion">
+            <div className="hero-temu-seccion-descripcion mobile-order-7">
               <h3 className="hero-temu-titulo-descripcion">
                 📝 Descripción del Producto
               </h3>
               <div className="hero-temu-texto-descripcion">
                 {descripcionExpandida 
                   ? producto.descripcion 
-                  : truncarTexto(producto.descripcion, 120)
+                  : truncarTexto(producto.descripcion, 50)
                 }
               </div>
-              {producto.descripcion.split(' ').length > 120 && (
+              {producto.descripcion.split(' ').length > 10 && (
                 <button 
                   className="hero-temu-boton-expandir"
                   onClick={() => setDescripcionExpandida(!descripcionExpandida)}
@@ -871,7 +888,7 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
           )}
 
           {/* Especificaciones técnicas */}
-          <div className="hero-temu-especificaciones-tecnicas">
+          <div className="hero-temu-especificaciones-tecnicas mobile-order-8">
             <h3 className="hero-temu-titulo-especificaciones">
               🔧 Especificaciones Técnicas
             </h3>
@@ -888,7 +905,7 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
           </div>
 
           {producto?.caracteristicas && (
-            <div className="hero-temu-seccion-porque-elegir">
+            <div className="hero-temu-seccion-porque-elegir mobile-order-9">
               <h3 className="hero-temu-titulo-porque-elegir">
                 ⭐ {producto.caracteristicas.titulo || 'Por qué elegir este producto'}
               </h3>

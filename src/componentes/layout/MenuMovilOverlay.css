@@ -6,6 +6,9 @@
   flex-direction: column;
   height: 100%;
   background: var(--color-fondo, #fff);
+  overflow: hidden; /* Evita scroll en el contenedor principal */
+  margin: 0;
+  padding: 0;
 }
 
 /* Header con branding y botón de cierre */
@@ -13,9 +16,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 16px;
+  padding: 12px 16px;
   background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
   color: #fff;
+  flex-shrink: 0; /* No se encoge */
 }
 
 .overlay-brand {
@@ -49,12 +53,19 @@
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.25);
   color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.overlay-close:hover {
+  background: rgba(255,255,255,0.25);
 }
 
 /* Bloque usuario / login */
 .overlay-user {
   padding: 14px 16px;
   border-bottom: 1px solid #f2f2f2;
+  flex-shrink: 0; /* No se encoge */
 }
 
 .overlay-user-row {
@@ -89,6 +100,12 @@
   color: #b45309;
   border: 1px solid #ffe8cc;
   font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.overlay-login-btn:hover {
+  background: #fff4e6;
 }
 
 /* Buscador */
@@ -97,6 +114,8 @@
   align-items: center;
   gap: 10px;
   padding: 12px 16px;
+  flex-shrink: 0; /* No se encoge */
+  cursor: pointer;
 }
 
 .overlay-search-input {
@@ -107,10 +126,33 @@
   padding: 0 12px;
   font-size: 14px;
   color: #333;
+  cursor: pointer;
 }
 
-/* Cuerpo y secciones */
-.overlay-body { padding: 6px 8px 16px; }
+/* Cuerpo y secciones - AQUÍ ESTÁ LA SOLUCIÓN DEL SCROLL */
+.overlay-body { 
+  flex: 1; /* Toma todo el espacio disponible */
+  overflow-y: auto; /* Permite scroll vertical */
+  padding: 6px 8px 16px;
+  /* Scroll personalizado para WebKit */
+}
+
+.overlay-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overlay-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overlay-body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.overlay-body::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
 
 .overlay-section { margin-top: 10px; }
 
@@ -130,9 +172,13 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px 8px;
+  cursor: pointer;
 }
 
-.overlay-section-chevron { transition: transform 0.2s ease; }
+.overlay-section-chevron { 
+  transition: transform 0.2s ease; 
+  color: #9aa0a6;
+}
 .overlay-section-chevron.rotado { transform: rotate(180deg); }
 
 /* Ítems de menú */
@@ -147,12 +193,16 @@
   margin: 6px 0;
   color: #333;
   background: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .overlay-item:hover { 
-  background: transparent !important; 
+  background: #fef7f0 !important; 
   transform: translateX(4px);
   color: #f97316;
+  border-color: #fed7aa;
 }
 
 .overlay-item-chevron { margin-left: auto; color: #c0c0c0; }
@@ -169,7 +219,10 @@
 }
 
 /* Categorías */
-.overlay-categories { padding: 2px 6px 8px; }
+.overlay-categories { 
+  padding: 2px 6px 8px; 
+  max-height: none; /* Permite que se expanda naturalmente */
+}
 
 .overlay-cat-item {
   display: flex;
@@ -182,9 +235,27 @@
   border-radius: 12px;
   margin-bottom: 8px;
   color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.overlay-cat-icon { color: #b45309; background: #fffbf5; border-radius: 8px; padding: 6px; }
-.overlay-cat-info { display: flex; flex-direction: column; }
+.overlay-cat-item:hover {
+  background: #fef7f0;
+  border-color: #fed7aa;
+  transform: translateX(2px);
+}
+
+.overlay-cat-icon { 
+  color: #b45309; 
+  background: #fffbf5; 
+  border-radius: 8px; 
+  padding: 6px; 
+  flex-shrink: 0;
+}
+.overlay-cat-info { 
+  display: flex; 
+  flex-direction: column; 
+  flex: 1;
+}
 .overlay-cat-name { font-size: 14px; font-weight: 600; }
 .overlay-cat-count { font-size: 12px; color: #9aa0a6; }

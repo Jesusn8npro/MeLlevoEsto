@@ -314,19 +314,21 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
               <Menu size={24} />
             </button>
             <Link to="/" className="logo-contenedor">
-              <div className="logo">
-                <span className="logo-texto">MeLlevo</span>
-                <span className="logo-destacado">Esto</span>
-              </div>
+              <img 
+                src="/Logo me llevo esto.png" 
+                alt="MeLlevoEsto.com" 
+                className="logo-imagen"
+              />
             </Link>
           </div>
 
           {/* Logo para Escritorio */}
           <Link to="/" className="logo-contenedor logo-escritorio">
-            <div className="logo">
-              <span className="logo-texto">MeLlevo</span>
-              <span className="logo-destacado">Esto</span>
-            </div>
+            <img 
+              src="/Logo me llevo esto.png" 
+              alt="MeLlevoEsto.com" 
+              className="logo-imagen logo-imagen-escritorio"
+            />
           </Link>
 
           {/* Buscador Central (Desktop) */}
@@ -680,6 +682,20 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
 
       {/* Overlay para ocultar elementos cuando el modal de búsqueda está abierto */}
       {modalBusquedaAbierto && (
+        <style>
+          {`
+            .boton-whatsapp,
+            .contenedor-widget-chat {
+              opacity: 0 !important;
+              pointer-events: none !important;
+              transition: opacity 0.3s ease !important;
+            }
+          `}
+        </style>
+      )}
+
+      {/* Overlay para ocultar elementos cuando el menú móvil está abierto */}
+      {menuMovilAbierto && (
         <style>
           {`
             .boton-whatsapp,

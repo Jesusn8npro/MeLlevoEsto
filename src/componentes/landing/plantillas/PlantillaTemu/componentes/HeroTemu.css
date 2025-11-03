@@ -4,6 +4,11 @@
    Todo en español y súper vendedor
    ============================================ */
 
+/* Ocultar imagen de pagos en escritorio */
+.hero-temu-imagen-pagos-movil {
+  display: none;
+}
+
 /* ============================================
    CONTENEDOR PRINCIPAL
    ============================================ */
@@ -86,23 +91,59 @@
 .hero-temu-imagen-principal { 
   flex: 1;
   aspect-ratio: 1/1; 
-  border-radius: 10px; 
+  border-radius: 0; /* Eliminado border-radius */
   background: transparent; 
   position: relative;
   cursor: pointer;
   overflow: hidden;
+  margin-bottom: 20px; /* Aumentado margin inferior */
 }
 
 .hero-temu-imagen-principal-img {
   width: 100%; 
   height: 100%; 
   object-fit: cover; 
-  border-radius: 10px;
+  border-radius: 0; /* Eliminado border-radius */
   /* Transición eliminada para cambio instantáneo de imágenes */
 }
 
 .hero-temu-imagen-principal:hover .hero-temu-imagen-principal-img {
   /* transform eliminado para evitar delay en cambio de imagen */
+}
+
+/* INDICADORES DE PUNTOS */
+.hero-temu-indicadores-puntos {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.hero-temu-punto-indicador {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.hero-temu-punto-indicador:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: scale(1.2);
+}
+
+.hero-temu-punto-indicador.activo {
+  background: #ff6b35;
+  width: 20px;
+  border-radius: 10px;
+  transform: scale(1);
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.4);
 }
 
 /* ELEMENTOS SOBRE LA IMAGEN */
@@ -415,7 +456,13 @@
 
 .hero-temu-icono-caracteristica {
   color: #00C851;
-  font-size: 14px;
+  font-size: 24px; /* Más grande */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; /* Contenedor fijo para centrado perfecto */
+  height: 40px;
+  text-align: center;
 }
 
 /* VALORACIÓN */
@@ -478,6 +525,52 @@
   margin-bottom: 12px;
   flex-wrap: wrap;
   padding: 0 10px;
+}
+
+/* Bloque único: opiniones + estrellas + verificado */
+.hero-temu-opiniones-verificado {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #2c3e50;
+  border-radius: 10px;
+  padding: 0 10px; /* sin fondo ni borde, solo separación lateral */
+  margin: 8px 10px 12px;
+  width: fit-content;
+}
+
+.hero-temu-opiniones-count {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.hero-temu-opiniones-stars span {
+  font-size: 16px;
+  color: #FFD700;
+}
+
+.hero-temu-opiniones-verified {
+  font-size: 13px;
+  font-weight: 700;
+  color: #10b981; /* verde igual que el badge de testimonios */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Icono verificado igual al de Testimonios, versión inline */
+.hero-temu-verified-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: #10b981;
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.45);
 }
 
 .hero-temu-badge-nueva-llegada {
@@ -625,6 +718,19 @@
   font-weight: 500;
 }
 
+/* Ahorro (alineado a la derecha en el contenedor) */
+.hero-temu-ahorro-label {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0f5132; /* texto verde oscuro para contraste */
+  background: rgba(16, 185, 129, 0.18); /* verde clarito */
+  padding: 6px 10px;
+  border-radius: 9999px; /* pill */
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  box-shadow: 0 1px 2px rgba(16, 185, 129, 0.15);
+}
+
 .hero-temu-badge-descuento-grande {
   background: linear-gradient(135deg, #FF4444 0%, #CC0000 100%);
   color: white;
@@ -636,14 +742,7 @@
   animation: hero-temu-badge-pulse 2s ease-in-out infinite;
 }
 
-.hero-temu-opciones-pago {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 15px;
-  color: #666;
-  margin-bottom: 16px;
-}
+
 
 @keyframes hero-temu-badge-pulse {
   0%, 100% { transform: scale(1); }
@@ -964,6 +1063,7 @@
   margin-bottom: 16px;
   letter-spacing: 0.3px;
   word-spacing: 1px;
+  text-align: left;
 }
 
 .hero-temu-boton-expandir {
@@ -1046,8 +1146,16 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  text-align: center;
-  justify-content: center;
+  text-align: left; /* Alineado a la izquierda */
+  justify-content: flex-start; /* Alineado a la izquierda */
+}
+
+.hero-temu-subtitulo-porque-elegir {
+  font-size: 14px;
+  color: #6c757d;
+  margin: 0 0 16px 0;
+  text-align: left; /* Alineado a la izquierda */
+  line-height: 1.5;
 }
 
 .hero-temu-beneficios-grid {
@@ -1075,9 +1183,15 @@
 }
 
 .hero-temu-icono-beneficio {
-  font-size: 24px;
+  font-size: 32px; /* Más grande para que se vea de lujo */
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: 0; /* Centrado verticalmente */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px; /* Contenedor fijo para centrado perfecto */
+  height: 50px;
+  text-align: center;
 }
 
 .hero-temu-contenido-beneficio h4 {
@@ -1085,6 +1199,7 @@
   font-weight: 600;
   color: #2c3e50;
   margin: 0 0 6px 0;
+  text-align: left; /* Alineado a la izquierda */
 }
 
 .hero-temu-contenido-beneficio p {
@@ -1092,6 +1207,7 @@
   color: #6c757d;
   margin: 0;
   line-height: 1.5;
+  text-align: left; /* Alineado a la izquierda */
 }
 
 /* ============================================
@@ -1463,95 +1579,9 @@
 }
 
 /* Media Queries para mostrar/ocultar layouts */
-@media (min-width: 800px) {
-  .hero-temu-popup-layout-desktop {
-    display: flex;
-  }
-  
-  .hero-temu-popup-layout-mobile {
-    display: none;
-  }
-}
 
-@media (max-width: 799px) {
-  .hero-temu-popup-layout-desktop {
-    display: none;
-  }
-  
-  .hero-temu-popup-layout-mobile {
-    display: flex;
-  }
-}
 
-/* MÓVIL - Eliminar fondos blancos problemáticos */
-@media (max-width: 800px) {
-  /* Galería principal sin fondo blanco en móvil */
-  .hero-temu-galeria-sticky {
-    background: transparent !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-  }
-  
-  /* Contenedor de galería sin fondo */
-  .hero-temu-contenedor-galeria {
-    background: transparent !important;
-  }
-  
-  /* Imagen principal sin fondos blancos */
-  .hero-temu-imagen-principal {
-    background: transparent !important;
-  }
-  
-  /* Botón de favoritos con fondo semi-transparente en móvil */
-  .hero-temu-boton-favoritos {
-    background: rgba(255, 255, 255, 0.9) !important;
-    backdrop-filter: blur(10px);
-  }
-  
-  /* Miniaturas sin fondos blancos */
-  .hero-temu-miniatura-vertical {
-    background: transparent !important;
-  }
-  
-  /* Popup de galería - asegurar fondo oscuro */
-  .hero-temu-popup-galeria {
-    background: rgba(0, 0, 0, 0.95) !important;
-  }
-  
-  .hero-temu-popup-contenido {
-    background: transparent !important;
-  }
-  
-  .hero-temu-popup-imagen-container {
-    background: transparent !important;
-  }
-  
-  /* Miniaturas del popup con fondo semi-transparente */
-  .hero-temu-popup-miniatura {
-    background: rgba(240, 240, 240, 0.1) !important;
-    border: 2px solid rgba(255, 255, 255, 0.2) !important;
-  }
-  
-  .hero-temu-popup-miniatura.activa {
-    background: rgba(14, 165, 233, 0.2) !important;
-    border-color: #0ea5e9 !important;
-  }
-  
-  /* Secciones de contenido con fondos más sutiles en móvil */
-  .hero-temu-seccion-descripcion {
-    background: rgba(255, 255, 255, 0.02) !important;
-    border: 1px solid rgba(233, 236, 239, 0.1) !important;
-  }
-  
-  .hero-temu-especificaciones-tecnicas {
-    background: rgba(255, 255, 255, 0.02) !important;
-  }
-  
-  .hero-temu-beneficio-item {
-    background: rgba(255, 255, 255, 0.02) !important;
-    border: 1px solid rgba(233, 236, 239, 0.1) !important;
-  }
-}
+
 
 /* TABLETS (hasta 1200px) */
 @media (max-width: 1200px) { 
@@ -1611,8 +1641,39 @@
   }
 }
 
-/* MÓVILES (hasta 800px) */
+/* ============================================
+   RESPONSIVE MÓVIL - SISTEMA LIMPIO CON CLASES ESPECÍFICAS
+   ============================================ */
 @media (max-width: 800px) {
+  /* Configuración base de flexbox para la columna derecha */
+  .hero-temu-columna-derecha {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1px !important;
+    padding: 1px 3px !important;
+    align-items: flex-start !important;
+  }
+
+  /* Ocultar elementos que no se necesitan en móvil */
+  .hero-temu-banner-mega-oferta,
+  .hero-temu-caracteristicas-clave,
+  .hero-temu-metodos-pago,
+  .hero-temu-especificaciones-tecnicas {
+    display: none !important;
+  }
+
+  /* SISTEMA DE ORDEN MÓVIL - Usando clases específicas */
+  .mobile-order-1 { order: 1 !important; } /* Opiniones verificadas */
+  .mobile-order-2 { order: 2 !important; } /* Título del producto */
+  .mobile-order-3 { order: 3 !important; } /* Sección de precios */
+  .mobile-order-4 { order: 5 !important; } /* Imagen de pagos móvil - después de botones */
+  .mobile-order-5 { order: 4 !important; } /* Botones de acción - inmediatamente después del precio */
+  .mobile-order-6 { order: 8 !important; } /* Oferta relámpago - después de características */
+  .mobile-order-7 { order: 6 !important; } /* Descripción del producto - después de imagen pagos */
+  .mobile-order-8 { order: 7 !important; } /* Especificaciones técnicas - después de descripción */
+  .mobile-order-9 { order: 9 !important; } /* Por qué elegir este producto */
+
+  /* Configuración del contenedor principal */
   .hero-temu-contenedor {
     position: relative;
     padding: 0 !important;
@@ -1635,26 +1696,130 @@
     margin: 0;
     padding: 0;
   }
-  
-  .hero-temu-columna-derecha {
-    flex: 1;
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    padding: 15px;
+
+  /* Márgenes negativos para secciones más compactas */
+  .hero-temu-titulo-producto {
+    font-size: 20px !important;
+    line-height: 1.3 !important;
+    text-align: left !important;
+    margin-bottom: -10px !important;
+    padding: 0 !important;
+    margin-top: -13px !important;
+  }
+
+  .hero-temu-seccion-precios-vendedora {
+    margin-left: -10px !important;
+    margin-top: -10px !important;
+    margin-bottom: -5px !important;
+    padding: 8px !important;
+    border-radius: 12px !important;
+    text-align: left !important;
+  }
+
+  .hero-temu-seccion-descripcion {
+    margin-left: 0px !important;   
+    margin-bottom: -10px !important;
+    padding: 8px !important;
+  }
+
+  .hero-temu-seccion-porque-elegir {
+    margin: 5px !important;
+    margin-top: -10px !important;
+    padding: 8px !important;
+  }
+
+  /* Iconos de beneficios más grandes y centrados en móvil */
+  .hero-temu-icono-beneficio {
+    font-size: 36px !important; /* Aún más grande en móvil */
+    width: 55px !important;
+    height: 55px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    margin-top: 0 !important;
+  }
+
+  .hero-temu-beneficio-item {
+    align-items: center !important; /* Centrado vertical del contenedor completo */
+  }
+
+  /* Opiniones verificadas completamente alineadas a la izquierda */
+  .hero-temu-opiniones-verificado {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+  }
+
+  /* Estilos específicos para elementos móviles */
+  .mobile-order-4 {
+    display: flex !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  .mobile-order-4 img {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin-top: -25px !important;
+    margin-bottom: -10px !important;
+  }
+
+  .hero-temu-precio-actual-grande { 
+    font-size: 26px !important; 
+    font-weight: 800 !important; 
+    text-shadow: none !important; 
   }
   
-  /* Desactivar sticky en móvil */
+  .hero-temu-precio-original-tachado { 
+    font-size: 16px !important; 
+    color: #9aa0a6 !important; 
+  }
+  
+  .hero-temu-ahorro-label { 
+    font-size: 12px !important; 
+    background: rgba(16, 185, 129, 0.18) !important;
+  }
+  
+  .hero-temu-badge-descuento-grande { 
+    display: none !important; 
+  }
+
+  .hero-temu-boton-carrito,
+  .hero-temu-boton-contra-entrega,
+  .hero-temu-boton-pagar-plataforma {
+    padding: 8px 6px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    border-radius: 6px !important;
+    min-height: 36px !important;
+    margin-top: -18px !important;
+  }
+
+  .hero-temu-oferta-relampago {
+    margin: 8px !important;
+    padding: 8px !important;
+    border-radius: 6px !important;
+  }
+
+  /* Configuración de galería para móvil */
   .hero-temu-galeria-sticky {
     position: static !important;
     width: 100% !important;
     margin: 0;
+    margin-bottom: -10px !important;
     padding: 0;
     border-radius: 0;
     box-shadow: none;
   }
   
-  /* Miniaturas horizontales en móvil */
   .hero-temu-contenedor-galeria {
     flex-direction: column;
     width: 100%;
@@ -1665,37 +1830,55 @@
     width: 100%;
     aspect-ratio: 1/1;
     margin: 0;
+    margin-bottom: 15px !important; /* Aumentado margin inferior en móvil */
     border-radius: 0;
+    order: 1; /* Imagen principal primero */
+  }
+
+  /* Indicadores de puntos en móvil */
+  .hero-temu-indicadores-puntos {
+    bottom: 10px !important;
+    gap: 6px !important;
+  }
+
+  .hero-temu-punto-indicador {
+    width: 8px !important;
+    height: 8px !important;
+  }
+
+  .hero-temu-punto-indicador.activo {
+    background-color: #ff6b35 !important;
+    width: 16px !important;
+    border-radius: 8px !important;
+    transform: scale(1) !important;
   }
   
-  /* Contenedor del slider de miniaturas */
   .hero-temu-miniaturas-verticales {
     flex-direction: row;
-    gap: 12px;
+    gap: 6px !important;
     margin: 0;
-    order: 2;
+    margin-top: -8px !important;
+    margin-bottom: -8px !important;
+    order: 2; /* Miniaturas después de la imagen principal */
     width: 100%;
-    padding: 15px 20px;
-    background: #f8f9fa;
+    padding: 6px !important;
     overflow-x: auto;
     overflow-y: hidden;
-    scroll-behavior: auto; /* Cambio instantáneo sin animación */
+    scroll-behavior: auto;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
   
-  /* Ocultar scrollbar en WebKit */
   .hero-temu-miniaturas-verticales::-webkit-scrollbar {
     display: none;
   }
 
   .hero-temu-miniatura-vertical {
-    width: 80px;
-    height: 80px;
+    width: 70px !important;
+    height: 70px !important;
     flex-shrink: 0;
-    border-radius: 12px;
-    /* Transición eliminada para cambio instantáneo en móvil */
+    border-radius: 8px !important;
     position: relative;
   }
   
@@ -1708,40 +1891,7 @@
     box-shadow: 0 0 0 2px #ff4444;
     transform: scale(1.1);
   }
-  
-  /* Indicador de scroll para miniaturas */
-  .hero-temu-slider-indicador {
-    position: absolute;
-    bottom: 5px;
-    right: 20px;
-    background: rgba(0, 0, 0, 0.6);
-    color: white;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 500;
-    pointer-events: none;
-    opacity: 0;
-    /* Transición eliminada para cambio instantáneo */
-  }
-  
-  .hero-temu-miniaturas-verticales:hover + .hero-temu-slider-indicador,
-  .hero-temu-miniaturas-verticales:focus + .hero-temu-slider-indicador {
-    opacity: 1;
-  }
-  
-  /* Imagen de pagos responsive */
-  .hero-temu-metodos-pago {
-    margin: 15px 0;
-    padding: 0 5px;
-  }
-  
-  .hero-temu-imagen-pagos {
-    max-width: 350px;
-    border-radius: 8px;
-  }
 
-  /* Ajustes del modal para móvil */
   .hero-temu-popup-miniatura {
     width: 80px;
     height: 80px;

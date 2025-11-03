@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   X,
@@ -34,6 +34,20 @@ const MenuMovilOverlay = ({
 }) => {
   const [categoriasAbiertas, setCategoriasAbiertas] = useState(true)
 
+  // Bloquear scroll del body cuando el menú esté abierto
+  useEffect(() => {
+    if (abierto) {
+      document.body.classList.add('menu-movil-abierto');
+    } else {
+      document.body.classList.remove('menu-movil-abierto');
+    }
+
+    // Cleanup: restaurar scroll cuando el componente se desmonte
+    return () => {
+      document.body.classList.remove('menu-movil-abierto');
+    };
+  }, [abierto]);
+
   const handleCartClick = () => {
     onAlternarCarrito && onAlternarCarrito()
     onCerrar && onCerrar()
@@ -62,14 +76,14 @@ const MenuMovilOverlay = ({
             <div className="overlay-user-row">
               <div className="overlay-avatar" aria-hidden="true">{usuario?.email?.[0]?.toUpperCase() || 'U'}</div>
               <div className="overlay-user-info">
-                <span className="overlay-user-label">Hola</span>
+                <span className="overlay-user-label">Bienvenido</span>
                 <span className="overlay-user-name">{usuario?.email}</span>
               </div>
             </div>
           ) : (
             <button className="overlay-login-btn" onClick={onAbrirAutenticacion}>
               <UserCircle size={18} />
-              <span>Iniciar sesión</span>
+              <span>Bienvenido - Iniciar sesión</span>
             </button>
           )}
         </div>

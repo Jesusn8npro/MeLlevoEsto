@@ -2,7 +2,7 @@ import React from 'react'
 import HeroInicio from '../../../componentes/inicio/HeroInicio'
 import SeccionBeneficios from '../../../componentes/inicio/SeccionBeneficios/SeccionBeneficios'
 import SeccionCategorias from '../../../componentes/inicio/SeccionCategorias/SeccionCategorias'
-import GridProductosVendedor from '../../../componentes/producto/GridProductosVendedor'
+import SeccionProductosVendidos from '../../../componentes/inicio/SeccionProductosVendidos/SeccionProductosVendidos'
 import './PaginaInicio.css'
 
 // Página de inicio - Landing ultra vendedora
@@ -17,6 +17,9 @@ export default function PaginaInicio() {
 
       {/* Sección de Categorías Populares - Estilo WoodMart */}
       <SeccionCategorias />
+
+      {/* Sección de Productos Más Vendidos - Últimos productos publicados */}
+      <SeccionProductosVendidos />
     </div>
   )
 }

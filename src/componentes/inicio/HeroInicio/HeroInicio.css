@@ -10,14 +10,14 @@
 }
 
 .hero-inicio--full {
-  padding: 12px 0; /* margen vertical ligero */
+  padding: 0; /* eliminar padding completamente */
 }
 
 /* Contenedor en rejilla para alinear ancho con beneficios */
 .hero-grid {
-  max-width: 1500px; /* igual que .beneficios-contenedor */
-  margin: 0 auto;
-  padding: 0 20px; /* igual que .beneficios-contenedor */
+  max-width: 100%; /* ancho completo siempre */
+  margin: 0;
+  padding: 0; /* eliminar padding completamente */
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
   gap: 16px;
@@ -29,9 +29,9 @@
   width: 100%;
   margin: 0;
   height: clamp(280px, 35vw, 380px); /* Más rectangular - reducido altura */
-  border-radius: 12px;
+  border-radius: 0; /* sin border-radius para ancho completo */
   overflow: hidden;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-shadow: none; /* sin sombra para ancho completo */
 }
 
 .hero-img {
@@ -41,6 +41,40 @@
   height: 100%;
   object-fit: cover; /* Mantiene proporciones, cubre todo el contenedor */
   object-position: center; /* Centra la imagen */
+}
+
+/* Botones de navegación del slider */
+.hero-flecha-navegacion {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+  opacity: 0;
+  animation: hero-flecha-aparecer 0.3s ease forwards;
+}
+
+.hero-flecha-navegacion:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.hero-flecha-izquierda { left: 12px; }
+.hero-flecha-derecha { right: 12px; }
+
+@keyframes hero-flecha-aparecer {
+  from { opacity: 0; transform: translateY(-50%) scale(0.8); }
+  to { opacity: 1; transform: translateY(-50%) scale(1); }
 }
 
 /* Overlay para legibilidad: aclara el lado izquierdo y desvanece a la derecha */
@@ -165,16 +199,40 @@
 
 /* Se eliminó el bloque de imagen independiente, ahora la imagen es fondo */
 
+/* Media query para ocultar banners después de 770px */
+@media (max-width: 770px) {
+  .hero-grid {
+    grid-template-columns: 1fr; /* solo slider, sin tarjetas */
+    gap: 0;
+    padding: 0; /* sin padding */
+  }
+
+  .hero-promos {
+    display: none; /* ocultar completamente las tarjetas promocionales */
+  }
+
+  .hero-slider {
+    width: 100%; /* ancho completo */
+    margin: 0;
+    border-radius: 0; /* sin border-radius para ancho completo */
+  }
+}
+
 /* Responsive: apilar columnas en móvil y ajustar padding */
 @media (max-width: 768px) {
   .hero-grid {
     grid-template-columns: 1fr; /* slider arriba, tarjetas abajo */
-    gap: 12px;
-    padding: 0 15px; /* consistente con beneficios móvil */
+    gap: 0;
+    padding: 0; /* sin padding en móvil */
   }
 
   .hero-promos {
     height: auto; /* en móvil, altura natural */
+    display: none; /* mantener oculto en móvil también */
+  }
+
+  .hero-slider {
+    border-radius: 0; /* sin border-radius en móvil */
   }
 
   .tarjetas-promocionales {
