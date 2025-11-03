@@ -1,0 +1,589 @@
+/* ===== SECCIÓN CREDIBILIDAD - ULTRA VENDEDORA ===== */
+.seccion-credibilidad {
+  padding: 4rem 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.seccion-credibilidad::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 48, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.contenedor-credibilidad {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== HEADER VENDEDOR ===== */
+.credibilidad-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  margin-bottom: 4rem;
+}
+
+.header-contenido {
+  text-align: left;
+}
+
+.credibilidad-titulo {
+  margin: 0 0 1.5rem 0;
+  line-height: 1.2;
+}
+
+.titulo-principal {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.titulo-destacado {
+  display: block;
+  font-size: 3rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.credibilidad-subtitulo {
+  font-size: 1.25rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ===== IMAGEN DE STOCK VENDEDORA ===== */
+.imagen-stock-contenedor {
+  position: relative;
+}
+
+.imagen-stock {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.5);
+  transform: perspective(1000px) rotateY(-5deg) rotateX(2deg);
+  transition: all 0.4s ease;
+}
+
+.imagen-stock:hover {
+  transform: perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1.02);
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.8);
+}
+
+.stock-imagen {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  display: block;
+}
+
+.stock-overlay {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+}
+
+.stock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(34, 197, 94, 0.95);
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+}
+
+/* ===== ESTADÍSTICAS DE CONFIANZA ===== */
+.estadisticas-confianza {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.estadistica-item {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.estadistica-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.estadistica-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(102, 126, 234, 0.2);
+}
+
+.estadistica-icono {
+  color: #667eea;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.estadistica-numero {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.estadistica-texto {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 0.25rem;
+}
+
+.estadistica-descripcion {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+/* ===== GARANTÍAS ===== */
+.garantias-contenedor {
+  margin-bottom: 4rem;
+}
+
+.garantias-titulo {
+  text-align: center;
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 3rem;
+}
+
+.garantias-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.garantia-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.garantia-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 8px 30px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(34, 197, 94, 0.2);
+}
+
+.garantia-icono {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: white; /* Iconos en color blanco */
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.garantia-titulo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+}
+
+.garantia-descripcion {
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ===== TESTIMONIOS ===== */
+.testimonios-contenedor {
+  margin-bottom: 4rem;
+}
+
+.testimonios-titulo {
+  text-align: center;
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 3rem;
+}
+
+.testimonios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.testimonio-item {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.testimonio-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 8px 30px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(255, 193, 7, 0.3);
+}
+
+.testimonio-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.testimonio-avatar {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.testimonio-info {
+  flex: 1;
+}
+
+.testimonio-nombre {
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.testimonio-ubicacion {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.testimonio-calificacion {
+  display: flex;
+  gap: 0.25rem;
+  color: #fbbf24;
+}
+
+.testimonio-comentario {
+  font-style: italic;
+  color: #475569;
+  line-height: 1.6;
+  margin: 0 0 1rem 0;
+}
+
+.testimonio-producto {
+  font-size: 0.85rem;
+  color: #667eea;
+  font-weight: 600;
+}
+
+/* ===== CTA FINAL ===== */
+.credibilidad-cta {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 3rem;
+  text-align: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.credibilidad-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.cta-contenido {
+  position: relative;
+  z-index: 1;
+}
+
+.cta-titulo {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 1rem 0;
+}
+
+.cta-descripcion {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 0 0 2rem 0;
+  line-height: 1.6;
+}
+
+.cta-botones {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-cta-principal,
+.btn-cta-secundario {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-cta-principal {
+  background: white;
+  color: #667eea;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-cta-principal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.btn-cta-secundario {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.btn-cta-secundario:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+/* ===== RESPONSIVE ===== */
+
+/* Tablet */
+@media (max-width: 768px) {
+  .seccion-credibilidad {
+    padding: 3rem 0;
+  }
+
+  .contenedor-credibilidad {
+    padding: 0 1.5rem;
+  }
+
+  .credibilidad-header {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .titulo-principal {
+    font-size: 2rem;
+  }
+
+  .titulo-destacado {
+    font-size: 2.5rem;
+  }
+
+  .credibilidad-subtitulo {
+    font-size: 1.1rem;
+  }
+
+  .imagen-stock {
+    transform: none;
+  }
+
+  .imagen-stock:hover {
+    transform: scale(1.02);
+  }
+
+  .estadisticas-confianza {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .garantias-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .testimonios-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .credibilidad-cta {
+    padding: 2rem;
+  }
+
+  .cta-titulo {
+    font-size: 1.75rem;
+  }
+
+  .cta-botones {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn-cta-principal,
+  .btn-cta-secundario {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
+}
+
+/* Móvil */
+@media (max-width: 480px) {
+  .seccion-credibilidad {
+    padding: 2rem 0;
+  }
+
+  .contenedor-credibilidad {
+    padding: 0 1rem;
+  }
+
+  .titulo-principal {
+    font-size: 1.75rem;
+  }
+
+  .titulo-destacado {
+    font-size: 2rem;
+  }
+
+  .credibilidad-subtitulo {
+    font-size: 1rem;
+  }
+
+  .estadisticas-confianza {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .estadistica-item {
+    padding: 1.5rem;
+  }
+
+  .estadistica-numero {
+    font-size: 2rem;
+  }
+
+  .garantias-titulo,
+  .testimonios-titulo {
+    font-size: 1.75rem;
+  }
+
+  .garantia-item {
+    padding: 1.5rem;
+  }
+
+  .testimonio-item {
+    padding: 1.5rem;
+  }
+
+  .credibilidad-cta {
+    padding: 1.5rem;
+  }
+
+  .cta-titulo {
+    font-size: 1.5rem;
+  }
+
+  .cta-descripcion {
+    font-size: 1rem;
+  }
+}
+
+/* Animaciones para usuarios que prefieren movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  .imagen-stock,
+  .estadistica-item,
+  .garantia-item,
+  .testimonio-item,
+  .btn-cta-principal,
+  .btn-cta-secundario {
+    transition: none;
+  }
+
+  .imagen-stock:hover,
+  .estadistica-item:hover,
+  .garantia-item:hover,
+  .testimonio-item:hover,
+  .btn-cta-principal:hover,
+  .btn-cta-secundario:hover {
+    transform: none;
+  }
+}

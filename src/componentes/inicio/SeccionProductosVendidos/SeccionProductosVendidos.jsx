@@ -19,47 +19,61 @@ export default function SeccionProductosVendidos() {
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState(null)
 
-  // Cargar productos más recientes
+  // Cargar productos más vendidos desde Supabase - MISMA LÓGICA QUE GridProductosVendedor
   useEffect(() => {
-    cargarProductosVendidos()
-  }, [])
+    const cargarProductos = async () => {
+      try {
+        setCargando(true)
+        setError(null)
 
-  const cargarProductosVendidos = async () => {
-    try {
-      setCargando(true)
-      setError(null)
+        // Consulta EXACTA como en GridProductosVendedor
+        let query = clienteSupabase
+          .from('productos')
+          .select(`
+            *,
+            categorias (
+              id,
+              nombre,
+              icono
+            ),
+            producto_imagenes (
+              imagen_principal,
+              imagen_secundaria_1,
+              imagen_secundaria_2,
+              imagen_secundaria_3,
+              imagen_secundaria_4
+            )
+          `)
+          .eq('activo', true)
+          .or('stock.gt.0,estado.eq.vendido') // Productos con stock O productos vendidos
+          .order('destacado', { ascending: false })
+          .order('creado_el', { ascending: false })
+          .limit(8)
 
-      // Consulta para obtener los productos más recientes con sus imágenes
-      const { data: productos, error: errorProductos } = await clienteSupabase
-        .from('productos')
-        .select(`
-          *,
-          producto_imagenes (
-            imagen_principal,
-            imagen_secundaria_1
-          )
-        `)
-        .eq('estado', 'activo')
-        .eq('visible', true)
-        .order('created_at', { ascending: false })
-        .limit(8)
+        const { data, error: errorQuery } = await query
 
-      if (errorProductos) {
-        console.error('Error al cargar productos:', errorProductos)
-        setError('Error al cargar los productos')
-        return
+        if (errorQuery) {
+          console.error('❌ Error cargando productos más vendidos:', {
+            message: errorQuery.message,
+            code: errorQuery.code,
+            details: errorQuery.details,
+            hint: errorQuery.hint
+          })
+          throw errorQuery
+        }
+
+        console.log('📦 Productos más vendidos cargados:', data?.length || 0)
+        setProductos(data || [])
+      } catch (err) {
+        console.error('Error cargando productos más vendidos:', err)
+        setError(err.message || 'Error cargando productos')
+      } finally {
+        setCargando(false)
       }
-
-      console.log('✅ Productos más vendidos cargados:', productos?.length || 0)
-      setProductos(productos || [])
-
-    } catch (error) {
-      console.error('Error inesperado:', error)
-      setError('Error inesperado al cargar productos')
-    } finally {
-      setCargando(false)
     }
-  }
+
+    cargarProductos()
+  }, [])
 
   if (error) {
     return (
@@ -69,7 +83,7 @@ export default function SeccionProductosVendidos() {
             <AlertCircle size={48} />
             <h3>Error al cargar productos</h3>
             <p>{error}</p>
-            <button onClick={cargarProductosVendidos} className="btn-reintentar">
+            <button onClick={() => window.location.reload()} className="btn-reintentar">
               Reintentar
             </button>
           </div>

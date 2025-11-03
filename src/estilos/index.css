@@ -79,6 +79,7 @@ body {
   background-color: var(--fondo-principal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding-bottom: 20px;
 }
 
 /* Clase para bloquear scroll cuando el menú móvil esté abierto */
