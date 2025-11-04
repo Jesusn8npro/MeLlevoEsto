@@ -1,10 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './HeroSeccion.css';
+<<<<<<< HEAD
+=======
+import { usarCategorias } from '../../hooks/usarCategorias';
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
 
 const HeroSeccion = () => {
   const [indiceSliderActual, setIndiceSliderActual] = useState(0);
   const scrollRef = useRef(null);
 
+<<<<<<< HEAD
+=======
+  // Hook para obtener categorías reales
+  const { categorias: categoriasReales, cargando: cargandoCategorias, error: errorCategorias } = usarCategorias();
+
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
   // Estados para el arrastre del mouse
   const [estaArrastrando, setEstaArrastrando] = useState(false);
   const [posicionInicial, setPosicionInicial] = useState(0);
@@ -308,6 +318,7 @@ const HeroSeccion = () => {
             onMouseLeave={finalizarArrastre}
             style={{ cursor: estaArrastrando ? 'grabbing' : 'grab' }}
           >
+<<<<<<< HEAD
             {categoriasCirculares.map((categoria, indice) => (
               <div 
                 key={indice} 
@@ -326,6 +337,43 @@ const HeroSeccion = () => {
                 <h3 className="nombre-categoria">{categoria.nombre}</h3>
               </div>
             ))}
+=======
+            {cargandoCategorias ? (
+              // Mostrar skeleton loading mientras cargan las categorías
+              Array.from({ length: 6 }).map((_, indice) => (
+                <div key={`skeleton-${indice}`} className="categoria-circular skeleton">
+                  <div className="contenedor-imagen-circular skeleton-imagen"></div>
+                  <div className="nombre-categoria skeleton-texto"></div>
+                </div>
+              ))
+            ) : errorCategorias ? (
+              <div className="error-categorias">
+                <p>Error al cargar categorías</p>
+              </div>
+            ) : (
+              categoriasReales.slice(0, 10).map((categoria) => (
+                <div 
+                  key={categoria.id} 
+                  className="categoria-circular"
+                  onClick={() => !estaArrastrando && (window.location.href = `/tienda/categoria/${categoria.slug}`)}
+                  style={{ cursor: estaArrastrando ? 'grabbing' : 'pointer' }}
+                >
+                  <div className="contenedor-imagen-circular">
+                    <img 
+                      src={categoria.imagen_url || '/images/Home/Categorias/Categorias fondo blanco/default.jpg'} 
+                      alt={categoria.nombre}
+                      className="imagen-categoria-circular"
+                      draggable={false}
+                      onError={(e) => {
+                        e.target.src = '/images/Home/Categorias/Categorias fondo blanco/default.jpg';
+                      }}
+                    />
+                  </div>
+                  <h3 className="nombre-categoria">{categoria.nombre}</h3>
+                </div>
+              ))
+            )}
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
           </div>
           
           {/* Indicador de scroll */}

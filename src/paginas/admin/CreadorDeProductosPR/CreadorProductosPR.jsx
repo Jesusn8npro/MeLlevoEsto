@@ -197,7 +197,13 @@ const CreadorProductosPR = ({ modo = 'crear', slug = null, onSuccess = null }) =
           // Campos básicos
           nombre: data.nombre || '',
           slug: data.slug || '',
+<<<<<<< HEAD
           descripcion: data.descripcion || '',
+=======
+          // Descripción como JSON: { titulo, contenido } con retrocompatibilidad
+          descripcion_titulo: typeof data.descripcion === 'object' && data.descripcion?.titulo ? data.descripcion.titulo : '',
+          descripcion_contenido: typeof data.descripcion === 'object' && data.descripcion?.contenido ? data.descripcion.contenido : (typeof data.descripcion === 'string' ? data.descripcion : ''),
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
           precio: data.precio || '',
           precio_original: data.precio_original || '',
           descuento: data.descuento || 0,
@@ -433,7 +439,17 @@ const CreadorProductosPR = ({ modo = 'crear', slug = null, onSuccess = null }) =
       const datosParaGuardar = {
         nombre: datosProducto.nombre ? datosProducto.nombre.trim() : null,
         slug: datosProducto.slug || datosProducto.nombre.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-'),
+<<<<<<< HEAD
         descripcion: datosProducto.descripcion ? datosProducto.descripcion.trim() : null,
+=======
+        // Descripción: enviar siempre como objeto JSONB si hay datos
+        descripcion: (datosProducto.descripcion_titulo || datosProducto.descripcion_contenido)
+          ? {
+              titulo: (datosProducto.descripcion_titulo || '🚀 Descubre Todo lo que Necesitas Saber').trim(),
+              contenido: (datosProducto.descripcion_contenido || '').trim()
+            }
+          : (datosProducto.descripcion ? datosProducto.descripcion.trim() : null),
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
         // Campos NUMERIC (permiten decimales)
         precio: toNum(datosProducto.precio),
         precio_original: toNum(datosProducto.precio_original),

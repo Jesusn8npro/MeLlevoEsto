@@ -279,6 +279,7 @@ const FormularioProducto = ({
           </div>
 
           <div className="campo">
+<<<<<<< HEAD
             <label>Descripción *</label>
             <textarea
               value={datosProducto.descripcion || ''}
@@ -288,6 +289,27 @@ const FormularioProducto = ({
               placeholder="Descripción detallada del producto..."
             />
             {errores.descripcion && <span className="error-texto">{errores.descripcion}</span>}
+=======
+            <label>Título de la sección (Descripción)</label>
+            <input
+              type="text"
+              value={datosProducto.descripcion_titulo || ''}
+              onChange={(e) => manejarCambio('descripcion_titulo', e.target.value)}
+              placeholder="Ej: 🚀 Descubre Todo lo que Necesitas Saber"
+            />
+          </div>
+
+          <div className="campo">
+            <label>Contenido de la Descripción *</label>
+            <textarea
+              value={datosProducto.descripcion_contenido || ''}
+              onChange={(e) => manejarCambio('descripcion_contenido', e.target.value)}
+              className={errores.descripcion_contenido ? 'error' : ''}
+              rows="4"
+              placeholder="Texto completo y persuasivo de la descripción..."
+            />
+            {errores.descripcion_contenido && <span className="error-texto">{errores.descripcion_contenido}</span>}
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
           </div>
 
           <div className="campo">

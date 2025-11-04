@@ -371,7 +371,11 @@ const PlantillaCatalogo = ({ producto, config, reviews, notificaciones }) => {
       </div>
 
       {/* Descripción completa */}
+<<<<<<< HEAD
       {producto.descripcion && (
+=======
+      {(producto.descripcion || (producto.descripcion && producto.descripcion.contenido)) && (
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
         <div style={{ 
           backgroundColor: 'white', 
           padding: '2rem', 
@@ -380,14 +384,26 @@ const PlantillaCatalogo = ({ producto, config, reviews, notificaciones }) => {
           border: '1px solid #dee2e6'
         }}>
           <h3 style={{ color: '#2c3e50', marginBottom: '1rem' }}>
+<<<<<<< HEAD
             📝 Descripción
+=======
+            {typeof producto.descripcion === 'object' && producto.descripcion?.titulo 
+              ? producto.descripcion.titulo 
+              : '📝 Descripción'}
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
           </h3>
           <div style={{ 
             lineHeight: '1.6', 
             color: '#495057',
             whiteSpace: 'pre-wrap'
           }}>
+<<<<<<< HEAD
             {producto.descripcion}
+=======
+            {typeof producto.descripcion === 'object' && producto.descripcion?.contenido 
+              ? producto.descripcion.contenido 
+              : producto.descripcion}
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
           </div>
         </div>
       )}

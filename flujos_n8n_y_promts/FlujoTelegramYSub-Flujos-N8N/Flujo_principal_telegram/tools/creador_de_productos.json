@@ -12,10 +12,17 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
+<<<<<<< HEAD
         -608,
         -48
       ],
       "id": "f40d7602-f007-4aeb-88eb-8dfc8cab49b1",
+=======
+        -432,
+        784
+      ],
+      "id": "8e4e5c87-a2d3-4004-a6fa-a055af981e19",
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
       "name": "OpenAI Chat Model2",
       "credentials": {
         "openAiApi": {
@@ -33,10 +40,17 @@
       "type": "n8n-nodes-base.supabaseTool",
       "typeVersion": 1,
       "position": [
+<<<<<<< HEAD
         -224,
         -48
       ],
       "id": "52435922-f79f-40d8-b277-ecddfa0698d1",
+=======
+        -48,
+        784
+      ],
+      "id": "92d88bd1-18e8-4d68-9292-998fed339b87",
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
       "name": "consultar_categorias",
       "credentials": {
         "supabaseApi": {
@@ -56,10 +70,17 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2.2,
       "position": [
+<<<<<<< HEAD
         -464,
         -400
       ],
       "id": "98c6f448-6389-436c-8d76-6687563303ac",
+=======
+        -288,
+        432
+      ],
+      "id": "76263eff-4f64-4f3f-9b27-2bbcb361e43e",
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
       "name": "AI Agent Creador Productos"
     },
     {
@@ -69,10 +90,17 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
+<<<<<<< HEAD
         -160,
         -400
       ],
       "id": "fe705983-88c2-4152-b9f0-050c477fa846",
+=======
+        16,
+        432
+      ],
+      "id": "9bbd0568-5552-4e1d-af4e-2294d7732d0e",
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
       "name": "Detector Tipo Respuesta"
     },
     {
@@ -113,10 +141,17 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
+<<<<<<< HEAD
         64,
         -400
       ],
       "id": "62c1ba38-6b84-4d56-9c35-915bb4d36702",
+=======
+        240,
+        432
+      ],
+      "id": "f84d434c-5c72-4818-bd21-045f4a3e5009",
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
       "name": "If"
     },
     {
@@ -126,10 +161,17 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
+<<<<<<< HEAD
         384,
         -400
       ],
       "id": "7538a790-98aa-403a-b67a-67160991f10d",
+=======
+        560,
+        432
+      ],
+      "id": "8d271d13-0c08-4939-a53a-d5a873ebe239",
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
       "name": "Procesador JSON"
     },
     {
@@ -291,10 +333,17 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
+<<<<<<< HEAD
         656,
         -384
       ],
       "id": "e5b6afc9-4aaf-41d5-8c3c-76c68deea19f",
+=======
+        832,
+        448
+      ],
+      "id": "009db6f8-300d-448f-b196-1a9256be7a49",
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
       "name": "Crear Producto en Supabase",
       "credentials": {
         "supabaseApi": {
@@ -350,10 +399,17 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
+<<<<<<< HEAD
         -672,
         -400
       ],
       "id": "17d79760-dd0b-421e-ac79-8761bb0d1ef3",
+=======
+        -496,
+        432
+      ],
+      "id": "68b74093-f623-438c-b1d2-8b5fae727757",
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
       "name": "Edit Fields"
     },
     {
@@ -375,13 +431,22 @@
           ]
         }
       },
+<<<<<<< HEAD
       "id": "22985982-b8e2-47eb-ade6-7bb3310390dd",
+=======
+      "id": "b2e3f4d0-134e-4648-9686-261fb6ca2a1c",
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
       "typeVersion": 1.1,
       "name": "When Executed by Another Workflow",
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "position": [
+<<<<<<< HEAD
         -944,
         -400
+=======
+        -768,
+        432
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
       ]
     }
   ],

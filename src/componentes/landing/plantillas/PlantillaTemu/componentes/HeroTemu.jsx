@@ -864,6 +864,7 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
 
           {producto?.descripcion && (
             <div className="hero-temu-seccion-descripcion mobile-order-7">
+<<<<<<< HEAD
               <h3 className="hero-temu-titulo-descripcion">
                 📝 Descripción del Producto
               </h3>
@@ -884,6 +885,44 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                   {descripcionExpandida ? 'Ver menos' : 'Ver descripción completa'}
                 </button>
               )}
+=======
+              {(() => {
+                // Soporte para descripción como JSON { titulo, contenido } o como string
+                const esObjeto = producto?.descripcion && typeof producto.descripcion === 'object'
+                const tituloDescripcion = esObjeto
+                  ? (producto.descripcion.titulo || 'Descripción del Producto')
+                  : 'Descripción del Producto'
+                const textoDescripcion = esObjeto
+                  ? (producto.descripcion.contenido || '')
+                  : (typeof producto?.descripcion === 'string' ? producto.descripcion : '')
+
+                return (
+                  <>
+                    <h3 className="hero-temu-titulo-descripcion">
+                      {/* Título dinámico con fallback */}
+                      📝 {tituloDescripcion}
+                    </h3>
+                    <div className="hero-temu-texto-descripcion">
+                      {descripcionExpandida 
+                        ? textoDescripcion
+                        : truncarTexto(textoDescripcion, 50)
+                      }
+                    </div>
+                    {textoDescripcion && textoDescripcion.split(' ').length > 10 && (
+                      <button 
+                        className="hero-temu-boton-expandir"
+                        onClick={() => setDescripcionExpandida(!descripcionExpandida)}
+                      >
+                        <span className={`hero-temu-icono-expandir ${descripcionExpandida ? 'expandido' : ''}`}>
+                          🔽
+                        </span>
+                        {descripcionExpandida ? 'Ver menos' : 'Ver descripción completa'}
+                      </button>
+                    )}
+                  </>
+                )
+              })()}
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
             </div>
           )}
 

@@ -222,6 +222,7 @@ const TarjetaProductoVendedora = ({
             </div>
           </div>
 
+<<<<<<< HEAD
           {/* Descripción */}
           <div className="lista-descripcion">
             <p className={descripcionExpandida ? 'expandida' : 'truncada'}>
@@ -235,6 +236,35 @@ const TarjetaProductoVendedora = ({
                 {descripcionExpandida ? 'Show Less' : 'Show More'}
               </button>
             )}
+=======
+          {/* Descripción (soporta JSON { titulo, contenido } y string) */}
+          <div className="lista-descripcion">
+            {(() => {
+              const esObjeto = producto?.descripcion && typeof producto.descripcion === 'object'
+              const textoDescripcion = esObjeto
+                ? (producto.descripcion.contenido || '')
+                : (typeof producto?.descripcion === 'string' ? producto.descripcion : '')
+
+              const textoFallback = 'Descubre sus características clave y calidad premium.'
+              const textoFinal = textoDescripcion || textoFallback
+
+              return (
+                <>
+                  <p className={descripcionExpandida ? 'expandida' : 'truncada'}>
+                    {textoFinal}
+                  </p>
+                  {textoDescripcion && textoDescripcion.length > 150 && (
+                    <button 
+                      className="btn-show-more"
+                      onClick={() => setDescripcionExpandida(!descripcionExpandida)}
+                    >
+                      {descripcionExpandida ? 'Ver menos' : 'Ver más'}
+                    </button>
+                  )}
+                </>
+              )
+            })()}
+>>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
           </div>
 
           {/* Características (si las hay) */}
