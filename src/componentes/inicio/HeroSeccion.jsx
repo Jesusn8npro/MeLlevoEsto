@@ -1,20 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './HeroSeccion.css';
-<<<<<<< HEAD
-=======
 import { usarCategorias } from '../../hooks/usarCategorias';
->>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
 
 const HeroSeccion = () => {
   const [indiceSliderActual, setIndiceSliderActual] = useState(0);
   const scrollRef = useRef(null);
 
-<<<<<<< HEAD
-=======
   // Hook para obtener categorías reales
   const { categorias: categoriasReales, cargando: cargandoCategorias, error: errorCategorias } = usarCategorias();
-
->>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
   // Estados para el arrastre del mouse
   const [estaArrastrando, setEstaArrastrando] = useState(false);
   const [posicionInicial, setPosicionInicial] = useState(0);
@@ -67,76 +60,6 @@ const HeroSeccion = () => {
       alt: 'Perfumería Árabe',
       titulo: 'Perfumería Árabe',
       enlace: '/categoria/perfumeria-arabe'
-    }
-  ];
-
-  // Categorías circulares para el scroll horizontal
-  const categoriasCirculares = [
-    {
-      src: '/images/Home/Categorias/Categorias fondo blanco/Cosas para el hogar.jpg',
-      alt: 'Cosas para el hogar',
-      nombre: 'Hogar',
-      enlace: '/categoria/hogar'
-    },
-    {
-      src: '/images/Home/Categorias/Categorias fondo blanco/Gamin y accesorios.jpg',
-      alt: 'Gaming y accesorios',
-      nombre: 'Gaming',
-      enlace: '/categoria/gaming'
-    },
-    {
-      src: '/images/Home/Categorias/Categorias fondo blanco/Instrumentos Musicales.jpg',
-      alt: 'Instrumentos Musicales',
-      nombre: 'Música',
-      enlace: '/categoria/instrumentos'
-    },
-    {
-      src: '/images/Home/Categorias/Categorias fondo blanco/Jugueteria.jpg',
-      alt: 'Juguetería',
-      nombre: 'Juguetes',
-      enlace: '/categoria/juguetes'
-    },
-    {
-      src: '/images/Home/Categorias/Categorias fondo blanco/Motocicletas en Venta.jpg',
-      alt: 'Motocicletas en Venta',
-      nombre: 'Motos',
-      enlace: '/categoria/motocicletas'
-    },
-    {
-      src: '/images/Home/Categorias/Categorias fondo blanco/Pc y accesorios.jpg',
-      alt: 'PC y accesorios',
-      nombre: 'Tecnología',
-      enlace: '/categoria/tecnologia'
-    },
-    {
-      src: '/images/Home/Categorias/Categorias fondo blanco/Perfumeria Europea.jpg',
-      alt: 'Perfumería Europea',
-      nombre: 'Perfumes',
-      enlace: '/categoria/perfumeria'
-    },
-    {
-      src: '/images/Home/Categorias/Categorias fondo blanco/Ropa.jpg',
-      alt: 'Ropa',
-      nombre: 'Moda',
-      enlace: '/categoria/ropa'
-    },
-    {
-      src: '/images/Home/Categorias/Categorias fondo blanco/Vehiculos usados.jpg',
-      alt: 'Vehículos usados',
-      nombre: 'Autos',
-      enlace: '/categoria/vehiculos'
-    },
-    {
-      src: '/images/Home/Categorias/Categorias fondo blanco/Venta de casas.jpg',
-      alt: 'Venta de casas',
-      nombre: 'Inmuebles',
-      enlace: '/categoria/inmuebles'
-    },
-    {
-      src: '/images/Home/Categorias/Categorias fondo blanco/Zapatos originales.jpg',
-      alt: 'Zapatos originales',
-      nombre: 'Calzado',
-      enlace: '/categoria/zapatos'
     }
   ];
 
@@ -318,26 +241,6 @@ const HeroSeccion = () => {
             onMouseLeave={finalizarArrastre}
             style={{ cursor: estaArrastrando ? 'grabbing' : 'grab' }}
           >
-<<<<<<< HEAD
-            {categoriasCirculares.map((categoria, indice) => (
-              <div 
-                key={indice} 
-                className="categoria-circular"
-                onClick={() => !estaArrastrando && (window.location.href = categoria.enlace)}
-                style={{ cursor: estaArrastrando ? 'grabbing' : 'pointer' }}
-              >
-                <div className="contenedor-imagen-circular">
-                  <img 
-                    src={categoria.src} 
-                    alt={categoria.alt}
-                    className="imagen-categoria-circular"
-                    draggable={false} // Prevenir arrastre de imagen
-                  />
-                </div>
-                <h3 className="nombre-categoria">{categoria.nombre}</h3>
-              </div>
-            ))}
-=======
             {cargandoCategorias ? (
               // Mostrar skeleton loading mientras cargan las categorías
               Array.from({ length: 6 }).map((_, indice) => (
@@ -373,7 +276,6 @@ const HeroSeccion = () => {
                 </div>
               ))
             )}
->>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
           </div>
           
           {/* Indicador de scroll */}

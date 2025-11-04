@@ -222,21 +222,6 @@ const TarjetaProductoVendedora = ({
             </div>
           </div>
 
-<<<<<<< HEAD
-          {/* Descripción */}
-          <div className="lista-descripcion">
-            <p className={descripcionExpandida ? 'expandida' : 'truncada'}>
-              {producto.descripcion || '5G speed. A14 Bionic, the fastest chip in a smartphone. An edge-to-edge OLED display. Ceramic Shield with four times better drop performance. And Night mode on every camera.'}
-            </p>
-            {producto.descripcion && producto.descripcion.length > 150 && (
-              <button 
-                className="btn-show-more"
-                onClick={() => setDescripcionExpandida(!descripcionExpandida)}
-              >
-                {descripcionExpandida ? 'Show Less' : 'Show More'}
-              </button>
-            )}
-=======
           {/* Descripción (soporta JSON { titulo, contenido } y string) */}
           <div className="lista-descripcion">
             {(() => {
@@ -264,7 +249,6 @@ const TarjetaProductoVendedora = ({
                 </>
               )
             })()}
->>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
           </div>
 
           {/* Características (si las hay) */}

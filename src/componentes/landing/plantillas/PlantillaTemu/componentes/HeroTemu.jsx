@@ -864,28 +864,6 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
 
           {producto?.descripcion && (
             <div className="hero-temu-seccion-descripcion mobile-order-7">
-<<<<<<< HEAD
-              <h3 className="hero-temu-titulo-descripcion">
-                📝 Descripción del Producto
-              </h3>
-              <div className="hero-temu-texto-descripcion">
-                {descripcionExpandida 
-                  ? producto.descripcion 
-                  : truncarTexto(producto.descripcion, 50)
-                }
-              </div>
-              {producto.descripcion.split(' ').length > 10 && (
-                <button 
-                  className="hero-temu-boton-expandir"
-                  onClick={() => setDescripcionExpandida(!descripcionExpandida)}
-                >
-                  <span className={`hero-temu-icono-expandir ${descripcionExpandida ? 'expandido' : ''}`}>
-                    🔽
-                  </span>
-                  {descripcionExpandida ? 'Ver menos' : 'Ver descripción completa'}
-                </button>
-              )}
-=======
               {(() => {
                 // Soporte para descripción como JSON { titulo, contenido } o como string
                 const esObjeto = producto?.descripcion && typeof producto.descripcion === 'object'
@@ -922,7 +900,6 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                   </>
                 )
               })()}
->>>>>>> 189475c (feat: actualización de prompt y soporte de descripción JSON en UI (HeroTemu y TarjetaProductoVendedora); FAQ mínimo 5; características con 4 ítems; títulos específicos en soluciones; banner animado dinámico)
             </div>
           )}
 
