@@ -11,7 +11,7 @@
     <div id="root"></div>
     <!-- ePayco OnPage Checkout SDK -->
     <script src="https://checkout.epayco.co/checkout.js"></script>
-    <!-- Advertencia estilo Facebook y bloqueo de consola en producción -->
+    <!-- Advertencia estilo Facebook (sin bloquear/reescribir consola en runtime) -->
     <script>
       (function () {
         try {
@@ -28,16 +28,13 @@
           // Mensaje de advertencia
           console.log('%c¡Detente!', tituloCss);
           console.log(
-            '%cEsta función del navegador está pensada para desarrolladores. Si alguien te ha indicado que copies y pegues algo aquí para habilitar una función o para "hackear" una cuenta, se trata de un fraude. Si lo haces, esa persona podrá acceder a tu cuenta.\n\nVer https://www.facebook.com/selfxss para obtener más información.',
+            '%cEsta función del navegador está pensada para desarrolladores. Si alguien te ha indicado que copies y pegues algo aquí para habilitar una función o para "hackear" una cuenta, se trata de un fraude. Si lo haces, esa persona podrá acceder a tu cuenta.\n\nVer https://mellevoesto.com/ayuda para obtener más información.',
             textoCss
           );
 
-          // Bloqueo de la consola en producción (sin mostrar información interna)
-          var noop = function () {};
-          ['log','info','debug','warn','error','table','trace','group','groupCollapsed','groupEnd'].forEach(function (m) {
-            try { console[m] = noop; } catch (e) {}
-          });
-          try { Object.freeze(console); } catch (e) {}
+          // No tocar/reescribir la consola para evitar romper bundles de terceros
+          // (la eliminación de logs se hace en el build de producción)
+          try { setTimeout(function(){ console.clear(); }, 0); } catch (e) {}
         } catch (e) {
           // Si algo falla, no romper la página
         }
