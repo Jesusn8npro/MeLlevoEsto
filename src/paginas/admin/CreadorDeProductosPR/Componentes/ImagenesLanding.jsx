@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { clienteSupabase } from '../../../../configuracion/supabase'
 
 // 🚀 OPTIMIZACIÓN DE IMÁGENES ACTIVADA
-import { comprimirParaEditor, obtenerInfoImagen } from '../../../../utilidades/compresionImagenes'
+import { comprimirParaEditor, obtenerInfoImagen, CONFIGURACIONES_PREDEFINIDAS, comprimirImagen } from '../../../../utilidades/compresionImagenes'
 import { InfoImagenWidget } from '../../../../utilidades/infoImagenes'
 
 // Iconos
@@ -90,6 +90,13 @@ const ImagenesLanding = ({
   const [optimizandoImagen, setOptimizandoImagen] = useState(false)
   const [estadisticasOptimizacion, setEstadisticasOptimizacion] = useState(null)
   const [archivoSeleccionado, setArchivoSeleccionado] = useState(null)
+  // 🎚️ Preset de compresión (mapea a configuraciones predefinidas de utilidades)
+  const [presetCompresion, setPresetCompresion] = useState('web') // 'producto' (90%), 'web' (80%), 'movil' (75%), 'thumbnail' (70%)
+  // 📌 Estados por imagen (control granular)
+  const [presetsPorImagen, setPresetsPorImagen] = useState({}) // { keyImagen: 'web' | 'producto' | 'movil' | 'thumbnail' }
+  const [calidadPorImagen, setCalidadPorImagen] = useState({}) // { keyImagen: 0.5..0.95 }
+  const [statsPorImagen, setStatsPorImagen] = useState({}) // { keyImagen: estadisticas }
+  const [archivoSeleccionadoPorKey, setArchivoSeleccionadoPorKey] = useState({}) // { keyImagen: File }
   
   // ===== SISTEMA DE LOGGING Y DEBUG =====
   const [mostrarDebug, setMostrarDebug] = useState(true)
@@ -108,6 +115,70 @@ const ImagenesLanding = ({
     }
     setLogsDebug(prev => [nuevoLog, ...prev.slice(0, 19)]) // Mantener solo los últimos 20 logs
     console.log(`[${tipo.toUpperCase()}] ${mensaje}`, datos)
+  }
+
+  // Reoptimizar una imagen ya subida desde su URL pública
+  const reoptimizarImagenDesdeURL = async (tipoImagen) => {
+    try {
+      const urlActual = imagenesLanding[tipoImagen]
+      if (!urlActual) return
+
+      setSubiendoImagenLanding(true)
+      setOptimizandoImagen(true)
+
+      // Descargar como Blob
+      const respuesta = await fetch(urlActual, { mode: 'cors' })
+      const blobOriginal = await respuesta.blob()
+
+      // Aplicar preset/calidad por imagen
+      const presetElegido = presetsPorImagen[tipoImagen] || presetCompresion
+      const calidadElegida = calidadPorImagen[tipoImagen]
+      let resultado
+      if (typeof calidadElegida === 'number') {
+        const base = CONFIGURACIONES_PREDEFINIDAS[presetElegido] || CONFIGURACIONES_PREDEFINIDAS.web
+        // Forzar conversión a WebP cuando se usa calidad manual para máxima compresión
+        resultado = await comprimirImagen(blobOriginal, { ...base, quality: calidadElegida, convertSize: 0 })
+      } else {
+        resultado = await comprimirParaEditor(blobOriginal, presetElegido)
+      }
+
+      const archivoFinal = resultado.archivoComprimido || resultado.archivo || blobOriginal
+      setStatsPorImagen(prev => ({ ...prev, [tipoImagen]: resultado.estadisticas }))
+      setEstadisticasOptimizacion(resultado.estadisticas)
+
+      // Subir reemplazo
+      const tipoMime = archivoFinal?.type || 'image/webp'
+      let extension = (tipoMime.split('/')[1] || 'webp').toLowerCase()
+      if (extension === 'jpeg') extension = 'jpg'
+      const nombreArchivo = `${productoId}_${tipoImagen}_${Date.now()}.${extension}`
+
+      const { data, error } = await clienteSupabase.storage
+        .from('imagenes_tienda')
+        .upload(nombreArchivo, archivoFinal, { cacheControl: '3600', upsert: false })
+
+      if (error) throw error
+
+      const { data: { publicUrl } } = clienteSupabase.storage
+        .from('imagenes_tienda')
+        .getPublicUrl(nombreArchivo)
+
+      setImagenesLanding(prev => ({ ...prev, [tipoImagen]: publicUrl }))
+
+      const datosParaGuardar = { ...imagenesLanding, [tipoImagen]: publicUrl, producto_id: productoId }
+      const { error: errorGuardar } = await clienteSupabase
+        .from('producto_imagenes')
+        .upsert(datosParaGuardar)
+
+      if (errorGuardar) throw errorGuardar
+
+      manejarExito('Imagen reoptimizada y reemplazada correctamente')
+    } catch (error) {
+      console.error('Error al reoptimizar imagen:', error)
+      manejarError('No se pudo reoptimizar la imagen')
+    } finally {
+      setSubiendoImagenLanding(false)
+      setOptimizandoImagen(false)
+    }
   }
 
   // Definir categorías de imágenes
@@ -250,7 +321,7 @@ const ImagenesLanding = ({
       nombre: archivo.name, 
       tamaño: archivo.size, 
       tipo: archivo.type,
-      dimensiones: `${infoOriginal.ancho}x${infoOriginal.alto}`
+      dimensiones: `${infoOriginal?.dimensiones?.ancho ?? '¿?'}x${infoOriginal?.dimensiones?.alto ?? '¿?'}`
     })
 
     // Validar tipo de archivo
@@ -277,14 +348,33 @@ const ImagenesLanding = ({
         tamañoOriginal: archivo.size 
       })
       
-      const resultado = await comprimirParaEditor(archivo)
-      archivoFinal = resultado.archivoComprimido
-      setEstadisticasOptimizacion(resultado.estadisticas)
+      // Usar preset/calidad por imagen si existen; si no, usar global
+      const presetElegido = presetsPorImagen[tipoImagen] || presetCompresion
+      const calidadElegida = calidadPorImagen[tipoImagen]
+      let resultado
+      if (typeof calidadElegida === 'number') {
+        const base = CONFIGURACIONES_PREDEFINIDAS[presetElegido] || CONFIGURACIONES_PREDEFINIDAS.web
+        // Forzar conversión a WebP cuando se usa calidad manual para máxima compresión
+        resultado = await comprimirImagen(archivo, { ...base, quality: calidadElegida, convertSize: 0 })
+        archivoFinal = resultado.archivoComprimido || archivo
+        setEstadisticasOptimizacion(resultado.estadisticas)
+        setStatsPorImagen(prev => ({ ...prev, [tipoImagen]: resultado.estadisticas }))
+      } else {
+        resultado = await comprimirParaEditor(archivo, presetElegido)
+        archivoFinal = resultado.archivo || archivo
+        setEstadisticasOptimizacion(resultado.estadisticas)
+        setStatsPorImagen(prev => ({ ...prev, [tipoImagen]: resultado.estadisticas }))
+      }
       
-      agregarLog('success', `✅ Imagen optimizada: ${resultado.estadisticas.porcentajeReduccion}% más pequeña`, {
-        tamañoOriginal: resultado.estadisticas.tamañoOriginal,
-        tamañoComprimido: resultado.estadisticas.tamañoComprimido,
-        reduccion: resultado.estadisticas.porcentajeReduccion
+      // Ajustar métricas según estructura real de estadisticas
+      const reduccionPct = resultado.estadisticas?.porcentajes?.reduccion
+      const tamOriginal = resultado.estadisticas?.tamaño?.original
+      const tamComprimido = resultado.estadisticas?.tamaño?.comprimido
+      
+      agregarLog('success', `✅ Imagen optimizada${typeof reduccionPct === 'number' ? `: -${reduccionPct}%` : ''}`, {
+        tamañoOriginal: tamOriginal,
+        tamañoComprimido: tamComprimido,
+        reduccion: reduccionPct
       })
       
     } catch (errorCompresion) {
@@ -295,7 +385,10 @@ const ImagenesLanding = ({
     setOptimizandoImagen(false)
 
     try {
-      const extension = archivoFinal.name.split('.').pop()
+      // Obtener extensión de forma segura incluso si archivoFinal es Blob sin nombre
+      const tipoMime = archivoFinal?.type || archivo?.type || 'image/jpeg'
+      let extension = (tipoMime.split('/')[1] || 'jpg').toLowerCase()
+      if (extension === 'jpeg') extension = 'jpg'
       const nombreArchivo = `${productoId}_${tipoImagen}_${Date.now()}.${extension}`
       
       agregarLog('info', `🗂️ Subiendo imagen optimizada a bucket 'imagenes_tienda'`, { 
@@ -328,6 +421,7 @@ const ImagenesLanding = ({
         ...prev,
         [tipoImagen]: publicUrl
       }))
+      setArchivoSeleccionadoPorKey(prev => ({ ...prev, [tipoImagen]: archivo }))
 
       // Guardar automáticamente en la base de datos después de subir
       const datosParaGuardar = {
@@ -505,6 +599,68 @@ const ImagenesLanding = ({
           </div>
         )}
       </div>
+
+      {/* Panel de compresión por imagen */}
+      <div className="panel-compresion">
+        <div className="controles">
+          <label className="control">
+            <span>Preset</span>
+            <select
+              value={presetsPorImagen[imagen.key] || presetCompresion}
+              onChange={(e) => setPresetsPorImagen(prev => ({ ...prev, [imagen.key]: e.target.value }))}
+            >
+              <option value="producto">Producto (90%)</option>
+              <option value="web">Web (80%)</option>
+              <option value="movil">Móvil (75%)</option>
+              <option value="thumbnail">Thumbnail (70%)</option>
+              <option value="ultra">Ultra (60%, WebP)</option>
+              <option value="extremo">Extremo (35%, WebP, 800×600)</option>
+            </select>
+          </label>
+
+          <label className="control">
+            <span>Calidad</span>
+            <input
+              type="range"
+              min={0.1}
+              max={0.95}
+              step={0.05}
+              value={typeof calidadPorImagen[imagen.key] === 'number' ? calidadPorImagen[imagen.key] : 0.8}
+              onChange={(e) => setCalidadPorImagen(prev => ({ ...prev, [imagen.key]: parseFloat(e.target.value) }))}
+            />
+            <span className="valor">{Math.round(100 * (typeof calidadPorImagen[imagen.key] === 'number' ? calidadPorImagen[imagen.key] : 0.8))}%</span>
+          </label>
+
+          {imagen.valor && (
+            <button
+              type="button"
+              className="boton-optimizar"
+              onClick={() => reoptimizarImagenDesdeURL(imagen.key)}
+              disabled={subiendoImagenLanding || !productoId}
+            >
+              Optimizar y reemplazar
+            </button>
+          )}
+        </div>
+
+        {/* Información de compresión en vivo */}
+        {statsPorImagen[imagen.key] && (
+          <div className="info-compresion">
+            <div className="bloque">
+              <span className="etiqueta">Tamaño original</span>
+              <span className="valor">{statsPorImagen[imagen.key].tamaño?.originalFormateado}</span>
+            </div>
+            <div className="bloque">
+              <span className="etiqueta">Tamaño optimizado</span>
+              <span className="valor">{statsPorImagen[imagen.key].tamaño?.comprimidoFormateado}</span>
+            </div>
+            <div className="bloque reduccion">
+              <span className="etiqueta">Reducción</span>
+              <span className="valor">-{statsPorImagen[imagen.key].porcentajes?.reduccion ?? 0}%</span>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   )
 
@@ -621,7 +777,7 @@ const ImagenesLanding = ({
             <div className="estadistica-card optimizacion-activa">
               <div className="estadistica-numero">
                 <Zap className="icono-optimizacion" />
-                -{estadisticasOptimizacion.porcentajeReduccion}%
+                -{estadisticasOptimizacion?.porcentajes?.reduccion ?? 0}%
               </div>
               <div className="estadistica-label">Última optimización</div>
             </div>
@@ -734,26 +890,44 @@ const ImagenesLanding = ({
         </div>
       )}
 
-      {/* 🚀 WIDGET DE INFORMACIÓN DE IMAGEN */}
+      {/* 🚀 WIDGET DE INFORMACIÓN DE IMAGEN + Selector de compresión */}
       {archivoSeleccionado && (
         <div className="widget-info-imagen">
           <h4>📊 Información de la imagen seleccionada</h4>
-          <InfoImagenWidget archivo={archivoSeleccionado} />
+          {/* Mostrar peso y dimensiones reales */}
+          <InfoImagenWidget fuente={archivoSeleccionado} />
+
+          {/* Selector de calidad con porcentajes visibles */}
+          <div className="selector-compresion">
+            <label>Calidad de compresión:</label>
+            <select
+              value={presetCompresion}
+              onChange={(e) => setPresetCompresion(e.target.value)}
+            >
+              <option value="producto">Máxima calidad (90%)</option>
+              <option value="web">Alta calidad (80%)</option>
+              <option value="movil">Balance móvil (75%)</option>
+              <option value="thumbnail">Ahorro/thumbnail (70%)</option>
+            </select>
+            <small>Se aplicará al próximo archivo que subas.</small>
+          </div>
+
+          {/* Métricas de la última optimización */}
           {estadisticasOptimizacion && (
             <div className="estadisticas-optimizacion">
               <h5>🚀 Resultados de la optimización:</h5>
               <div className="metricas-optimizacion">
                 <div className="metrica">
                   <span className="label">Tamaño original:</span>
-                  <span className="valor">{(estadisticasOptimizacion.tamañoOriginal / 1024).toFixed(1)} KB</span>
+                  <span className="valor">{((estadisticasOptimizacion?.tamaño?.original || 0) / 1024).toFixed(1)} KB</span>
                 </div>
                 <div className="metrica">
                   <span className="label">Tamaño optimizado:</span>
-                  <span className="valor">{(estadisticasOptimizacion.tamañoComprimido / 1024).toFixed(1)} KB</span>
+                  <span className="valor">{((estadisticasOptimizacion?.tamaño?.comprimido || 0) / 1024).toFixed(1)} KB</span>
                 </div>
                 <div className="metrica destacada">
                   <span className="label">Reducción:</span>
-                  <span className="valor">-{estadisticasOptimizacion.porcentajeReduccion}%</span>
+                  <span className="valor">-{estadisticasOptimizacion?.porcentajes?.reduccion ?? 0}%</span>
                 </div>
               </div>
             </div>

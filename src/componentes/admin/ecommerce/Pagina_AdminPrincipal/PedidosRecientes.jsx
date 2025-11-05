@@ -12,8 +12,6 @@ const PedidosRecientes = () => {
 
   const cargarPedidosRecientes = async () => {
     try {
-      console.log('📦 Cargando pedidos recientes...')
-      
       const { data: pedidosData, error } = await clienteSupabase
         .from('pedidos')
         .select(`
@@ -24,14 +22,13 @@ const PedidosRecientes = () => {
         .limit(5)
 
       if (error) {
-        console.error('❌ Error cargando pedidos:', error)
+        // Error silencioso para producción
         return
       }
 
       setPedidos(pedidosData || [])
-      console.log('✅ Pedidos recientes cargados:', pedidosData?.length || 0)
     } catch (error) {
-      console.error('❌ Error en cargarPedidosRecientes:', error)
+      // Error silencioso para producción
     } finally {
       setCargando(false)
     }

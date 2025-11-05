@@ -37,17 +37,7 @@ const PaginaRespuestaEpayco = () => {
     const procesarRespuestaEpayco = async () => {
       try {
         // Ejecutar diagnóstico de conectividad primero
-        console.log('🔧 Ejecutando diagnóstico de Supabase...')
         const diagnostico = await pedidosServicio.diagnosticarConectividad()
-        console.log('📋 Resultado del diagnóstico:', diagnostico)
-        
-        if (!diagnostico.conectividad) {
-          console.error('🚨 Sin conectividad a Supabase:', diagnostico.error)
-        } else if (!diagnostico.campoEpayco) {
-          console.error('🚨 Campo epayco_ref_payco no accesible:', diagnostico.solucion)
-        } else {
-          console.log('✅ Diagnóstico exitoso, procediendo con la consulta...')
-        }
 
         // Obtener TODOS los parámetros de ePayco según documentación oficial
         const x_cust_id_cliente = searchParams.get('x_cust_id_cliente')
@@ -107,26 +97,7 @@ const PaginaRespuestaEpayco = () => {
         const estado = x_response || searchParams.get('estado')
         const respuesta = x_response_reason_text || searchParams.get('respuesta')
 
-        console.log('🔍 Parámetros recibidos de ePayco:', {
-          x_ref_payco,
-          x_response,
-          x_response_reason_text,
-          x_amount,
-          x_fecha_transaccion,
-          x_bank_name,
-          x_receipt,
-          x_franchise,
-          x_cod_response,
-          x_description,
-          x_transaction_id,
-          x_approval_code,
-          x_signature,
-          x_currency_code,
-          x_test_request
-        })
-
         if (!ref_payco) {
-          console.error('No se encontró referencia de pago')
           setCargando(false)
           return
         }
@@ -226,20 +197,14 @@ const PaginaRespuestaEpayco = () => {
           
           // Si aún no se encuentra, usar método alternativo
           if (!pedidoReal && ref_payco) {
-            console.log('🔄 Intentando búsqueda alternativa...')
             pedidoReal = await pedidosServicio.buscarPedidoAlternativo(ref_payco)
           }
-          
-          console.log('📦 Pedido encontrado:', pedidoReal)
         } catch (error) {
-          console.error('❌ Error al buscar pedido:', error)
-          
           // Como último recurso, intentar búsqueda alternativa
           try {
-            console.log('🔄 Intentando búsqueda alternativa como último recurso...')
             pedidoReal = await pedidosServicio.buscarPedidoAlternativo(ref_payco)
           } catch (fallbackError) {
-            console.error('❌ Error en búsqueda alternativa:', fallbackError)
+            // Error en búsqueda alternativa
           }
         }
 
@@ -323,7 +288,7 @@ const PaginaRespuestaEpayco = () => {
         }
 
       } catch (error) {
-        console.error('Error al procesar respuesta de ePayco:', error)
+        // Error al procesar respuesta de ePayco
       } finally {
         setCargando(false)
       }

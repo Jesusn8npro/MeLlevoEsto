@@ -98,7 +98,20 @@ const CaracteristicasTemu = ({
     }
   }
 
-  const datos = caracteristicasData || datosDefecto
+  // Usar datos del producto si están disponibles, sino datos por defecto
+  const datos = {
+    titulo: producto?.ventajas?.titulo || caracteristicasData?.titulo || datosDefecto.titulo,
+    subtitulo: producto?.ventajas?.subtitulo || caracteristicasData?.subtitulo || datosDefecto.subtitulo,
+    imagen: producto?.imagenes?.imagen_caracteristicas || caracteristicasData?.imagen || datosDefecto.imagen,
+    
+    // Columna izquierda - Ventajas
+    detalles: producto?.ventajas?.items?.slice(0, 3) || caracteristicasData?.detalles || datosDefecto.detalles,
+    
+    // Columna derecha - Beneficios
+    beneficios: producto?.beneficios?.items?.slice(0, 3) || caracteristicasData?.beneficios || datosDefecto.beneficios,
+    
+    cta: producto?.ventajas?.cta || producto?.beneficios?.cta || caracteristicasData?.cta || datosDefecto.cta
+  }
   
   // Usar imagen de características desde productos_imagenes si está disponible
   const imagenCaracteristicas = producto?.imagenes?.imagen_caracteristicas || datos.imagen

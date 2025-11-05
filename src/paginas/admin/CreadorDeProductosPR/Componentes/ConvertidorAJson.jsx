@@ -50,6 +50,10 @@ const ConvertidorAJson = ({ valor, onChange, tipo = 'banner_animado' }) => {
             inicializarTestimonios(datosParseados)
           } else if (tipo === 'faq') {
             inicializarFAQ(datosParseados)
+          } else if (tipo === 'ventajas') {
+            inicializarVentajas(datosParseados)
+          } else if (tipo === 'beneficios') {
+            inicializarBeneficios(datosParseados)
           } else if (tipo === 'garantias') {
             inicializarGarantias(datosParseados)
           } else if (tipo === 'cta_final') {
@@ -148,6 +152,18 @@ const ConvertidorAJson = ({ valor, onChange, tipo = 'banner_animado' }) => {
         titulo: 'Preguntas Frecuentes',
         subtitulo: 'Resolvemos todas tus dudas para que compres con total confianza',
         preguntas: [crearPreguntaVacia()]
+      })
+    } else if (tipo === 'ventajas') {
+      setDatos({
+        titulo: '¿Por qué elegirnos?',
+        subtitulo: 'Ventajas que nos diferencian',
+        items: [crearBeneficioVacio()]
+      })
+    } else if (tipo === 'beneficios') {
+      setDatos({
+        titulo: 'Beneficios Exclusivos',
+        subtitulo: 'Todo lo que obtienes al elegirnos',
+        items: [crearBeneficioVacio()]
       })
     } else if (tipo === 'garantias') {
       setDatos({
@@ -304,6 +320,40 @@ const ConvertidorAJson = ({ valor, onChange, tipo = 'banner_animado' }) => {
     }
   }
 
+  // Función para inicializar Ventajas (JSONB con items)
+  const inicializarVentajas = (datosParseados) => {
+    if (datosParseados && datosParseados.titulo) {
+      setDatos({
+        titulo: datosParseados.titulo || '¿Por qué elegirnos?',
+        subtitulo: datosParseados.subtitulo || 'Ventajas que nos diferencian',
+        items: Array.isArray(datosParseados.items) ? datosParseados.items : [crearBeneficioVacio()]
+      })
+    } else {
+      setDatos({
+        titulo: '¿Por qué elegirnos?',
+        subtitulo: 'Ventajas que nos diferencian',
+        items: [crearBeneficioVacio()]
+      })
+    }
+  }
+
+  // Función para inicializar Beneficios (JSONB con items)
+  const inicializarBeneficios = (datosParseados) => {
+    if (datosParseados && datosParseados.titulo) {
+      setDatos({
+        titulo: datosParseados.titulo || 'Beneficios Exclusivos',
+        subtitulo: datosParseados.subtitulo || 'Todo lo que obtienes al elegirnos',
+        items: Array.isArray(datosParseados.items) ? datosParseados.items : [crearBeneficioVacio()]
+      })
+    } else {
+      setDatos({
+        titulo: 'Beneficios Exclusivos',
+        subtitulo: 'Todo lo que obtienes al elegirnos',
+        items: [crearBeneficioVacio()]
+      })
+    }
+  }
+
   // Función para inicializar garantías
   const inicializarGarantias = (datosParseados) => {
     if (datosParseados && datosParseados.titulo) {
@@ -414,6 +464,44 @@ const ConvertidorAJson = ({ valor, onChange, tipo = 'banner_animado' }) => {
 
   const actualizarSubtitulo = (nuevoSubtitulo) => {
     const nuevosDatos = { ...datos, subtitulo: nuevoSubtitulo }
+    setDatos(nuevosDatos)
+    notificarCambio(nuevosDatos)
+  }
+
+  // ===== FUNCIONES LISTAS GENERALES (items para ventajas/beneficios) =====
+  const actualizarTituloLista = (nuevoTitulo) => {
+    const nuevosDatos = { ...datos, titulo: nuevoTitulo }
+    setDatos(nuevosDatos)
+    notificarCambio(nuevosDatos)
+  }
+
+  const actualizarSubtituloLista = (nuevoSubtitulo) => {
+    const nuevosDatos = { ...datos, subtitulo: nuevoSubtitulo }
+    setDatos(nuevosDatos)
+    notificarCambio(nuevosDatos)
+  }
+
+  const agregarItemLista = () => {
+    const nuevosItems = [...(datos.items || []), crearBeneficioVacio()]
+    const nuevosDatos = { ...datos, items: nuevosItems }
+    setDatos(nuevosDatos)
+    notificarCambio(nuevosDatos)
+  }
+
+  const eliminarItemLista = (index) => {
+    const lista = datos.items || []
+    if (lista.length > 1) {
+      const nuevosItems = lista.filter((_, i) => i !== index)
+      const nuevosDatos = { ...datos, items: nuevosItems }
+      setDatos(nuevosDatos)
+      notificarCambio(nuevosDatos)
+    }
+  }
+
+  const actualizarItemLista = (index, campo, valor) => {
+    const nuevosItems = [...(datos.items || [])]
+    nuevosItems[index] = { ...nuevosItems[index], [campo]: valor }
+    const nuevosDatos = { ...datos, items: nuevosItems }
     setDatos(nuevosDatos)
     notificarCambio(nuevosDatos)
   }
@@ -1191,6 +1279,112 @@ const ConvertidorAJson = ({ valor, onChange, tipo = 'banner_animado' }) => {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (tipo === 'ventajas' || tipo === 'beneficios') {
+    const tituloSeccion = tipo === 'ventajas' ? 'Ventajas Competitivas' : 'Beneficios del Producto'
+    return (
+      <div className="caracteristicas-editor">
+        <div className="caracteristicas-header">
+          <div className="caracteristicas-campo">
+            <label className="caracteristicas-label">Título principal:</label>
+            <input
+              type="text"
+              value={datos.titulo}
+              onChange={(e) => actualizarTituloLista(e.target.value)}
+              placeholder={tituloSeccion}
+              className="caracteristicas-input"
+            />
+          </div>
+          <div className="caracteristicas-campo">
+            <label className="caracteristicas-label">Subtítulo:</label>
+            <input
+              type="text"
+              value={datos.subtitulo}
+              onChange={(e) => actualizarSubtituloLista(e.target.value)}
+              placeholder="Subtítulo descriptivo"
+              className="caracteristicas-input"
+            />
+          </div>
+        </div>
+
+        <div className="caracteristicas-seccion">
+          <h4>{tituloSeccion}</h4>
+          {(datos.items || []).map((item, index) => (
+            <div key={item.id || index} className="caracteristicas-item">
+              <div className="caracteristicas-item-header">
+                <span className="caracteristicas-numero">Ítem #{index + 1}</span>
+                {(datos.items || []).length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => eliminarItemLista(index)}
+                    className="btn-eliminar-caracteristicas"
+                  >
+                    ❌
+                  </button>
+                )}
+              </div>
+              <div className="caracteristicas-campos">
+                <div className="caracteristicas-campo">
+                  <label className="caracteristicas-label">Icono:</label>
+                  <input
+                    type="text"
+                    value={item.icono || ''}
+                    onChange={(e) => actualizarItemLista(index, 'icono', e.target.value)}
+                    placeholder="🛡️"
+                    className="caracteristicas-input-small"
+                  />
+                </div>
+                <div className="caracteristicas-campo">
+                  <label className="caracteristicas-label">Título:</label>
+                  <input
+                    type="text"
+                    value={item.titulo || ''}
+                    onChange={(e) => actualizarItemLista(index, 'titulo', e.target.value)}
+                    placeholder="Título del ítem"
+                    className="caracteristicas-input"
+                  />
+                </div>
+              </div>
+              <div className="caracteristicas-campo">
+                <label className="caracteristicas-label">Descripción:</label>
+                <textarea
+                  value={item.descripcion || ''}
+                  onChange={(e) => actualizarItemLista(index, 'descripcion', e.target.value)}
+                  placeholder="Descripción del ítem..."
+                  className="caracteristicas-textarea"
+                />
+              </div>
+            </div>
+          ))}
+
+          <button
+            type="button"
+            onClick={agregarItemLista}
+            className="btn-agregar-caracteristicas"
+          >
+            ➕ Agregar Ítem
+          </button>
+        </div>
+
+        <div className="preview-beneficios">
+          <strong>Vista previa:</strong>
+          <div style={{ marginTop: '8px' }}>
+            <h3>{datos.titulo}</h3>
+            <p>{datos.subtitulo}</p>
+            {(datos.items || []).filter(i => i.titulo && i.titulo.trim()).map((i, index) => (
+              <div key={`item-preview-${i.id || index}`} className="preview-caracteristica-item">
+                <div className="preview-caracteristica-header">
+                  <span className="preview-icono">{i.icono}</span>
+                  <span className="preview-titulo">{i.titulo}</span>
+                </div>
+                <div className="preview-descripcion">{i.descripcion}</div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

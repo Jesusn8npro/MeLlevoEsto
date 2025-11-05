@@ -60,8 +60,6 @@ const SidebarFiltros = ({
 
       if (categoriasError) throw categoriasError
 
-      console.log('Categorías cargadas en sidebar:', categoriasData)
-
       // Contar productos por categoría
       const categoriasConConteo = await Promise.all(
         (categoriasData || []).map(async (categoria) => {
@@ -72,7 +70,6 @@ const SidebarFiltros = ({
             .eq('activo', true)
 
           if (countError) {
-            console.error(`Error contando productos para categoría ${categoria.nombre}:`, countError)
             return { ...categoria, cantidad: 0 }
           }
 
@@ -89,12 +86,9 @@ const SidebarFiltros = ({
         })
       )
 
-      console.log('Categorías con conteo y slug:', categoriasConConteo)
-
       setCategorias(categoriasConConteo)
       setCategoriasConProductos(categoriasConConteo.filter(cat => cat.cantidad > 0))
     } catch (error) {
-      console.error('Error cargando categorías:', error)
       setCategorias([])
       setCategoriasConProductos([])
     }
@@ -113,7 +107,6 @@ const SidebarFiltros = ({
       const marcasUnicas = [...new Set(data?.map(p => p.marca).filter(Boolean))]
       setMarcasDisponibles(marcasUnicas.sort())
     } catch (error) {
-      console.error('Error cargando marcas:', error)
       setMarcasDisponibles([])
     }
   }
@@ -142,7 +135,7 @@ const SidebarFiltros = ({
         }))
       }
     } catch (error) {
-      console.error('Error cargando rango de precio:', error)
+      // Error silencioso en producción
     }
   }
 

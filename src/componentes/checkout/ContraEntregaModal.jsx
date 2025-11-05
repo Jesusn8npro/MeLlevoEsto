@@ -19,9 +19,6 @@ const ContraEntregaModal = ({
   const WHATSAPP_NUMERO = WHATSAPP_NUMERO_RAW.startsWith('57') ? WHATSAPP_NUMERO_RAW : `57${WHATSAPP_NUMERO_RAW}`
 
   const generarOfertas = () => {
-    console.log('🔍 DEBUG - Producto completo:', producto)
-    console.log('🔍 DEBUG - Promociones del producto:', producto?.promociones)
-    
     const ofertas = []
     
     // Siempre agregar la oferta base de 1 unidad
@@ -41,25 +38,18 @@ const ContraEntregaModal = ({
       // Si promociones es un objeto con la estructura {titulo, subtitulo, promociones: [...]}
       if (producto.promociones.promociones && Array.isArray(producto.promociones.promociones)) {
         promocionesReales = producto.promociones.promociones
-        console.log('✅ DEBUG - Encontradas promociones en estructura anidada:', promocionesReales.length)
       }
       // Si promociones es directamente un array (estructura alternativa)
       else if (Array.isArray(producto.promociones)) {
         promocionesReales = producto.promociones
-        console.log('✅ DEBUG - Encontradas promociones en estructura directa:', promocionesReales.length)
       }
     }
 
     if (promocionesReales && promocionesReales.length > 0) {
-      console.log('🎁 DEBUG - Procesando promociones reales:', promocionesReales)
-      
       // Mapear SOLO las promociones reales de Supabase al formato del modal
       promocionesReales.forEach((promo, index) => {
-        console.log(`🔍 DEBUG - Promoción ${index}:`, promo)
-        
         // Validar que la promoción esté activa y tenga cantidad mínima válida
         if (promo.activa && promo.cantidadMinima && promo.cantidadMinima > 1 && promo.descuentoPorcentaje) {
-          console.log(`✅ DEBUG - Promoción ${index} es válida, agregando...`)
           ofertas.push({
             id: index + 2,
             titulo: `Compra ${promo.cantidadMinima} unidades con un ${promo.descuentoPorcentaje}% de descuento adicional`,
@@ -67,32 +57,15 @@ const ContraEntregaModal = ({
             cantidad: promo.cantidadMinima,
             descuento: promo.descuentoPorcentaje
           })
-        } else {
-          console.log(`❌ DEBUG - Promoción ${index} no es válida:`, {
-            activa: promo.activa,
-            cantidadMinima: promo.cantidadMinima,
-            descuentoPorcentaje: promo.descuentoPorcentaje
-          })
         }
       })
-    } else {
-      console.log('❌ DEBUG - No hay promociones configuradas en Supabase para este producto')
     }
 
-    // ✅ CORRECCIÓN: NO generar promociones falsas por defecto
-    // Solo mostrar la oferta base si no hay promociones reales configuradas
-    if (ofertas.length === 1) {
-      console.log('ℹ️ DEBUG - Solo se mostrará la oferta base (sin promociones inventadas)')
-    }
-
-    console.log('🎯 DEBUG - Ofertas finales (solo reales de Supabase):', ofertas)
     return ofertas
   }
 
   const OFERTAS = useMemo(() => {
-    console.log('🔄 DEBUG - Regenerando ofertas...')
     const ofertas = generarOfertas()
-    console.log('🎯 DEBUG - Ofertas generadas en useMemo:', ofertas)
     return ofertas
   }, [producto?.promociones, producto?.id])
   const [ofertaSeleccionada, setOfertaSeleccionada] = useState(null)
@@ -119,13 +92,8 @@ const ContraEntregaModal = ({
   const navigate = useNavigate()
 
   useEffect(() => {
-    console.log('🔄 DEBUG - useEffect OFERTAS ejecutándose...')
-    console.log('🔍 DEBUG - OFERTAS disponibles:', OFERTAS)
-    console.log('🔍 DEBUG - Oferta actualmente seleccionada:', ofertaSeleccionada)
-    
     if (OFERTAS.length > 0) {
       if (!ofertaSeleccionada || !OFERTAS.find(o => o.id === ofertaSeleccionada?.id)) {
-        console.log('✅ DEBUG - Estableciendo primera oferta como seleccionada:', OFERTAS[0])
         setOfertaSeleccionada(OFERTAS[0])
       }
     }
@@ -162,7 +130,6 @@ const ContraEntregaModal = ({
       if (Array.isArray(valor) && valor.length > 0) return String(valor[0])
       // Si no se puede extraer un valor válido del objeto, retornar string vacío
       // NUNCA convertir el objeto completo a string para evitar JSON
-      console.warn('⚠️ asegurarString: No se pudo extraer valor string del objeto:', valor)
       return ''
     }
     
@@ -173,7 +140,6 @@ const ContraEntregaModal = ({
   const sincronizarDatosUsuario = async (datosFormulario, usuarioId) => {
     try {
       if (!usuarioId) {
-        console.log('No hay usuario autenticado, omitiendo sincronización')
         return
       }
 
@@ -198,8 +164,6 @@ const ContraEntregaModal = ({
         actualizado_el: new Date().toISOString()
       }
 
-      console.log('🔄 Sincronizando datos del usuario:', datosActualizacion)
-
       // Actualizar la tabla usuarios
       const { error } = await clienteSupabase
         .from('usuarios')
@@ -207,12 +171,10 @@ const ContraEntregaModal = ({
         .eq('id', usuarioId)
 
       if (error) {
-        console.error('❌ Error sincronizando datos del usuario:', error)
-      } else {
-        console.log('✅ Datos del usuario sincronizados correctamente')
+        // Error al sincronizar datos del usuario
       }
     } catch (error) {
-      console.error('❌ Error en sincronizarDatosUsuario:', error)
+      // Error en sincronizarDatosUsuario
     }
   }
 
@@ -304,7 +266,7 @@ const ContraEntregaModal = ({
         .select()
 
       if (error) {
-        console.error('Error al guardar pedido:', error)
+        // Error al guardar pedido
         setErrores({ general: 'Error al procesar el pedido' })
         return
       }
@@ -316,8 +278,8 @@ const ContraEntregaModal = ({
       if (onConfirmar) onConfirmar(data[0])
 
     } catch (error) {
-      console.error('Error en manejarConfirmar:', error)
-      setErrores({ general: 'Error inesperado al procesar el pedido' })
+      // Error en manejarConfirmar
+      setErrores({ general: 'Error al procesar el pedido' })
     }
   }
 
@@ -625,7 +587,7 @@ const ContraEntregaModal = ({
         
         {!compraConfirmada && (
           <div className="cod-plataforma">
-            <button type="button" className="cod-cta-plataforma" onClick={() => console.log('Pagar en plataforma')}>
+            <button type="button" className="cod-cta-plataforma">
               AHORRA 5% PAGANDO AQUÍ, CON TARJETA DE CRÉDITO O PSE
               <span className="cod-hand">👈</span>
             </button>

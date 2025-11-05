@@ -12,8 +12,6 @@ class PedidosServicio {
    */
   async crearPedido(datosPedido) {
     try {
-      console.log('🛒 Creando pedido en Supabase...', datosPedido)
-
       // Validar datos requeridos
       if (!datosPedido.numero_pedido) {
         throw new Error('Número de pedido es requerido')
@@ -63,8 +61,6 @@ class PedidosServicio {
         epayco_response_raw: null
       }
 
-      console.log('📝 Datos preparados para inserción:', pedidoParaInsertar)
-
       // Insertar en Supabase
       const { data, error } = await clienteSupabase
         .from('pedidos')
@@ -73,27 +69,13 @@ class PedidosServicio {
         .single()
 
       if (error) {
-        console.error('❌ Error al insertar pedido en Supabase:', error)
         throw new Error(`Error al crear pedido: ${error.message}`)
       }
 
-      console.log('✅ Pedido creado exitosamente:', data)
       return data
 
     } catch (error) {
-      console.error('❌ Error al crear pedido:', error);
-      console.error('📋 Detalles del error:');
-      console.error('  - Código:', error.code);
-      console.error('  - Mensaje:', error.message);
-      console.error('  - Detalles:', error.details);
-      console.error('  - Hint:', error.hint);
-      
-      // Verificar si es un problema de RLS
-      if (error.message?.includes('row-level security') || error.message?.includes('policy')) {
-        console.error('🔒 PROBLEMA DETECTADO: Las políticas RLS están bloqueando la inserción en pedidos');
-        console.error('💡 SOLUCIÓN: Ejecuta el script 04_configurar_rls_pedidos.sql en Supabase');
-      }
-      
+      // Error silencioso para producción
       throw error;
     }
   }
@@ -106,15 +88,12 @@ class PedidosServicio {
    */
   async actualizarPedidoConEpayco(pedidoId, datosEpayco) {
     try {
-      console.log('🔄 Actualizando pedido con datos de ePayco...', { pedidoId, datosEpayco })
-
       const datosActualizacion = {
         epayco_ref_payco: datosEpayco.x_ref_payco || null,
         epayco_transaction_id: datosEpayco.x_transaction_id || null,
         epayco_cod_response: datosEpayco.x_cod_response || null,
         epayco_signature: datosEpayco.x_signature || null,
         epayco_approval_code: datosEpayco.x_approval_code || null,
-        // CORREGIDO: usar x_fecha_transaccion en lugar de x_transaction_date
         epayco_fecha_transaccion: datosEpayco.x_fecha_transaccion ? new Date(datosEpayco.x_fecha_transaccion) : null,
         epayco_franchise: datosEpayco.x_franchise || null,
         epayco_bank_name: datosEpayco.x_bank_name || null,
@@ -125,12 +104,9 @@ class PedidosServicio {
           extra3: datosEpayco.x_extra3 
         } : null,
         epayco_response_raw: datosEpayco,
-        // Actualizar estado basado en la respuesta de ePayco
         estado: this.determinarEstadoPedido(datosEpayco.x_cod_response),
         actualizado_el: new Date().toISOString()
       }
-
-      console.log('📋 Datos de actualización preparados:', datosActualizacion)
 
       const { data, error } = await clienteSupabase
         .from('pedidos')
@@ -140,15 +116,13 @@ class PedidosServicio {
         .single()
 
       if (error) {
-        console.error('❌ Error al actualizar pedido:', error)
         throw new Error(`Error al actualizar pedido: ${error.message}`)
       }
 
-      console.log('✅ Pedido actualizado exitosamente:', data)
       return data
 
     } catch (error) {
-      console.error('❌ Error en actualizarPedidoConEpayco:', error)
+      // Error silencioso para producción
       throw error
     }
   }
@@ -167,14 +141,13 @@ class PedidosServicio {
         .limit(1)
 
       if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
-        console.error('❌ Error al buscar pedido:', error)
         throw new Error(`Error al buscar pedido: ${error.message}`)
       }
 
       return data && data.length > 0 ? data[0] : null
 
     } catch (error) {
-      console.error('❌ Error en buscarPedidoPorNumero:', error)
+      // Error silencioso para producción
       throw error
     }
   }
@@ -186,27 +159,10 @@ class PedidosServicio {
    */
   async buscarPedidoPorRefEpayco(refPayco) {
     try {
-      console.log('🔍 Buscando pedido por ref ePayco:', refPayco)
-      
       if (!refPayco) {
-        console.warn('⚠️ No se proporcionó ref_payco')
         return null
       }
 
-      // Primero verificar si existen pedidos con epayco_ref_payco
-      const { data: pedidosConEpayco, error: errorVerificacion } = await clienteSupabase
-        .from('pedidos')
-        .select('id, epayco_ref_payco')
-        .not('epayco_ref_payco', 'is', null)
-        .limit(1)
-
-      if (errorVerificacion) {
-        console.error('❌ Error verificando datos de ePayco:', errorVerificacion)
-      } else if (!pedidosConEpayco || pedidosConEpayco.length === 0) {
-        console.warn('⚠️ No hay pedidos con datos de ePayco en la base de datos')
-        console.log('💡 Sugerencia: Ejecuta el script crear_datos_prueba_epayco.sql para crear datos de prueba')
-      }
-      
       const { data, error } = await clienteSupabase
         .from('pedidos')
         .select('*')
@@ -214,17 +170,8 @@ class PedidosServicio {
         .limit(1)
 
       if (error) {
-        console.error('❌ Error al buscar pedido por ref ePayco:', error)
-        console.error('📋 Detalles del error:')
-        console.error('  - Código:', error.code)
-        console.error('  - Mensaje:', error.message)
-        console.error('  - Detalles:', error.details)
-        console.error('  - Hint:', error.hint)
-        
         // Si es error 406, probablemente el campo no existe
         if (error.message?.includes('406') || error.message?.includes('Not Acceptable')) {
-          console.error('🚨 ERROR 406: El campo epayco_ref_payco probablemente no existe en la tabla pedidos')
-          console.error('💡 SOLUCIÓN: Ejecuta el script 01_agregar_campos_epayco_pedidos.sql en Supabase')
           return null // Retornar null en lugar de lanzar error para no romper el flujo
         }
         
@@ -234,13 +181,10 @@ class PedidosServicio {
       }
 
       if (data && data.length > 0) {
-        console.log('✅ Pedido encontrado por epayco_ref_payco:', data[0].numero_pedido)
         return data[0]
       }
 
       // Si no se encuentra por epayco_ref_payco, buscar por numero_pedido como fallback
-      console.log('🔄 No encontrado por epayco_ref_payco, buscando por numero_pedido...')
-      
       const { data: dataAlternativa, error: errorAlternativo } = await clienteSupabase
         .from('pedidos')
         .select('*')
@@ -248,20 +192,17 @@ class PedidosServicio {
         .limit(1)
 
       if (errorAlternativo) {
-        console.error('❌ Error en consulta alternativa:', errorAlternativo)
         return null
       }
 
       if (dataAlternativa && dataAlternativa.length > 0) {
-        console.log('✅ Pedido encontrado por numero_pedido:', dataAlternativa[0].numero_pedido)
         return dataAlternativa[0]
       }
 
-      console.log('❌ No se encontró ningún pedido con ref_payco:', refPayco)
       return null
 
     } catch (error) {
-      console.error('❌ Error en buscarPedidoPorRefEpayco:', error)
+      // Error silencioso para producción
       return null
     }
   }
@@ -271,8 +212,6 @@ class PedidosServicio {
    */
   async diagnosticarConectividad() {
     try {
-      console.log('🔧 Iniciando diagnóstico de conectividad con Supabase...')
-      
       // 1. Verificar conectividad básica
       const { data: testBasico, error: errorBasico } = await clienteSupabase
         .from('pedidos')
@@ -280,11 +219,8 @@ class PedidosServicio {
         .limit(1)
 
       if (errorBasico) {
-        console.error('❌ Error en conectividad básica:', errorBasico)
         return { conectividad: false, error: errorBasico }
       }
-
-      console.log('✅ Conectividad básica OK')
 
       // 2. Verificar si el campo epayco_ref_payco existe
       const { data: testCampo, error: errorCampo } = await clienteSupabase
@@ -293,7 +229,6 @@ class PedidosServicio {
         .limit(1)
 
       if (errorCampo) {
-        console.error('❌ Error al acceder campo epayco_ref_payco:', errorCampo)
         return { 
           conectividad: true, 
           campoEpayco: false, 
@@ -302,16 +237,12 @@ class PedidosServicio {
         }
       }
 
-      console.log('✅ Campo epayco_ref_payco accesible')
-
       // 3. Verificar datos existentes
       const { data: testDatos, error: errorDatos } = await clienteSupabase
         .from('pedidos')
         .select('id, numero_pedido, epayco_ref_payco')
         .not('epayco_ref_payco', 'is', null)
         .limit(5)
-
-      console.log('📊 Datos encontrados:', testDatos?.length || 0, 'pedidos con epayco_ref_payco')
 
       return {
         conectividad: true,
@@ -321,7 +252,7 @@ class PedidosServicio {
       }
 
     } catch (error) {
-      console.error('❌ Error en diagnóstico:', error)
+      // Error silencioso para producción
       return { conectividad: false, error }
     }
   }
@@ -334,8 +265,6 @@ class PedidosServicio {
    */
   async buscarPedidoAlternativo(referencia) {
     try {
-      console.log('🔍 Buscando pedido con método alternativo:', referencia)
-      
       // Primero intentar buscar por número de pedido
       let { data, error } = await clienteSupabase
         .from('pedidos')
@@ -344,7 +273,6 @@ class PedidosServicio {
         .limit(1)
 
       if (data && data.length > 0) {
-        console.log('✅ Pedido encontrado por número de pedido:', data[0])
         return data[0]
       }
 
@@ -356,7 +284,6 @@ class PedidosServicio {
         .limit(1))
 
       if (data && data.length > 0) {
-        console.log('✅ Pedido encontrado por referencia de pago:', data[0])
         return data[0]
       }
 
@@ -368,15 +295,13 @@ class PedidosServicio {
         .limit(1))
 
       if (data && data.length > 0) {
-        console.log('✅ Pedido encontrado con búsqueda amplia:', data[0])
         return data[0]
       }
 
-      console.log('❌ No se encontró pedido con referencia:', referencia)
       return null
 
     } catch (error) {
-      console.error('❌ Error en buscarPedidoAlternativo:', error)
+      // Error silencioso para producción
       return null
     }
   }
@@ -415,14 +340,13 @@ class PedidosServicio {
         .order('creado_el', { ascending: false })
 
       if (error) {
-        console.error('❌ Error al obtener pedidos del usuario:', error)
         throw new Error(`Error al obtener pedidos: ${error.message}`)
       }
 
       return data || []
 
     } catch (error) {
-      console.error('❌ Error en obtenerPedidosUsuario:', error)
+      // Error silencioso para producción
       throw error
     }
   }

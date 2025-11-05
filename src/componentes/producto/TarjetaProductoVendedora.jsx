@@ -130,12 +130,8 @@ const TarjetaProductoVendedora = ({
     if (!producto) return
     
     try {
-      console.log('🛒 Agregando producto al carrito:', producto)
-      
       // Usar el producto completo tal como viene de la base de datos
       const resultado = await agregarAlCarrito(producto, cantidad || 1, variante)
-      
-      console.log('✅ Resultado de agregar al carrito:', resultado)
       
       if (resultado.success) {
         // Abrir el modal del carrito para mostrar confirmación
@@ -147,7 +143,6 @@ const TarjetaProductoVendedora = ({
         throw new Error(resultado.message || 'Error al agregar al carrito')
       }
     } catch (error) {
-      console.error('❌ Error al agregar al carrito:', error)
       mostrarNotificacion('error', 'Error al agregar', 'Error al agregar al carrito. Por favor, inténtalo de nuevo.')
       throw error
     }
@@ -387,7 +382,6 @@ const TarjetaProductoVendedora = ({
               cantidad={1}
               className="accion-btn carrito"
               onAgregar={manejarAgregarCarrito}
-              onError={(error) => console.error('Error en overlay:', error)}
             >
               <ShoppingCart size={20} />
             </BotonCarritoAnimado>
@@ -489,7 +483,6 @@ const TarjetaProductoVendedora = ({
             cantidad={1}
             className="btn-comprar"
             onAgregar={manejarAgregarCarrito}
-            onError={(error) => console.error('Error en botón principal:', error)}
           >
             ¡COMPRAR AHORA!
           </BotonCarritoAnimado>

@@ -181,8 +181,7 @@ export const usarEpayco = () => {
             throw new Error('Error al configurar el handler de ePayco. Verifica las credenciales.');
           }
 
-          console.log('✅ Handler configurado exitosamente');
-          console.log('📊 Datos del pago a enviar:', datosPago);
+          // Handler configurado exitosamente - sin logs en producción
 
           // Declarar variable para timeout
           let timeoutId;
@@ -192,7 +191,7 @@ export const usarEpayco = () => {
             // Verificar origen por seguridad
             if (event.origin !== 'https://checkout.epayco.co') return;
             
-            console.log('✅ Respuesta de ePayco recibida:', event.data);
+            // Respuesta de ePayco recibida - sin logs en producción
             
             // Limpiar timeout y remover listener
             if (timeoutId) clearTimeout(timeoutId);
@@ -200,7 +199,7 @@ export const usarEpayco = () => {
             
             // Validar que la respuesta tenga los datos mínimos necesarios
             if (!event.data || (!event.data.ref_payco && !event.data.x_ref_payco)) {
-              console.error('❌ Respuesta de ePayco incompleta:', event.data);
+              // Error silencioso para producción - respuesta incompleta
               reject({
                 exito: false,
                 error: 'Respuesta de ePayco incompleta'
@@ -219,15 +218,7 @@ export const usarEpayco = () => {
 
              // Guardar transacción en Supabase
              try {
-               console.log('💾 Guardando transacción en Supabase...');
-               console.log('📊 Datos completos de ePayco recibidos:', event.data);
-               console.log('🔍 Datos que se enviarán a registrarTransaccion:', {
-                 pedidoId: datosEpayco.pedido.id || datosPago.invoice || null,
-                 referenciaPago: event.data.ref_payco || event.data.x_ref_payco,
-                 estado: event.data.x_response || 'pendiente',
-                 respuestaCompleta: event.data,
-                 tipo: 'onpage_checkout'
-               });
+               // Guardando transacción en Supabase - sin logs en producción
                
                const resultado = await servicioEpayco.registrarTransaccion({
                  pedidoId: datosEpayco.pedido.id || datosPago.invoice || null,

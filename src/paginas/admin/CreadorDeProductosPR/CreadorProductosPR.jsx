@@ -206,10 +206,11 @@ const CreadorProductosPR = ({ modo = 'crear', slug = null, onSuccess = null }) =
           categoria_id: data.categoria_id || '',
           estado: data.estado || 'borrador',
           
-          // Arrays dinámicos
+          // Arrays / objetos dinámicos
           ganchos: data.ganchos || [],
-          beneficios: data.beneficios || [],
-          ventajas: data.ventajas || [],
+          // Soporte JSONB: preferir columnas *_jsonb si existen
+          beneficios: data.beneficios_jsonb || data.beneficios || [],
+          ventajas: data.ventajas_jsonb || data.ventajas || [],
           palabras_clave: data.palabras_clave || [],
           
           // Inventario y configuración
@@ -238,11 +239,11 @@ const CreadorProductosPR = ({ modo = 'crear', slug = null, onSuccess = null }) =
           fotos_principales: data.fotos_principales || [],
           fotos_secundarias: data.fotos_secundarias || [],
           
-          // CAMPOS JSON COMPLEJOS - ESTOS ERAN LOS QUE FALTABAN
+          // CAMPOS JSON COMPLEJOS
           promociones: data.promociones || null,
           banner_animado: data.banner_animado || null,
           puntos_dolor: data.puntos_dolor || null,
-          caracteristicas: data.caracteristicas || null,
+          caracteristicas: data.caracteristicas_jsonb || data.caracteristicas || null,
           testimonios: data.testimonios || null,
           faq: data.faq || null,
           garantias: data.garantias || null,
@@ -431,6 +432,22 @@ const CreadorProductosPR = ({ modo = 'crear', slug = null, onSuccess = null }) =
         return
       }
 
+      // Helper: asegurar que los campos JSONB se envíen como objetos
+      const toJsonb = (val, fallback = null) => {
+        if (val === null || val === undefined) return fallback
+        if (typeof val === 'string') {
+          try {
+            const parsed = JSON.parse(val)
+            return parsed
+          } catch (e) {
+            console.warn('No se pudo parsear JSON, usando fallback:', e?.message)
+            return fallback
+          }
+        }
+        if (typeof val === 'object') return val
+        return fallback
+      }
+
       // Preparar datos para Supabase con tipos correctos
       const datosParaGuardar = {
         nombre: datosProducto.nombre ? datosProducto.nombre.trim() : null,
@@ -456,9 +473,12 @@ const CreadorProductosPR = ({ modo = 'crear', slug = null, onSuccess = null }) =
         
         // Campos de texto
         ganchos: datosProducto.ganchos || [],
-        beneficios: datosProducto.beneficios || [],
-        ventajas: datosProducto.ventajas || [],
         palabras_clave: datosProducto.palabras_clave || [],
+
+        // Campos JSONB nuevos (editor avanzado)
+        ventajas_jsonb: toJsonb(datosProducto.ventajas),
+        beneficios_jsonb: toJsonb(datosProducto.beneficios),
+        caracteristicas_jsonb: toJsonb(datosProducto.caracteristicas),
         
         // Especificaciones físicas
         peso: toNum(datosProducto.peso),
@@ -475,15 +495,14 @@ const CreadorProductosPR = ({ modo = 'crear', slug = null, onSuccess = null }) =
         calificacion_promedio: toNum(datosProducto.calificacion_promedio),
         total_resenas: toInt(datosProducto.total_resenas),
         
-        // Campos JSON complejos
-        banner_animado: datosProducto.banner_animado || null,
-        puntos_dolor: datosProducto.puntos_dolor || null,
-        caracteristicas: datosProducto.caracteristicas || null,
-        testimonios: datosProducto.testimonios || null,
-        faq: datosProducto.faq || null,
-        garantias: datosProducto.garantias || null,
-        cta_final: datosProducto.cta_final || null,
-        promociones: datosProducto.promociones || null,
+        // Campos JSON complejos (aseguramos objeto JSONB)
+        banner_animado: toJsonb(datosProducto.banner_animado),
+        puntos_dolor: toJsonb(datosProducto.puntos_dolor),
+        testimonios: toJsonb(datosProducto.testimonios),
+        faq: toJsonb(datosProducto.faq),
+        garantias: toJsonb(datosProducto.garantias),
+        cta_final: toJsonb(datosProducto.cta_final),
+        promociones: toJsonb(datosProducto.promociones),
         
         // SEO
         meta_title: datosProducto.meta_title ? datosProducto.meta_title.trim() : null,

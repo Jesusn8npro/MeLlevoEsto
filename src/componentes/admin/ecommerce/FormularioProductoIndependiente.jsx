@@ -177,8 +177,6 @@ const FormularioProductoIndependiente = ({
   // Funciones de carga
   const cargarCategorias = async () => {
     try {
-      console.log('🔍 Cargando categorías...')
-      
       const { data, error } = await clienteSupabase
         .from('categorias')
         .select('id, nombre, icono, activo')
@@ -186,14 +184,11 @@ const FormularioProductoIndependiente = ({
         .order('nombre')
 
       if (error) {
-        console.error('❌ Error cargando categorías:', error)
         throw error
       }
       
-      console.log('✅ Categorías cargadas:', data?.length || 0)
       setCategorias(data || [])
     } catch (error) {
-      console.error('💥 Error cargando categorías:', error)
       setError(`Error al cargar las categorías: ${error.message}`)
     }
   }
@@ -201,7 +196,6 @@ const FormularioProductoIndependiente = ({
   const cargarProducto = async () => {
     try {
       setCargandoProducto(true)
-      console.log('🔍 Cargando producto para editar:', slug)
       
       // Intentar por slug primero
       const { data: porSlug, error: errorSlug } = await clienteSupabase
@@ -211,7 +205,6 @@ const FormularioProductoIndependiente = ({
         .limit(1)
 
       if (errorSlug) {
-        console.error('❌ Error cargando producto por slug:', errorSlug)
         throw errorSlug
       }
 
@@ -226,7 +219,6 @@ const FormularioProductoIndependiente = ({
           .limit(1)
 
         if (errorNombre) {
-          console.error('❌ Error cargando producto por nombre:', errorNombre)
           throw errorNombre
         }
 
@@ -236,8 +228,6 @@ const FormularioProductoIndependiente = ({
       if (!productoEncontrado) {
         throw new Error('Producto no encontrado')
       }
-
-      console.log('✅ Producto cargado:', productoEncontrado)
       
       // Mapear datos del producto al formulario
       setFormulario({
@@ -275,7 +265,6 @@ const FormularioProductoIndependiente = ({
       setProductoId(productoEncontrado.id)
       
     } catch (error) {
-      console.error('💥 Error cargando producto:', error)
       setError(`Error al cargar el producto: ${error.message}`)
     } finally {
       setCargandoProducto(false)
@@ -304,7 +293,7 @@ const FormularioProductoIndependiente = ({
         setImagenesLandingId(registro.id)
       }
     } catch (error) {
-      console.error('Error cargando imágenes de landing:', error)
+      // Error silencioso para producción
     }
   }
 
@@ -414,8 +403,6 @@ const FormularioProductoIndependiente = ({
         ...(modo === 'editar' && { actualizado_el: new Date().toISOString() })
       }
 
-      console.log(`${modo === 'crear' ? 'Creando' : 'Actualizando'} producto:`, datosProducto)
-
       let result
       if (modo === 'crear') {
         result = await clienteSupabase
@@ -433,11 +420,8 @@ const FormularioProductoIndependiente = ({
       const { data, error } = result
 
       if (error) {
-        console.error('Error al guardar:', error)
         throw error
       }
-
-      console.log('Producto guardado:', data)
       const mensaje = modo === 'crear' ? '¡Producto creado exitosamente!' : '¡Producto actualizado exitosamente!'
       setExito(mensaje)
       
@@ -452,7 +436,6 @@ const FormularioProductoIndependiente = ({
       }
 
     } catch (error) {
-      console.error('Error al guardar producto:', error)
       setError(`Error al guardar: ${error.message}`)
     } finally {
       setCargando(false)
@@ -1180,7 +1163,6 @@ const FormularioProductoIndependiente = ({
               modo="embed"
               mostrar={true}
               onProductoCreado={(producto) => {
-                console.log('Producto creado con IA:', producto)
                 setProductoCreado(producto)
                 setExito('¡Producto creado con IA exitosamente!')
               }}
@@ -1195,7 +1177,6 @@ const FormularioProductoIndependiente = ({
               mostrar={true}
               productoId={productoId}
               onImagenesGeneradas={(imagenes) => {
-                console.log('Imágenes generadas:', imagenes)
                 setExito('¡Imágenes generadas exitosamente!')
               }}
             />

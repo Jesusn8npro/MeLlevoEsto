@@ -274,6 +274,22 @@ export const CONFIGURACIONES_PREDEFINIDAS = {
     maxWidth: 800,
     maxHeight: 600
   }
+  ,
+  // Ultra compresión: forzar WebP y reducir dimensiones
+  ultra: {
+    quality: 0.6,
+    maxWidth: 1024,
+    maxHeight: 768,
+    convertSize: 0 // cualquier tamaño se convierte a WebP
+  }
+  ,
+  // Preset aún más agresivo
+  extremo: {
+    quality: 0.35,
+    maxWidth: 800,
+    maxHeight: 600,
+    convertSize: 0 // fuerza WebP para máxima reducción
+  }
 }
 
 /**

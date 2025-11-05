@@ -400,7 +400,7 @@ const FormularioProducto = ({
             <label>Categoría *</label>
             <select
               value={datosProducto.categoria_id || ''}
-              onChange={(e) => manejarCambioEntero('categoria_id', e.target.value)}
+              onChange={(e) => manejarCambio('categoria_id', e.target.value)}
               className={errores.categoria_id ? 'error' : ''}
             >
               <option value="">Seleccionar categoría...</option>
@@ -456,25 +456,19 @@ const FormularioProducto = ({
 
           <div className="campo">
             <label>Beneficios</label>
-            <textarea
-              value={Array.isArray(datosProducto.beneficios) 
-                ? datosProducto.beneficios.join('\n') 
-                : ''}
-              onChange={(e) => manejarCambioArray('beneficios', e.target.value)}
-              rows="4"
-              placeholder="Un beneficio por línea..."
+            <ConvertidorAJson
+              valor={datosProducto.beneficios}
+              onChange={(valor) => manejarCambio('beneficios', valor)}
+              tipo="beneficios"
             />
           </div>
 
           <div className="campo">
-            <label>Ventajas</label>
-            <textarea
-              value={Array.isArray(datosProducto.ventajas) 
-                ? datosProducto.ventajas.join('\n') 
-                : ''}
-              onChange={(e) => manejarCambioArray('ventajas', e.target.value)}
-              rows="4"
-              placeholder="Una ventaja por línea..."
+            <label>Ventajas Competitivas</label>
+            <ConvertidorAJson
+              valor={datosProducto.ventajas}
+              onChange={(valor) => manejarCambio('ventajas', valor)}
+              tipo="ventajas"
             />
           </div>
         </section>
@@ -572,17 +566,17 @@ const FormularioProducto = ({
           </div>
         </section>
 
-        {/* Especificaciones */}
+        {/* Características (JSONB) */}
         <section className="seccion">
-          <h3>📋 Especificaciones</h3>
+          <h3>⚙️ Características</h3>
           <p className="descripcion-json">Características técnicas del producto</p>
           
           <div className="campo">
-            <label>Especificaciones</label>
+            <label>Características</label>
             <ConvertidorAJson
-              valor={datosProducto.especificaciones}
-              onChange={(valor) => manejarCambio('especificaciones', valor)}
-              tipo="especificaciones"
+              valor={datosProducto.caracteristicas}
+              onChange={(valor) => manejarCambio('caracteristicas', valor)}
+              tipo="caracteristicas"
             />
           </div>
         </section>
@@ -597,6 +591,36 @@ const FormularioProducto = ({
               valor={datosProducto.banner_animado}
               onChange={(valor) => manejarCambio('banner_animado', valor)}
               tipo="banner_animado"
+            />
+          </div>
+        </section>
+
+        {/* Puntos de Dolor */}
+        <section className="seccion">
+          <h3>🩹 Puntos de Dolor</h3>
+          <p className="descripcion-json">Problemas que enfrenta tu cliente y cómo los resuelves</p>
+
+          <div className="campo">
+            <label>Puntos de Dolor</label>
+            <ConvertidorAJson
+              valor={datosProducto.puntos_dolor}
+              onChange={(valor) => manejarCambio('puntos_dolor', valor)}
+              tipo="puntos_dolor"
+            />
+          </div>
+        </section>
+
+        {/* Testimonios */}
+        <section className="seccion">
+          <h3>👥 Testimonios</h3>
+          <p className="descripcion-json">Reseñas y opiniones de clientes</p>
+          
+          <div className="campo">
+            <label>Testimonios</label>
+            <ConvertidorAJson
+              valor={datosProducto.testimonios}
+              onChange={(valor) => manejarCambio('testimonios', valor)}
+              tipo="testimonios"
             />
           </div>
         </section>

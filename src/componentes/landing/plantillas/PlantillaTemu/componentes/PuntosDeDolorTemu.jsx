@@ -64,9 +64,46 @@ const PuntosDeDolorTemu = ({
     ]
   }
 
-  const datos = puntosDeDolorData || datosDefecto
-  
-  const timelineConImagenes = datos.timeline.slice(0, 4).map((punto, index) => {
+  // Normalizar estructura entrante para evitar errores cuando falten campos
+  const datosNormalizados = (() => {
+    // Si no viene nada, usar defaults
+    if (!puntosDeDolorData) return datosDefecto
+
+    // Si viene un array directo, convertir a estructura esperada con timeline
+    if (Array.isArray(puntosDeDolorData)) {
+      return {
+        ...datosDefecto,
+        timeline: puntosDeDolorData.map((punto, index) => ({
+          id: punto.id || Date.now() + index,
+          icono: punto.icono || '💔',
+          nombre: punto.nombre || punto.titulo || '',
+          posicion: punto.posicion || (index % 2 === 0 ? 'izquierda' : 'derecha'),
+          descripcion: punto.descripcion || '',
+          solucion: punto.solucion || '',
+          textoBoton: punto.textoBoton || 'NUESTRA SOLUCIÓN'
+        }))
+      }
+    }
+
+    // Si viene un objeto, asegurar que tenga timeline array
+    if (typeof puntosDeDolorData === 'object') {
+      const timeline = Array.isArray(puntosDeDolorData.timeline) 
+        ? puntosDeDolorData.timeline 
+        : []
+      return {
+        titulo: puntosDeDolorData.titulo || datosDefecto.titulo,
+        subtitulo: puntosDeDolorData.subtitulo || datosDefecto.subtitulo,
+        timeline: timeline.length > 0 ? timeline : datosDefecto.timeline
+      }
+    }
+
+    // Fallback
+    return datosDefecto
+  })()
+
+  const datos = datosNormalizados
+
+  const timelineConImagenes = (Array.isArray(datos.timeline) ? datos.timeline : []).slice(0, 4).map((punto, index) => {
     let campoImagen
     if (index < 2) {
       campoImagen = `imagen_punto_dolor_${index + 1}`
@@ -122,7 +159,7 @@ const PuntosDeDolorTemu = ({
           
           <div className="puntos-dolor-temu-linea-central"></div>
 
-          {timelineConImagenes.map((punto, index) => (
+          {(timelineConImagenes || []).map((punto, index) => (
             <div 
               key={punto.id}
               className={`puntos-dolor-temu-item puntos-dolor-temu-${punto.posicion}`}

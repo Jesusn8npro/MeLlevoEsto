@@ -430,12 +430,8 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
     if (!producto) return
     
     try {
-      console.log('🛒 Agregando producto desde HeroTemu al carrito:', producto)
-      
       // Usar el producto completo tal como viene de la base de datos
       const resultado = await agregarAlCarrito(producto, cantidad, variante)
-      
-      console.log('✅ Resultado de agregar desde HeroTemu:', resultado)
       
       if (resultado.success) {
         // Abrir el modal del carrito para mostrar confirmación
@@ -447,7 +443,6 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
         throw new Error(resultado.message || 'Error al agregar al carrito')
       }
     } catch (error) {
-      console.error('❌ Error al agregar desde HeroTemu:', error)
       mostrarNotificacion('error', 'Error al agregar', 'Error al agregar al carrito. Por favor, inténtalo de nuevo.')
       throw error
     }
@@ -931,7 +926,8 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                 </p>
               )}
               <div className="hero-temu-beneficios-grid">
-                {producto.caracteristicas.detalles && producto.caracteristicas.detalles.map((detalle, index) => (
+                {/* Mostrar solo 4 características principales del producto */}
+                {producto.caracteristicas.detalles && producto.caracteristicas.detalles.slice(0, 4).map((detalle, index) => (
                   <div key={`detalle-${index}`} className="hero-temu-beneficio-item">
                     <span className="hero-temu-icono-beneficio">
                       {detalle.icono || '⭐'}
@@ -943,29 +939,18 @@ const HeroTemu = ({ producto, config, reviews, notificaciones }) => {
                   </div>
                 ))}
                 
-                {producto.caracteristicas.beneficios && producto.caracteristicas.beneficios.map((beneficio, index) => (
-                  <div key={`beneficio-${index}`} className="hero-temu-beneficio-item">
-                    <span className="hero-temu-icono-beneficio">
-                      {beneficio.icono || '✅'}
-                    </span>
-                    <div className="hero-temu-contenido-beneficio">
-                      <h4>{beneficio.titulo || beneficio}</h4>
-                      {beneficio.descripcion && <p>{beneficio.descripcion}</p>}
-                    </div>
-                  </div>
-                ))}
-
-                {(!producto.caracteristicas.detalles && !producto.caracteristicas.beneficios) && 
-                 producto.ventajas && producto.ventajas.slice(0, 4).map((ventaja, index) => {
-                  const iconos = ['🚀', '🛡️', '🔒', '🚚'];
+                {/* Si no hay detalles, mostrar características del producto principal */}
+                {(!producto.caracteristicas.detalles || producto.caracteristicas.detalles.length === 0) && 
+                 producto.caracteristicas && producto.caracteristicas.slice(0, 4).map((caracteristica, index) => {
+                  const iconos = ['🚀', '⚡', '💎', '🛡️'];
                   return (
-                    <div key={`ventaja-${index}`} className="hero-temu-beneficio-item">
+                    <div key={`caracteristica-${index}`} className="hero-temu-beneficio-item">
                       <span className="hero-temu-icono-beneficio">
                         {iconos[index] || '⭐'}
                       </span>
                       <div className="hero-temu-contenido-beneficio">
-                        <h4>{ventaja}</h4>
-                        <p>Beneficio específico de este producto</p>
+                        <h4>{caracteristica}</h4>
+                        <p>Característica destacada del producto</p>
                       </div>
                     </div>
                   );

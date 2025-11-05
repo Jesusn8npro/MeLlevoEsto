@@ -41,7 +41,7 @@ const ItemCarrito = ({
     try {
       await onActualizarCantidad(item.id, nuevaCantidad)
     } catch (error) {
-      console.error('Error al actualizar cantidad:', error)
+      // Error silencioso para producción
       setCantidadTemporal(item.cantidad) // Revertir en caso de error
     } finally {
       setCargandoActualizacion(false)
@@ -54,7 +54,7 @@ const ItemCarrito = ({
       try {
         await onEliminar(item.id)
       } catch (error) {
-        console.error('Error al eliminar producto:', error)
+        // Error silencioso para producción
       }
     }
   }
@@ -66,7 +66,7 @@ const ItemCarrito = ({
         await onMoverAFavoritos(item.productos)
         await onEliminar(item.id)
       } catch (error) {
-        console.error('Error al mover a favoritos:', error)
+        // Error silencioso para producción
       }
     }
   }

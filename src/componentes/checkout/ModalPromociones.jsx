@@ -23,21 +23,11 @@ const ModalPromociones = ({
 
   // Generar ofertas basadas en el producto y sus promociones
   const ofertas = useMemo(() => {
-    console.log('🎯 ===== INICIANDO GENERACIÓN DE OFERTAS =====')
-    console.log('🎯 Producto nombre:', producto?.nombre)
-    console.log('📦 Producto completo:', JSON.stringify(producto, null, 2))
-    console.log('🎁 Promociones del producto:', producto?.promociones)
-    console.log('🔍 Tipo de promociones:', typeof producto?.promociones)
-    console.log('🔍 Es array?:', Array.isArray(producto?.promociones))
-
     const listaOfertas = []
     
     if (!producto?.precio) {
-      console.log('❌ No hay precio del producto')
       return listaOfertas
     }
-
-    console.log('💰 Precio del producto:', producto.precio)
 
     // Oferta base (precio real)
     const ofertaBase = {
@@ -49,20 +39,11 @@ const ModalPromociones = ({
       etiqueta: 'Precio de Oferta',
       tipo: 'base'
     }
-    console.log('🏷️ Oferta base creada:', ofertaBase)
     listaOfertas.push(ofertaBase)
 
     // Agregar promociones desde Supabase
     if (producto?.promociones && Array.isArray(producto.promociones)) {
-      console.log('✅ PROCESANDO PROMOCIONES - Total:', producto.promociones.length)
-      console.log('🔍 Promociones JSON completo:', JSON.stringify(producto.promociones, null, 2))
-      
       producto.promociones.forEach((promocion, index) => {
-        console.log(`\n🎁 ===== PROCESANDO PROMOCIÓN ${index + 1} =====`)
-        console.log(`📋 Promoción completa:`, JSON.stringify(promocion, null, 2))
-        console.log(`🔍 Campo 'activa':`, promocion.activa, '(tipo:', typeof promocion.activa, ')')
-        console.log(`🔍 Todos los campos:`, Object.keys(promocion))
-        
         // Verificar que la promoción esté activa (muy flexible para diferentes tipos de datos)
         const estaActiva = promocion.activa === true || 
                           promocion.activa === 1 || 
@@ -74,14 +55,9 @@ const ModalPromociones = ({
                           promocion.activa === 'YES' ||
                           promocion.activa === 'yes'
         
-        console.log(`🔍 ¿Está activa? ${estaActiva} (valor original: ${promocion.activa})`)
-        
         if (!estaActiva) {
-          console.log(`⏸️ PROMOCIÓN ${index + 1} RECHAZADA - No está activa:`, promocion.activa, typeof promocion.activa)
           return
         }
-
-        console.log(`✅ PROMOCIÓN ${index + 1} ACEPTADA - Está activa (${promocion.activa})`)
 
         // Buscar campos de cantidad con diferentes nombres posibles
         const cantidad = promocion.cantidadMinima || 
@@ -99,17 +75,10 @@ const ModalPromociones = ({
                                    promocion.percentage ||
                                    0
         
-        console.log(`🔢 Cantidad encontrada: ${cantidad}`)
-        console.log(`💸 Descuento encontrado: ${descuentoPorcentaje}%`)
-        
         const precioConDescuento = producto.precio * (1 - descuentoPorcentaje / 100)
         const precioTotal = precioConDescuento * cantidad
         const ahorroTotal = (producto.precio * cantidad) - precioTotal
         const ahorroUnitario = producto.precio - precioConDescuento
-
-        console.log(`💰 Precio con descuento: ${precioConDescuento}`)
-        console.log(`💰 Precio total: ${precioTotal}`)
-        console.log(`💰 Ahorro total: ${ahorroTotal}`)
 
         const nuevaOferta = {
           id: `promocion-${promocion.id || index}`,
@@ -123,27 +92,15 @@ const ModalPromociones = ({
           tipo: 'promocion'
         }
 
-        console.log(`🎉 OFERTA CREADA PARA PROMOCIÓN ${index + 1}:`, JSON.stringify(nuevaOferta, null, 2))
         listaOfertas.push(nuevaOferta)
-        console.log(`📊 Total ofertas hasta ahora: ${listaOfertas.length}`)
       })
-    } else {
-      console.log('❌ NO HAY PROMOCIONES VÁLIDAS')
-      console.log('🔍 Razón - promociones:', producto?.promociones)
-      console.log('🔍 Razón - es array:', Array.isArray(producto?.promociones))
     }
-
-    console.log('📋 ===== OFERTAS FINALES GENERADAS =====')
-    console.log('📊 Total ofertas:', listaOfertas.length)
-    console.log('📋 Lista completa:', JSON.stringify(listaOfertas, null, 2))
-    console.log('🎯 ===== FIN GENERACIÓN DE OFERTAS =====\n')
     
     return listaOfertas
   }, [producto])
 
   // Manejar selección de oferta
   const manejarSeleccionOferta = (oferta) => {
-    console.log('🎯 Oferta seleccionada:', oferta)
     setOfertaSeleccionada(oferta)
   }
 

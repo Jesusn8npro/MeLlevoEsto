@@ -103,13 +103,42 @@ const TestimoniosTemu = ({
     ]
   }
 
-  const datos = testimoniosData || testimoniosFicticios
+  // Normalizar estructura entrante
+  const datos = (() => {
+    if (!testimoniosData) return testimoniosFicticios
+
+    // Si llega como array de testimonios
+    if (Array.isArray(testimoniosData)) {
+      return {
+        ...testimoniosFicticios,
+        testimonios: testimoniosData
+      }
+    }
+
+    // Si llega como objeto con diferentes claves
+    if (typeof testimoniosData === 'object') {
+      const base = { ...testimoniosFicticios }
+      const arr = 
+        Array.isArray(testimoniosData.testimonios) ? testimoniosData.testimonios :
+        Array.isArray(testimoniosData.items) ? testimoniosData.items :
+        []
+      const estadisticas = testimoniosData.estadisticas || base.estadisticas || { totalClientes: 1000, satisfaccion: 4.8, recomiendan: 95 }
+      return {
+        titulo: testimoniosData.titulo || base.titulo,
+        subtitulo: testimoniosData.subtitulo || base.subtitulo,
+        estadisticas,
+        testimonios: arr.length ? arr : base.testimonios
+      }
+    }
+
+    return testimoniosFicticios
+  })()
 
   useEffect(() => {
     if (!mostrarContador) return
     
     let inicio = 0
-    const final = datos.estadisticas.totalClientes
+    const final = (datos?.estadisticas?.totalClientes ?? 1000)
     const duracion = 2000
     const incremento = final / (duracion / 16)
     
@@ -124,7 +153,7 @@ const TestimoniosTemu = ({
     }, 16)
     
     return () => clearInterval(timer)
-  }, [mostrarContador, datos.estadisticas.totalClientes])
+  }, [mostrarContador, datos?.estadisticas?.totalClientes])
 
   useEffect(() => {
     if (!mostrarAnimaciones) return
@@ -165,7 +194,7 @@ const TestimoniosTemu = ({
     setMostrarTodos(!mostrarTodos)
   }
 
-  const testimoniosConImagenes = datos.testimonios.slice(0, 3).map((testimonio, index) => ({
+  const testimoniosConImagenes = (Array.isArray(datos.testimonios) ? datos.testimonios : []).slice(0, 3).map((testimonio, index) => ({
     ...testimonio,
     imagen: producto?.imagenes?.[`imagen_testimonio_persona_${index + 1}`] || testimonio.imagen,
     imagenProducto: producto?.imagenes?.[`imagen_testimonio_producto_${index + 1}`] || testimonio.imagenProducto

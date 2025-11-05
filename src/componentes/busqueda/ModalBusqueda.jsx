@@ -110,7 +110,6 @@ export default function ModalBusqueda({ abierto, onCerrar }) {
         .limit(6)
 
       if (errorTexto && errorPalabrasClave) {
-        console.error('Error al buscar productos:', errorTexto || errorPalabrasClave)
         return
       }
 
@@ -122,7 +121,7 @@ export default function ModalBusqueda({ abierto, onCerrar }) {
 
       setProductos(productosUnicos)
     } catch (error) {
-      console.error('Error en búsqueda:', error)
+      // Error silencioso en producción
     } finally {
       setCargando(false)
     }

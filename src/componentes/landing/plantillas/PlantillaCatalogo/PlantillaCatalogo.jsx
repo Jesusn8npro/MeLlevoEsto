@@ -417,7 +417,15 @@ const PlantillaCatalogo = ({ producto, config, reviews, notificaciones }) => {
         )}
 
         {/* Beneficios */}
-        {producto.beneficios && producto.beneficios.length > 0 && (
+        {(() => {
+          // Soportar ambos formatos: array simple y objeto con items
+          let beneficiosList = []
+          if (Array.isArray(producto.beneficios)) {
+            beneficiosList = producto.beneficios
+          } else if (producto.beneficios && Array.isArray(producto.beneficios.items)) {
+            beneficiosList = producto.beneficios.items.map((b) => b.titulo || b.descripcion || '')
+          }
+          return beneficiosList && beneficiosList.length > 0 && (
           <div style={{ 
             backgroundColor: '#f0fff0', 
             padding: '1.5rem', 
@@ -426,15 +434,24 @@ const PlantillaCatalogo = ({ producto, config, reviews, notificaciones }) => {
           }}>
             <h4 style={{ color: '#006400', marginBottom: '1rem' }}>✅ Beneficios</h4>
             <ul style={{ margin: 0, paddingLeft: '1.5rem' }}>
-              {producto.beneficios.map((beneficio, index) => (
+              {beneficiosList.map((beneficio, index) => (
                 <li key={index} style={{ marginBottom: '0.5rem' }}>{beneficio}</li>
               ))}
             </ul>
           </div>
-        )}
+          )
+        })()}
 
         {/* Ventajas */}
-        {producto.ventajas && producto.ventajas.length > 0 && (
+        {(() => {
+          // Soportar ambos formatos: array simple y objeto con items
+          let ventajasList = []
+          if (Array.isArray(producto.ventajas)) {
+            ventajasList = producto.ventajas
+          } else if (producto.ventajas && Array.isArray(producto.ventajas.items)) {
+            ventajasList = producto.ventajas.items.map((v) => v.titulo || v.descripcion || '')
+          }
+          return ventajasList && ventajasList.length > 0 && (
           <div style={{ 
             backgroundColor: '#f0f8ff', 
             padding: '1.5rem', 
@@ -443,12 +460,13 @@ const PlantillaCatalogo = ({ producto, config, reviews, notificaciones }) => {
           }}>
             <h4 style={{ color: '#4682b4', marginBottom: '1rem' }}>⭐ Ventajas</h4>
             <ul style={{ margin: 0, paddingLeft: '1.5rem' }}>
-              {producto.ventajas.map((ventaja, index) => (
+              {ventajasList.map((ventaja, index) => (
                 <li key={index} style={{ marginBottom: '0.5rem' }}>{ventaja}</li>
               ))}
             </ul>
           </div>
-        )}
+          )
+        })()}
       </div>
 
       {/* Especificaciones técnicas */}

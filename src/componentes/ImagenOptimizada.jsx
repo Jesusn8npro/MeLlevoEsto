@@ -81,7 +81,7 @@ const ImagenOptimizada = ({
       
       return urlOriginal
     } catch (error) {
-      console.warn('Error al generar URL optimizada:', error)
+      // Error silencioso para producción
       return urlOriginal
     }
   }

@@ -75,7 +75,7 @@ const StickyProducto = ({ producto, mostrar }) => {
       await agregarAlCarrito(producto, 1);
       setProductoAnadido(true);
     } catch (error) {
-      console.error('Error al agregar producto al carrito:', error);
+      // Error silencioso para producción
     }
   };
 
@@ -91,8 +91,6 @@ const StickyProducto = ({ producto, mostrar }) => {
         top: offsetTop,
         behavior: 'smooth'
       });
-    } else {
-      console.warn('No se encontró la galería de imágenes del HeroTemu');
     }
   };
   
@@ -190,7 +188,6 @@ const StickyProducto = ({ producto, mostrar }) => {
         onCerrar={() => setModalContraEntregaAbierto(false)}
         producto={producto}
         onConfirmar={(payload) => {
-          console.log('Pedido COD creado desde sticky:', payload);
           setModalContraEntregaAbierto(false);
         }}
       />

@@ -44,7 +44,26 @@ const GarantiasTemu = ({
     ]
   }
 
-  const datos = garantiasData || datosDefecto
+  // Normalizar estructura: aceptar array directo o objeto con garantias/items
+  const datos = (() => {
+    if (!garantiasData) return datosDefecto
+    if (Array.isArray(garantiasData)) {
+      return { ...datosDefecto, garantias: garantiasData }
+    }
+    if (typeof garantiasData === 'object') {
+      const arr = Array.isArray(garantiasData.garantias)
+        ? garantiasData.garantias
+        : Array.isArray(garantiasData.items)
+          ? garantiasData.items
+          : []
+      return {
+        titulo: garantiasData.titulo || datosDefecto.titulo,
+        subtitulo: garantiasData.subtitulo || datosDefecto.subtitulo,
+        garantias: arr.length ? arr : datosDefecto.garantias
+      }
+    }
+    return datosDefecto
+  })()
 
   // Animaciones al hacer scroll
   useEffect(() => {
@@ -94,7 +113,7 @@ const GarantiasTemu = ({
 
       {/* GRID DE GARANTÍAS */}
       <div className="garantias-temu-grid">
-        {datos.garantias.map((garantia, index) => (
+        {(Array.isArray(datos.garantias) ? datos.garantias : []).map((garantia, index) => (
           <div 
             key={garantia.id || index}
             className="garantias-temu-item"

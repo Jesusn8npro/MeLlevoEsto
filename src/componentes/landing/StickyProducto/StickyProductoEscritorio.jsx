@@ -193,7 +193,6 @@ const StickyProductoEscritorio = ({
         onCerrar={() => setModalContraEntregaAbierto(false)}
         producto={producto}
         onConfirmar={(payload) => {
-          console.log('Pedido COD creado desde sticky escritorio:', payload);
           setModalContraEntregaAbierto(false);
         }}
       />

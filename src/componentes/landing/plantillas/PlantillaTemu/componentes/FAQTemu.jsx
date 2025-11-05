@@ -57,7 +57,26 @@ const FAQTemu = ({
     ]
   }
 
-  const datos = faqData || datosDefecto
+  // Normalizar estructura: aceptar array directo o objeto con preguntas/items
+  const datos = (() => {
+    if (!faqData) return datosDefecto
+    if (Array.isArray(faqData)) {
+      return { ...datosDefecto, preguntas: faqData }
+    }
+    if (typeof faqData === 'object') {
+      const arr = Array.isArray(faqData.preguntas)
+        ? faqData.preguntas
+        : Array.isArray(faqData.items)
+          ? faqData.items
+          : []
+      return {
+        titulo: faqData.titulo || datosDefecto.titulo,
+        subtitulo: faqData.subtitulo || datosDefecto.subtitulo,
+        preguntas: arr.length ? arr : datosDefecto.preguntas
+      }
+    }
+    return datosDefecto
+  })()
 
   // Animaciones al hacer scroll
   useEffect(() => {
@@ -102,7 +121,7 @@ const FAQTemu = ({
 
       {/* LISTA DE PREGUNTAS */}
       <div className="faq-temu-contenedor">
-        {datos.preguntas.map((item, index) => (
+        {(Array.isArray(datos.preguntas) ? datos.preguntas : []).map((item, index) => (
           <div 
             key={item.id || index}
             className="faq-temu-item"

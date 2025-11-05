@@ -57,7 +57,6 @@ const GridProductosVendedor = ({
 
   // Cargar productos
   useEffect(() => {
-    console.log('🔄 useEffect disparado - Cargando productos...')
     cargarProductos()
   }, [filtrosExternos, filtros, paginaActual, ordenar])
 
@@ -70,8 +69,6 @@ const GridProductosVendedor = ({
     try {
       setCargando(true)
       setError(null)
-
-      console.log('🔍 GridProductosVendedor - Filtros recibidos:', filtrosExternos)
 
       let query = clienteSupabase
         .from('productos')
@@ -95,19 +92,13 @@ const GridProductosVendedor = ({
 
       // Aplicar filtros externos (desde PaginaTienda)
       if (filtrosExternos) {
-        console.log('🔍 Aplicando filtrosExternos...')
-        
         // Categorías - PRIORIDAD MÁXIMA
         if (filtrosExternos.categorias && filtrosExternos.categorias.length > 0) {
-          console.log('🔍 ✅ Aplicando filtro de categorías:', filtrosExternos.categorias)
           query = query.in('categoria_id', filtrosExternos.categorias)
-        } else {
-          console.log('🔍 ⚠️ NO hay categorías para filtrar')
         }
         
         // Búsqueda por texto
         if (filtrosExternos.busqueda) {
-          console.log('🔍 Aplicando búsqueda:', filtrosExternos.busqueda)
           query = query.or(`nombre.ilike.%${filtrosExternos.busqueda}%,descripcion.ilike.%${filtrosExternos.busqueda}%`)
         }
 
@@ -187,16 +178,8 @@ const GridProductosVendedor = ({
       const { data, error: errorQuery, count } = await query
 
       if (errorQuery) {
-        console.error('❌ Error cargando productos (RLS/SELECT):', {
-          message: errorQuery.message,
-          code: errorQuery.code,
-          details: errorQuery.details,
-          hint: errorQuery.hint
-        })
         throw errorQuery
       }
-
-      console.log('📦 Productos cargados RAW:', data?.length || 0)
 
       // ✅ PROCESAR IMÁGENES DE GOOGLE DRIVE
       const productosConImagenes = (data || []).map(producto => {
@@ -219,16 +202,12 @@ const GridProductosVendedor = ({
           imagenesReales.push(...producto.fotos_principales)
         }
         
-        console.log(`🖼️ Producto "${producto.nombre}" - Imágenes procesadas:`, imagenesReales.length)
-        
         // Retornar producto con las imágenes convertidas en fotos_principales
         return {
           ...producto,
           fotos_principales: imagenesReales.length > 0 ? imagenesReales : producto.fotos_principales
         }
       })
-
-      console.log('✅ Productos procesados con imágenes:', productosConImagenes.length)
 
       if (paginacionInfinita && paginaActual > 1) {
         setProductos(prev => [...prev, ...productosConImagenes])
@@ -243,7 +222,6 @@ const GridProductosVendedor = ({
       }
 
     } catch (error) {
-      console.error('Error cargando productos:', error)
       setError('Error al cargar los productos. Inténtalo de nuevo.')
     } finally {
       setCargando(false)
@@ -262,7 +240,7 @@ const GridProductosVendedor = ({
 
       setCategorias(data || [])
     } catch (error) {
-      console.error('Error cargando categorías:', error)
+      // Error silencioso para producción
     }
   }
 

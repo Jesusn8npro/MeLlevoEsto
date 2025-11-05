@@ -20,8 +20,6 @@ const DebugProductoImagenes = ({ slug }) => {
     setError(null)
 
     try {
-      console.log('🔍 DebugProductoImagenes - Consultando slug:', slug)
-      
       // Consulta directa para ver qué datos llegan
       const { data, error: errorConsulta } = await clienteSupabase
         .from('productos')
@@ -49,16 +47,13 @@ const DebugProductoImagenes = ({ slug }) => {
         .eq('activo', true)
         .single()
 
-      console.log('🔍 DebugProductoImagenes - Datos recibidos:', data)
-      console.log('🔍 DebugProductoImagenes - Error:', errorConsulta)
-
       if (errorConsulta) {
         throw errorConsulta
       }
 
       setDatos(data)
     } catch (err) {
-      console.error('❌ DebugProductoImagenes - Error:', err)
+      // Error silencioso para producción
       setError(err.message)
     } finally {
       setCargando(false)

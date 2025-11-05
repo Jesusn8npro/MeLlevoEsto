@@ -2,8 +2,6 @@
 import { clienteSupabase } from '../configuracion/supabase.js';
 
 async function probarInsercionTransacciones() {
-  console.log('🧪 Iniciando prueba de inserción en transacciones_epayco_logs...');
-  
   try {
     // Datos de prueba
     const datosTransaccionPrueba = {
@@ -22,8 +20,6 @@ async function probarInsercionTransacciones() {
       creado_el: new Date().toISOString()
     };
 
-    console.log('📊 Datos de prueba a insertar:', datosTransaccionPrueba);
-
     // Intentar insertar
     const { data, error } = await clienteSupabase
       .from('transacciones_epayco_logs')
@@ -32,21 +28,14 @@ async function probarInsercionTransacciones() {
 
     if (error) {
       console.error('❌ Error al insertar datos de prueba:', error);
-      console.error('📋 Detalles del error:');
-      console.error('  - Código:', error.code);
-      console.error('  - Mensaje:', error.message);
-      console.error('  - Detalles:', error.details);
-      console.error('  - Hint:', error.hint);
       
       // Verificar si es un problema de RLS
       if (error.message?.includes('row-level security') || error.message?.includes('policy')) {
         console.error('🔒 PROBLEMA DETECTADO: Las políticas RLS están bloqueando la inserción');
-        console.error('💡 SOLUCIÓN: Ejecuta el script fix_rls_policies.sql en Supabase');
       }
       
       return false;
     } else {
-      console.log('✅ Datos de prueba insertados exitosamente:', data);
       return true;
     }
   } catch (error) {
@@ -58,8 +47,6 @@ async function probarInsercionTransacciones() {
 
 // Función para verificar la estructura de la tabla
 async function verificarEstructuraTabla() {
-  console.log('🔍 Verificando estructura de la tabla transacciones_epayco_logs...');
-  
   try {
     // Intentar hacer un SELECT simple para verificar que la tabla existe
     const { data, error } = await clienteSupabase
@@ -71,8 +58,6 @@ async function verificarEstructuraTabla() {
       console.error('❌ Error al acceder a la tabla:', error);
       return false;
     } else {
-      console.log('✅ Tabla accesible. Estructura verificada.');
-      console.log('📊 Datos existentes (muestra):', data);
       return true;
     }
   } catch (error) {
@@ -83,8 +68,6 @@ async function verificarEstructuraTabla() {
 
 // Función principal de prueba
 async function ejecutarPruebas() {
-  console.log('🚀 Iniciando pruebas de transacciones_epayco_logs...');
-  
   // Verificar estructura
   const estructuraOK = await verificarEstructuraTabla();
   if (!estructuraOK) {
@@ -107,7 +90,5 @@ window.probarTransaccionesEpayco = {
   probarInsercionTransacciones,
   verificarEstructuraTabla
 };
-
-console.log('🔧 Script de pruebas cargado. Usa window.probarTransaccionesEpayco.ejecutarPruebas() en la consola.');
 
 export { ejecutarPruebas, probarInsercionTransacciones, verificarEstructuraTabla };

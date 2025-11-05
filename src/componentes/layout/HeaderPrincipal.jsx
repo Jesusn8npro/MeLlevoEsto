@@ -110,7 +110,7 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
             .eq('activo', true)
 
           if (countError) {
-            console.error(`Error contando productos para categoría ${categoria.nombre}:`, countError)
+            // Error silencioso para producción
             return { ...categoria, cantidad: 0 }
           }
 
@@ -129,7 +129,7 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
 
       setCategorias(categoriasConConteo.filter(cat => cat.cantidad > 0))
     } catch (error) {
-      console.error('Error cargando categorías:', error)
+      // Error silencioso para producción
       setCategorias([])
     } finally {
       setCargandoCategorias(false)
@@ -178,7 +178,7 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
   // Manejar búsqueda
   const manejarBusqueda = (e) => {
     e.preventDefault()
-    console.log('Búsqueda:', busqueda)
+    // Búsqueda manejada por el componente ModalBusqueda
   }
 
   // Detectar si estamos en una página de producto o tienda para desactivar sticky
@@ -252,7 +252,7 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
       navigate('/sesion-cerrada')
       setMenuUsuarioAbierto(false)
     } catch (error) {
-      console.error('Error al cerrar sesión:', error)
+      // Error silencioso para producción
     }
   }
 

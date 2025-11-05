@@ -74,12 +74,8 @@ const ProductosRelacionados = ({ categoriaId, onCerrarModal }) => {
   // Manejar agregar al carrito
   const manejarAgregarCarrito = async (producto, cantidad, variante) => {
     try {
-      console.log('🛒 Agregando producto relacionado al carrito:', producto)
-      
       // Usar el producto completo tal como viene de la base de datos
       const resultado = await agregarAlCarrito(producto, cantidad || 1, variante)
-      
-      console.log('✅ Resultado de agregar producto relacionado:', resultado)
       
       if (resultado.success) {
         // Abrir modal del carrito para confirmar
@@ -91,7 +87,6 @@ const ProductosRelacionados = ({ categoriaId, onCerrarModal }) => {
         throw new Error(resultado.message || 'Error al agregar al carrito')
       }
     } catch (error) {
-      console.error('❌ Error al agregar producto relacionado:', error)
       mostrarNotificacion('error', 'Error al agregar', 'Error al agregar al carrito. Por favor, inténtalo de nuevo.')
       throw error
     }
@@ -194,7 +189,6 @@ const ProductosRelacionados = ({ categoriaId, onCerrarModal }) => {
                       cantidad={1}
                       className="boton-agregar-rapido"
                       onAgregar={manejarAgregarCarrito}
-                      onError={(error) => console.error('Error en botón rápido:', error)}
                     >
                       <Plus size={14} />
                     </BotonCarritoAnimado>
@@ -251,7 +245,6 @@ const ProductosRelacionados = ({ categoriaId, onCerrarModal }) => {
                       cantidad={1}
                       className="boton-agregar-completo"
                       onAgregar={manejarAgregarCarrito}
-                      onError={(error) => console.error('Error en botón completo:', error)}
                     >
                       <Plus size={14} />
                       Agregar

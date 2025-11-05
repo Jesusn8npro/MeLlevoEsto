@@ -11,6 +11,38 @@
     <div id="root"></div>
     <!-- ePayco OnPage Checkout SDK -->
     <script src="https://checkout.epayco.co/checkout.js"></script>
+    <!-- Advertencia estilo Facebook y bloqueo de consola en producción -->
+    <script>
+      (function () {
+        try {
+          var host = window.location.hostname;
+          var esLocal = host === 'localhost' || host === '127.0.0.1' || host === '::1' || /\.local$/.test(host);
+
+          // En localhost no intervenimos la consola
+          if (esLocal) return;
+
+          // Estilos para el mensaje (similar a Facebook)
+          var tituloCss = 'color:#d93025;font-size:48px;font-weight:700;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;';
+          var textoCss = 'color:#222;font-size:16px;font-weight:400;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;';
+
+          // Mensaje de advertencia
+          console.log('%c¡Detente!', tituloCss);
+          console.log(
+            '%cEsta función del navegador está pensada para desarrolladores. Si alguien te ha indicado que copies y pegues algo aquí para habilitar una función o para "hackear" una cuenta, se trata de un fraude. Si lo haces, esa persona podrá acceder a tu cuenta.\n\nVer https://www.facebook.com/selfxss para obtener más información.',
+            textoCss
+          );
+
+          // Bloqueo de la consola en producción (sin mostrar información interna)
+          var noop = function () {};
+          ['log','info','debug','warn','error','table','trace','group','groupCollapsed','groupEnd'].forEach(function (m) {
+            try { console[m] = noop; } catch (e) {}
+          });
+          try { Object.freeze(console); } catch (e) {}
+        } catch (e) {
+          // Si algo falla, no romper la página
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
