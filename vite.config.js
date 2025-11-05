@@ -11,8 +11,8 @@ export default defineConfig(({ command }) => ({
       apply: 'build',
       options: {
         compact: true,
-        controlFlowFlattening: true,
-        controlFlowFlatteningThreshold: 0.7,
+        // Ajustes de rendimiento: evitar transformaciones costosas en runtime
+        controlFlowFlattening: false,
         deadCodeInjection: false,
         debugProtection: false,
         disableConsoleOutput: true,
@@ -23,7 +23,7 @@ export default defineConfig(({ command }) => ({
         simplify: true,
         splitStrings: false,
         stringArray: true,
-        stringArrayThreshold: 0.75,
+        stringArrayThreshold: 0.25,
         unicodeEscapeSequence: false
       }
     })
@@ -38,8 +38,9 @@ export default defineConfig(({ command }) => ({
     sourcemap: false,
     minify: 'esbuild',
     esbuild: {
-      // Elimina llamadas a console y debugger en el build de producción
-      drop: ['console', 'debugger']
+      // Elimina llamadas a debugger en el build; conservamos console para evitar overhead adicional
+      // (la ocultación de logs ya la gestiona el obfuscador en nuestro código)
+      drop: ['debugger']
     }
   },
   resolve: {

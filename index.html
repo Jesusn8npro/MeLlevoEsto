@@ -34,7 +34,7 @@
 
           // No tocar/reescribir la consola para evitar romper bundles de terceros
           // (la eliminación de logs se hace en el build de producción)
-          try { setTimeout(function(){ console.clear(); }, 0); } catch (e) {}
+          // Mantener visible el mensaje: NO limpiar la consola.
         } catch (e) {
           // Si algo falla, no romper la página
         }
