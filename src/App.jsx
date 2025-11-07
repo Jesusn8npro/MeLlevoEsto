@@ -42,7 +42,7 @@ import AdminChats from './paginas/admin/ManejoDeChats/AdminChats'
 import GenericaAdmin from './paginas/admin/GenericaAdmin'
 import CalendarioTareas from './paginas/admin/calendario_tareas/CalendarioTareas'
 import TableroTareas from './paginas/admin/calendario_tareas/TableroTareas'
-import AdminBlog from './paginas/admin/blog/AdminBlog'
+import AdminBlog from './paginas/admin/Blog/AdminBlog'
 
 import ManejoCupones from './paginas/admin/ManejoCupones/ManejoCupones'
 import LandingProducto from './paginas/LandingProducto'
