@@ -1,4 +1,4 @@
-import { createContext, useState, useContext, useEffect, useMemo, useCallback } from 'react'
+import React, { createContext, useState, useContext, useEffect, useMemo, useCallback } from 'react'
 
 const ContextoTema = createContext(undefined)
 

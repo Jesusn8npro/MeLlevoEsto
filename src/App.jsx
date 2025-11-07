@@ -1,3 +1,4 @@
+import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom'
 import HeaderPrincipal from './componentes/layout/HeaderPrincipal'
 import RutaAdmin from './componentes/autenticacion/RutaAdmin'
