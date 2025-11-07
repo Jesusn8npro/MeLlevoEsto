@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛍️</text></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ME LLEVO ESTO - Tienda Ultra Vendedora</title>
+    <meta name="description" content="ME LLEVO ESTO - La tienda más vendedora del mercado. Productos increíbles a precios irresistibles." />
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- ePayco OnPage Checkout SDK -->
+    <script src="https://checkout.epayco.co/checkout.js"></script>
+    <!-- Advertencia estilo Facebook (sin bloquear/reescribir consola en runtime) -->
+    <script>
+      (function () {
+        try {
+          var host = window.location.hostname;
+          var esLocal = host === 'localhost' || host === '127.0.0.1' || host === '::1' || /\.local$/.test(host);
+
+          // En localhost no intervenimos la consola
+          if (esLocal) return;
+
+          // Estilos para el mensaje (similar a Facebook)
+          var tituloCss = 'color:#d93025;font-size:48px;font-weight:700;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;';
+          var textoCss = 'color:#222;font-size:16px;font-weight:400;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;';
+
+          // Mensaje de advertencia
+          console.log('%c¡Detente!', tituloCss);
+          console.log(
+            '%cEsta función del navegador está pensada para desarrolladores. Si alguien te ha indicado que copies y pegues algo aquí para habilitar una función o para "hackear" una cuenta, se trata de un fraude. Si lo haces, esa persona podrá acceder a tu cuenta.\n\nVer https://mellevoesto.com/ayuda para obtener más información.',
+            textoCss
+          );
+
+          // No tocar/reescribir la consola para evitar romper bundles de terceros
+          // (la eliminación de logs se hace en el build de producción)
+          // Mantener visible el mensaje: NO limpiar la consola.
+        } catch (e) {
+          // Si algo falla, no romper la página
+        }
+      })();
+    </script>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+
+
+
+
+
+

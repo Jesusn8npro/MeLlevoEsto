@@ -1,0 +1,278 @@
+{
+  "id": "01709d28-2e20-4b1d-adfa-8e1008d91a06",
+  "nombre": "Motocicleta DR 200 2012",
+  "slug": "motocicleta-dr-200-2012",
+  "descripcion_titulo": "La Motocicleta Perfecta para Aventura y Uso Diario",
+  "descripcion_contenido": "Descubre la emocionante Motocicleta DR 200 modelo 2012, un estilo supermotard que combina elegancia y rendimiento. Diseñada para quienes buscan la mezcla perfecta entre aventura y uso diario, su motor potente asegura un viaje fluido tanto en la ciudad como en caminos accidentados. En un excelente estado, esta motocicleta es ideal para principiantes y para aquellos que buscan un nuevo vehículo que brinde confianza y comodidad. Con un diseño ergonómico y capacidades excepcionales, te encantará explorar nuevos horizontes sobre dos ruedas.",
+  "precio": 8700000,
+  "precio_original": 10000000,
+  "descuento": 13,
+  "categoria_id": "c20af764-351f-48d0-8977-7353cf834105",
+  "estado": "nuevo",
+  "ganchos": [
+    "🏍️ ¡Siente la emoción de la aventura!",
+    "🌟 Ideal para principiantes y expertos",
+    "🔧 Mantenimiento sencillo y económico",
+    "💨 Rendimiento superior en todos los terrenos",
+    "⚡ Motocicleta en excelente estado"
+  ],
+  "beneficios": [
+    "Conducción cómoda y segura",
+    "Diseño atractivo y ágil",
+    "Excelente opción para desplazamientos urbanos",
+    "Ideal para escapadas de fin de semana",
+    "Gran capacidad para transporte diario"
+  ],
+  "ventajas": [],
+  "palabras_clave": [
+    "motocicleta",
+    "DR200",
+    "2012",
+    "supermotard",
+    "aventura"
+  ],
+  "stock": 10,
+  "stock_minimo": 5,
+  "destacado": false,
+  "activo": true,
+  "landing_tipo": "temu",
+  "peso": 12000,
+  "dimensiones": {
+    "alto": 120,
+    "ancho": 30,
+    "profundidad": 200
+  },
+  "marca": "DR Motor",
+  "modelo": "DR200 2012",
+  "color": "Negro",
+  "talla": "Única",
+  "material": "Metal de alta calidad",
+  "meta_title": "Motocicleta DR 200 2012 - Aventura y Uso Diario",
+  "meta_description": "Motocicleta DR 200 modelo 2012, elige aventura y comodidad en tus desplazamientos diarios.",
+  "fotos_principales": [],
+  "fotos_secundarias": [],
+  "promociones": [
+    {
+      "tipo": "multipack",
+      "desde": "2025-01-01",
+      "hasta": "2025-12-31",
+      "activo": true,
+      "titulo": "Llévate 2 y ahorra un 15%",
+      "descripcion": "Aplica para todas las compras en el mes de lanzamiento.",
+      "multiplicador": 2
+    }
+  ],
+  "banner_animado": {
+    "mensajes": [
+      "🏁 ¡Descubre nuevos caminos con DR 200!",
+      "💪 Diseñada para aventuras diarias.",
+      "💰 Oportunidad única para motoristas.",
+      "🚀 ¡Compra ahora y disfruta cada viaje!"
+    ],
+    "textColor": "#FFFFFF",
+    "velocidad": "normal",
+    "backgroundColor": "#FF4444"
+  },
+  "puntos_dolor": {
+    "titulo": "¿Te sientes identificado con estos problemas?",
+    "timeline": [
+      {
+        "id": 1,
+        "icono": "💔",
+        "nombre": "Rendimiento ineficiente",
+        "posicion": "izquierda",
+        "solucion": "Bajo rendimiento en calles y carreteras",
+        "textoBoton": "Más información aquí",
+        "descripcion": "Los motores débiles no ofrecen la aceleración que necesitas para un viaje pleno."
+      },
+      {
+        "id": 2,
+        "icono": "😤",
+        "nombre": "Comodidad insuficiente",
+        "posicion": "derecha",
+        "solucion": "Falta de comodidad para viajes largos",
+        "textoBoton": "Más información aquí",
+        "descripcion": "Montar largas distancias puede ser doloroso y frustrante sin un diseño ergonómico."
+      },
+      {
+        "id": 3,
+        "icono": "✅",
+        "nombre": "Rendimiento eficiente en todas partes",
+        "posicion": "izquierda",
+        "solucion": "Motor potente diseñado para cualquier terreno",
+        "textoBoton": "Descubre más sobre su rendimiento",
+        "descripcion": "El motor de alta eficiencia de la DR 200 te proporciona la potencia necesaria para disfrutar de cada viaje."
+      },
+      {
+        "id": 4,
+        "icono": "🎯",
+        "nombre": "Confort y ergonomía",
+        "posicion": "derecha",
+        "solucion": "Diseño ergonómico que prioriza tu comodidad",
+        "textoBoton": "Aprende sobre nuestro diseño",
+        "descripcion": "Disfruta de cada jornada con un diseño que se adapta a tus necesidades, ideal para viajes largos."
+      }
+    ],
+    "subtitulo": "Miles de personas sufren estos inconvenientes cada día"
+  },
+  "caracteristicas": {
+    "cta": {
+      "texto": "¡QUIERO APROVECHAR ESTA OFERTA!",
+      "subtexto": "🔥 Stock limitado, no dejes pasar esta oportunidad"
+    },
+    "imagen": "",
+    "titulo": "¿Por qué miles eligen nuestra motocicleta?",
+    "detalles": [
+      {
+        "id": 1,
+        "icono": "⚡",
+        "titulo": "Motor Potente",
+        "descripcion": "Motor de alta eficiencia que brinda un rendimiento excepcional para aventuras y uso diario."
+      },
+      {
+        "id": 2,
+        "icono": "🔧",
+        "titulo": "Diseño Ergonómico",
+        "descripcion": "Diseñada para maximizar la comodidad y el control en la conducción, incluso en viajes largos."
+      },
+      {
+        "id": 3,
+        "icono": "💎",
+        "titulo": "Construcción Duradera",
+        "descripcion": "Fabricada con materiales de alta calidad, garantizando durabilidad y resistencia."
+      },
+      {
+        "id": 4,
+        "icono": "🚀",
+        "titulo": "Ideal para Principiantes",
+        "descripcion": "Fácil de manejar, perfecta para aquellos que se inician en el mundo de las motos."
+      }
+    ],
+    "subtitulo": "Características que la hacen única",
+    "beneficios": [
+      {
+        "id": 1,
+        "icono": "🛡️",
+        "titulo": "Garantía de Calidad",
+        "descripcion": "Tu inversión está protegida con una garantía de 24 meses por defectos de fabricación."
+      },
+      {
+        "id": 2,
+        "icono": "🚚",
+        "titulo": "Envío Rápido y Seguro",
+        "descripcion": "Recibe tu motocicleta en la puerta de tu hogar en 24-48 horas."
+      },
+      {
+        "id": 3,
+        "icono": "💰",
+        "titulo": "Gran Relación Calidad-Precio",
+        "descripcion": "Lleva a casa una motocicleta de alta calidad sin romper tu presupuesto."
+      }
+    ]
+  },
+  "testimonios": {
+    "titulo": "¡+1.500 YA COMPRARON ESTA MOTOCICLETA!",
+    "subtitulo": "Lee lo que dicen nuestros clientes satisfechos",
+    "testimonios": [
+      {
+        "id": 1,
+        "fecha": "Hace 2 días",
+        "likes": 134,
+        "nombre": "Juan Vargas",
+        "rating": 5,
+        "ubicacion": "Cali, Colombia",
+        "comentario": "Es una excelente moto, me ha servido tanto para trabajar como para el ocio. Muy recomendada ⭐⭐⭐⭐⭐",
+        "verificado": true,
+        "compraVerificada": true
+      },
+      {
+        "id": 2,
+        "fecha": "Hace 1 semana",
+        "likes": 98,
+        "nombre": "Ana Beltrán",
+        "rating": 5,
+        "ubicacion": "Bogotá, Colombia",
+        "comentario": "La moto es cómoda y rápida. Disfruto cada recorrido. ¡Gran compra! ⭐⭐⭐⭐⭐",
+        "verificado": true,
+        "compraVerificada": true
+      },
+      {
+        "id": 3,
+        "fecha": "Hace 3 días",
+        "likes": 76,
+        "nombre": "Carlos Pérez",
+        "rating": 4,
+        "ubicacion": "Medellín, Colombia",
+        "comentario": "Estoy satisfecho con la DR 200, ideal para mi día a día. ⭐⭐⭐⭐",
+        "verificado": true,
+        "compraVerificada": true
+      }
+    ],
+    "estadisticas": {
+      "recomiendan": 95,
+      "satisfaccion": 4.8,
+      "totalClientes": 1500
+    }
+  },
+  "faq": {
+    "titulo": "Preguntas Frecuentes",
+    "preguntas": [
+      {
+        "pregunta": "¿Cuánto tiempo tarda en llegar?",
+        "respuesta": "El envío tarda entre 1-3 días hábiles a nivel nacional."
+      },
+      {
+        "pregunta": "¿Tiene garantía?",
+        "respuesta": "Sí, incluye garantía de 24 meses por defectos de fabricación."
+      },
+      {
+        "pregunta": "¿Puedo devolverlo si no me gusta?",
+        "respuesta": "Tienes 30 días para devolverlo sin preguntas si no estás satisfecho."
+      },
+      {
+        "pregunta": "¿Cómo es el mantenimiento de la DR 200?",
+        "respuesta": "El mantenimiento es sencillo y se incluyen instrucciones claras para prolongar su vida útil."
+      },
+      {
+        "pregunta": "¿Aceptan métodos de pago seguros?",
+        "respuesta": "Sí, contamos con opciones seguras: tarjeta de crédito, PSE y contraentrega."
+      }
+    ],
+    "subtitulo": "Resolvemos todas tus dudas para que compres con total confianza"
+  },
+  "garantias": {
+    "titulo": "Compra con Total Confianza",
+    "garantias": [
+      {
+        "icono": "🛡️",
+        "titulo": "Garantía de Calidad",
+        "descripcion": "24 meses de garantía por defectos de fabricación"
+      },
+      {
+        "icono": "🚚",
+        "titulo": "Envío Seguro",
+        "descripcion": "Envío gratis y seguro a toda Colombia"
+      },
+      {
+        "icono": "💰",
+        "titulo": "Devolución del Dinero",
+        "descripcion": "30 días para devolver si no estás satisfecho"
+      }
+    ],
+    "subtitulo": "Tu satisfacción y seguridad son nuestra prioridad #1"
+  },
+  "cta_final": {
+    "envio": "🚚 Envío GRATIS en 24-48 horas",
+    "titulo": "¡NO DEJES PASAR ESTA OPORTUNIDAD!",
+    "garantia": "🛡️ Garantía de satisfacción del 100% o te devolvemos tu dinero",
+    "urgencia": "⚡ Oferta válida solo por hoy",
+    "descuento": "10% OFF",
+    "subtitulo": "Aprovecha esta oferta exclusiva antes de que se agote",
+    "botonTexto": "¡QUIERO MI MOTOCICLETA AHORA!",
+    "precioActual": "8700000",
+    "precioAnterior": "10000000"
+  },
+  "timestamp": "2025-11-04T15:55:55.421Z",
+  "modo": "editar",
+  "errores": {}
+}

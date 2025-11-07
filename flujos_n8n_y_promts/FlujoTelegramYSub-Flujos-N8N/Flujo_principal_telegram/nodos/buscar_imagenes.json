@@ -1,0 +1,63 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "toolDescription": "Busca archivos en Supabase Storage bucket imagenes. Lee TODAS las carpetas sin restricción de prefix. Retorna array de objetos con: name, id, created_at, updated_at, metadata.",
+        "method": "POST",
+        "url": "https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/list/imagenes",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prefix"
+            },
+            {
+              "name": "limit",
+              "value": "1000"
+            },
+            {
+              "name": "offset",
+              "value": "0"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        304,
+        928
+      ],
+      "id": "c7836a8b-b08d-4f6e-9ade-b89758e7c826",
+      "name": "Buscar Imagenes sin editar1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Buscar Imagenes sin editar1": {
+      "ai_tool": [
+        []
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8000b702e0a3d9ac6d70099a2751603316de4028cd14af0949776a26efecb219"
+  }
+}

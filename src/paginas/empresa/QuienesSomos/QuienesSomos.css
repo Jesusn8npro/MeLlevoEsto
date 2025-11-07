@@ -1,0 +1,336 @@
+/* Quiénes Somos - Diseño Minimalista */
+.quienes-minimal {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+  padding: 0;
+}
+
+.quienes-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Hero Section */
+.quienes-hero {
+  padding: 6rem 0 4rem;
+  text-align: center;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  margin-bottom: 4rem;
+}
+
+.quienes-hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.quienes-title {
+  font-size: 3.5rem;
+  font-weight: 300;
+  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.quienes-highlight {
+  color: #0f172a;
+  font-weight: 500;
+}
+
+.quienes-subtitle {
+  font-size: 1.25rem;
+  color: #666;
+  font-weight: 400;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Misión y Visión */
+.quienes-mision-vision {
+  padding: 4rem 0;
+  margin-bottom: 4rem;
+}
+
+.mision-vision-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+
+.mision-card,
+.vision-card {
+  background: white;
+  padding: 3rem;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.mision-card:hover,
+.vision-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Valores */
+.quienes-valores {
+  padding: 4rem 0;
+  margin-bottom: 4rem;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.section-subtitle {
+  font-size: 1.125rem;
+  color: #666;
+  font-weight: 400;
+}
+
+.valores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.valor-card {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 1rem;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.valor-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.valor-icon {
+  color: #0f172a;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.valor-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+}
+
+.valor-description {
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Equipo */
+.quienes-equipo {
+  padding: 4rem 0;
+  margin-bottom: 4rem;
+}
+
+.equipo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.equipo-card {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.equipo-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.equipo-header {
+  margin-bottom: 1.5rem;
+}
+
+.equipo-nombre {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+}
+
+.equipo-rol {
+  color: #0f172a;
+  font-weight: 500;
+  font-size: 1.125rem;
+  margin: 0;
+}
+
+.equipo-descripcion {
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Contacto */
+.quienes-contacto {
+  padding: 4rem 0 6rem;
+}
+
+.contacto-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  padding: 4rem;
+  border-radius: 1.5rem;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.contacto-title {
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.contacto-text {
+  font-size: 1.25rem;
+  color: #666;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.contacto-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.contacto-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: #666;
+  font-size: 1.125rem;
+}
+
+.contacto-item svg {
+  color: #0f172a;
+  flex-shrink: 0;
+}
+
+.whatsapp-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  background: #25d366;
+  color: white;
+  text-decoration: none;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-size: 1.125rem;
+}
+
+.whatsapp-button:hover {
+  background: #128c7e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .quienes-container {
+    padding: 0 1rem;
+  }
+  
+  .quienes-hero {
+    padding: 4rem 0 3rem;
+  }
+  
+  .quienes-title {
+    font-size: 2.5rem;
+  }
+  
+  .mision-vision-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .mision-card,
+  .vision-card {
+    padding: 2rem;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .valores-grid,
+  .equipo-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .valor-card,
+  .equipo-card {
+    padding: 2rem;
+  }
+  
+  .contacto-card {
+    padding: 2rem;
+  }
+  
+  .contacto-title {
+    font-size: 2rem;
+  }
+  
+  .contacto-text {
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .quienes-title {
+    font-size: 2rem;
+  }
+  
+  .section-title {
+    font-size: 1.75rem;
+  }
+  
+  .contacto-card {
+    padding: 1.5rem;
+  }
+  
+  .contacto-title {
+    font-size: 1.75rem;
+  }
+  
+  .whatsapp-button {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
+}
