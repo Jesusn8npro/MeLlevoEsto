@@ -63,6 +63,7 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
   const [cargandoCategorias, setCargandoCategorias] = useState(false)
   const [headerSticky, setHeaderSticky] = useState(false)
   const [menuUsuarioAbierto, setMenuUsuarioAbierto] = useState(false)
+  const [productosMenu, setProductosMenu] = useState([])
   
   const headerRef = useRef(null)
 
@@ -81,6 +82,26 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
 
     document.addEventListener('mousedown', manejarClickFuera)
     return () => document.removeEventListener('mousedown', manejarClickFuera)
+  }, [])
+
+  // Cargar productos para el menú
+  useEffect(() => {
+    const cargarProductosParaMenu = async () => {
+      try {
+        const { data, error } = await clienteSupabase
+          .from('productos')
+          .select('id, nombre, slug, precio_final, imagen_url')
+          .eq('activo', true)
+          .order('created_at', { ascending: false })
+          .limit(4)
+
+        if (error) throw error
+        setProductosMenu(data || [])
+      } catch (error) {
+        setProductosMenu([])
+      }
+    }
+    cargarProductosParaMenu()
   }, [])
 
   // Cargar categorías para el menú móvil
@@ -288,6 +309,15 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
     navigate('/favoritos')
   }
 
+  const manejarNavegacion = (ruta) => {
+    setHomeLayoutAbierto(false)
+    setCategoryAbierto(false)
+    setProductAbierto(false)
+    setBlogAbierto(false)
+    setDepartamentosAbierto(false)
+    navigate(ruta)
+  }
+
   return (
     <header className={`header-principal ${headerSticky ? 'sticky' : ''} ${chatAbierto ? 'chat-abierto' : ''}`} ref={headerRef}>
       {/* Barra Promocional Superior eliminada por solicitud */}
@@ -351,11 +381,6 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
 
           {/* Acciones del Header (Derecha) */}
           <div className="acciones-header">
-            {/* Ícono de búsqueda sticky (solo visible al hacer scroll) */}
-            <button className="buscar-icono-sticky" onClick={() => setModalBusquedaAbierto(true)}>
-              <Search size={20} />
-            </button>
-            
             <Link to="/favoritos" className="accion-item favoritos-enlace">
               <div className="favoritos-contenedor">
                 <Heart size={24} />
@@ -434,7 +459,7 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
                           Panel Admin
                         </button>
                         <button className="dropdown-item" onClick={navegarAProductosAdmin}>
-                          <ShoppingBag size={16} />
+                          <ShoppingCart size={16} />
                           Productos
                         </button>
                         <button className="dropdown-item" onClick={navegarAAgregarProducto}>
@@ -508,23 +533,42 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
       {/* Menú de Navegación */}
       <nav className="menu-navegacion">
         <div className="contenedor-menu">
-          {/* Comprar por Departamento */}
+          {/* Comprar por Categorías */}
           <div className="menu-departamentos">
             <button 
               className="boton-departamentos"
               onClick={() => setDepartamentosAbierto(!departamentosAbierto)}
             >
-              <Menu size={18} />
-              <span>Comprar por categorias</span>
+              <LayoutGrid size={18} />
+              <span>Comprar por categorías</span>
               <ChevronDown size={16} className={departamentosAbierto ? 'rotado' : ''} />
             </button>
             {departamentosAbierto && (
               <div className="dropdown-departamentos">
-                <Link to="/categoria/electronica" className="dropdown-item">Electrónicos</Link>
-                <Link to="/categoria/ropa" className="dropdown-item">Ropa</Link>
-                <Link to="/categoria/hogar" className="dropdown-item">Hogar</Link>
-                <Link to="/categoria/deportes" className="dropdown-item">Deportes</Link>
-                <Link to="/categoria/libros" className="dropdown-item">Libros</Link>
+                {cargandoCategorias ? (
+                  <div className="dropdown-item">Cargando...</div>
+                ) : (
+                  categorias.map(categoria => (
+                    <Link 
+                      key={categoria.id} 
+                      to={`/tienda/categoria/${categoria.slug}`} 
+                      className="dropdown-item"
+                      onClick={() => setDepartamentosAbierto(false)}
+                    >
+                      {obtenerIconoCategoria(categoria)}
+                      <span>{categoria.nombre}</span>
+                      <span className="cantidad-productos">{categoria.cantidad}</span>
+                    </Link>
+                  ))
+                )}
+                <Link 
+                  to="/tienda" 
+                  className="dropdown-item ver-todas"
+                  onClick={() => setDepartamentosAbierto(false)}
+                >
+                  <Store size={20} />
+                  <span>Ver todas las categorías</span>
+                </Link>
               </div>
             )}
           </div>
@@ -536,31 +580,14 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
                 className="menu-enlace"
                 onClick={() => setHomeLayoutAbierto(!homeLayoutAbierto)}
               >
-                Diseño de Inicio
+                Páginas
                 <ChevronDown size={14} className={homeLayoutAbierto ? 'rotado' : ''} />
               </button>
               {homeLayoutAbierto && (
                 <div className="dropdown-menu">
-                  <Link to="/" className="dropdown-item">Inicio 1</Link>
-                  <Link to="/home-2" className="dropdown-item">Inicio 2</Link>
-                  <Link to="/home-3" className="dropdown-item">Inicio 3</Link>
-                </div>
-              )}
-            </div>
-
-            <div className="menu-item dropdown">
-              <button 
-                className="menu-enlace"
-                onClick={() => setCategoryAbierto(!categoryAbierto)}
-              >
-                Categorías
-                <ChevronDown size={14} className={categoryAbierto ? 'rotado' : ''} />
-              </button>
-              {categoryAbierto && (
-                <div className="dropdown-menu">
-                  <Link to="/categoria/electronica" className="dropdown-item">Electrónicos</Link>
-                  <Link to="/categoria/ropa" className="dropdown-item">Ropa</Link>
-                  <Link to="/categoria/hogar" className="dropdown-item">Hogar</Link>
+                  <Link to="/" className="dropdown-item" onClick={() => manejarNavegacion('/')}>Inicio</Link>
+                  <Link to="/tienda" className="dropdown-item" onClick={() => manejarNavegacion('/tienda')}>Tienda</Link>
+                  <Link to="/nosotros" className="dropdown-item" onClick={() => manejarNavegacion('/nosotros')}>Nosotros</Link>
                 </div>
               )}
             </div>
@@ -574,38 +601,43 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
                 <ChevronDown size={14} className={productAbierto ? 'rotado' : ''} />
               </button>
               {productAbierto && (
-                <div className="dropdown-menu">
-                  <Link to="/productos" className="dropdown-item">Todos los Productos</Link>
-                  <Link to="/productos/nuevos" className="dropdown-item">Nuevos</Link>
-                  <Link to="/productos/ofertas" className="dropdown-item">Ofertas</Link>
+                <div className="dropdown-menu dropdown-productos">
+                  {productosMenu.length > 0 ? (
+                    productosMenu.map(producto => (
+                      <Link 
+                        key={producto.id}
+                        to={`/producto/${producto.slug}`} 
+                        className="dropdown-item producto-item"
+                        onClick={() => setProductAbierto(false)}
+                      >
+                        <img src={producto.imagen_url} alt={producto.nombre} className="producto-imagen-menu" />
+                        <div className="producto-info-menu">
+                          <span className="producto-nombre-menu">{producto.nombre}</span>
+                          <span className="producto-precio-menu">${new Intl.NumberFormat('es-CO').format(producto.precio_final)}</span>
+                        </div>
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="dropdown-item">Cargando productos...</div>
+                  )}
+                  <div className="dropdown-divider"></div>
+                  <Link to="/tienda" className="dropdown-item ver-todos-productos" onClick={() => setProductAbierto(false)}>
+                    Ver todos los productos
+                  </Link>
                 </div>
               )}
             </div>
 
-            <div className="menu-item dropdown">
-              <button 
-                className="menu-enlace"
-                onClick={() => setBlogAbierto(!blogAbierto)}
-              >
-                Blog
-                <ChevronDown size={14} className={blogAbierto ? 'rotado' : ''} />
-              </button>
-              {blogAbierto && (
-                <div className="dropdown-menu">
-                  <Link to="/blog" className="dropdown-item">Blog Principal</Link>
-                  <Link to="/blog/noticias" className="dropdown-item">Noticias</Link>
-                  <Link to="/blog/tutoriales" className="dropdown-item">Tutoriales</Link>
-                </div>
-              )}
-            </div>
-
+            <Link to="/blog" className="menu-enlace">Blog</Link>
             <Link to="/contacto" className="menu-enlace">Contacto</Link>
           </div>
 
           {/* Información de Contacto */}
           <div className="info-contacto">
-            <Phone size={16} />
-            <span>Línea Directa: 1-800-234-5678</span>
+            <a href="https://wa.me/573208492093" target="_blank" rel="noopener noreferrer" className="whatsapp-enlace">
+              <Phone size={16} />
+              <span>Línea Directa: +57 320 849 2093</span>
+            </a>
           </div>
         </div>
       </nav>
@@ -654,7 +686,7 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
           <div className="nav-icono-contenedor carrito-contenedor-movil">
             <ShoppingCart size={22} />
             {totalItems > 0 && (
-              <span className="carrito-contador-movil">{totalItems}</span>
+              <span className="notificacion-circulo">{totalItems}</span>
             )}
           </div>
           <span>Carrito</span>

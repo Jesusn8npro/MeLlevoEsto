@@ -130,6 +130,49 @@
 }
 .tabla-contenidos a:hover { text-decoration: underline; }
 
+/* Estilos para el reproductor de audio */
+.reproductor-audio {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+}
+
+.reproductor-audio .btn-play {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reproductor-audio .progreso-audio {
+  flex-grow: 1;
+  background-color: #e5e7eb;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.reproductor-audio .barra-progreso {
+  background-color: #3b82f6;
+  height: 100%;
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+.reproductor-audio .tiempo-audio {
+  font-size: 0.875rem;
+  color: #4b5563;
+  min-width: 80px;
+  text-align: center;
+}
+
 .bloque { margin: 18px 0 22px; }
 .bloque-titulo {
   font-size: 20px;

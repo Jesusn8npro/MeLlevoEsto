@@ -216,15 +216,6 @@ const ModalCarrito = ({ abierto, onCerrar }) => {
                 >
                   Ver carrito completo
                 </Link>
-                
-                <Link 
-                  to="/checkout" 
-                  className="boton-checkout"
-                  onClick={manejarCierre}
-                >
-                  Proceder al pago
-                  <ArrowRight size={18} />
-                </Link>
               </div>
             </div>
 

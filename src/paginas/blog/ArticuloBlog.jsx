@@ -1,9 +1,166 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Clock, Star, ChevronDown, AlertTriangle, Loader } from 'lucide-react';
+import { Clock, Star, ChevronDown, AlertTriangle, Loader, Play, Pause } from 'lucide-react';
 import './ArticuloBlog.css';
 import SidebarBlog from './SidebarBlog';
 import { clienteSupabase } from '../../configuracion/supabase';
+
+// Componente para renderizar el contenido dinámico del artículo
+const RenderizadorContenido = ({ secciones }) => {
+  if (!Array.isArray(secciones)) {
+    return <p>El contenido del artículo no es válido.</p>;
+  }
+
+  const slugify = (text) => text.toString().toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/--+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+
+  return secciones.map((seccion, index) => {
+    const id = seccion.titulo ? slugify(seccion.titulo) : `seccion-${index}`;
+
+    switch (seccion.tipo) {
+      case 'encabezado':
+        const Nivel = `h${seccion.nivel || 2}`;
+        return <Nivel key={id} id={id} className="bloque-titulo">{seccion.contenido}</Nivel>;
+      
+      case 'parrafo':
+        return <p key={id} className="bloque-texto">{seccion.contenido}</p>;
+      
+      case 'imagen':
+        return (
+          <figure key={id} className="imagen-inline">
+            <img src={seccion.url} alt={seccion.alt || 'Imagen del artículo'} loading="lazy" decoding="async" />
+            {seccion.caption && <figcaption>{seccion.caption}</figcaption>}
+          </figure>
+        );
+        
+      case 'lista':
+        const Lista = seccion.ordenada ? 'ol' : 'ul';
+        return (
+          <Lista key={id} className="bloque-texto">
+            {Array.isArray(seccion.items) && seccion.items.map((item, i) => <li key={i}>{item}</li>)}
+          </Lista>
+        );
+
+      default:
+        return null;
+    }
+  });
+};
+
+// Componente para el reproductor de audio TTS
+const ReproductorAudio = ({ texto }) => {
+  const [reproduciendo, setReproduciendo] = useState(false);
+  const [progreso, setProgreso] = useState(0);
+  const [tiempoActual, setTiempoActual] = useState('0:00');
+  const [duracion, setDuracion] = useState('0:00');
+  const utteranceRef = useRef(null);
+
+  const formatearTiempo = (segundos) => {
+    const s = Math.floor(segundos);
+    return `${Math.floor(s / 60)}:${('0' + (s % 60)).slice(-2)}`;
+  };
+
+  const limpiarSpeech = () => {
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+    }
+    if (utteranceRef.current) {
+      utteranceRef.current.onend = null;
+      utteranceRef.current.onerror = null;
+      utteranceRef.current.onboundary = null;
+    }
+  };
+
+  useEffect(() => {
+    const synth = window.speechSynthesis;
+    if (!texto || !synth) return;
+
+    const handleBoundary = (event) => {
+      if (utteranceRef.current) {
+        const textoHablado = utteranceRef.current.text.substring(0, event.charIndex + event.charLength);
+        const progresoCalculado = (textoHablado.length / utteranceRef.current.text.length) * 100;
+        setProgreso(progresoCalculado);
+        
+        // Estimación del tiempo actual
+        const duracionEstimada = utteranceRef.current.estimatedDuration || (utteranceRef.current.text.length / 10); // Asumir 10 caracteres/seg
+        const tiempoTranscurrido = (progresoCalculado / 100) * duracionEstimada;
+        setTiempoActual(formatearTiempo(tiempoTranscurrido));
+      }
+    };
+
+    const ut = new SpeechSynthesisUtterance(texto);
+    ut.lang = 'es-ES';
+    utteranceRef.current = ut;
+
+    ut.onstart = () => {
+      const duracionEstimada = ut.text.length / 10; // Estimación simple
+      ut.estimatedDuration = duracionEstimada;
+      setDuracion(formatearTiempo(duracionEstimada));
+    };
+    
+    ut.onboundary = handleBoundary;
+    ut.onend = () => {
+      setReproduciendo(false);
+      setProgreso(100);
+      setTiempoActual(duracion);
+    };
+    ut.onerror = (e) => {
+      console.error("Error en SpeechSynthesis:", e);
+      setReproduciendo(false);
+    };
+
+    return () => limpiarSpeech();
+  }, [texto]);
+
+  const togglePlay = () => {
+    const synth = window.speechSynthesis;
+    if (!synth || !utteranceRef.current) return;
+
+    if (reproduciendo) {
+      synth.pause();
+    } else {
+      if (synth.paused) {
+        synth.resume();
+      } else {
+        limpiarSpeech(); // Limpia cualquier estado anterior antes de hablar
+        // Re-adjuntar listeners porque se pierden al cancelar
+        utteranceRef.current.onend = () => { setReproduciendo(false); setProgreso(100); setTiempoActual(duracion); };
+        utteranceRef.current.onerror = (e) => { console.error("Error en SpeechSynthesis:", e); setReproduciendo(false); };
+        utteranceRef.current.onboundary = (event) => {
+          if (utteranceRef.current) {
+            const textoHablado = utteranceRef.current.text.substring(0, event.charIndex + event.charLength);
+            const progresoCalculado = (textoHablado.length / utteranceRef.current.text.length) * 100;
+            setProgreso(progresoCalculado);
+            const duracionEstimada = utteranceRef.current.estimatedDuration || (utteranceRef.current.text.length / 10);
+            const tiempoTranscurrido = (progresoCalculado / 100) * duracionEstimada;
+            setTiempoActual(formatearTiempo(tiempoTranscurrido));
+          }
+        };
+        synth.speak(utteranceRef.current);
+      }
+    }
+    setReproduciendo(!reproduciendo);
+  };
+
+  if (!texto) return null;
+
+  return (
+    <div className="reproductor-audio">
+      <button onClick={togglePlay} className="btn-play" aria-label={reproduciendo ? 'Pausar audio' : 'Reproducir audio'}>
+        {reproduciendo ? <Pause size={24} /> : <Play size={24} />}
+      </button>
+      <div className="progreso-audio">
+        <div className="barra-progreso" style={{ width: `${progreso}%` }}></div>
+      </div>
+      <div className="tiempo-audio">{tiempoActual} / {duracion}</div>
+    </div>
+  );
+};
+
 
 // Página de detalle de artículo con contenido completo y tabla de contenidos
 export default function ArticuloBlog() {
@@ -32,12 +189,12 @@ export default function ArticuloBlog() {
       
       setCargando(true);
       setError(null);
-      setArticuloData(null); // Reset data on new slug
+      setArticuloData(null);
 
       try {
         const { data, error: err } = await clienteSupabase
           .from('articulos_web')
-          .select('slug,titulo,autor,autor_iniciales,fecha_publicacion,lectura_min,calificacion,portada_url,resumen_breve,resumen_completo,secciones,cta,estado_publicacion')
+          .select('*')
           .eq('slug', slug)
           .eq('estado_publicacion', 'publicado')
           .limit(1)
@@ -47,19 +204,17 @@ export default function ArticuloBlog() {
 
         if (activo) {
           if (data) {
-            // Asegurarse de que las secciones y CTA son objetos JSON
             const secciones = typeof data.secciones === 'string' ? JSON.parse(data.secciones) : data.secciones;
             const cta = typeof data.cta === 'string' ? JSON.parse(data.cta) : data.cta;
             setArticuloData({ ...data, secciones, cta });
           } else {
-            // No se encontró el artículo o no está publicado
             setArticuloData(null);
           }
         }
       } catch (e) {
         if (activo) {
           console.error("Error al cargar el artículo:", e);
-          setError(e?.message || 'Error cargando el artículo. Por favor, intente de nuevo más tarde.');
+          setError(e?.message || 'Error cargando el artículo.');
         }
       } finally {
         if (activo) {
@@ -72,10 +227,10 @@ export default function ArticuloBlog() {
 
     return () => {
       activo = false;
+      window.speechSynthesis.cancel();
     };
   }, [slug]);
 
-  // Renderizado basado en el estado de carga
   if (cargando) {
     return (
       <div className="pagina-blog-estado">
@@ -107,11 +262,10 @@ export default function ArticuloBlog() {
     );
   }
 
-  // Una vez que los datos están listos, preparamos la información para renderizar
   const cabecera = {
     titulo: articuloData.titulo,
-    autor: articuloData.autor,
-    autorIniciales: articuloData.autor_iniciales || '...',
+    autor: "JESUS GONZALEZ",
+    autorIniciales: "JG",
     fecha: formatearFecha(articuloData.fecha_publicacion),
     lecturaMin: articuloData.lectura_min ?? 0,
     rating: articuloData.calificacion ?? 0,
@@ -120,14 +274,29 @@ export default function ArticuloBlog() {
 
   const resumenBreveActual = articuloData.resumen_breve;
   const resumenCompletoActual = articuloData.resumen_completo;
+  
+  const encabezados = Array.isArray(articuloData.secciones) 
+    ? articuloData.secciones.filter(s => s.tipo === 'encabezado')
+    : [];
+
+  const slugify = (text) => text.toString().toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/--+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+
+  const textoParaHablar = [
+    cabecera.titulo,
+    resumenCompletoActual || resumenBreveActual,
+    ...(Array.isArray(articuloData.secciones) ? articuloData.secciones.map(s => s.contenido || (s.items ? s.items.join(', ') : '')).filter(Boolean) : [])
+  ].join('. ');
 
   return (
     <div className="pagina-blog">
       <section className="seccion-articulos articulo-contenedor">
         <div className="grid-blog">
-          {/* Contenido del artículo */}
           <article className="articulo">
-            {/* Cabecera del artículo */}
             <header className="articulo-header">
               <h1 className="articulo-titulo">{cabecera.titulo}</h1>
               <div className="articulo-meta">
@@ -141,19 +310,12 @@ export default function ArticuloBlog() {
               </div>
             </header>
 
-            {/* Imagen de portada */}
             <div className="articulo-imagen">
-              <img
-                src={cabecera.portada}
-                alt={cabecera.titulo}
-                loading="lazy"
-                decoding="async"
-                width="1200"
-                height="700"
-              />
+              <img src={cabecera.portada} alt={cabecera.titulo} loading="lazy" decoding="async" />
             </div>
 
-            {/* Resumen expandible */}
+            <ReproductorAudio texto={textoParaHablar} />
+
             {(resumenBreveActual || resumenCompletoActual) && (
               <div className="resumen-destacado" aria-live="polite">
                 <p className={`resumen-texto ${resumenExpandido ? 'expandido' : 'clamp'}`}>
@@ -172,59 +334,20 @@ export default function ArticuloBlog() {
               </div>
             )}
 
-            {/* Contenido principal con TOC y secciones ancladas */}
             <div className="articulo-contenido">
-              {/* Tabla de contenidos dinámica */}
-              {Array.isArray(articuloData.secciones) && articuloData.secciones.length > 0 && (
+              {encabezados.length > 1 && (
                 <nav className="tabla-contenidos" aria-label="Tabla de contenidos">
                   <p className="toc-title">Contenido</p>
                   <ul>
-                    {articuloData.secciones.map(sec => (
-                      <li key={sec.id}><a href={`#${sec.id}`}>{sec.titulo}</a></li>
+                    {encabezados.map(sec => (
+                      <li key={slugify(sec.contenido)}><a href={`#${slugify(sec.contenido)}`}>{sec.contenido}</a></li>
                     ))}
                   </ul>
                 </nav>
               )}
 
-              {/* Secciones dinámicas */}
-              {Array.isArray(articuloData.secciones) && articuloData.secciones.map(sec => (
-                <section id={sec.id} className="bloque" key={sec.id}>
-                  <h2 className="bloque-titulo">{sec.titulo}</h2>
-                  {Array.isArray(sec.parrafos) && sec.parrafos.map((p, i) => (
-                    <p className="bloque-texto" key={`p-${i}`}>{p}</p>
-                  ))}
-                  {Array.isArray(sec.lista_items) && sec.lista_items.length > 0 && (
-                    <ul className="bloque-texto">
-                      {sec.lista_items.map((item, i) => (
-                        <li key={`li-${i}`}>{item}</li>
-                      ))}
-                    </ul>
-                  )}
-                  {Array.isArray(sec.lista_ordenada) && sec.lista_ordenada.length > 0 && (
-                    <ol className="bloque-texto">
-                      {sec.lista_ordenada.map((item, i) => (
-                        <li key={`ol-${i}`}>{item}</li>
-                      ))}
-                    </ol>
-                  )}
-                  {sec.imagen?.url && (
-                    <figure className="imagen-inline">
-                      <img src={sec.imagen.url} alt={sec.imagen.alt || sec.titulo} loading="lazy" decoding="async" width="960" height="540" />
-                      {sec.imagen.caption && <figcaption>{sec.imagen.caption}</figcaption>}
-                    </figure>
-                  )}
-                  {Array.isArray(sec.subsecciones) && sec.subsecciones.map((sub, j) => (
-                    <React.Fragment key={`sub-${j}`}>
-                      <h3 className="bloque-subtitulo">{sub.titulo}</h3>
-                      {Array.isArray(sub.parrafos) && sub.parrafos.map((sp, k) => (
-                        <p className="bloque-texto" key={`sp-${j}-${k}`}>{sp}</p>
-                      ))}
-                    </React.Fragment>
-                  ))}
-                </section>
-              ))}
+              <RenderizadorContenido secciones={articuloData.secciones} />
 
-              {/* CTA dinámica */}
               {Array.isArray(articuloData.cta?.items) && articuloData.cta.items.length > 0 && (
                 <div className="cta-articulo" aria-label="Acciones recomendadas">
                   {articuloData.cta.items.map((item, idx) => {
@@ -240,7 +363,6 @@ export default function ArticuloBlog() {
             </div>
           </article>
 
-          {/* Sidebar reutilizable (sticky en desktop) */}
           <SidebarBlog />
         </div>
       </section>
