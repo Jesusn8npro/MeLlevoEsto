@@ -1,0 +1,106 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "description": "Usa esta herramienta para cuando el usuario necesite crear un articulo del blog. Debes hacer las preguntas una por una para obtener la información necesaria.",
+        "workflowId": {
+          "__rl": true,
+          "value": "yXZKyDLtZzeDRvsd",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/yXZKyDLtZzeDRvsd",
+          "cachedResultName": "CreadorDeArticulos"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "titulo_del_blog": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('titulo_del_blog', 'El título principal del artículo, optimizado para SEO.', 'string') }}",
+            "tipo_de_contenido": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('tipo_de_contenido', 'El tipo de contenido a generar (ej: tutorial, comparativa, noticia, etc.).', 'string') }}",
+            "cuantas_imagenes": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('cuantas_imagenes', 'El número de imágenes que se deben generar para el artículo.', 'string') }}",
+            "tamano_del_articulo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('tamano_del_articulo', 'La longitud deseada para el artículo (ej: corto, mediano, largo).', 'string') }}",
+            "tema_del_articulo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('tema_del_articulo', 'El tema central sobre el que tratará el artículo.', 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "tema_del_articulo",
+              "displayName": "Tema del Artículo",
+              "required": true,
+              "description": "El tema central sobre el que tratará el artículo. (Ej: 'tendencias de marketing digital para 2025')",
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tamano_del_articulo",
+              "displayName": "Tamaño del Artículo",
+              "required": true,
+              "description": "Define la longitud del artículo. Opciones: 'corto' (300-500 palabras), 'mediano' (800-1200 palabras), 'largo' (1500+ palabras).",
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "cuantas_imagenes",
+              "displayName": "Cuántas Imágenes",
+              "required": true,
+              "description": "El número de imágenes que se deben generar e incluir en el artículo. (Ej: 3)",
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tipo_de_contenido",
+              "displayName": "Tipo de Contenido",
+              "required": true,
+              "description": "El formato o enfoque del artículo. (Ej: 'tutorial paso a paso', 'lista de recursos', 'análisis de caso de estudio')",
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "titulo_del_blog",
+              "displayName": "Título del Blog",
+              "required": true,
+              "description": "El título principal del artículo. Debe ser atractivo y estar optimizado para SEO.",
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        928
+      ],
+      "id": "0627626d-45f3-4e94-9132-1c9579426e1e",
+      "name": "Creador De Articulos"
+    }
+  ],
+  "connections": {
+    "Creador De Articulos": {
+      "ai_tool": [
+        []
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8000b702e0a3d9ac6d70099a2751603316de4028cd14af0949776a26efecb219"
+  }
+}
