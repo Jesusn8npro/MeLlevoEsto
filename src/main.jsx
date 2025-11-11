@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { ProveedorAutenticacion } from './contextos/ContextoAutenticacion'
 import { ProveedorTema } from './contextos/ContextoTema'
 import App from './App.jsx'
-import './estilos/index.css'
+import './estilos/index.css';
 
 // Importar script de prueba para Supabase (solo en desarrollo)
 if (import.meta.env.DEV) {

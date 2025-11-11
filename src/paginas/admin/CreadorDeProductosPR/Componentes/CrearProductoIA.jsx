@@ -13,7 +13,7 @@ import {
   X,
   RotateCcw
 } from 'lucide-react'
-import './CreadorProductoIA.css'
+import './CreadorProductoIA.css';
 
 const CrearProductoIA = ({ 
   mostrar = false, 
