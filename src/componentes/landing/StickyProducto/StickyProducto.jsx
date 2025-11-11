@@ -94,6 +94,15 @@ const StickyProducto = ({ producto, mostrar }) => {
     }
   };
   
+  // Función para navegar a la categoría del producto
+  const navegarACategoria = () => {
+    if (producto?.categoria) {
+      // Asumiendo que la URL de la categoría es /tienda/categoria/{nombre_categoria}
+      const categoriaURL = `/tienda/categoria/${producto.categoria}`;
+      window.location.href = categoriaURL;
+    }
+  };
+
   // No mostrar si no hay producto, mostrar está en false, o no se ha pasado la imagen de pagos
   if (!mostrar || !producto || !mostrarSticky) return null;
 
@@ -142,25 +151,35 @@ const StickyProducto = ({ producto, mostrar }) => {
           </div>
 
           {/* Contenedor inferior con precio y botones */}
-          <div className="contenedor-inferior">
-            
-            {/* Precio (izquierda) */}
-            <div className="contenedor-precio">
-              <div className="precio-actual">
-                ${producto.precio || '0'}
-              </div>
-              {producto.precio_original && producto.precio_original > producto.precio && (
-                <div className="precio-info">
-                  <span className="precio-original">${producto.precio_original}</span>
-                  <span className="descuento-porcentaje">
-                    -{producto.descuento || Math.round(((producto.precio_original - producto.precio) / producto.precio_original) * 100)}%
-                  </span>
-                </div>
-              )}
+          <div className="contenedor-precio">
+            <div className="precio-actual">
+              ${producto.precio?.toLocaleString() || '0'}
             </div>
+            {producto.precio_original && producto.precio_original > producto.precio && (
+              <span className="precio-original">${producto.precio_original.toLocaleString()}</span>
+            )}
+          </div>
+        </div>
 
-            {/* Botones (derecha) */}
-            <div className="contenedor-botones">
+        {/* Contenedor de los botones (derecha) */}
+        <div className="contenedor-botones">
+          {producto.estado === 'vendido' ? (
+            <>
+              <button 
+                className="boton-1 vendido"
+                disabled
+              >
+                Vendido
+              </button>
+              <button 
+                className="boton-2"
+                onClick={navegarACategoria}
+              >
+                Ver similares
+              </button>
+            </>
+          ) : (
+            <>
               <button 
                 className="boton-1"
                 onClick={() => setModalContraEntregaAbierto(true)}
@@ -172,15 +191,13 @@ const StickyProducto = ({ producto, mostrar }) => {
                 onClick={manejarAgregarCarrito}
                 disabled={productoAnadido}
               >
-                {productoAnadido ? 'Producto Añadido' : 'Añadir Carrito'}
+                {productoAnadido ? 'Añadido' : 'Añadir'}
               </button>
-            </div>
-
-          </div>
-
+            </>
+          )}
         </div>
 
-      </div>
+        </div>
       
       {/* Modal de Contra Entrega */}
       <ContraEntregaModal

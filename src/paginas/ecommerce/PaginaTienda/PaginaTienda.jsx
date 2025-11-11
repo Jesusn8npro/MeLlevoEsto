@@ -34,7 +34,7 @@ const PaginaTienda = () => {
     enStock: false
   })
   const [vista, setVista] = useState('grid') // 'grid' | 'lista'
-  const [ordenar, setOrdenar] = useState('relevancia')
+  const [ordenar, setOrdenar] = useState('nuevos')
   const [totalProductos, setTotalProductos] = useState(0)
   
   // Estados para modales móviles

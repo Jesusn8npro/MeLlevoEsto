@@ -18,7 +18,6 @@
   position: relative;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .slider-contenido {
@@ -58,7 +57,6 @@
 .navegacion-slider {
   position: absolute;
   bottom: 20px;
-  left: 50%;
   transform: translateX(-50%);
   display: flex;
   gap: 10px;
@@ -91,7 +89,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 15px;
+  gap: 1px;
 }
 
 .tarjeta-categoria {
@@ -100,7 +98,6 @@
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .tarjeta-categoria:hover {
@@ -124,7 +121,6 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
   color: white;
   padding: 15px;
   text-align: center;
@@ -376,6 +372,7 @@
 .contenedor-scroll-categorias {
   position: relative;
   overflow: hidden;
+  padding-bottom: 15px; /* Espacio para el indicador */
 }
 
 .scroll-categorias {
@@ -420,9 +417,8 @@
   border-radius: 50%;
   overflow: hidden;
   background: white;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18); /* Sombra más pronunciada */
+  border: 1px solid rgba(0, 0, 0, 0.375);
   transition: all 0.3s ease;
-  border: 4px solid transparent;
   background-clip: padding-box;
   position: relative;
   margin-bottom: 15px; /* Más espacio entre imagen y texto */
@@ -448,7 +444,6 @@
 
 .categoria-circular:hover .contenedor-imagen-circular {
   transform: scale(1.08);
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28); /* Sombra más intensa en hover */
 }
 
 .imagen-categoria-circular {
@@ -515,13 +510,13 @@
 }
 .indicador-scroll {
   position: absolute;
-  bottom: 0;
+  bottom: 5px;
   right: 0;
   background: rgba(255, 107, 53, 0.9);
   color: white;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 20px 0 0 20px;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 500;
   animation: pulseIndicator 2s infinite;
 }

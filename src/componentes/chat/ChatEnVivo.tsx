@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useCallback, useContext } from 'react'
 import { X, Send, MessageCircle, Bot } from 'lucide-react'
 import { useAuth } from '../../contextos/ContextoAutenticacion'
 import './ChatEnVivo.css'
 import { clienteSupabase, obtenerSessionId } from '../../configuracion/supabase'
+import { useCarrito } from '../../contextos/CarritoContext';
 
 const WEBHOOK_URL = 'https://velostrategix-n8n.lnrubg.easypanel.host/webhook/chat_en_vivo'
 
@@ -18,6 +19,7 @@ const tiposConsulta = [
 
 export default function ChatEnVivo() {
   const { usuario } = useAuth()
+  const { modalAbierto } = useCarrito();
   
   // Estados principales
   const [chatAbierto, setChatAbierto] = useState(false)
@@ -40,6 +42,10 @@ export default function ChatEnVivo() {
   
   const contenedorMensajesRef = useRef(null)
   const inputMensajeRef = useRef(null)
+
+  if (modalAbierto) {
+    return null;
+  }
 
   // Utilidades
   const esUrlImagen = (url) => {

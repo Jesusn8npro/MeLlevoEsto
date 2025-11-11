@@ -145,6 +145,9 @@ const GridProductosVendedor = ({
       // Aplicar ordenamiento
       const ordenarActivo = ordenar || filtrosActivos.ordenar
       switch (ordenarActivo) {
+        case 'nuevos':
+          query = query.order('creado_el', { ascending: false })
+          break
         case 'precio-menor':
         case 'precio_asc':
           query = query.order('precio', { ascending: true })

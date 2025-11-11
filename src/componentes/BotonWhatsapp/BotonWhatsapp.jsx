@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './BotonWhatsapp.css';
+import { useCarrito } from '../../contextos/CarritoContext';
 
 const BotonWhatsapp = () => {
   const [animacionActiva, setAnimacionActiva] = useState(true);
+  const { modalAbierto } = useCarrito();
 
   // Número de WhatsApp con indicativo de Colombia
   const numeroWhatsapp = '573214892176';
@@ -24,6 +26,10 @@ const BotonWhatsapp = () => {
     setAnimacionActiva(false);
     setTimeout(() => setAnimacionActiva(true), 2000);
   };
+
+  if (modalAbierto) {
+    return null;
+  }
 
   return (
     <>

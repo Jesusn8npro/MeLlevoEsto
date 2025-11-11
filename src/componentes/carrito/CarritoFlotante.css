@@ -7,7 +7,7 @@
   z-index: 1000;
   backdrop-filter: blur(8px);
   animation: fadeInBackdrop 0.3s ease-out;
-}
+  padding: 10px;
 
 .modal-carrito-backdrop {
   position: absolute;
@@ -361,16 +361,16 @@
 
 .footer-botones-principales {
   display: flex;
-  gap: 12px;
+  gap: 1px;
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .boton-ver-carrito {
   text-decoration: none;
   background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
   color: #475569;
-  padding: 14px 20px;
+  padding: 1px 2px;
   border-radius: 12px;
   font-size: 15px;
   font-weight: 600;
@@ -390,7 +390,7 @@
   text-decoration: none;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 14px 20px;
+  padding: 14px 2px;
   border-radius: 12px;
   font-size: 15px;
   font-weight: 600;
