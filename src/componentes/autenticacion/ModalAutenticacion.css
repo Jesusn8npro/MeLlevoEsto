@@ -1,5 +1,5 @@
-/* ===== FONDO MODAL ===== */
-.fondo-modal {
+/* ===== FONDO MODAL (AUTH) ===== */
+.fondo-modal-auth {
   position: fixed;
   top: 0;
   left: 0;
@@ -91,7 +91,7 @@
 .logo-modal {
   text-align: center;
   padding: 50px 40px 30px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-primario-hover) 100%);
   position: relative;
   overflow: hidden;
 }
@@ -140,8 +140,8 @@
   font-weight: 600;
 }
 
-/* ===== CONTENIDO ===== */
-.contenido-modal {
+/* ===== CONTENIDO (AUTH) ===== */
+.contenido-modal-auth {
   padding: 40px;
 }
 
@@ -201,9 +201,9 @@
 
 .input-icono input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--color-primario);
   background: white;
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
 }
 
 .input-icono input::placeholder {
@@ -233,8 +233,8 @@
 }
 
 .boton-mostrar-contrasena:hover {
-  color: #667eea;
-  background: rgba(102, 126, 234, 0.1);
+  color: var(--color-primario);
+  background: rgba(255, 107, 53, 0.1);
 }
 
 /* ===== FILA NOMBRE Y APELLIDO ===== */
@@ -270,9 +270,9 @@
 
 .selector-pais:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--color-primario);
   background: white;
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
 }
 
 .flecha-selector {
@@ -302,9 +302,9 @@
 
 .input-numero input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--color-primario);
   background: white;
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
 }
 
 .input-numero .icono-input {
@@ -317,9 +317,9 @@
 }
 
 /* ===== BOTÓN ENVIAR ===== */
-.boton-enviar {
+.boton-enviar-auth {
   width: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-primario-hover) 100%);
   color: white;
   border: none;
   padding: 16px;
@@ -329,19 +329,19 @@
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 8px;
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
 }
 
-.boton-enviar:hover:not(:disabled) {
+.boton-enviar-auth:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 12px 28px rgba(255, 107, 53, 0.4);
 }
 
-.boton-enviar:active:not(:disabled) {
+.boton-enviar-auth:active:not(:disabled) {
   transform: translateY(0);
 }
 
-.boton-enviar:disabled {
+.boton-enviar-auth:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
@@ -372,7 +372,7 @@
   margin-bottom: 20px;
 }
 
-.boton-google {
+.boton-google-auth {
   width: 100%;
   display: flex;
   align-items: center;
@@ -388,14 +388,14 @@
   font-weight: 600;
 }
 
-.boton-google:hover:not(:disabled) {
-  border-color: #667eea;
+.boton-google-auth:hover:not(:disabled) {
+  border-color: var(--color-primario);
   background: #f8fafc;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.15);
 }
 
-.boton-google:disabled {
+.boton-google-auth:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -432,17 +432,17 @@
 
 .enlace-olvido:hover,
 .enlace-registrarse:hover {
-  color: #667eea;
-  background: rgba(102, 126, 234, 0.05);
+  color: var(--color-primario);
+  background: rgba(255, 107, 53, 0.05);
 }
 
 .enlace-registrarse b {
-  color: #667eea;
+  color: var(--color-primario);
   font-weight: 700;
 }
 
-/* ===== MENSAJES ===== */
-.mensaje-error {
+/* ===== MENSAJES (AUTH) ===== */
+.mensaje-error-auth {
   background: #fef2f2;
   color: #dc2626;
   padding: 12px 16px;
@@ -456,7 +456,7 @@
   justify-content: center;
 }
 
-.mensaje-info {
+.mensaje-info-auth {
   padding: 12px 16px;
   border-radius: 10px;
   font-size: 14px;
@@ -467,13 +467,13 @@
   justify-content: center;
 }
 
-.mensaje-info.success {
+.mensaje-info-auth.success {
   background: #f0fdf4;
   color: #16a34a;
   border: 1px solid #bbf7d0;
 }
 
-.mensaje-info.error {
+.mensaje-info-auth.error {
   background: #fef2f2;
   color: #dc2626;
   border: 1px solid #fecaca;
@@ -481,15 +481,16 @@
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 640px) {
-  .fondo-modal {
-    padding: 0;
-    align-items: flex-end;
+  .fondo-modal-auth {
+    padding: 12px;
+    align-items: center; /* Centra el modal en móviles */
   }
   
   .modal-inicio-sesion {
-    max-width: 100%;
-    max-height: 95vh;
-    border-radius: 24px 24px 0 0;
+    max-width: 420px; /* Reduce ancho en móviles */
+    width: 92%;
+    max-height: 82vh; /* Menor altura para que no ocupe toda la pantalla */
+    border-radius: 20px; /* Modal compacto y agradable */
     animation: slideUpMobile 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
   
@@ -514,8 +515,8 @@
     font-size: 18px;
   }
   
-  .contenido-modal {
-    padding: 30px 24px;
+  .contenido-modal-auth {
+    padding: 24px 20px; /* Reduce relleno interno para ganar espacio visible */
   }
   
   .titulo-modal {
@@ -548,8 +549,8 @@
     font-size: 16px;
   }
   
-  .contenido-modal {
-    padding: 24px 20px;
+  .contenido-modal-auth {
+    padding: 20px 16px; /* Aún más compacto en pantallas muy pequeñas */
   }
   
   .titulo-modal {
@@ -574,9 +575,14 @@
     font-size: 16px; /* Previene zoom en iOS */
   }
   
-  .boton-enviar,
-  .boton-google {
+  .boton-enviar-auth,
+  .boton-google-auth {
     padding: 13px;
     font-size: 15px;
   }
 }
+  .modal-inicio-sesion {
+    max-width: 360px; /* Más pequeño en móviles muy pequeños */
+    width: 92%;
+    max-height: 78vh;
+  }

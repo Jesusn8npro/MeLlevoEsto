@@ -540,7 +540,7 @@
   background: #e55a2b; 
 }
 
-.dropdown-departamentos, 
+.dropdown-departamentos,
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -554,26 +554,57 @@
   margin-top: 8px;
 }
 
-.dropdown-menu { 
-  min-width: 180px; 
+.dropdown-menu {
+  min-width: 180px;
+}
+
+/* Mejora visual del dropdown de categorías: dos columnas y scroll controlado */
+.dropdown-departamentos {
+  display: grid;
+  gap: 8px;
+  padding: 8px;
+  /* Por defecto 1 columna (pantallas estrechas) */
+  grid-template-columns: 1fr;
+  min-width: 420px;
+  /* Sin scroll interno: se muestra completo */
+  max-height: none;
+  overflow: visible;
+}
+
+/* 3 columnas en Desktop con ancho mínimo cómodo */
+@media (min-width: 992px) {
+  .dropdown-departamentos {
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
+    min-width: 720px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .dropdown-departamentos {
+    grid-template-columns: repeat(3, minmax(260px, 1fr));
+    min-width: 840px;
+  }
 }
 
 .dropdown-departamentos .dropdown-item,
 .dropdown-menu .dropdown-item {
-  display: block;
-  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
   color: #333;
   text-decoration: none;
   font-size: 14px;
   border-bottom: 1px solid #f8f9fa;
-  transition: background 0.3s ease;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .dropdown-departamentos .dropdown-item:hover,
 .dropdown-menu .dropdown-item:hover {
-  background: transparent !important;
-  color: #ff6b35;
-  transform: translateX(4px);
+  background-color: #f7f7f7 !important;
+  color: #333 !important;
+  transform: none;
 }
 
 .dropdown-departamentos .dropdown-item:last-child,
@@ -614,6 +645,45 @@
 
 .rotado { 
   transform: rotate(180deg); 
+}
+
+/* ===== Dropdown Páginas: 3 columnas en Desktop, estilo tarjeta ===== */
+.menu-principal .dropdown-paginas {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding: 12px;
+  min-width: 420px;
+}
+
+@media (min-width: 992px) {
+  .menu-principal .dropdown-paginas {
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
+    min-width: 720px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .menu-principal .dropdown-paginas {
+    grid-template-columns: repeat(3, minmax(260px, 1fr));
+    min-width: 840px;
+  }
+}
+
+.dropdown-paginas .pagina-item {
+  border: 1px solid #eef0f2;
+  border-bottom: none;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.dropdown-paginas .pagina-item .pagina-titulo {
+  font-weight: 500;
+}
+
+.dropdown-paginas .pagina-item:hover {
+  background-color: #f7f7f7 !important;
+  transform: translateY(-1px);
 }
 
 .info-contacto {
@@ -1092,8 +1162,8 @@
 .menu-navegacion .dropdown-item .cantidad-productos {
   margin-left: auto;
   font-size: 0.8rem;
-  color: #888;
-  background-color: #f0f0f0;
+  color: #64748b;
+  background-color: #f1f5f9;
   padding: 2px 6px;
   border-radius: 8px;
 }
@@ -1104,6 +1174,11 @@
   border-top: 1px solid #eee;
   margin-top: 5px;
   padding-top: 10px;
+}
+
+/* La opción "Ver todas" ocupa el ancho completo en el grid */
+.dropdown-departamentos .dropdown-item.ver-todas {
+  grid-column: 1 / -1;
 }
 
 .menu-principal .dropdown-productos {
@@ -1161,6 +1236,60 @@
   font-weight: 600;
   color: var(--color-primario);
   padding: 10px;
+}
+
+/* Slider de productos en el menú principal */
+.menu-principal .dropdown-productos {
+  min-width: 820px; /* ancho amplio para contener varias tarjetas */
+  max-width: 960px;
+}
+
+.menu-principal .productos-slider-wrapper {
+  position: relative;
+}
+
+.menu-principal .productos-slider {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 6px 36px; /* espacio para botones laterales */
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.menu-principal .producto-slide {
+  scroll-snap-align: start;
+  min-width: 300px; /* igualar ancho de tarjeta de tienda */
+}
+
+.menu-principal .slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.menu-principal .slider-btn.izquierda { left: 6px; }
+.menu-principal .slider-btn.derecha { right: 6px; }
+
+@media (max-width: 992px) {
+  .menu-principal .dropdown-productos {
+    min-width: 100%;
+    max-width: 100%;
+  }
+  .menu-principal .productos-slider {
+    padding: 6px 8px;
+  }
+  .menu-principal .slider-btn { display: none; }
 }
 
 .info-contacto .whatsapp-enlace {

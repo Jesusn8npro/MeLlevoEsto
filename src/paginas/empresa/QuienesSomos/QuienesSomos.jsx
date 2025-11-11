@@ -1,154 +1,146 @@
-import { Phone, Mail, MapPin, Users, Award, Heart } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Phone, Mail, MapPin, Users, Award, Heart, Star, ShieldCheck, ShoppingBag } from 'lucide-react'
 import './QuienesSomos.css'
 
 export default function QuienesSomos() {
   const valores = [
-    {
-      icono: Users,
-      titulo: 'Compromiso',
-      descripcion: 'Nos dedicamos a cada cliente con atención personalizada y servicio excepcional.'
-    },
-    {
-      icono: Award,
-      titulo: 'Calidad',
-      descripcion: 'Seleccionamos cuidadosamente cada producto para garantizar la mejor experiencia.'
-    },
-    {
-      icono: Heart,
-      titulo: 'Pasión',
-      descripcion: 'Amamos lo que hacemos y trabajamos cada día para superar expectativas.'
-    }
+    { icono: Users, titulo: 'Compromiso', descripcion: 'Atención personalizada y servicio excepcional en cada compra.' },
+    { icono: Award, titulo: 'Calidad', descripcion: 'Seleccionamos productos con altos estándares y garantía real.' },
+    { icono: Heart, titulo: 'Pasión', descripcion: 'Vivimos el e-commerce y trabajamos para superar expectativas.' },
   ]
 
   const equipo = [
-    {
-      nombre: 'Equipo Fundador',
-      rol: 'Visión y Estrategia',
-      descripcion: 'Profesionales con años de experiencia en comercio digital y atención al cliente.'
-    },
-    {
-      nombre: 'Equipo de Ventas',
-      rol: 'Atención Personalizada',
-      descripcion: 'Especialistas comprometidos con encontrar la mejor solución para cada cliente.'
-    },
-    {
-      nombre: 'Equipo de Soporte',
-      rol: 'Soporte 24/7',
-      descripcion: 'Siempre disponibles para resolver cualquier duda o inquietud de forma rápida.'
-    }
+    { nombre: 'Equipo Fundador', rol: 'Visión y Estrategia', descripcion: 'Experiencia en comercio digital y servicio al cliente.' },
+    { nombre: 'Equipo de Ventas', rol: 'Atención Personalizada', descripcion: 'Consultores que te acompañan a elegir mejor.' },
+    { nombre: 'Equipo de Soporte', rol: 'Soporte 24/7', descripcion: 'Resolución ágil de dudas e incidencias.' },
+  ]
+
+  const stats = [
+    { label: 'Clientes felices', value: '50k+' },
+    { label: 'Productos evaluados', value: '2k+' },
+    { label: 'Tasa de satisfacción', value: '98%' },
+    { label: 'Entregas a tiempo', value: '99%' },
   ]
 
   return (
-    <div className="quienes-minimal">
-      <div className="quienes-container">
-        {/* Hero Section */}
-        <section className="quienes-hero">
-          <div className="quienes-hero-content">
-            <h1 className="quienes-title">
-              Sobre <span className="quienes-highlight">Nosotros</span>
-            </h1>
-            <p className="quienes-subtitle">
-              En Me Llevo Esto, conectamos personas con productos de calidad, 
-              brindando un servicio excepcional y experiencias memorables.
-            </p>
+    <section className="luxAbout">
+      <div className="luxAbout-container">
+        {/* Hero premium */}
+        <header className="luxAbout-hero">
+          <div className="luxAbout-badge">
+            <ShieldCheck size={18} />
+            <span>Garantía y confianza</span>
           </div>
-        </section>
+          <h1 className="luxAbout-title">
+            Somos <span>Me Llevo Esto</span>
+          </h1>
+          <p className="luxAbout-subtitle">
+            Una plataforma que combina producto, servicio y experiencia para que comprar online sea impecable.
+          </p>
 
-        {/* Misión y Visión */}
-        <section className="quienes-mision-vision">
-          <div className="mision-vision-grid">
-            <div className="mision-card">
-              <h2 className="section-title">Nuestra Misión</h2>
-              <p className="section-text">
-                Facilitar el acceso a productos de calidad con un servicio personalizado, 
-                rápido y confiable, creando valor para nuestros clientes y comunidad.
-              </p>
-            </div>
-            <div className="vision-card">
-              <h2 className="section-title">Nuestra Visión</h2>
-              <p className="section-text">
-                Ser la plataforma de comercio preferida en Colombia, reconocida por 
-                nuestra excelencia en servicio y compromiso con la satisfacción del cliente.
-              </p>
-            </div>
+          <div className="luxAbout-cta">
+            <Link to="/tienda" className="luxAbout-btn luxAbout-btn-primary">
+              <ShoppingBag size={18} /> Ver Tienda
+            </Link>
+            <a href="https://wa.me/573214892176" target="_blank" rel="noopener noreferrer" className="luxAbout-btn luxAbout-btn-secondary">
+              <Phone size={18} /> WhatsApp
+            </a>
           </div>
+        </header>
+
+        {/* Métricas */}
+        <section className="luxAbout-stats">
+          {stats.map((s, i) => (
+            <div key={i} className="luxAbout-stat-card">
+              <div className="luxAbout-stat-value">{s.value}</div>
+              <div className="luxAbout-stat-label">{s.label}</div>
+            </div>
+          ))}
         </section>
 
         {/* Valores */}
-        <section className="quienes-valores">
-          <div className="section-header">
-            <h2 className="section-title">Nuestros Valores</h2>
-            <p className="section-subtitle">Los principios que guían cada decisión</p>
+        <section className="luxAbout-values">
+          <div className="luxAbout-section-head">
+            <Star size={20} />
+            <h2>Nuestros valores</h2>
+            <p>Principios que guían nuestro trabajo y decisiones.</p>
           </div>
-          <div className="valores-grid">
+          <div className="luxAbout-values-grid">
             {valores.map((valor, index) => {
               const Icon = valor.icono
               return (
-                <div key={index} className="valor-card">
-                  <div className="valor-icon">
-                    <Icon size={32} />
-                  </div>
-                  <h3 className="valor-title">{valor.titulo}</h3>
-                  <p className="valor-description">{valor.descripcion}</p>
+                <div key={index} className="luxAbout-value-card">
+                  <div className="luxAbout-value-icon"><Icon size={28} /></div>
+                  <h3 className="luxAbout-value-title">{valor.titulo}</h3>
+                  <p className="luxAbout-value-desc">{valor.descripcion}</p>
                 </div>
               )
             })}
           </div>
         </section>
 
-        {/* Equipo */}
-        <section className="quienes-equipo">
-          <div className="section-header">
-            <h2 className="section-title">Nuestro Equipo</h2>
-            <p className="section-subtitle">Profesionales dedicados a tu satisfacción</p>
+        {/* Historia */}
+        <section className="luxAbout-story">
+          <div className="luxAbout-section-head">
+            <ShieldCheck size={20} />
+            <h2>Nuestra historia</h2>
+            <p>Construimos una experiencia de compra confiable y memorable.</p>
           </div>
-          <div className="equipo-grid">
+          <div className="luxAbout-story-grid">
+            <div className="luxAbout-story-card">
+              <h3>Inicio</h3>
+              <p>Nacimos con la misión de ofrecer productos de calidad con un servicio que realmente acompaña.</p>
+            </div>
+            <div className="luxAbout-story-card">
+              <h3>Crecer con propósito</h3>
+              <p>Mejoramos los procesos de selección, envío y soporte para elevar el estándar del e-commerce.</p>
+            </div>
+            <div className="luxAbout-story-card">
+              <h3>Hoy</h3>
+              <p>Somos una plataforma que cuida cada detalle para que tu compra sea impecable.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Equipo */}
+        <section className="luxAbout-team">
+          <div className="luxAbout-section-head">
+            <Users size={20} />
+            <h2>Nuestro equipo</h2>
+            <p>Personas comprometidas con tu satisfacción.</p>
+          </div>
+          <div className="luxAbout-team-grid">
             {equipo.map((miembro, index) => (
-              <div key={index} className="equipo-card">
-                <div className="equipo-header">
-                  <h3 className="equipo-nombre">{miembro.nombre}</h3>
-                  <p className="equipo-rol">{miembro.rol}</p>
-                </div>
-                <p className="equipo-descripcion">{miembro.descripcion}</p>
+              <div key={index} className="luxAbout-team-card">
+                <h3 className="luxAbout-team-name">{miembro.nombre}</h3>
+                <p className="luxAbout-team-role">{miembro.rol}</p>
+                <p className="luxAbout-team-desc">{miembro.descripcion}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* Contacto */}
-        <section className="quienes-contacto">
-          <div className="contacto-card">
-            <h2 className="contacto-title">¿Listo para comenzar?</h2>
-            <p className="contacto-text">
-              Estamos aquí para ayudarte. Contáctanos y descubre cómo podemos 
-              hacer tu experiencia de compra excepcional.
-            </p>
-            <div className="contacto-info">
-              <div className="contacto-item">
-                <Phone size={20} />
-                <span>WhatsApp: +57 321 489 2176</span>
-              </div>
-              <div className="contacto-item">
-                <Mail size={20} />
-                <span>info@mellevolesto.com</span>
-              </div>
-              <div className="contacto-item">
-                <MapPin size={20} />
-                <span>Bogotá, Colombia</span>
-              </div>
+        <section className="luxAbout-contact">
+          <div className="luxAbout-contact-card">
+            <h2>¿Listo para comenzar?</h2>
+            <p>Estamos aquí para ayudarte. Escríbenos o visita la tienda.</p>
+            <div className="luxAbout-contact-info">
+              <div className="luxAbout-contact-item"><Phone size={18} /> +57 321 489 2176</div>
+              <div className="luxAbout-contact-item"><Mail size={18} /> info@mellevoesto.com</div>
+              <div className="luxAbout-contact-item"><MapPin size={18} /> Bogotá, Colombia</div>
             </div>
-            <a 
-              href="https://wa.me/573214892176" 
-              className="whatsapp-button"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Phone size={20} />
-              Contactar por WhatsApp
-            </a>
+            <div className="luxAbout-contact-actions">
+              <a href="https://wa.me/573214892176" target="_blank" rel="noopener noreferrer" className="luxAbout-btn luxAbout-btn-primary">
+                <Phone size={18} /> WhatsApp
+              </a>
+              <Link to="/tienda" className="luxAbout-btn luxAbout-btn-secondary">
+                <ShoppingBag size={18} /> Ver Tienda
+              </Link>
+            </div>
           </div>
         </section>
       </div>
-    </div>
+    </section>
   )
 }

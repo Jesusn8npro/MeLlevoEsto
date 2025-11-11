@@ -240,7 +240,7 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
   if (!abierto) return null
 
   return (
-    <div className="fondo-modal" onClick={manejarClickModal}>
+    <div className="fondo-modal-auth" onClick={manejarClickModal}>
       <div className="modal-inicio-sesion" onClick={(e) => e.stopPropagation()}>
         {/* Botón cerrar */}
         <button 
@@ -260,7 +260,7 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
         </div>
 
         {/* Contenido del modal */}
-        <div className="contenido-modal">
+        <div className="contenido-modal-auth">
           {vistaRecuperar ? (
             // Vista de recuperar contraseña
             <>
@@ -287,12 +287,12 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                 </div>
 
                 {mensajeRecuperar && (
-                  <div className={`mensaje-info ${mensajeRecuperar.includes('✅') ? 'success' : 'error'}`}>
+                  <div className={`mensaje-info-auth ${mensajeRecuperar.includes('✅') ? 'success' : 'error'}`}>
                     {mensajeRecuperar}
                   </div>
                 )}
 
-                <button type="submit" className="boton-enviar" disabled={cargando}>
+                <button type="submit" className="boton-enviar-auth" disabled={cargando}>
                   {cargando ? 'Enviando...' : 'Enviar enlace'}
                 </button>
               </form>
@@ -359,10 +359,10 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                 </div>
 
                 {error && (
-                  <div className="mensaje-error">{error}</div>
+                  <div className="mensaje-error-auth">{error}</div>
                 )}
 
-                <button type="submit" className="boton-enviar" disabled={cargando}>
+                <button type="submit" className="boton-enviar-auth" disabled={cargando}>
                   {cargando ? 'Ingresando...' : 'Entrar'}
                 </button>
               </form>
@@ -378,7 +378,7 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
               <div className="botones-sociales">
                 <button 
                   type="button" 
-                  className="boton-google" 
+                  className="boton-google-auth" 
                   onClick={manejarGoogleLogin}
                   disabled={cargando}
                 >
@@ -520,10 +520,10 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                 </div>
 
                 {error && (
-                  <div className="mensaje-error">{error}</div>
+                  <div className="mensaje-error-auth">{error}</div>
                 )}
 
-                <button type="submit" className="boton-enviar" disabled={cargando}>
+                <button type="submit" className="boton-enviar-auth" disabled={cargando}>
                   {cargando ? 'Registrando...' : 'Registrarme'}
                 </button>
               </form>

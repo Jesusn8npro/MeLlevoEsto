@@ -59,11 +59,14 @@ html {
   --espacio-xl: 2rem;
   --espacio-2xl: 3rem;
 
-    /* Bordes */
+  /* Bordes */
   --radio-sm: 0.25rem;
   --radio-md: 0.5rem;
   --radio-lg: 0.75rem;
   --radio-xl: 1rem;
+
+  /* Tamaños de fuente */
+  --texto-base: 1rem; /* Define tamaño base para evitar valores indefinidos */
 
     /* Z-index */
   --z-dropdown: 1000;

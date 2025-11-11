@@ -14,6 +14,7 @@ import {
   Package,
   LayoutGrid,
   ChevronRight,
+  ChevronLeft,
   Tag,
   Smartphone,
   Laptop,
@@ -41,6 +42,7 @@ import { useChat } from '../../contextos/ChatContext'
 import './HeaderPrincipal.css'
 import MenuMovilOverlay from './MenuMovilOverlay'
 import SliderInformacion from './SliderInformacion'
+import TarjetaProductoLujo from '../producto/TarjetaProductoLujo'
 
 const HeaderPrincipal = () => {
   const navigate = useNavigate()
@@ -64,6 +66,29 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
   const [headerSticky, setHeaderSticky] = useState(false)
   const [menuUsuarioAbierto, setMenuUsuarioAbierto] = useState(false)
   const [productosMenu, setProductosMenu] = useState([])
+  const sliderProductosRef = useRef(null)
+  const hoverTimersRef = useRef({ productos: null, departamentos: null, paginas: null })
+  
+  // Lista de páginas para el menú (visibles al público)
+  const paginasMenu = [
+    { ruta: '/', titulo: 'Inicio', Icono: Home },
+    { ruta: '/tienda', titulo: 'Tienda', Icono: Store },
+    { ruta: '/blog', titulo: 'Blog', Icono: Tag },
+    { ruta: '/favoritos', titulo: 'Favoritos', Icono: Heart },
+    { ruta: '/carrito', titulo: 'Carrito', Icono: ShoppingBag },
+    { ruta: '/checkout', titulo: 'Checkout', Icono: Package },
+    { ruta: '/quienes-somos', titulo: 'Quiénes somos', Icono: Globe },
+    { ruta: '/contacto', titulo: 'Contacto', Icono: Phone },
+    { ruta: '/preguntas-frecuentes', titulo: 'Preguntas frecuentes', Icono: Settings },
+    { ruta: '/terminos-condiciones', titulo: 'Términos y condiciones', Icono: Settings },
+    { ruta: '/politica-privacidad', titulo: 'Política de privacidad', Icono: Settings },
+    { ruta: '/trabaja-con-nosotros', titulo: 'Trabaja con nosotros', Icono: MapPin },
+    { ruta: '/ayuda', titulo: 'Ayuda', Icono: Settings },
+    { ruta: '/login', titulo: 'Ingresar', Icono: UserCircle },
+    { ruta: '/registro', titulo: 'Registrarse', Icono: UserCircle },
+    { ruta: '/perfil', titulo: 'Mi perfil', Icono: UserCircle },
+    { ruta: '/restablecer-contrasena', titulo: 'Restablecer contraseña', Icono: Settings },
+  ]
   
   const headerRef = useRef(null)
 
@@ -90,14 +115,39 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
       try {
         const { data, error } = await clienteSupabase
           .from('productos')
-          .select('id, nombre, slug, precio_final, imagen_url')
+          .select(`
+            id,
+            nombre,
+            slug,
+            precio,
+            precio_original,
+            estado,
+            destacado,
+            stock,
+            stock_minimo,
+            categoria_id,
+            categorias (
+              id,
+              nombre,
+              icono
+            ),
+            producto_imagenes (
+              imagen_principal,
+              imagen_secundaria_1,
+              imagen_secundaria_2,
+              imagen_secundaria_3,
+              imagen_secundaria_4
+            )
+          `)
           .eq('activo', true)
-          .order('created_at', { ascending: false })
-          .limit(4)
+          .gt('stock', 0)
+          .order('creado_el', { ascending: false })
+          .limit(8)
 
         if (error) throw error
         setProductosMenu(data || [])
       } catch (error) {
+        console.error('Error cargando productos para menú:', error?.message || error)
         setProductosMenu([])
       }
     }
@@ -115,9 +165,10 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
       // Cargar categorías
       const { data: categoriasData, error: categoriasError } = await clienteSupabase
         .from('categorias')
-        .select('id, nombre, slug, icono, descripcion')
+        .select('id, nombre, slug, icono, descripcion, orden')
         .eq('activo', true)
-        .order('nombre')
+        .order('orden', { ascending: true })
+        .order('nombre', { ascending: true })
 
       if (categoriasError) throw categoriasError
 
@@ -148,7 +199,8 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
         })
       )
 
-      setCategorias(categoriasConConteo.filter(cat => cat.cantidad > 0))
+      // Mostrar todas las categorías activas, incluso con 0 productos
+      setCategorias(categoriasConConteo)
     } catch (error) {
       // Error silencioso para producción
       setCategorias([])
@@ -534,10 +586,26 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
       <nav className="menu-navegacion">
         <div className="contenedor-menu">
           {/* Comprar por Categorías */}
-          <div className="menu-departamentos">
+          <div 
+            className="menu-departamentos"
+            onMouseEnter={() => {
+              if (hoverTimersRef.current.departamentos) {
+                clearTimeout(hoverTimersRef.current.departamentos)
+                hoverTimersRef.current.departamentos = null
+              }
+              setDepartamentosAbierto(true)
+            }}
+            onMouseLeave={() => {
+              if (hoverTimersRef.current.departamentos) clearTimeout(hoverTimersRef.current.departamentos)
+              hoverTimersRef.current.departamentos = setTimeout(() => setDepartamentosAbierto(false), 500)
+            }}
+          >
             <button 
               className="boton-departamentos"
-              onClick={() => setDepartamentosAbierto(!departamentosAbierto)}
+              aria-haspopup="true"
+              aria-expanded={departamentosAbierto}
+              onFocus={() => setDepartamentosAbierto(true)}
+              onBlur={() => setDepartamentosAbierto(false)}
             >
               <LayoutGrid size={18} />
               <span>Comprar por categorías</span>
@@ -575,27 +643,67 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
 
           {/* Menú Principal */}
           <div className="menu-principal">
-            <div className="menu-item dropdown">
+            <div 
+              className="menu-item dropdown"
+              onMouseEnter={() => {
+                if (hoverTimersRef.current.paginas) {
+                  clearTimeout(hoverTimersRef.current.paginas)
+                  hoverTimersRef.current.paginas = null
+                }
+                setHomeLayoutAbierto(true)
+              }}
+              onMouseLeave={() => {
+                if (hoverTimersRef.current.paginas) clearTimeout(hoverTimersRef.current.paginas)
+                hoverTimersRef.current.paginas = setTimeout(() => setHomeLayoutAbierto(false), 500)
+              }}
+            >
               <button 
                 className="menu-enlace"
-                onClick={() => setHomeLayoutAbierto(!homeLayoutAbierto)}
+                aria-haspopup="true"
+                aria-expanded={homeLayoutAbierto}
+                onFocus={() => setHomeLayoutAbierto(true)}
+                onBlur={() => setHomeLayoutAbierto(false)}
               >
                 Páginas
                 <ChevronDown size={14} className={homeLayoutAbierto ? 'rotado' : ''} />
               </button>
               {homeLayoutAbierto && (
-                <div className="dropdown-menu">
-                  <Link to="/" className="dropdown-item" onClick={() => manejarNavegacion('/')}>Inicio</Link>
-                  <Link to="/tienda" className="dropdown-item" onClick={() => manejarNavegacion('/tienda')}>Tienda</Link>
-                  <Link to="/nosotros" className="dropdown-item" onClick={() => manejarNavegacion('/nosotros')}>Nosotros</Link>
+                <div className="dropdown-menu dropdown-paginas">
+                  {paginasMenu.map(({ ruta, titulo, Icono }) => (
+                    <Link 
+                      key={ruta}
+                      to={ruta}
+                      className="dropdown-item pagina-item"
+                      onClick={() => manejarNavegacion(ruta)}
+                    >
+                      {Icono ? <Icono size={18} /> : <Tag size={18} />}
+                      <span className="pagina-titulo">{titulo}</span>
+                    </Link>
+                  ))}
                 </div>
               )}
             </div>
 
-            <div className="menu-item dropdown">
+            <div 
+              className="menu-item dropdown"
+              onMouseEnter={() => {
+                if (hoverTimersRef.current.productos) {
+                  clearTimeout(hoverTimersRef.current.productos)
+                  hoverTimersRef.current.productos = null
+                }
+                setProductAbierto(true)
+              }}
+              onMouseLeave={() => {
+                if (hoverTimersRef.current.productos) clearTimeout(hoverTimersRef.current.productos)
+                hoverTimersRef.current.productos = setTimeout(() => setProductAbierto(false), 500)
+              }}
+            >
               <button 
                 className="menu-enlace"
-                onClick={() => setProductAbierto(!productAbierto)}
+                aria-haspopup="true"
+                aria-expanded={productAbierto}
+                onFocus={() => setProductAbierto(true)}
+                onBlur={() => setProductAbierto(false)}
               >
                 Productos
                 <ChevronDown size={14} className={productAbierto ? 'rotado' : ''} />
@@ -603,20 +711,24 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
               {productAbierto && (
                 <div className="dropdown-menu dropdown-productos">
                   {productosMenu.length > 0 ? (
-                    productosMenu.map(producto => (
-                      <Link 
-                        key={producto.id}
-                        to={`/producto/${producto.slug}`} 
-                        className="dropdown-item producto-item"
-                        onClick={() => setProductAbierto(false)}
-                      >
-                        <img src={producto.imagen_url} alt={producto.nombre} className="producto-imagen-menu" />
-                        <div className="producto-info-menu">
-                          <span className="producto-nombre-menu">{producto.nombre}</span>
-                          <span className="producto-precio-menu">${new Intl.NumberFormat('es-CO').format(producto.precio_final)}</span>
-                        </div>
-                      </Link>
-                    ))
+                    <div className="productos-slider-wrapper">
+                      <button className="slider-btn izquierda" aria-label="Anterior" onClick={() => desplazarSlider('izq')}>
+                        <ChevronLeft size={18} />
+                      </button>
+                      <div className="productos-slider" ref={sliderProductosRef}>
+                        {productosMenu.map((producto) => {
+                          const p = normalizarProductoMenu(producto)
+                          return (
+                            <div key={producto.id} className="producto-slide" onClick={() => setProductAbierto(false)}>
+                              <TarjetaProductoLujo producto={p} />
+                            </div>
+                          )
+                        })}
+                      </div>
+                      <button className="slider-btn derecha" aria-label="Siguiente" onClick={() => desplazarSlider('der')}>
+                        <ChevronRight size={18} />
+                      </button>
+                    </div>
                   ) : (
                     <div className="dropdown-item">Cargando productos...</div>
                   )}
@@ -744,3 +856,36 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
 }
 
 export default HeaderPrincipal
+  // Normalizar producto para la tarjeta vendedora
+  const normalizarProductoMenu = (p) => {
+    // Derivar fotos_principales desde relación producto_imagenes (objeto o array) o fallbacks
+    let imagenPrincipal = null
+    let imagenSecundaria = null
+    const rel = p?.producto_imagenes
+    if (rel) {
+      if (Array.isArray(rel)) {
+        imagenPrincipal = rel[0]?.imagen_principal || null
+        imagenSecundaria = rel[0]?.imagen_secundaria_1 || null
+      } else {
+        imagenPrincipal = rel.imagen_principal || null
+        imagenSecundaria = rel.imagen_secundaria_1 || null
+      }
+    }
+
+    const fotos = Array.isArray(p?.fotos_principales) && p.fotos_principales.length > 0
+      ? p.fotos_principales
+      : [imagenPrincipal, imagenSecundaria].filter(Boolean)
+
+    return {
+      ...p,
+      precio: typeof p?.precio === 'number' ? p.precio : 0,
+      fotos_principales: fotos
+    }
+  }
+
+  const desplazarSlider = (direccion) => {
+    const cont = sliderProductosRef.current
+    if (!cont) return
+    const paso = Math.min(360, cont.clientWidth * 0.4)
+    cont.scrollBy({ left: direccion === 'izq' ? -paso : paso, behavior: 'smooth' })
+  }

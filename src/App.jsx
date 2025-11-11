@@ -55,6 +55,7 @@ import BotonWhatsapp from './componentes/BotonWhatsapp/BotonWhatsapp'
 // import MigrarImagenes from './paginas/MigrarImagenes' // Eliminado
 import PaginaBlog from './paginas/blog/PaginaBlog'
 import ArticuloBlog from './paginas/blog/ArticuloBlog'
+import Ayuda from './paginas/ayuda/Ayuda'
 
 function App() {
   const location = useLocation()
@@ -628,7 +629,7 @@ function App() {
           <>
             <HeaderPrincipal />
             <main className="contenido-principal">
-              <div>Ayuda (próximamente)</div>
+              <Ayuda />
             </main>
           </>
         } />

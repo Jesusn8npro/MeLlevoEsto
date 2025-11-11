@@ -21,18 +21,17 @@ export default function ModalBusqueda({ abierto, onCerrar }) {
     { nombre: 'Favoritos', ruta: '/favoritos', descripcion: 'Tus productos favoritos' },
     { nombre: 'Carrito', ruta: '/carrito', descripcion: 'Revisa tu carrito de compras' },
     { nombre: 'Contacto', ruta: '/contacto', descripcion: 'Contáctanos para cualquier consulta' },
-    { nombre: 'Nosotros', ruta: '/nosotros', descripcion: 'Conoce más sobre nuestra empresa' },
-    { nombre: 'Categorías', ruta: '/tienda/categorias', descripcion: 'Navega por categorías' },
-    { nombre: 'Ofertas', ruta: '/tienda/ofertas', descripcion: 'Productos en oferta' },
-    { nombre: 'Nuevos', ruta: '/tienda/nuevos', descripcion: 'Productos recién llegados' },
-    { nombre: 'Electrónicos', ruta: '/tienda/categoria/electronica', descripcion: 'Tecnología y electrónicos' },
+    { nombre: 'Quiénes Somos', ruta: '/quienes-somos', descripcion: 'Conoce más sobre nuestra empresa' },
+    { nombre: 'Ofertas', ruta: '/ofertas', descripcion: 'Productos en oferta' },
+    { nombre: 'Electrónica', ruta: '/tienda/categoria/electronica', descripcion: 'Tecnología y electrónicos' },
     { nombre: 'Ropa', ruta: '/tienda/categoria/ropa', descripcion: 'Moda y vestimenta' },
     { nombre: 'Hogar', ruta: '/tienda/categoria/hogar', descripcion: 'Artículos para el hogar' },
     { nombre: 'Deportes', ruta: '/tienda/categoria/deportes', descripcion: 'Artículos deportivos' },
-    { nombre: 'Términos y Condiciones', ruta: '/terminos', descripcion: 'Términos y condiciones de uso' },
-    { nombre: 'Política de Privacidad', ruta: '/privacidad', descripcion: 'Política de privacidad del sitio' },
-    { nombre: 'Preguntas Frecuentes', ruta: '/faq', descripcion: 'Respuestas a preguntas comunes' },
-    { nombre: 'Mi Cuenta', ruta: '/mi-cuenta', descripcion: 'Gestiona tu cuenta y pedidos' },
+    { nombre: 'Blog', ruta: '/blog', descripcion: 'Artículos y noticias' },
+    { nombre: 'Términos y Condiciones', ruta: '/terminos-condiciones', descripcion: 'Condiciones de uso' },
+    { nombre: 'Política de Privacidad', ruta: '/politica-privacidad', descripcion: 'Protección de datos' },
+    { nombre: 'Preguntas Frecuentes', ruta: '/preguntas-frecuentes', descripcion: 'Respuestas a preguntas comunes' },
+    { nombre: 'Mi Cuenta', ruta: '/perfil', descripcion: 'Gestiona tu cuenta y pedidos' },
     { nombre: 'Ayuda', ruta: '/ayuda', descripcion: 'Centro de ayuda y soporte' }
   ]
 
@@ -109,8 +108,12 @@ export default function ModalBusqueda({ abierto, onCerrar }) {
         .eq('activo', true)
         .limit(6)
 
-      if (errorTexto && errorPalabrasClave) {
-        return
+      if (errorTexto || errorPalabrasClave) {
+        console.error('Error buscando productos en Supabase', {
+          termino: terminoBusqueda,
+          errorTexto,
+          errorPalabrasClave
+        })
       }
 
       // Combinar resultados y eliminar duplicados
@@ -118,10 +121,15 @@ export default function ModalBusqueda({ abierto, onCerrar }) {
       const productosUnicos = todosLosProductos.filter((producto, index, self) => 
         index === self.findIndex(p => p.id === producto.id)
       ).slice(0, 6)
-
+      console.log('Resultados búsqueda productos', {
+        termino: terminoBusqueda,
+        texto: (productosTexto || []).length,
+        palabrasClave: (productosPalabrasClave || []).length,
+        combinados: productosUnicos.length
+      })
       setProductos(productosUnicos)
     } catch (error) {
-      // Error silencioso en producción
+      console.error('Excepción en buscarProductos:', error)
     } finally {
       setCargando(false)
     }
@@ -182,14 +190,15 @@ export default function ModalBusqueda({ abierto, onCerrar }) {
       <div className="modal-busqueda-contenido" onClick={(e) => e.stopPropagation()}>
         <div className="modal-busqueda-header">
           <h2>Buscar Productos y Páginas</h2>
-          <button onClick={onCerrar} className="cerrar-modal">
+          {/* Botón cerrar con clase única para evitar colisiones */}
+          <button onClick={onCerrar} className="modal-busqueda-cerrar">
             <X />
           </button>
         </div>
 
         <form onSubmit={manejarBusqueda} className="modal-busqueda-form">
           <div className="busqueda-input-contenedor">
-            <Search className="busqueda-icono" />
+            <Search className="busqueda-icono" size={18} />
             <input
               ref={inputRef}
               type="text"
