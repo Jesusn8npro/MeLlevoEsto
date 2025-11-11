@@ -8,6 +8,7 @@
   backdrop-filter: blur(8px);
   animation: fadeInBackdrop 0.3s ease-out;
   padding: 10px;
+}
 
 .modal-carrito-backdrop {
   position: absolute;
