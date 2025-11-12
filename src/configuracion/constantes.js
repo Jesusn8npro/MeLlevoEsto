@@ -43,8 +43,8 @@ export const RUTAS = {
 export const EPAYCO_CONFIG = {
   PUBLIC_KEY: import.meta.env.VITE_EPAYCO_PUBLIC_KEY, // Credencial pública desde .env
   PRIVATE_KEY: import.meta.env.VITE_EPAYCO_PRIVATE_KEY, // Credencial privada desde .env
-  CUSTOMER_ID: "1566446", // Tu ID de cliente actualizado
-  P_KEY: "186c5f30d26856adac71cc09eb206f4974c3c2f0", // Tu P_KEY actualizado
+  CUSTOMER_ID: import.meta.env.VITE_EPAYCO_P_CUST_ID_CLIENTE, // ID de cliente desde .env
+  P_KEY: import.meta.env.VITE_EPAYCO_P_KEY, // P_KEY desde .env
   TEST_MODE: import.meta.env.VITE_EPAYCO_TEST_MODE === 'true', // Modo prueba desde .env
   COUNTRY: "CO", // Colombia
   CURRENCY: "COP", // Peso colombiano

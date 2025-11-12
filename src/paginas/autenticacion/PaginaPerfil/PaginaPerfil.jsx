@@ -499,26 +499,42 @@ export default function PaginaPerfil() {
     }
   }
 
-  // Actualizar contraseña con verificación básica
+  // Actualizar contraseña con verificación mejorada
   const actualizarContrasena = async () => {
     if (!usuario?.email) return
 
-    // Validaciones básicas
+    // Validaciones mejoradas
     if (!contrasenaActual || !nuevaContrasena || !confirmarContrasena) {
       setMensajeSeguridad({ tipo: 'error', texto: 'Por favor completa todos los campos' })
       return
     }
+    
+    // Verificar que la nueva contraseña no sea igual a la actual
+    if (contrasenaActual === nuevaContrasena) {
+      setMensajeSeguridad({ tipo: 'error', texto: 'La nueva contraseña debe ser diferente a la actual' })
+      return
+    }
+    
     if (nuevaContrasena !== confirmarContrasena) {
       setMensajeSeguridad({ tipo: 'error', texto: 'La confirmación no coincide con la nueva contraseña' })
       return
     }
+    
+    // Validar longitud mínima
+    if (nuevaContrasena.length < 8) {
+      setMensajeSeguridad({ tipo: 'error', texto: 'La contraseña debe tener al menos 8 caracteres' })
+      return
+    }
+    
+    // Validar complejidad
     if (!validarPassword(nuevaContrasena)) {
-      setMensajeSeguridad({ tipo: 'error', texto: 'La nueva contraseña no cumple los requisitos mínimos' })
+      setMensajeSeguridad({ tipo: 'error', texto: 'La contraseña debe incluir mayúsculas, minúsculas, números y caracteres especiales (@$!%*?&)' })
       return
     }
 
     setGuardandoSeguridad(true)
     setMensajeSeguridad(null)
+    
     try {
       // Verificar contraseña actual
       const { error: loginError } = await clienteSupabase.auth.signInWithPassword({
@@ -538,11 +554,21 @@ export default function PaginaPerfil() {
       }
 
       setMensajeSeguridad({ tipo: 'ok', texto: 'Contraseña actualizada correctamente' })
+      
+      // Limpiar campos del formulario
       setContrasenaActual('')
       setNuevaContrasena('')
       setConfirmarContrasena('')
+      
     } catch (e) {
-      setMensajeSeguridad({ tipo: 'error', texto: e.message || 'No se pudo actualizar la contraseña' })
+      // Manejar errores específicos sin exponer información sensible
+      let mensajeError = 'No se pudo actualizar la contraseña'
+      if (e.message?.includes('weak_password')) {
+        mensajeError = 'La contraseña es muy débil, por favor usa una más segura'
+      } else if (e.message?.includes('same_password')) {
+        mensajeError = 'La nueva contraseña debe ser diferente a la actual'
+      }
+      setMensajeSeguridad({ tipo: 'error', texto: mensajeError })
     } finally {
       setGuardandoSeguridad(false)
     }

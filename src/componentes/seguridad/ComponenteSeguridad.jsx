@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { verificarRateLimit, manejarError } from '../configuracion/seguridad.js';
+import { verificarRateLimit, manejarError } from '../../configuracion/seguridad.js';
 
 /**
  * Componente de seguridad que envuelve la aplicación

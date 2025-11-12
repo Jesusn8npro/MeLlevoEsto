@@ -6,8 +6,8 @@ export const validarEmail = (email) => {
 }
 
 export const validarPassword = (password) => {
-  // Regla simplificada: mínimo 6 caracteres y sin espacios
-  const regex = /^\S{6,}$/
+  // Regla mejorada: mínimo 8 caracteres, al menos una mayúscula, una minúscula, un número y un carácter especial
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
   return regex.test(password)
 }
 
@@ -43,7 +43,7 @@ export const validarCodigoPostal = (codigo) => {
 export const obtenerMensajeError = (campo, valor) => {
   const mensajes = {
     email: 'Debe ser un email válido',
-    password: 'Debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número',
+    password: 'Debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&)',
     telefono: 'Debe ser un teléfono válido (ej: 300 123 4567)',
     cedula: 'Debe ser una cédula válida (8-11 dígitos)',
     nombre: 'Debe contener solo letras y tener entre 2-50 caracteres',
