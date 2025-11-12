@@ -17,12 +17,12 @@ import FavoritosProvider from './contextos/FavoritosContext'
 import { CarritoProvider } from './contextos/CarritoContext'
 import { ChatProvider } from './contextos/ChatContext'
 // import ProteccionAvanzada from './componentes/ProteccionAvanzada' // Comentado temporalmente
-const PaginaInicio = lazy(() => import('./paginas/ecommerce/PaginaInicio/PaginaInicio'));
-const PaginaProducto = lazy(() => import('./paginas/ecommerce/PaginaProducto/PaginaProducto'));
-const PaginaCategoria = lazy(() => import('./paginas/ecommerce/PaginaCategoria/PaginaCategoria'));
-const PaginaCarrito = lazy(() => import('./paginas/ecommerce/PaginaCarrito/PaginaCarrito'));
-const PaginaFavoritos = lazy(() => import('./paginas/ecommerce/PaginaFavoritos/PaginaFavoritos'));
-const PaginaCheckout = lazy(() => import('./paginas/ecommerce/PaginaCheckout/PaginaCheckout'));
+const PaginaInicio = lazy(() => import('./paginas/ecommerce/PaginaInicio/PaginaInicio.jsx'));
+const PaginaProducto = lazy(() => import('./paginas/ecommerce/PaginaProducto/PaginaProducto.jsx'));
+const PaginaCategoria = lazy(() => import('./paginas/ecommerce/PaginaCategoria/PaginaCategoria.jsx'));
+const PaginaCarrito = lazy(() => import('./paginas/ecommerce/PaginaCarrito/PaginaCarrito.jsx'));
+const PaginaFavoritos = lazy(() => import('./paginas/ecommerce/PaginaFavoritos/PaginaFavoritos.jsx'));
+const PaginaCheckout = lazy(() => import('./paginas/ecommerce/PaginaCheckout/PaginaCheckout.jsx'));
 const PaginaLogin = lazy(() => import('./paginas/autenticacion/PaginaLogin/PaginaLogin'));
 const PaginaRegistro = lazy(() => import('./paginas/autenticacion/PaginaRegistro/PaginaRegistro'));
 const PaginaPerfil = lazy(() => import('./paginas/autenticacion/PaginaPerfil/PaginaPerfil'));
@@ -57,7 +57,7 @@ const AdminBlog = lazy(() => import('./paginas/admin/Blog/AdminBlog'));
 const ManejoCupones = lazy(() => import('./paginas/admin/ManejoCupones/ManejoCupones'));
 const LandingProducto = lazy(() => import('./paginas/LandingProducto.jsx'));
 const PlantillaTemu = lazy(() => import('./componentes/landing/plantillas/PlantillaTemu/PlantillaTemu'));
-const PaginaTienda = lazy(() => import('./paginas/ecommerce/PaginaTienda/PaginaTienda'));
+const PaginaTienda = lazy(() => import('./paginas/ecommerce/PaginaTienda/PaginaTienda.jsx'));
 const PaginaBlog = lazy(() => import('./paginas/blog/PaginaBlog'));
 const ArticuloBlog = lazy(() => import('./paginas/blog/ArticuloBlog'));
 const Ayuda = lazy(() => import('./paginas/ayuda/Ayuda'));
