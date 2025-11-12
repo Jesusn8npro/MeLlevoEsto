@@ -14,6 +14,15 @@ export default defineConfig(({ mode }) => {
         compress: {
           drop_console: isProduction, // Remover console.logs en producción
           drop_debugger: isProduction, // Remover debuggers en producción
+          pure_funcs: ['console.log', 'console.info', 'console.debug'], // Eliminar llamadas específicas
+          passes: 3, // Múltiples pases de compresión para mejor optimización
+        },
+        mangle: {
+          properties: true, // Ofuscar nombres de propiedades
+          safari10: true, // Soporte para Safari 10
+        },
+        format: {
+          comments: false, // Eliminar comentarios
         },
       },
     },

@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Heart, Search, Grid, List, ShoppingCart, Eye, Trash2, Star } from 'lucide-react'
 import { useFavoritos } from '../../../contextos/FavoritosContext'
-import TarjetaProductoVendedora from '../../../componentes/producto/TarjetaProductoVendedora'
+import TarjetaProductoLujo from '../../../componentes/producto/TarjetaProductoLujo'
 import './PaginaFavoritos.css'
 
 const PaginaFavoritos = () => {
@@ -300,16 +300,9 @@ const PaginaFavoritos = () => {
                 const productoConvertido = convertirFavoritoAProducto(favorito)
                 console.log(`🎨 Renderizando producto convertido:`, productoConvertido)
                 return (
-                  <TarjetaProductoVendedora
+                  <TarjetaProductoLujo
                     key={favorito.producto_id || favorito.id}
                     producto={productoConvertido}
-                    tamaño="normal"
-                    mostrarDescuento={true}
-                    mostrarUrgencia={true}
-                    mostrarPruebaSocial={true}
-                    mostrarBadges={true}
-                    animaciones={true}
-                    vistaLista={vistaActual === 'list'}
                   />
                 )
               })

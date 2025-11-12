@@ -1,6 +1,12 @@
 /* Estilos base de ME LLEVO ESTO - Tienda Ultra Vendedora */
 
-/* Reset y variables CSS */
+/* Reset global para eliminar padding y margin por defecto */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -15,6 +21,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  margin: 0; /* Asegura eliminación de margin default del navegador */
+  padding: 0; /* Asegura eliminación de padding default del navegador */
 }
 
 /* Clase para bloquear scroll cuando el menú móvil esté abierto */

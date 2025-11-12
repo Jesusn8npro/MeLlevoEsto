@@ -43,10 +43,6 @@ export default function ChatEnVivo() {
   const contenedorMensajesRef = useRef(null)
   const inputMensajeRef = useRef(null)
 
-  if (modalAbierto) {
-    return null;
-  }
-
   // Utilidades
   const esUrlImagen = (url) => {
     if (!url || typeof url !== 'string') return false
@@ -469,6 +465,10 @@ export default function ChatEnVivo() {
     if (!chatAbierto) {
       setContadorNoLeidos(0)
     }
+  }
+
+  if (modalAbierto) {
+    return null;
   }
 
   return (

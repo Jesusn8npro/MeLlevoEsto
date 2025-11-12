@@ -561,13 +561,20 @@
 .dropdown-departamentos {
   display: grid;
   gap: 8px;
-  padding: 8px;
+  padding: 8px 8px 0 8px; /* Elimina padding inferior para remover espacio no deseado */
   /* Por defecto 1 columna (pantallas estrechas) */
   grid-template-columns: 1fr;
   min-width: 420px;
   /* Sin scroll interno: se muestra completo */
   max-height: none;
-  overflow: visible;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Oculta barra en Firefox */
+}
+
+.dropdown-departamentos::-webkit-scrollbar {
+  display: none; /* Oculta barra en Chrome y Safari */
 }
 
 /* 3 columnas en Desktop con ancho mínimo cómodo */

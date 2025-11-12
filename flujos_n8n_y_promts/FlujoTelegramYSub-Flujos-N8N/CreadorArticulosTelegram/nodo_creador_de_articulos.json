@@ -2,7 +2,7 @@
   "nodes": [
     {
       "parameters": {
-        "description": "Usa esta herramienta para cuando el usuario necesite crear un articulo del blog. Debes hacer las preguntas una por una para obtener la información necesaria.",
+        "description": "Usa esta herramienta para cuando el usuario necesite crear un articulo del blog, realiza las preguntas necesarias para qe se cree",
         "workflowId": {
           "__rl": true,
           "value": "yXZKyDLtZzeDRvsd",
@@ -13,19 +13,19 @@
         "workflowInputs": {
           "mappingMode": "defineBelow",
           "value": {
-            "titulo_del_blog": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('titulo_del_blog', 'El título principal del artículo, optimizado para SEO.', 'string') }}",
-            "tipo_de_contenido": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('tipo_de_contenido', 'El tipo de contenido a generar (ej: tutorial, comparativa, noticia, etc.).', 'string') }}",
-            "cuantas_imagenes": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('cuantas_imagenes', 'El número de imágenes que se deben generar para el artículo.', 'string') }}",
-            "tamano_del_articulo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('tamano_del_articulo', 'La longitud deseada para el artículo (ej: corto, mediano, largo).', 'string') }}",
-            "tema_del_articulo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('tema_del_articulo', 'El tema central sobre el que tratará el artículo.', 'string') }}"
+            "TituloDelBlog": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('TituloDelBlog', ``, 'string') }}",
+            "TipoDeConrtenido": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('TipoDeConrtenido', ``, 'string') }}",
+            "CuantasImagenes": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('CuantasImagenes', ``, 'string') }}",
+            "tamañoDelArticulo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('tama_oDelArticulo', ``, 'string') }}",
+            "TeQueTrataElArticulo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('TeQueTrataElArticulo', ``, 'string') }}",
+            "ContextoDelArticulo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('ContextoDelArticulo', ``, 'string') }}"
           },
           "matchingColumns": [],
           "schema": [
             {
-              "id": "tema_del_articulo",
-              "displayName": "Tema del Artículo",
-              "required": true,
-              "description": "El tema central sobre el que tratará el artículo. (Ej: 'tendencias de marketing digital para 2025')",
+              "id": "TeQueTrataElArticulo",
+              "displayName": "TeQueTrataElArticulo",
+              "required": false,
               "defaultMatch": false,
               "display": true,
               "canBeUsedToMatch": true,
@@ -33,10 +33,9 @@
               "removed": false
             },
             {
-              "id": "tamano_del_articulo",
-              "displayName": "Tamaño del Artículo",
-              "required": true,
-              "description": "Define la longitud del artículo. Opciones: 'corto' (300-500 palabras), 'mediano' (800-1200 palabras), 'largo' (1500+ palabras).",
+              "id": "tamañoDelArticulo",
+              "displayName": "tamañoDelArticulo",
+              "required": false,
               "defaultMatch": false,
               "display": true,
               "canBeUsedToMatch": true,
@@ -44,10 +43,9 @@
               "removed": false
             },
             {
-              "id": "cuantas_imagenes",
-              "displayName": "Cuántas Imágenes",
-              "required": true,
-              "description": "El número de imágenes que se deben generar e incluir en el artículo. (Ej: 3)",
+              "id": "CuantasImagenes",
+              "displayName": "CuantasImagenes",
+              "required": false,
               "defaultMatch": false,
               "display": true,
               "canBeUsedToMatch": true,
@@ -55,10 +53,9 @@
               "removed": false
             },
             {
-              "id": "tipo_de_contenido",
-              "displayName": "Tipo de Contenido",
-              "required": true,
-              "description": "El formato o enfoque del artículo. (Ej: 'tutorial paso a paso', 'lista de recursos', 'análisis de caso de estudio')",
+              "id": "TipoDeConrtenido",
+              "displayName": "TipoDeConrtenido",
+              "required": false,
               "defaultMatch": false,
               "display": true,
               "canBeUsedToMatch": true,
@@ -66,10 +63,19 @@
               "removed": false
             },
             {
-              "id": "titulo_del_blog",
-              "displayName": "Título del Blog",
-              "required": true,
-              "description": "El título principal del artículo. Debe ser atractivo y estar optimizado para SEO.",
+              "id": "TituloDelBlog",
+              "displayName": "TituloDelBlog",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "ContextoDelArticulo",
+              "displayName": "ContextoDelArticulo",
+              "required": false,
               "defaultMatch": false,
               "display": true,
               "canBeUsedToMatch": true,

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { clienteSupabase } from '../../configuracion/supabase'
-import TarjetaProductoVendedora from './TarjetaProductoVendedora'
 import TarjetaProductoLujo from './TarjetaProductoLujo'
 import { Filter, Grid, List, ChevronDown, Loader, AlertCircle, Zap, Flame, TrendingUp } from 'lucide-react'
 import './GridProductosVendedor.css'

@@ -55,7 +55,7 @@ const CalendarioTareas = lazy(() => import('./paginas/admin/calendario_tareas/Ca
 const TableroTareas = lazy(() => import('./paginas/admin/calendario_tareas/TableroTareas'));
 const AdminBlog = lazy(() => import('./paginas/admin/Blog/AdminBlog'));
 const ManejoCupones = lazy(() => import('./paginas/admin/ManejoCupones/ManejoCupones'));
-const LandingProducto = lazy(() => import('./paginas/LandingProducto'));
+const LandingProducto = lazy(() => import('./paginas/LandingProducto.jsx'));
 const PlantillaTemu = lazy(() => import('./componentes/landing/plantillas/PlantillaTemu/PlantillaTemu'));
 const PaginaTienda = lazy(() => import('./paginas/ecommerce/PaginaTienda/PaginaTienda'));
 const PaginaBlog = lazy(() => import('./paginas/blog/PaginaBlog'));

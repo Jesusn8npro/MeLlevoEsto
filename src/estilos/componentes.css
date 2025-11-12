@@ -230,6 +230,18 @@
   color: var(--color-blanco);
 }
 
+/* Estilos para la lista de productos en el menú */
+.lista-productos-menu {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    overflow-x: auto;
+}
+
+.lista-productos-menu .producto-card:last-child {
+    margin-bottom: 0;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .menu-contenedor {
