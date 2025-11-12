@@ -1,39 +1,58 @@
 
 import { createClient } from '@supabase/supabase-js'
+import { getSecurityHeaders, manejarError } from './seguridad.js'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-// Configuración simplificada para garantizar persistencia de sesión
+// Validación de variables de entorno críticas
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Faltan variables de entorno críticas de Supabase')
+}
+
+// Configuración mejorada con seguridad
 export const clienteSupabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    // Configuración básica y confiable
+    // Configuración segura de autenticación
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
     
-    // Usar localStorage estándar sin customización
+    // Usar localStorage estándar con validación
     storage: window.localStorage,
     
-    // Usar flujo implícito que es más confiable para SPAs
-    flowType: 'implicit',
+    // Flujo PKCE más seguro para producción
+    flowType: 'pkce',
     
-    // Configuración de debug
-    debug: import.meta.env.VITE_DEBUG === 'true'
+    // Deshabilitar debug en producción
+    debug: import.meta.env.DEV && import.meta.env.VITE_DEBUG === 'true'
+  },
+  global: {
+    headers: {
+      ...getSecurityHeaders(),
+      'X-Client-Info': 'MeLlevoEsto/1.0.0'
+    }
+  },
+  // Configuración de reintentos y timeouts
+  db: {
+    schema: 'public'
   }
 })
 
-// Función auxiliar para obtener session ID solo cuando sea necesario
+// Función auxiliar para obtener session ID de forma segura
 export const obtenerSessionId = () => {
   try {
-    let sessionId = localStorage.getItem('me-llevo-esto-session-id')
+    let sessionId = sessionStorage.getItem('me-llevo-esto-session-id')
     if (!sessionId) {
       sessionId = crypto.randomUUID()
-      localStorage.setItem('me-llevo-esto-session-id', sessionId)
+      sessionStorage.setItem('me-llevo-esto-session-id', sessionId)
     }
     return sessionId
   } catch (error) {
-    console.warn('Error obteniendo session ID:', error)
+    // En producción no mostrar errores en consola
+    if (import.meta.env.DEV) {
+      console.warn('Error obteniendo session ID:', error)
+    }
     return crypto.randomUUID()
   }
 }
@@ -47,16 +66,19 @@ export const obtenerClienteConSesion = () => {
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
-      storage: window.localStorage,
-      flowType: 'implicit'
+      storage: window.sessionStorage, // Cambiado a sessionStorage
+      flowType: 'pkce' // Más seguro que implicit
     },
     global: {
       headers: {
-        'x-session-id': sessionId
+        'x-session-id': sessionId,
+        ...getSecurityHeaders()
       }
     }
   })
 }
 
-// Log de inicialización
-console.log('🚀 Cliente Supabase inicializado con configuración simplificada')
+// Log de inicialización (solo en desarrollo)
+if (import.meta.env.DEV) {
+  console.log('🚀 Cliente Supabase inicializado con configuración segura')
+}

@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom'
+import { ComponenteSeguridad } from './componentes/seguridad/ComponenteSeguridad.jsx'
 
 // Componente de carga para Suspense
 const SuspenseLayout = ({ children }) => (
@@ -78,6 +79,7 @@ function App() {
   )
   
   return (
+    <ComponenteSeguridad>
     <ChatProvider>
       <CarritoProvider>
         <FavoritosProvider>
@@ -645,9 +647,10 @@ function App() {
         </SuspenseLayout>
         <NotificacionCarritoWrapper />
         </div>
-      </FavoritosProvider>
-    </CarritoProvider>
-  </ChatProvider>
+        </FavoritosProvider>
+      </CarritoProvider>
+    </ChatProvider>
+    </ComponenteSeguridad>
   )
 }
 
