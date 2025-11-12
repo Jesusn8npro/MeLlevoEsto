@@ -3,7 +3,11 @@ import { X, Eye, EyeOff, Mail, Lock, User, Phone } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contextos/ContextoAutenticacion'
 import { clienteSupabase } from '../../configuracion/supabase'
+<<<<<<< HEAD
 import styles from './ModalAutenticacion.module.css'
+=======
+import './ModalAutenticacion.css'
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
 
 export default function ModalAutenticacion({ abierto, onCerrar }) {
   const [cargando, setCargando] = useState(false)
@@ -240,17 +244,26 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
   if (!abierto) return null
 
   return (
+<<<<<<< HEAD
     <div className={styles.overlay} onClick={manejarClickModal}>
       <div className={styles.container} onClick={(e) => e.stopPropagation()}>
         {/* Botón de cierre */}
         <button 
           className={styles.closeButton} 
+=======
+    <div className="fondo-modal-auth" onClick={manejarClickModal}>
+      <div className="modal-inicio-sesion" onClick={(e) => e.stopPropagation()}>
+        {/* Botón cerrar */}
+        <button 
+          className="boton-cerrar-modal" 
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
           onClick={onCerrar}
           aria-label="Cerrar modal"
         >
           <X size={24} />
         </button>
 
+<<<<<<< HEAD
         {/* Contenido principal */}
         <div className={styles.content}>
           {/* Logo */}
@@ -271,6 +284,30 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                 <div className={styles.inputGroup}>
                   <label htmlFor="emailRecuperar">Correo electrónico</label>
                   <div className={styles.inputWrapper}>
+=======
+        {/* Logo y branding */}
+        <div className="logo-modal">
+          <div className="logo-contenedor">
+            <h1 className="logo-texto">ME LLEVO ESTO</h1>
+            <span className="logo-dominio">.com</span>
+          </div>
+        </div>
+
+        {/* Contenido del modal */}
+        <div className="contenido-modal-auth">
+          {vistaRecuperar ? (
+            // Vista de recuperar contraseña
+            <>
+              <h2 className="titulo-modal">Recuperar contraseña</h2>
+              <p className="login-desc">
+                Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.
+              </p>
+              
+              <form className="formulario-inicio-sesion" onSubmit={manejarRecuperacion}>
+                <div className="campo-formulario">
+                  <label htmlFor="emailRecuperar">Correo electrónico</label>
+                  <div className="input-icono">
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
                     <input
                       id="emailRecuperar"
                       ref={inputRef}
@@ -280,16 +317,25 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                       placeholder="ejemplo@correo.com"
                       required
                     />
+<<<<<<< HEAD
                     <Mail className={styles.inputIcon} size={20} />
+=======
+                    <Mail className="icono-input" size={20} />
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
                   </div>
                 </div>
 
                 {mensajeRecuperar && (
+<<<<<<< HEAD
                   <div className={`${styles.message} ${mensajeRecuperar.includes('✅') ? styles.isSuccess : styles.isError}`}>
+=======
+                  <div className={`mensaje-info-auth ${mensajeRecuperar.includes('✅') ? 'success' : 'error'}`}>
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
                     {mensajeRecuperar}
                   </div>
                 )}
 
+<<<<<<< HEAD
                 <button type="submit" className={styles.submitButton} disabled={cargando}>
                   {cargando ? 'Enviando...' : 'Enviar Enlace'}
                 </button>
@@ -299,12 +345,24 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                 <button 
                   type="button" 
                   className={styles.link} 
+=======
+                <button type="submit" className="boton-enviar-auth" disabled={cargando}>
+                  {cargando ? 'Enviando...' : 'Enviar enlace'}
+                </button>
+              </form>
+
+              <div className="enlaces-extra">
+                <button 
+                  type="button" 
+                  className="enlace-olvido" 
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
                   onClick={() => {
                     setVistaRecuperar(false)
                     setMensajeRecuperar('')
                     setEmailRecuperar('')
                   }}
                 >
+<<<<<<< HEAD
                   Volver a Iniciar Sesión
                 </button>
               </div>
@@ -321,6 +379,24 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                 <div className={styles.inputGroup}>
                   <label htmlFor="email">Correo electrónico</label>
                   <div className={styles.inputWrapper}>
+=======
+                  Volver al inicio de sesión
+                </button>
+              </div>
+            </>
+          ) : !vistaRegistro ? (
+            // Vista de login
+            <>
+              <h2 className="titulo-modal">¡Bienvenido de nuevo!</h2>
+              <p className="login-desc">
+                Accede a tu cuenta para disfrutar de todos los beneficios de ME LLEVO ESTO.
+              </p>
+              
+              <form className="formulario-inicio-sesion" onSubmit={manejarLogin}>
+                <div className="campo-formulario">
+                  <label htmlFor="email">Correo electrónico</label>
+                  <div className="input-icono">
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
                     <input
                       id="email"
                       ref={inputRef}
@@ -330,6 +406,7 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                       placeholder="ejemplo@correo.com"
                       required
                     />
+<<<<<<< HEAD
                     <Mail className={styles.inputIcon} size={20} />
                   </div>
                 </div>
@@ -337,6 +414,15 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                 <div className={styles.inputGroup}>
                   <label htmlFor="contrasena">Contraseña</label>
                   <div className={styles.inputWrapper}>
+=======
+                    <Mail className="icono-input" size={20} />
+                  </div>
+                </div>
+
+                <div className="campo-formulario">
+                  <label htmlFor="contrasena">Contraseña</label>
+                  <div className="input-icono">
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
                     <input
                       id="contrasena"
                       type={mostrarContrasena ? 'text' : 'password'}
@@ -347,9 +433,15 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                     />
                     <button
                       type="button"
+<<<<<<< HEAD
                       className={styles.showPassword}
                       onClick={() => setMostrarContrasena(!mostrarContrasena)}
                       aria-label={mostrarContrasena ? 'Ocultar' : 'Mostrar'}
+=======
+                      className="boton-mostrar-contrasena"
+                      onClick={() => setMostrarContrasena(!mostrarContrasena)}
+                      aria-label={mostrarContrasena ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
                     >
                       {mostrarContrasena ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
@@ -357,14 +449,22 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                 </div>
 
                 {error && (
+<<<<<<< HEAD
                   <div className={`${styles.message} ${styles.isError}`}>{error}</div>
                 )}
 
                 <button type="submit" className={styles.submitButton} disabled={cargando}>
+=======
+                  <div className="mensaje-error-auth">{error}</div>
+                )}
+
+                <button type="submit" className="boton-enviar-auth" disabled={cargando}>
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
                   {cargando ? 'Ingresando...' : 'Entrar'}
                 </button>
               </form>
 
+<<<<<<< HEAD
               <div className={styles.separator}>
                 <span>o continúa con</span>
               </div>
@@ -377,11 +477,30 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                   disabled={cargando}
                 >
                   <svg className={styles.googleIcon} viewBox="0 0 24 24">
+=======
+              {/* Separador */}
+              <div className="separador-o">
+                <div className="linea"></div>
+                <span className="texto-o">o continúa con</span>
+                <div className="linea"></div>
+              </div>
+
+              {/* Botón de Google */}
+              <div className="botones-sociales">
+                <button 
+                  type="button" 
+                  className="boton-google-auth" 
+                  onClick={manejarGoogleLogin}
+                  disabled={cargando}
+                >
+                  <svg className="google-icon" viewBox="0 0 24 24" fill="none">
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                   </svg>
+<<<<<<< HEAD
                   <span>{cargando ? 'Conectando...' : 'Continuar con Google'}</span>
                 </button>
               </div>
@@ -390,12 +509,25 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                 <button 
                   type="button" 
                   className={styles.link} 
+=======
+                  <span className="google-texto">
+                    {cargando ? 'Conectando...' : 'Continuar con Google'}
+                  </span>
+                </button>
+              </div>
+
+              <div className="enlaces-extra">
+                <button 
+                  type="button" 
+                  className="enlace-olvido" 
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
                   onClick={() => setVistaRecuperar(true)}
                 >
                   ¿Olvidaste tu contraseña?
                 </button>
                 <button 
                   type="button" 
+<<<<<<< HEAD
                   className={styles.link} 
                   onClick={() => setVistaRegistro(true)}
                 >
@@ -416,12 +548,35 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                   <div className={styles.inputGroup}>
                     <label htmlFor="nombre">Nombre</label>
                     <div className={styles.inputWrapper}>
+=======
+                  className="enlace-registrarse" 
+                  onClick={() => setVistaRegistro(true)}
+                >
+                  ¿No tienes cuenta? <b>Regístrate</b>
+                </button>
+              </div>
+            </>
+          ) : (
+            // Vista de registro
+            <>
+              <h2 className="titulo-modal">Crear cuenta nueva</h2>
+              <p className="login-desc">
+                Únete a la comunidad y accede a todas las ofertas y beneficios exclusivos.
+              </p>
+              
+              <form className="formulario-inicio-sesion" onSubmit={manejarRegistro}>
+                <div className="fila-nombre-apellido">
+                  <div className="campo-formulario">
+                    <label htmlFor="nombre">Nombre</label>
+                    <div className="input-icono">
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
                       <input
                         id="nombre"
                         ref={inputRef}
                         type="text"
                         value={nombre}
                         onChange={(e) => setNombre(e.target.value)}
+<<<<<<< HEAD
                         placeholder="Juan"
                         required
                       />
@@ -431,22 +586,76 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                   <div className={styles.inputGroup}>
                     <label htmlFor="apellido">Apellido</label>
                     <div className={styles.inputWrapper}>
+=======
+                        placeholder="Ej: Juan"
+                        required
+                      />
+                      <User className="icono-input" size={20} />
+                    </div>
+                  </div>
+                  <div className="campo-formulario">
+                    <label htmlFor="apellido">Apellido</label>
+                    <div className="input-icono">
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
                       <input
                         id="apellido"
                         type="text"
                         value={apellido}
                         onChange={(e) => setApellido(e.target.value)}
+<<<<<<< HEAD
                         placeholder="Pérez"
                         required
                       />
                       <User className={styles.inputIcon} size={20} />
+=======
+                        placeholder="Ej: Pérez"
+                        required
+                      />
+                      <User className="icono-input" size={20} />
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
                     </div>
                   </div>
                 </div>
 
+<<<<<<< HEAD
                 <div className={styles.inputGroup}>
                   <label htmlFor="emailRegistro">Correo electrónico</label>
                   <div className={styles.inputWrapper}>
+=======
+                <div className="campo-formulario">
+                  <label htmlFor="telefono">WhatsApp (opcional)</label>
+                  <div className="input-whatsapp">
+                    <div className="selector-pais-container">
+                      <select 
+                        className="selector-pais" 
+                        value={codigoPais}
+                        onChange={(e) => setCodigoPais(e.target.value)}
+                      >
+                        {paises.map((pais) => (
+                          <option key={pais.codigo} value={pais.codigo}>
+                            {pais.bandera} {pais.codigo}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="flecha-selector">▼</span>
+                    </div>
+                    <div className="input-numero">
+                      <input
+                        id="telefono"
+                        type="tel"
+                        value={telefono}
+                        onChange={(e) => setTelefono(e.target.value)}
+                        placeholder="Número sin código de país"
+                      />
+                      <Phone className="icono-input" size={20} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="campo-formulario">
+                  <label htmlFor="emailRegistro">Correo electrónico</label>
+                  <div className="input-icono">
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
                     <input
                       id="emailRegistro"
                       type="email"
@@ -455,6 +664,7 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                       placeholder="ejemplo@correo.com"
                       required
                     />
+<<<<<<< HEAD
                     <Mail className={styles.inputIcon} size={20} />
                   </div>
                 </div>
@@ -462,19 +672,38 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                 <div className={styles.inputGroup}>
                   <label htmlFor="contrasenaRegistro">Contraseña</label>
                   <div className={styles.inputWrapper}>
+=======
+                    <Mail className="icono-input" size={20} />
+                  </div>
+                </div>
+
+                <div className="campo-formulario">
+                  <label htmlFor="contrasenaRegistro">Contraseña</label>
+                  <div className="input-icono">
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
                     <input
                       id="contrasenaRegistro"
                       type={mostrarContrasenaRegistro ? 'text' : 'password'}
                       value={contrasenaRegistro}
                       onChange={(e) => setContrasenaRegistro(e.target.value)}
+<<<<<<< HEAD
                       placeholder="Mínimo 6 caracteres"
+=======
+                      placeholder="Crea una contraseña segura"
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
                       required
                     />
                     <button
                       type="button"
+<<<<<<< HEAD
                       className={styles.showPassword}
                       onClick={() => setMostrarContrasenaRegistro(!mostrarContrasenaRegistro)}
                       aria-label={mostrarContrasenaRegistro ? 'Ocultar' : 'Mostrar'}
+=======
+                      className="boton-mostrar-contrasena"
+                      onClick={() => setMostrarContrasenaRegistro(!mostrarContrasenaRegistro)}
+                      aria-label={mostrarContrasenaRegistro ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
                     >
                       {mostrarContrasenaRegistro ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
@@ -482,6 +711,7 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                 </div>
 
                 {error && (
+<<<<<<< HEAD
                   <div className={`${styles.message} ${styles.isError}`}>{error}</div>
                 )}
 
@@ -500,6 +730,26 @@ export default function ModalAutenticacion({ abierto, onCerrar }) {
                 </button>
               </div>
             </div>
+=======
+                  <div className="mensaje-error-auth">{error}</div>
+                )}
+
+                <button type="submit" className="boton-enviar-auth" disabled={cargando}>
+                  {cargando ? 'Registrando...' : 'Registrarme'}
+                </button>
+              </form>
+
+              <div className="enlaces-extra">
+                <button 
+                  type="button" 
+                  className="enlace-olvido" 
+                  onClick={() => setVistaRegistro(false)}
+                >
+                  ¿Ya tienes cuenta? <b>Inicia sesión</b>
+                </button>
+              </div>
+            </>
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
           )}
         </div>
       </div>

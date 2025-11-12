@@ -7,6 +7,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+<<<<<<< HEAD
     css: {
       modules: {
         localsConvention: 'camelCase',
@@ -15,6 +16,8 @@ export default defineConfig(({ mode }) => {
           : '[name]__[local]__[hash:base64:5]',
       },
     },
+=======
+>>>>>>> bf661ffa5c8178383d447a0252a503d6f79768bc
     build: {
       sourcemap: false, // Desactivar source maps en producción
       minify: 'terser', // Usar Terser para minificación
