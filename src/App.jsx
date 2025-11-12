@@ -23,11 +23,11 @@ const PaginaCategoria = lazy(() => import('./paginas/ecommerce/PaginaCategoria/P
 const PaginaCarrito = lazy(() => import('./paginas/ecommerce/PaginaCarrito/PaginaCarrito.jsx'));
 const PaginaFavoritos = lazy(() => import('./paginas/ecommerce/PaginaFavoritos/PaginaFavoritos.jsx'));
 const PaginaCheckout = lazy(() => import('./paginas/ecommerce/PaginaCheckout/PaginaCheckout.jsx'));
-const PaginaLogin = lazy(() => import('./paginas/autenticacion/PaginaLogin/PaginaLogin'));
-const PaginaRegistro = lazy(() => import('./paginas/autenticacion/PaginaRegistro/PaginaRegistro'));
-const PaginaPerfil = lazy(() => import('./paginas/autenticacion/PaginaPerfil/PaginaPerfil'));
-const PaginaRestablecerContrasena = lazy(() => import('./paginas/autenticacion/PaginaResetPassword/PaginaResetPassword'));
-const PaginaSesionCerrada = lazy(() => import('./paginas/autenticacion/PaginaSesionCerrada/PaginaSesionCerrada'));
+const PaginaLogin = lazy(() => import('./paginas/autenticacion/PaginaLogin/PaginaLogin.jsx'));
+const PaginaRegistro = lazy(() => import('./paginas/autenticacion/PaginaRegistro/PaginaRegistro.jsx'));
+const PaginaPerfil = lazy(() => import('./paginas/autenticacion/PaginaPerfil/PaginaPerfil.jsx'));
+const PaginaRestablecerContrasena = lazy(() => import('./paginas/autenticacion/PaginaResetPassword/PaginaResetPassword.jsx'));
+const PaginaSesionCerrada = lazy(() => import('./paginas/autenticacion/PaginaSesionCerrada/PaginaSesionCerrada.jsx'));
 import PaginaNoEncontrada from './paginas/sistema/PaginaNoEncontrada/PaginaNoEncontrada'
 import PaginaRespuestaEpayco from './paginas/ecommerce/PaginaRespuestaEpayco/PaginaRespuestaEpayco'
 import ConfirmacionEpayco from './paginas/ecommerce/ConfirmacionEpayco'
@@ -38,25 +38,25 @@ import PoliticaPrivacidad from './paginas/legal/PoliticaPrivacidad/PoliticaPriva
 import PruebaDeProducto from './paginas/ecommerce/PruebaDeProducto/PruebaDeProducto'
 import PreguntasFrecuentes from './paginas/legal/PreguntasFrecuentes/PreguntasFrecuentes'
 import TrabajaConNosotros from './paginas/empresa/TrabajaConNosotros/TrabajaConNosotros'
-const DashboardAdmin = lazy(() => import('./paginas/admin/DashboardAdmin/DashboardAdmin'));
+const DashboardAdmin = lazy(() => import('./paginas/admin/DashboardAdmin/DashboardAdmin.jsx'));
 const DisposicionAdmin = lazy(() => import('./componentes/admin/DisposicionAdmin/DisposicionAdmin'));
-const ListaProductos = lazy(() => import('./paginas/admin/productos/ListaProductos'));
-const GestionProductos = lazy(() => import('./paginas/admin/GestionProductos/GestionProductos'));
-const CreadorProductosPR = lazy(() => import('./paginas/admin/CreadorDeProductosPR/CreadorProductosPR'));
-const CreadorArticulos = lazy(() => import('./paginas/admin/Blog/CreadorArticulos'));
-const EditarProducto = lazy(() => import('./paginas/admin/PaginaEditarProducto/EditarProducto'));
-const Categorias = lazy(() => import('./paginas/admin/Categorias/Categorias'));
-const Pedidos = lazy(() => import('./paginas/admin/Pedidos/Pedidos'));
-const Inventario = lazy(() => import('./paginas/admin/Inventario/Inventario'));
-const Usuarios = lazy(() => import('./paginas/admin/Usuarios/Usuarios'));
-const AdminChats = lazy(() => import('./paginas/admin/ManejoDeChats/AdminChats'));
-const GenericaAdmin = lazy(() => import('./paginas/admin/GenericaAdmin'));
-const CalendarioTareas = lazy(() => import('./paginas/admin/calendario_tareas/CalendarioTareas'));
-const TableroTareas = lazy(() => import('./paginas/admin/calendario_tareas/TableroTareas'));
-const AdminBlog = lazy(() => import('./paginas/admin/Blog/AdminBlog'));
-const ManejoCupones = lazy(() => import('./paginas/admin/ManejoCupones/ManejoCupones'));
+const ListaProductos = lazy(() => import('./paginas/admin/productos/ListaProductos.jsx'));
+const GestionProductos = lazy(() => import('./paginas/admin/GestionProductos/GestionProductos.jsx'));
+const CreadorProductosPR = lazy(() => import('./paginas/admin/CreadorDeProductosPR/CreadorProductosPR.jsx'));
+const CreadorArticulos = lazy(() => import('./paginas/admin/Blog/CreadorArticulos.jsx'));
+const EditarProducto = lazy(() => import('./paginas/admin/PaginaEditarProducto/EditarProducto.jsx'));
+const Categorias = lazy(() => import('./paginas/admin/Categorias/Categorias.jsx'));
+const Pedidos = lazy(() => import('./paginas/admin/Pedidos/Pedidos.jsx'));
+const Inventario = lazy(() => import('./paginas/admin/Inventario/Inventario.jsx'));
+const Usuarios = lazy(() => import('./paginas/admin/Usuarios/Usuarios.jsx'));
+const AdminChats = lazy(() => import('./paginas/admin/ManejoDeChats/AdminChats.jsx'));
+const GenericaAdmin = lazy(() => import('./paginas/admin/GenericaAdmin.jsx'));
+const CalendarioTareas = lazy(() => import('./paginas/admin/calendario_tareas/CalendarioTareas.jsx'));
+const TableroTareas = lazy(() => import('./paginas/admin/calendario_tareas/TableroTareas.jsx'));
+const AdminBlog = lazy(() => import('./paginas/admin/Blog/AdminBlog.jsx'));
+const ManejoCupones = lazy(() => import('./paginas/admin/ManejoCupones/ManejoCupones.jsx'));
 const LandingProducto = lazy(() => import('./paginas/LandingProducto.jsx'));
-const PlantillaTemu = lazy(() => import('./componentes/landing/plantillas/PlantillaTemu/PlantillaTemu'));
+const PlantillaTemu = lazy(() => import('./componentes/landing/plantillas/PlantillaTemu/PlantillaTemu.jsx'));
 const PaginaTienda = lazy(() => import('./paginas/ecommerce/PaginaTienda/PaginaTienda.jsx'));
 const PaginaBlog = lazy(() => import('./paginas/blog/PaginaBlog'));
 const ArticuloBlog = lazy(() => import('./paginas/blog/ArticuloBlog'));
