@@ -33,3 +33,5 @@ dist-ssr
 # Supabase
 .supabase
 
+# Evitar nombres reservados de Windows creados accidentalmente
+CON
