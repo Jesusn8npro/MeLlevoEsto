@@ -14,7 +14,6 @@ body {
   background-color: var(--fondo-principal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding-bottom: 20px;
   overflow-x: hidden;
 }
 
@@ -24,13 +23,4 @@ body.menu-movil-abierto {
   position: fixed !important;
   width: 100% !important;
   height: 100% !important;
-}
-
-/* ===== MARGEN INFERIOR PARA NAVEGACIÓN MÓVIL ===== */
-/* Asegurar que el menú móvil inferior no tape el contenido */
-@media (max-width: 800px) {
-  /* Margen inferior para el body en móvil */
-  body {
-    padding-bottom: 100px !important; /* 75px del menú + 25px de margen extra */
-  }
 }
