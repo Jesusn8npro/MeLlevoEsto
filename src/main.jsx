@@ -25,17 +25,8 @@ if (import.meta.env.PROD) {
     return;
   };
   
-  // Mensaje de advertencia para desarrolladores
-  console.log('%c⚠️ ¡Atención!', 'color: red; font-size: 24px; font-weight: bold;');
-  console.log('%cEsta función del navegador está pensada para desarrolladores. No pegues aquí código que no entiendas.', 'color: red; font-size: 16px;');
-  console.log('%cPegar código aquí puede dar acceso a tus datos a atacantes.', 'color: red; font-size: 16px;');
-  
-  // Prevenir acceso a desarrollador tools
-  setInterval(() => {
-    if (window.devtools.isOpen) {
-      window.location.href = 'about:blank';
-    }
-  }, 1000);
+  // Mensaje mínimo y sin acceso a propiedades inexistentes
+  console.log('%cModo producción activo', 'color: #ff5722; font-weight: bold;');
 }
 
 // Importar script de prueba para Supabase (solo en desarrollo)
@@ -57,4 +48,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ProveedorTema>
   </BrowserRouter>,
 )
-

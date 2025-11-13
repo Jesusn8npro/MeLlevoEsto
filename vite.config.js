@@ -25,7 +25,6 @@ export default defineConfig(({ mode }) => {
           passes: 3
         },
         mangle: {
-          properties: true,
           safari10: true
         },
         format: {
