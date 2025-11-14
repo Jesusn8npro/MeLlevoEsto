@@ -24,6 +24,7 @@ const Categorias = () => {
   const [categorias, setCategorias] = useState([])
   const [productos, setProductos] = useState([])
   const [cargando, setCargando] = useState(true)
+  const [cargandoProductos, setCargandoProductos] = useState(false)
   const [error, setError] = useState(null)
   const [busqueda, setBusqueda] = useState('')
   const [busquedaProductos, setBusquedaProductos] = useState('')

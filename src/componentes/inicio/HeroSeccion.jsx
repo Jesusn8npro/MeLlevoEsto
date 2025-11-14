@@ -254,7 +254,7 @@ const HeroSeccion = () => {
                 <p>Error al cargar categorías</p>
               </div>
             ) : (
-              categoriasReales.slice(0, 10).map((categoria) => (
+              categoriasReales.map((categoria) => (
                 <div 
                   key={categoria.id} 
                   className="categoria-circular"
