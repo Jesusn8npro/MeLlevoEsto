@@ -97,6 +97,9 @@ const ImagenesLanding = ({
   const [calidadPorImagen, setCalidadPorImagen] = useState({}) // { keyImagen: 0.5..0.95 }
   const [statsPorImagen, setStatsPorImagen] = useState({}) // { keyImagen: estadisticas }
   const [archivoSeleccionadoPorKey, setArchivoSeleccionadoPorKey] = useState({}) // { keyImagen: File }
+  const [pagina, setPagina] = useState(1)
+  const [porPagina, setPorPagina] = useState(12)
+  const [optimizandoPorKey, setOptimizandoPorKey] = useState({}) // { keyImagen: true }
   
   // ===== SISTEMA DE LOGGING Y DEBUG =====
   const [mostrarDebug, setMostrarDebug] = useState(true)
@@ -118,16 +121,37 @@ const ImagenesLanding = ({
   }
 
   // Reoptimizar una imagen ya subida desde su URL pública
+  const descargarConTimeout = async (url, ms = 15000) => {
+    return Promise.race([
+      fetch(url, { mode: 'cors' }),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('Tiempo de espera excedido al descargar la imagen')), ms))
+    ])
+  }
+
+  const verificarDisponible = async (url, ms = 8000) => {
+    try {
+      const resp = await Promise.race([
+        fetch(url, { method: 'GET' }),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('Timeout de verificación')), ms))
+      ])
+      const blob = await resp.blob()
+      return blob.size > 0
+    } catch {
+      return false
+    }
+  }
+
   const reoptimizarImagenDesdeURL = async (tipoImagen) => {
     try {
+      if (optimizandoPorKey[tipoImagen]) return
+      setOptimizandoPorKey(prev => ({ ...prev, [tipoImagen]: true }))
       const urlActual = imagenesLanding[tipoImagen]
       if (!urlActual) return
 
       setSubiendoImagenLanding(true)
       setOptimizandoImagen(true)
 
-      // Descargar como Blob
-      const respuesta = await fetch(urlActual, { mode: 'cors' })
+      const respuesta = await descargarConTimeout(urlActual)
       const blobOriginal = await respuesta.blob()
 
       // Aplicar preset/calidad por imagen
@@ -146,15 +170,12 @@ const ImagenesLanding = ({
       setStatsPorImagen(prev => ({ ...prev, [tipoImagen]: resultado.estadisticas }))
       setEstadisticasOptimizacion(resultado.estadisticas)
 
-      // Subir reemplazo
-      const tipoMime = archivoFinal?.type || 'image/webp'
-      let extension = (tipoMime.split('/')[1] || 'webp').toLowerCase()
-      if (extension === 'jpeg') extension = 'jpg'
-      const nombreArchivo = `${productoId}_${tipoImagen}_${Date.now()}.${extension}`
+      const extension = 'webp'
+      const nombreArchivo = `optimizadas/${productoId}/${tipoImagen}.${extension}`
 
       const { data, error } = await clienteSupabase.storage
         .from('imagenes_tienda')
-        .upload(nombreArchivo, archivoFinal, { cacheControl: '3600', upsert: false })
+        .upload(nombreArchivo, archivoFinal, { cacheControl: '3600', upsert: true })
 
       if (error) throw error
 
@@ -162,6 +183,8 @@ const ImagenesLanding = ({
         .from('imagenes_tienda')
         .getPublicUrl(nombreArchivo)
 
+      const ok = await verificarDisponible(publicUrl)
+      if (!ok) throw new Error('La imagen optimizada no se pudo verificar en Storage')
       setImagenesLanding(prev => ({ ...prev, [tipoImagen]: publicUrl }))
 
       const datosParaGuardar = { ...imagenesLanding, [tipoImagen]: publicUrl, producto_id: productoId }
@@ -178,6 +201,7 @@ const ImagenesLanding = ({
     } finally {
       setSubiendoImagenLanding(false)
       setOptimizandoImagen(false)
+      setOptimizandoPorKey(prev => ({ ...prev, [tipoImagen]: false }))
     }
   }
 
@@ -385,24 +409,25 @@ const ImagenesLanding = ({
     setOptimizandoImagen(false)
 
     try {
-      // Obtener extensión de forma segura incluso si archivoFinal es Blob sin nombre
-      const tipoMime = archivoFinal?.type || archivo?.type || 'image/jpeg'
-      let extension = (tipoMime.split('/')[1] || 'jpg').toLowerCase()
-      if (extension === 'jpeg') extension = 'jpg'
-      const nombreArchivo = `${productoId}_${tipoImagen}_${Date.now()}.${extension}`
+      let extOpt = 'webp'
+      let extOrig = (archivo?.type?.split('/')[1] || 'jpg').toLowerCase()
+      if (extOrig === 'jpeg') extOrig = 'jpg'
+      const nombreOriginal = `originales/${productoId}/${tipoImagen}.${extOrig}`
+      const nombreOptimizado = `optimizadas/${productoId}/${tipoImagen}.${extOpt}`
       
       agregarLog('info', `🗂️ Subiendo imagen optimizada a bucket 'imagenes_tienda'`, { 
-        nombreArchivo,
+        nombreOptimizado,
         tamañoFinal: archivoFinal.size,
         optimizada: archivoFinal !== archivo
       })
       
+      await clienteSupabase.storage
+        .from('imagenes_tienda')
+        .upload(nombreOriginal, archivo, { cacheControl: '3600', upsert: true })
+
       const { data, error } = await clienteSupabase.storage
         .from('imagenes_tienda')
-        .upload(nombreArchivo, archivoFinal, {
-          cacheControl: '3600',
-          upsert: false
-        })
+        .upload(nombreOptimizado, archivoFinal, { cacheControl: '3600', upsert: true })
 
       if (error) {
         agregarLog('error', `❌ Error en Storage Supabase: ${error.message}`, error)
@@ -413,14 +438,13 @@ const ImagenesLanding = ({
 
       const { data: { publicUrl } } = clienteSupabase.storage
         .from('imagenes_tienda')
-        .getPublicUrl(nombreArchivo)
+        .getPublicUrl(nombreOptimizado)
 
       agregarLog('info', '🔗 URL pública generada', { publicUrl })
 
-      setImagenesLanding(prev => ({
-        ...prev,
-        [tipoImagen]: publicUrl
-      }))
+      const okFinal = await verificarDisponible(publicUrl)
+      if (!okFinal) throw new Error('Verificación fallida: la imagen optimizada no está disponible')
+      setImagenesLanding(prev => ({ ...prev, [tipoImagen]: publicUrl }))
       setArchivoSeleccionadoPorKey(prev => ({ ...prev, [tipoImagen]: archivo }))
 
       // Guardar automáticamente en la base de datos después de subir
@@ -636,9 +660,9 @@ const ImagenesLanding = ({
               type="button"
               className="boton-optimizar"
               onClick={() => reoptimizarImagenDesdeURL(imagen.key)}
-              disabled={subiendoImagenLanding || !productoId}
+              disabled={subiendoImagenLanding || !productoId || optimizandoPorKey[imagen.key]}
             >
-              Optimizar y reemplazar
+              {optimizandoPorKey[imagen.key] ? 'Optimizando…' : 'Optimizar y reemplazar'}
             </button>
           )}
         </div>
@@ -738,6 +762,9 @@ const ImagenesLanding = ({
   }
 
   const imagenesFiltradas = obtenerImagenesFiltradas()
+  const inicio = (pagina - 1) * porPagina
+  const fin = inicio + porPagina
+  const imagenesPaginadas = imagenesFiltradas.slice(inicio, fin)
 
   return (
     <>
@@ -873,11 +900,11 @@ const ImagenesLanding = ({
       <div className={`imagenes-contenedor ${vistaActual}`}>
         {vistaActual === 'grid' ? (
           <div className="imagenes-grid-moderno">
-            {imagenesFiltradas.map(renderizarTarjetaImagen)}
+            {imagenesPaginadas.map(renderizarTarjetaImagen)}
           </div>
         ) : (
           <div className="imagenes-lista-moderno">
-            {imagenesFiltradas.map(renderizarFilaImagen)}
+            {imagenesPaginadas.map(renderizarFilaImagen)}
           </div>
         )}
       </div>
@@ -955,6 +982,17 @@ const ImagenesLanding = ({
             </>
           )}
         </button>
+      </div>
+
+      <div className="paginacion-editor">
+        <button onClick={() => setPagina(p => Math.max(1, p - 1))} disabled={pagina === 1}>Anterior</button>
+        <span>Página {pagina}</span>
+        <button onClick={() => setPagina(p => p + 1)} disabled={fin >= imagenesFiltradas.length}>Siguiente</button>
+        <select value={porPagina} onChange={e => { setPagina(1); setPorPagina(parseInt(e.target.value)) }}>
+          <option value={8}>8</option>
+          <option value={12}>12</option>
+          <option value={16}>16</option>
+        </select>
       </div>
 
       {/* Panel de Debug */}

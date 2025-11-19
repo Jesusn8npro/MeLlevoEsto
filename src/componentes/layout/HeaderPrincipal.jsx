@@ -397,7 +397,7 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
             </button>
             <Link to="/" className="logo-contenedor">
               <img 
-                src="/images/Logo oficial me llevo esto.jpg" 
+                src="/Logo me llevo esto.png" 
                 alt="MeLlevoEsto.com" 
                 className="logo-imagen"
               />
@@ -407,7 +407,7 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
           {/* Logo para Escritorio */}
           <Link to="/" className="logo-contenedor logo-escritorio">
             <img 
-              src="/images/Logo oficial me llevo esto.jpg" 
+              src="/Logo me llevo esto.png" 
               alt="MeLlevoEsto.com" 
               className="logo-imagen logo-imagen-escritorio"
             />

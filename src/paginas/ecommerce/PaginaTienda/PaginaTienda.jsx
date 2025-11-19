@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useSearchParams, useParams, useNavigate } from 'react-router-dom'
+import { useSearchParams, useParams } from 'react-router-dom'
 import LayoutTienda from '../../../componentes/tienda/LayoutTienda'
 import SidebarFiltros from '../../../componentes/tienda/SidebarFiltros'
 import GridProductosVendedor from '../../../componentes/producto/GridProductosVendedor'
@@ -20,8 +20,7 @@ import './PaginaTienda.css'
  */
 
 const PaginaTienda = () => {
-  const { slug } = useParams()
-  const navigate = useNavigate()
+  const { slug } = useParams() // Detectar slug de categoría
   const [searchParams, setSearchParams] = useSearchParams()
   const [categoriaActual, setCategoriaActual] = useState(null)
   const [cargandoCategoria, setCargandoCategoria] = useState(!!slug)
@@ -498,35 +497,15 @@ const PaginaTienda = () => {
 
       {/* Grid de productos */}
       <div className="tienda-productos">
-        {totalProductos === 0 ? (
-          <>
-            <div className="sin-productos-tienda">
-              <div className="sin-productos-icono"></div>
-              <h3>No encontramos productos</h3>
-              <p>Esta categoría aún no tiene productos disponibles. Explora toda la tienda.</p>
-              <button className="btn-limpiar-grande" onClick={() => navigate('/tienda')}>Ver todos los productos</button>
-            </div>
-            <GridProductosVendedor
-              filtrosExternos={null}
-              vistaActiva={vista}
-              ordenar={ordenar}
-              titulo="Te puede interesar"
-              subtitulo="Productos destacados y recientes"
-              mostrarHeader={true}
-              mostrarFiltros={false}
-            />
-          </>
-        ) : (
-          <GridProductosVendedor
-            filtrosExternos={filtros}
-            vistaActiva={vista}
-            ordenar={ordenar}
-            titulo=""
-            mostrarHeader={false}
-            mostrarFiltros={false}
-            onTotalChange={setTotalProductos}
-          />
-        )}
+        <GridProductosVendedor
+          filtrosExternos={filtros}
+          vistaActiva={vista}
+          ordenar={ordenar}
+          titulo=""
+          mostrarHeader={false}
+          mostrarFiltros={false}
+          onTotalChange={setTotalProductos}
+        />
       </div>
     </LayoutTienda>
     </>

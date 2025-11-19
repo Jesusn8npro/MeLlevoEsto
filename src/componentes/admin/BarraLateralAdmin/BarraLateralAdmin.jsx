@@ -56,6 +56,13 @@ const elementosNavegacion = [
     ruta: '/admin/chats',
   },
   {
+    icono: <BoxCubeIcon />,
+    nombre: 'Imágenes',
+    subItems: [
+      { nombre: 'Imágenes IA', ruta: '/admin/imagenes-ia', pro: false },
+    ],
+  },
+  {
     nombre: 'Formularios',
     icono: <ListIcon />,
     subItems: [{ nombre: 'Elementos de Formulario', ruta: '/admin/elementos-formulario', pro: false }],

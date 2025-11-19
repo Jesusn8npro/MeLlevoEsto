@@ -1190,28 +1190,20 @@
   height: 40px;
   border-radius: 50%;
   border: none;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(20px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  backdrop-filter: blur(10px);
   position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 0;
+  min-width: 40px;
+  line-height: 1;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
-.boton-accion::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 50%;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 0;
-}
+.boton-accion::before { display: none; }
 
 .boton-accion .icono {
   position: relative;
@@ -1229,10 +1221,7 @@
   opacity: 0;
 }
 
-.boton-accion.ver:hover {
-  transform: scale(1.15) translateY(-2px);
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-}
+.boton-accion.ver:hover { transform: scale(1.08); box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3); }
 
 .boton-accion.ver:hover::before {
   opacity: 1;
@@ -1252,10 +1241,7 @@
   opacity: 0;
 }
 
-.boton-accion.descargar:hover {
-  transform: scale(1.15) translateY(-2px);
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-}
+.boton-accion.descargar:hover { transform: scale(1.08); box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3); }
 
 .boton-accion.descargar:hover::before {
   opacity: 1;
@@ -1275,10 +1261,7 @@
   opacity: 0;
 }
 
-.boton-accion.eliminar:hover {
-  transform: scale(1.15) translateY(-2px);
-  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
-}
+.boton-accion.eliminar:hover { transform: scale(1.08); box-shadow: 0 8px 16px rgba(239, 68, 68, 0.3); }
 
 .boton-accion.eliminar:hover::before {
   opacity: 1;
@@ -1716,6 +1699,23 @@
 .spinner {
   animation: spin 1s linear infinite;
 }
+
+/* Paginación inferior del editor */
+.paginacion-editor {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 12px 0;
+}
+.paginacion-editor button {
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+}
+.paginacion-editor select { padding: 6px 8px; border: 1px solid #e5e7eb; border-radius: 8px; }
 
 /* Responsive */
 @media (max-width: 768px) {
