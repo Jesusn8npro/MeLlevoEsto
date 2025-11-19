@@ -17,6 +17,7 @@ export default function ImagenesIA() {
   const [reemplazarOriginal, setReemplazarOriginal] = useState(false)
   const [modalAbierto, setModalAbierto] = useState(false)
   const [imagenModal, setImagenModal] = useState(null)
+  const [previewsProductos, setPreviewsProductos] = useState([])
 
   // Listar archivos del bucket seleccionado
   const listarArchivos = useCallback(async () => {
@@ -89,8 +90,15 @@ export default function ImagenesIA() {
       }
       const mapa = new Map(productos.map(p => [p.id, p]))
       setUsos(coincidencias.map(c => ({ producto_id: c.producto_id, producto: mapa.get(c.producto_id), campo: c.campo, valor: c.valor })))
+      const { data: imgs } = ids.length > 0 ? await clienteSupabase
+        .from('producto_imagenes')
+        .select('producto_id, imagen_principal, imagen_secundaria_1')
+        .in('producto_id', ids) : { data: [] }
+      const mapaImgs = new Map((imgs || []).map(i => [i.producto_id, i]))
+      setPreviewsProductos(ids.map(pid => ({ producto: mapa.get(pid), imagenes: mapaImgs.get(pid) || {} })))
     } catch (e) {
       setUsos([])
+      setPreviewsProductos([])
     }
   }, [obtenerUrlPublica])
 
@@ -221,7 +229,10 @@ export default function ImagenesIA() {
                     <div className="uso-detalle">Campo: {u.campo}</div>
                   </div>
                   {u.producto?.slug && (
-                    <a href={`/producto/${u.producto.slug}`} className="link-producto">Abrir producto</a>
+                    <div className="links-producto">
+                      <a href={`/producto/${u.producto.slug}`} className="link-producto">Ver producto</a>
+                      <a href={`/landing/${u.producto.slug}`} className="link-producto">Ver landing</a>
+                    </div>
                   )}
                 </li>
               ))}
@@ -231,8 +242,8 @@ export default function ImagenesIA() {
       )}
 
       {modalAbierto && imagenModal && (
-        <div className="modal-imagen-ia" onClick={() => setModalAbierto(false)}>
-          <div className="modal-contenido-ia" onClick={e => e.stopPropagation()}>
+        <div className="modal-imagen-ia fade-in" onClick={() => setModalAbierto(false)}>
+          <div className="modal-contenido-ia slide-up" onClick={e => e.stopPropagation()}>
             <button className="modal-cerrar-ia" onClick={() => setModalAbierto(false)}>Cerrar</button>
             <img src={imagenModal} alt="Imagen" className="modal-imagen-preview" />
             <div className="modal-usos-ia">
@@ -249,13 +260,46 @@ export default function ImagenesIA() {
                         <div className="uso-detalle">Campo: {u.campo}</div>
                       </div>
                       {u.producto?.slug && (
-                        <a href={`/producto/${u.producto.slug}`} className="link-producto">Abrir producto</a>
+                        <div className="links-producto">
+                          <a href={`/producto/${u.producto.slug}`} className="link-producto">Ver producto</a>
+                          <a href={`/landing/${u.producto.slug}`} className="link-producto">Ver landing</a>
+                        </div>
                       )}
                     </li>
                   ))}
                 </ul>
               )}
             </div>
+            {previewsProductos.length > 0 && (
+              <div className="previews-productos">
+                <h3>Productos asociados</h3>
+                <div className="grid-previews">
+                  {previewsProductos.map((p) => (
+                    <div key={`pv-${p.producto?.id}`} className="preview-card">
+                      <div className="preview-imagen">
+                        {p.imagenes?.imagen_principal ? (
+                          <img src={p.imagenes.imagen_principal} alt={p.producto?.nombre} />
+                        ) : (
+                          <div className="preview-placeholder">Sin imagen</div>
+                        )}
+                      </div>
+                      <div className="preview-info">
+                        <div className="preview-titulo">{p.producto?.nombre}</div>
+                        {typeof p.producto?.precio === 'number' && (
+                          <div className="preview-precio">${p.producto.precio.toLocaleString('es-CO')}</div>
+                        )}
+                        {p.producto?.slug && (
+                          <div className="links-producto">
+                            <a href={`/producto/${p.producto.slug}`} className="link-producto">Ver producto</a>
+                            <a href={`/landing/${p.producto.slug}`} className="link-producto">Ver landing</a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
