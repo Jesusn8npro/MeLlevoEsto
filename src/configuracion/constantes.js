@@ -42,9 +42,9 @@ export const RUTAS = {
 // Configuración de ePayco
 export const EPAYCO_CONFIG = {
   PUBLIC_KEY: import.meta.env.VITE_EPAYCO_PUBLIC_KEY, // Credencial pública desde .env
-  PRIVATE_KEY: import.meta.env.VITE_EPAYCO_PRIVATE_KEY, // Credencial privada desde .env
-  CUSTOMER_ID: import.meta.env.VITE_EPAYCO_P_CUST_ID_CLIENTE, // ID de cliente desde .env
-  P_KEY: import.meta.env.VITE_EPAYCO_P_KEY, // P_KEY desde .env
+  PRIVATE_KEY: undefined, // No se usa en el frontend por seguridad
+  CUSTOMER_ID: undefined, // No se expone en el frontend
+  P_KEY: undefined, // No se expone en el frontend
   TEST_MODE: import.meta.env.VITE_EPAYCO_TEST_MODE === 'true', // Modo prueba desde .env
   COUNTRY: "CO", // Colombia
   CURRENCY: "COP", // Peso colombiano

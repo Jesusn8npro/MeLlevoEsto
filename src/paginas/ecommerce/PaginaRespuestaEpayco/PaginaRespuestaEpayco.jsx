@@ -23,7 +23,6 @@ import {
 import { useCarrito } from '../../../contextos/CarritoContext'
 import { formatearPrecioCOP } from '../../../utilidades/formatoPrecio'
 import servicioEpayco from '../../../servicios/epayco/servicioEpayco'
-import { pedidosServicio } from '../../../servicios/pedidosServicio'
 import './PaginaRespuestaEpayco.css'
 
 const PaginaRespuestaEpayco = () => {
@@ -36,8 +35,7 @@ const PaginaRespuestaEpayco = () => {
   useEffect(() => {
     const procesarRespuestaEpayco = async () => {
       try {
-        // Ejecutar diagnóstico de conectividad primero
-        const diagnostico = await pedidosServicio.diagnosticarConectividad()
+        // Diagnóstico opcional del lado cliente (omitido)
 
         // Obtener TODOS los parámetros de ePayco según documentación oficial
         const x_cust_id_cliente = searchParams.get('x_cust_id_cliente')
@@ -185,28 +183,7 @@ const PaginaRespuestaEpayco = () => {
         })
 
         // Obtener datos reales del pedido desde la base de datos
-        let pedidoReal = null
-        try {
-          // Intentar buscar por referencia de ePayco primero
-          pedidoReal = await pedidosServicio.buscarPedidoPorRefEpayco(ref_payco)
-          
-          // Si no se encuentra, intentar buscar por número de pedido
-          if (!pedidoReal && ref_payco) {
-            pedidoReal = await pedidosServicio.buscarPedidoPorNumero(ref_payco)
-          }
-          
-          // Si aún no se encuentra, usar método alternativo
-          if (!pedidoReal && ref_payco) {
-            pedidoReal = await pedidosServicio.buscarPedidoAlternativo(ref_payco)
-          }
-        } catch (error) {
-          // Como último recurso, intentar búsqueda alternativa
-          try {
-            pedidoReal = await pedidosServicio.buscarPedidoAlternativo(ref_payco)
-          } catch (fallbackError) {
-            // Error en búsqueda alternativa
-          }
-        }
+        const pedidoReal = null
 
         // Generar descripción del producto basada en los datos del pedido
           let descripcionProducto = 'Producto no encontrado'

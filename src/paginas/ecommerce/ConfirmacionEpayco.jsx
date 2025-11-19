@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { clienteSupabase } from '../../configuracion/supabase';
+import servicioEpayco from '../../servicios/epayco/servicioEpayco';
 
 const ConfirmacionEpayco = () => {
   const [searchParams] = useSearchParams();
@@ -102,78 +102,22 @@ const ConfirmacionEpayco = () => {
         x_test_request: parametros.x_test_request
       };
 
-      // Insertar log en Supabase
-      const { error: errorLog } = await clienteSupabase
-        .from('transacciones_epayco_logs')
-        .insert([logData]);
-
-      if (errorLog) {
-        console.error('❌ Error al insertar log:', errorLog);
-      } else {
-        console.log('✅ Log de confirmación guardado');
-      }
+      // Enviar la confirmación al backend seguro si está configurado
+      await servicioEpayco.registrarTransaccion({
+        referenciaPago: logData.epayco_ref_payco,
+        estado: parametros.x_response,
+        respuestaCompleta: logData,
+        tipo: 'confirmation'
+      });
 
       // Buscar el pedido por referencia
-      if (parametros.ref_payco) {
-        const { data: pedidos, error: errorPedido } = await clienteSupabase
-          .from('pedidos')
-          .select('*')
-          .eq('epayco_ref_payco', parametros.ref_payco)
-          .single();
-
-        if (errorPedido) {
-          console.error('❌ Error al buscar pedido:', errorPedido);
-          setEstado('error');
-          setMensaje('Error al buscar el pedido');
-          return;
-        }
-
-        if (pedidos) {
-          // Actualizar el pedido con los datos de ePayco
-          const datosActualizacion = {
-            epayco_transaction_id: parametros.transaction_id,
-            epayco_cod_response: parametros.cod_response,
-            epayco_signature: parametros.signature,
-            epayco_approval_code: parametros.approval_code,
-            epayco_fecha_transaccion: new Date().toISOString(),
-            epayco_franchise: parametros.franchise,
-            epayco_bank_name: parametros.bank_name,
-            epayco_test_request: parametros.test_request === 'true',
-            epayco_response_raw: parametros
-          };
-
-          // Actualizar estado del pedido según la respuesta
-          if (parametros.cod_response === '1') {
-            datosActualizacion.estado = 'confirmado';
-          } else if (parametros.cod_response === '2') {
-            datosActualizacion.estado = 'cancelado';
-          } else if (parametros.cod_response === '3') {
-            datosActualizacion.estado = 'pendiente';
-          }
-
-          const { error: errorActualizacion } = await clienteSupabase
-            .from('pedidos')
-            .update(datosActualizacion)
-            .eq('id', pedidos.id);
-
-          if (errorActualizacion) {
-            console.error('❌ Error al actualizar pedido:', errorActualizacion);
-            setEstado('error');
-            setMensaje('Error al actualizar el pedido');
-          } else {
-            console.log('✅ Pedido actualizado correctamente');
-            setEstado('exitoso');
-            setMensaje('Confirmación procesada correctamente');
-          }
-        } else {
-          console.warn('⚠️ No se encontró pedido con ref_payco:', parametros.ref_payco);
-          setEstado('advertencia');
-          setMensaje('Pedido no encontrado');
-        }
-      } else {
+      if (!parametros.ref_payco) {
         console.error('❌ No se recibió ref_payco');
         setEstado('error');
         setMensaje('Referencia de pago no válida');
+      } else {
+        setEstado('exitoso');
+        setMensaje('Confirmación registrada. El procesamiento se realiza del lado servidor.');
       }
 
     } catch (error) {

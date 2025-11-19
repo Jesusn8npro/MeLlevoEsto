@@ -7,7 +7,7 @@
 export const configuracionEpayco = {
   // Credenciales principales
   clavePublica: import.meta.env.VITE_EPAYCO_PUBLIC_KEY,
-  clavePrivada: import.meta.env.VITE_EPAYCO_PRIVATE_KEY,
+  clavePrivada: undefined,
   
   // Configuración del entorno
   esProduccion: import.meta.env.VITE_EPAYCO_ENVIRONMENT === 'production',
@@ -48,10 +48,6 @@ export const validarConfiguracion = () => {
     errores.push('VITE_EPAYCO_PUBLIC_KEY no está configurada');
   }
   
-  if (!configuracionEpayco.clavePrivada) {
-    errores.push('VITE_EPAYCO_PRIVATE_KEY no está configurada');
-  }
-  
   if (!configuracionEpayco.urlConfirmacion) {
     errores.push('VITE_EPAYCO_URL_CONFIRMATION no está configurada');
   }
@@ -74,7 +70,6 @@ export const validarConfiguracion = () => {
 export const obtenerConfiguracionSDK = () => {
   return {
     apiKey: configuracionEpayco.clavePublica,
-    privateKey: configuracionEpayco.clavePrivada,
     lang: configuracionEpayco.idioma,
     test: !configuracionEpayco.esProduccion
   };
