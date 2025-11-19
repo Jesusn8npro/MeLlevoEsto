@@ -15,6 +15,8 @@ export default function ImagenesIA() {
   const [mostrandoUsos, setMostrandoUsos] = useState(null) // ruta del archivo
   const [usos, setUsos] = useState([])
   const [reemplazarOriginal, setReemplazarOriginal] = useState(false)
+  const [modalAbierto, setModalAbierto] = useState(false)
+  const [imagenModal, setImagenModal] = useState(null)
 
   // Listar archivos del bucket seleccionado
   const listarArchivos = useCallback(async () => {
@@ -51,18 +53,32 @@ export default function ImagenesIA() {
   const consultarUsos = useCallback(async (file) => {
     try {
       setMostrandoUsos(file.name)
+      setImagenModal(obtenerUrlPublica(file.name))
+      setModalAbierto(true)
       setUsos([])
       const url = obtenerUrlPublica(file.name)
-      // Buscar coincidencias por URL o nombre en tabla producto_imagenes
+      // Campos de uso según tabla producto_imagenes
+      const campos = [
+        'imagen_principal','imagen_secundaria_1','imagen_secundaria_2','imagen_secundaria_3','imagen_secundaria_4',
+        'imagen_punto_dolor_1','imagen_punto_dolor_2','imagen_solucion_1','imagen_solucion_2',
+        'imagen_testimonio_persona_1','imagen_testimonio_persona_2','imagen_testimonio_persona_3',
+        'imagen_testimonio_producto_1','imagen_testimonio_producto_2','imagen_testimonio_producto_3',
+        'imagen_caracteristicas','imagen_garantias','imagen_cta_final'
+      ]
       const { data: registros, error } = await clienteSupabase
         .from('producto_imagenes')
-        .select('producto_id, imagen_principal, imagen_secundaria_1, imagen_secundaria_2, imagen_secundaria_3, imagen_secundaria_4')
+        .select(['producto_id', ...campos].join(','))
       if (error) throw error
-      const usados = (registros || []).filter(r => {
-        const valores = [r.imagen_principal, r.imagen_secundaria_1, r.imagen_secundaria_2, r.imagen_secundaria_3, r.imagen_secundaria_4]
-        return valores.some(v => typeof v === 'string' && (v.includes(url) || v.includes(file.name)))
-      })
-      const ids = Array.from(new Set(usados.map(u => u.producto_id).filter(Boolean)))
+      const coincidencias = []
+      for (const r of (registros || [])) {
+        for (const campo of campos) {
+          const val = r[campo]
+          if (typeof val === 'string' && (val.includes(url) || val.includes(file.name))) {
+            coincidencias.push({ producto_id: r.producto_id, campo, valor: val })
+          }
+        }
+      }
+      const ids = Array.from(new Set(coincidencias.map(c => c.producto_id).filter(Boolean)))
       let productos = []
       if (ids.length > 0) {
         const { data: prods } = await clienteSupabase
@@ -72,7 +88,7 @@ export default function ImagenesIA() {
         productos = prods || []
       }
       const mapa = new Map(productos.map(p => [p.id, p]))
-      setUsos(usados.map(u => ({ producto_id: u.producto_id, producto: mapa.get(u.producto_id) })))
+      setUsos(coincidencias.map(c => ({ producto_id: c.producto_id, producto: mapa.get(c.producto_id), campo: c.campo, valor: c.valor })))
     } catch (e) {
       setUsos([])
     }
@@ -164,7 +180,7 @@ export default function ImagenesIA() {
       <div className="grid-archivos">
         {archivosFiltrados.map(file => (
           <div key={file.name} className="tarjeta-archivo">
-            <div className="vista-cuadrada">
+            <div className="vista-cuadrada" onClick={() => { setImagenModal(obtenerUrlPublica(file.name)); setModalAbierto(true); }}>
               {/* imagen */}
               <img
                 src={obtenerUrlPublica(file.name)}
@@ -179,11 +195,11 @@ export default function ImagenesIA() {
               <div className="acciones">
                 <button className="btn btn-primario" onClick={() => consultarUsos(file)}>Ver usos</button>
                 <button className="btn btn-ambar" onClick={() => optimizarArchivo(file)}>Optimizar</button>
-                <button className="btn btn-peligro" onClick={() => eliminarArchivo(file)}>Eliminar</button>
+                <button className="btn btn-peligro" onClick={() => { if (confirm('¿Eliminar esta imagen del storage?')) eliminarArchivo(file) }}>Eliminar</button>
               </div>
               <div className="acciones-secundarias">
                 <button className="btn btn-secundario" onClick={() => navigator.clipboard.writeText(obtenerUrlPublica(file.name))}>Copiar URL</button>
-                <a className="btn btn-ligero" href={obtenerUrlPublica(file.name)} target="_blank" rel="noreferrer">Abrir</a>
+                <button className="btn btn-ligero" onClick={() => { setImagenModal(obtenerUrlPublica(file.name)); setModalAbierto(true) }}>Abrir</button>
               </div>
             </div>
           </div>
@@ -198,10 +214,11 @@ export default function ImagenesIA() {
           ) : (
             <ul className="lista-usos">
               {usos.map(u => (
-                <li key={`${u.producto_id}`} className="item-uso">
+                <li key={`${u.producto_id}-${u.campo}`} className="item-uso">
                   <div>
                     <div className="uso-id">Producto ID: {u.producto_id}</div>
                     <div className="uso-detalle">{u.producto?.nombre} {u.producto?.slug ? `— /producto/${u.producto.slug}` : ''}</div>
+                    <div className="uso-detalle">Campo: {u.campo}</div>
                   </div>
                   {u.producto?.slug && (
                     <a href={`/producto/${u.producto.slug}`} className="link-producto">Abrir producto</a>
@@ -210,6 +227,36 @@ export default function ImagenesIA() {
               ))}
             </ul>
           )}
+        </div>
+      )}
+
+      {modalAbierto && imagenModal && (
+        <div className="modal-imagen-ia" onClick={() => setModalAbierto(false)}>
+          <div className="modal-contenido-ia" onClick={e => e.stopPropagation()}>
+            <button className="modal-cerrar-ia" onClick={() => setModalAbierto(false)}>Cerrar</button>
+            <img src={imagenModal} alt="Imagen" className="modal-imagen-preview" />
+            <div className="modal-usos-ia">
+              <h3>Usos detectados</h3>
+              {usos.length === 0 ? (
+                <div className="no-usos">No hay usos registrados.</div>
+              ) : (
+                <ul className="lista-usos">
+                  {usos.map(u => (
+                    <li key={`m-${u.producto_id}-${u.campo}`} className="item-uso">
+                      <div>
+                        <div className="uso-id">Producto ID: {u.producto_id}</div>
+                        <div className="uso-detalle">{u.producto?.nombre}</div>
+                        <div className="uso-detalle">Campo: {u.campo}</div>
+                      </div>
+                      {u.producto?.slug && (
+                        <a href={`/producto/${u.producto.slug}`} className="link-producto">Abrir producto</a>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>

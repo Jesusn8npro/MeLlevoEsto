@@ -52,3 +52,11 @@
 .uso-detalle { font-size: 12px; color: var(--ia-muted); }
 .link-producto { color: var(--ia-primario); font-size: 12px; text-decoration: none; }
 .link-producto:hover { text-decoration: underline; }
+
+/* Modal imagen y usos */
+.modal-imagen-ia { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 10000; }
+.modal-contenido-ia { background: #fff; border-radius: 12px; max-width: 960px; width: 92vw; max-height: 90vh; overflow: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.modal-cerrar-ia { position: sticky; top: 0; margin: 8px; align-self: flex-end; background: #ef4444; color: #fff; border: none; border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+.modal-imagen-preview { width: 100%; height: auto; object-fit: contain; border-bottom: 1px solid var(--ia-borde); }
+.modal-usos-ia { padding: 12px; }
+.modal-usos-ia h3 { margin-bottom: 8px; font-size: 16px; }
