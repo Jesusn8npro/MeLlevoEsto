@@ -33,7 +33,7 @@ import {
 } from 'lucide-react'
 import { clienteSupabase } from '../../configuracion/supabase'
 import ModalBusqueda from '../busqueda/ModalBusqueda'
-import ModalAutenticacion from '../autenticacion/ModalAutenticacion'
+import ModalAutenticacionIsolado from '../autenticacion/ModalAutenticacionIsolado'
 import ModalCarrito from '../carrito/CarritoFlotante'
 import { useFavoritos } from '../../contextos/FavoritosContext'
 import { useAuth } from '../../contextos/ContextoAutenticacion'
@@ -820,7 +820,7 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
         abierto={modalBusquedaAbierto} 
         onCerrar={() => setModalBusquedaAbierto(false)} 
       />
-      <ModalAutenticacion 
+      <ModalAutenticacionIsolado 
         abierto={modalAutenticacionAbierto} 
         onCerrar={() => setModalAutenticacionAbierto(false)} 
       />
