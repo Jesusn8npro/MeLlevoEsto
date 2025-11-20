@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useSearchParams, useParams } from 'react-router-dom'
+import { useSearchParams, useParams, useNavigate } from 'react-router-dom'
 import LayoutTienda from '../../../componentes/tienda/LayoutTienda'
 import SidebarFiltros from '../../../componentes/tienda/SidebarFiltros'
 import GridProductosVendedor from '../../../componentes/producto/GridProductosVendedor'
@@ -21,6 +21,7 @@ import './PaginaTienda.css'
 
 const PaginaTienda = () => {
   const { slug } = useParams() // Detectar slug de categoría
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const [categoriaActual, setCategoriaActual] = useState(null)
   const [cargandoCategoria, setCargandoCategoria] = useState(!!slug)
@@ -497,6 +498,17 @@ const PaginaTienda = () => {
 
       {/* Grid de productos */}
       <div className="tienda-productos">
+        {totalProductos === 0 ? (
+          <div className="tienda-empty">
+            <div className="tienda-empty-icono">!</div>
+            <h3 className="tienda-empty-titulo">No encontramos productos</h3>
+            <p className="tienda-empty-desc">Ajusta los filtros o explora otras categorías</p>
+            <div className="tienda-empty-acciones">
+              <button className="btn-primario" onClick={() => navigate('/tienda')}>Ver todos los productos</button>
+              <button className="btn-secundario" onClick={() => setModalFiltrosAbierto(true)}>Abrir filtros</button>
+            </div>
+          </div>
+        ) : null}
         <GridProductosVendedor
           filtrosExternos={filtros}
           vistaActiva={vista}
@@ -505,6 +517,7 @@ const PaginaTienda = () => {
           mostrarHeader={false}
           mostrarFiltros={false}
           onTotalChange={setTotalProductos}
+          mostrarEmpty={false}
         />
       </div>
     </LayoutTienda>

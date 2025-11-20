@@ -9,6 +9,15 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Protección básica: deshabilitar clic derecho -->
+    <script>
+      (function(){
+        try {
+          document.addEventListener('contextmenu', function(e){ e.preventDefault(); }, { passive: false });
+          document.addEventListener('dragstart', function(e){ e.preventDefault(); }, { passive: false });
+        } catch (_) {}
+      })();
+    </script>
     <!-- ePayco OnPage Checkout SDK -->
     <script src="https://checkout.epayco.co/checkout.js"></script>
     <!-- Advertencia estilo Facebook (sin bloquear/reescribir consola en runtime) -->

@@ -2,17 +2,12 @@
 
 .grid-productos-vendedor {
   width: 100%;
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 10px 0; /* Sin padding lateral por defecto */
+  max-width: none;
+  margin: 0;
+  padding: 10px 0; /* Sin padding lateral */
 }
 
-/* Desktop - Con padding lateral */
-@media (min-width: 1025px) {
-  .grid-productos-vendedor {
-    padding: 10px 16px;
-  }
-}
+
 
 
 /* Header del grid */

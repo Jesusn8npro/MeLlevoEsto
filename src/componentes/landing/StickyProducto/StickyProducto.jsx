@@ -96,11 +96,10 @@ const StickyProducto = ({ producto, mostrar }) => {
   
   // Función para navegar a la categoría del producto
   const navegarACategoria = () => {
-    if (producto?.categoria) {
-      // Asumiendo que la URL de la categoría es /tienda/categoria/{nombre_categoria}
-      const categoriaURL = `/tienda/categoria/${producto.categoria}`;
-      window.location.href = categoriaURL;
-    }
+    const slug = producto?.categorias?.slug || producto?.categorias?.nombre || producto?.categoria || ''
+    if (!slug) return
+    const categoriaURL = `/tienda/categoria/${encodeURIComponent(slug)}`
+    window.location.href = categoriaURL
   };
 
   // No mostrar si no hay producto, mostrar está en false, o no se ha pasado la imagen de pagos

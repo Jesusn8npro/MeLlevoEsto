@@ -32,7 +32,8 @@ const GridProductosVendedor = ({
   filtrosExternos = null,
   vistaActiva = 'grid',
   ordenar = 'relevancia',
-  onTotalChange = null
+  onTotalChange = null,
+  mostrarEmpty = true
 }) => {
   // Estados
   const [productos, setProductos] = useState([])
@@ -446,14 +447,18 @@ const GridProductosVendedor = ({
             <p>Cargando productos increíbles...</p>
           </div>
         ) : productos.length === 0 ? (
-          <div className="sin-productos">
-            <AlertCircle size={48} />
-            <h3>No encontramos productos</h3>
-            <p>Intenta ajustar los filtros o buscar algo diferente</p>
-            <button onClick={limpiarFiltros} className="btn-limpiar-grande">
-              Ver todos los productos
-            </button>
-          </div>
+          mostrarEmpty ? (
+            <div className="sin-productos">
+              <AlertCircle size={48} />
+              <h3>No encontramos productos</h3>
+              <p>Intenta ajustar los filtros o buscar algo diferente</p>
+              <button onClick={limpiarFiltros} className="btn-limpiar-grande">
+                Ver todos los productos
+              </button>
+            </div>
+          ) : (
+            <div className="sin-productos-compacto" />
+          )
         ) : (
           <>
             {productos.map((producto, index) => (

@@ -25,6 +25,13 @@ const StickyProductoEscritorio = ({
     return 0;
   };
 
+  const navegarACategoria = () => {
+    const slug = producto?.categorias?.slug || producto?.categorias?.nombre || producto?.categoria || ''
+    if (!slug) return
+    const categoriaURL = `/tienda/categoria/${encodeURIComponent(slug)}`
+    window.location.href = categoriaURL
+  };
+
   // Generar estrellas de calificación
   const generarEstrellas = (calificacion = 4.8) => {
     const estrellas = [];
@@ -155,22 +162,37 @@ const StickyProductoEscritorio = ({
 
           {/* Botones principales */}
           <div className="sticky-escritorio-botones-principales">
-            <button 
-              className="sticky-escritorio-boton-contra-entrega"
-              onClick={() => setModalContraEntregaAbierto(true)}
-            >
-              <Truck size={18} />
-              <span>Contra Entrega</span>
-            </button>
-            
-            <button 
-              className={`sticky-escritorio-boton-carrito ${productoAnadido ? 'producto-anadido' : ''}`}
-              onClick={manejarAgregarCarrito}
-              disabled={productoAnadido}
-            >
-              <ShoppingCart size={18} />
-              <span>{productoAnadido ? 'Producto Añadido' : 'Añadir al Carrito'}</span>
-            </button>
+            {producto?.estado === 'vendido' ? (
+              <>
+                <button className="sticky-escritorio-boton-contra-entrega" disabled>
+                  <Truck size={18} />
+                  <span>Vendido</span>
+                </button>
+                <button className="sticky-escritorio-boton-carrito" onClick={navegarACategoria}>
+                  <ShoppingCart size={18} />
+                  <span>Ver similares</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <button 
+                  className="sticky-escritorio-boton-contra-entrega"
+                  onClick={() => setModalContraEntregaAbierto(true)}
+                >
+                  <Truck size={18} />
+                  <span>Contra Entrega</span>
+                </button>
+                
+                <button 
+                  className={`sticky-escritorio-boton-carrito ${productoAnadido ? 'producto-anadido' : ''}`}
+                  onClick={manejarAgregarCarrito}
+                  disabled={productoAnadido}
+                >
+                  <ShoppingCart size={18} />
+                  <span>{productoAnadido ? 'Producto Añadido' : 'Añadir al Carrito'}</span>
+                </button>
+              </>
+            )}
           </div>
 
           {/* Información adicional */}

@@ -236,11 +236,20 @@
 
 .tienda-productos {
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border: 1px solid #f1f3f4;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
   overflow: hidden;
 }
+
+/* Estado vacío elegante */
+.tienda-empty { display: grid; place-items: center; text-align: center; padding: 28px 16px; color: #475569; }
+.tienda-empty-icono { width: 44px; height: 44px; border-radius: 50%; background: #e2e8f0; color: #334155; display:flex; align-items:center; justify-content:center; font-weight: 800; margin-bottom: 10px; }
+.tienda-empty-titulo { margin: 6px 0; font-size: 18px; font-weight: 800; color: #1f2937; }
+.tienda-empty-desc { margin: 0 0 12px 0; font-size: 14px; color: #64748b; }
+.tienda-empty-acciones { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.btn-primario { background: #ff4757; color: white; border: none; border-radius: 10px; padding: 10px 14px; font-weight: 700; cursor: pointer; }
+.btn-secundario { background: white; color: #334155; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 14px; font-weight: 700; cursor: pointer; }
 
 /* Responsive */
 @media (max-width: 1024px) {

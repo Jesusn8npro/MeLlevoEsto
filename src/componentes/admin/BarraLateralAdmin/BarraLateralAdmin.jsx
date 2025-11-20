@@ -68,9 +68,7 @@ const elementosNavegacion = [
     subItems: [{ nombre: 'Elementos de Formulario', ruta: '/admin/elementos-formulario', pro: false }],
   },
   {
-    nombre: 'Tablas',
-    icono: <TableIcon />,
-    subItems: [{ nombre: 'Tablas Básicas', ruta: '/admin/tablas-basicas', pro: false }],
+    // Eliminado menú Tablas según solicitud
   },
   {
     nombre: 'Blog',
@@ -89,26 +87,6 @@ const otrosElementos = [
     subItems: [
       { nombre: 'Gráfico de Líneas', ruta: '/admin/grafico-lineas', pro: false },
       { nombre: 'Gráfico de Barras', ruta: '/admin/grafico-barras', pro: false },
-    ],
-  },
-  {
-    icono: <BoxCubeIcon />,
-    nombre: 'Elementos UI',
-    subItems: [
-      { nombre: 'Alertas', ruta: '/admin/alertas', pro: false },
-      { nombre: 'Avatares', ruta: '/admin/avatares', pro: false },
-      { nombre: 'Insignias', ruta: '/admin/insignias', pro: false },
-      { nombre: 'Botones', ruta: '/admin/botones', pro: false },
-      { nombre: 'Imágenes', ruta: '/admin/imagenes', pro: false },
-      { nombre: 'Videos', ruta: '/admin/videos', pro: false },
-    ],
-  },
-  {
-    icono: <PlugInIcon />,
-    nombre: 'Autenticación',
-    subItems: [
-      { nombre: 'Iniciar Sesión', ruta: '/admin/iniciar-sesion', pro: false },
-      { nombre: 'Registrarse', ruta: '/admin/registrarse', pro: false },
     ],
   },
 ]
@@ -320,10 +298,7 @@ const BarraLateralAdmin = () => {
       >
         <Link to="/admin">
           {estaExpandida || estaEnHover || movilAbierto ? (
-            <div className="barra-lateral-logo-completo">
-              <span className="barra-lateral-logo-texto">ME LLEVO ESTO</span>
-              <span className="barra-lateral-logo-subtitulo">Admin</span>
-            </div>
+            <img src="/MeLlevoEsto.Com Logo.png" alt="ME LLEVO ESTO" className="barra-lateral-logo-img" onError={(e) => { e.currentTarget.src = '/images/Logo oficial me llevo esto.jpg' }} />
           ) : (
             <div className="barra-lateral-logo-icono">
               <span>🛍️</span>

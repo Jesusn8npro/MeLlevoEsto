@@ -397,9 +397,10 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
             </button>
             <Link to="/" className="logo-contenedor">
               <img 
-                src="/Logo me llevo esto.png" 
-                alt="MeLlevoEsto.com" 
+                src="/MeLlevoEsto.Com Logo.png" 
+                alt="ME LLEVO ESTO" 
                 className="logo-imagen"
+                onError={(e) => { e.currentTarget.src = '/images/Logo oficial me llevo esto.jpg' }}
               />
             </Link>
           </div>
@@ -407,9 +408,10 @@ const { usuario, sesionInicializada, cerrarSesion, esAdmin } = useAuth()
           {/* Logo para Escritorio */}
           <Link to="/" className="logo-contenedor logo-escritorio">
             <img 
-              src="/Logo me llevo esto.png" 
-              alt="MeLlevoEsto.com" 
+              src="/MeLlevoEsto.Com Logo.png" 
+              alt="ME LLEVO ESTO" 
               className="logo-imagen logo-imagen-escritorio"
+              onError={(e) => { e.currentTarget.src = '/images/Logo oficial me llevo esto.jpg' }}
             />
           </Link>
 

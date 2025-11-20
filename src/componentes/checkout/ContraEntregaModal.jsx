@@ -336,12 +336,25 @@ const ContraEntregaModal = ({
     }
   }, [compraConfirmada, contador, redireccionEnCurso, producto, ofertaSeleccionada, form, WHATSAPP_NUMERO, onCerrar])
 
+  useEffect(() => {
+    if (abierto) {
+      const prevOverflow = document.body.style.overflow
+      const prevTouch = document.body.style.touchAction
+      document.body.style.overflow = 'hidden'
+      document.body.style.touchAction = 'pan-y'
+      return () => {
+        document.body.style.overflow = prevOverflow
+        document.body.style.touchAction = prevTouch
+      }
+    }
+  }, [abierto])
+
   if (!abierto) return null
 
   return (
     <Portal>
-      <div className={`cod-modal-overlay ${cerrandoAuto ? 'cod-cerrando' : ''}`}>
-      <div className="cod-modal">
+      <div className={`cod-modal-overlay ${cerrandoAuto ? 'cod-cerrando' : ''}`} onClick={onCerrar}>
+      <div className="cod-modal" onClick={(e) => e.stopPropagation()}>
         <button className="cod-cerrar" onClick={onCerrar}>
           <X size={24} />
         </button>
