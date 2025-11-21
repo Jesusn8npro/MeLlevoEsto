@@ -43,10 +43,10 @@ export default function ModalAutenticacionShadow({ abierto, onCerrar }) {
     const style = document.createElement('style')
     style.textContent = `
       :host{all:initial}
-      .ov{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:100003;padding:20px}
-      .bx{width:100%;max-width:460px;max-height:92vh;background:#fff;border-radius:22px;box-shadow:0 24px 60px rgba(0,0,0,.28);overflow:auto;position:relative;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+      .ov{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:100003;padding:20px;overflow-x:hidden}
+      .bx{width:100%;max-width:460px;max-height:92vh;background:#fff;border-radius:22px;box-shadow:0 24px 60px rgba(0,0,0,.28);overflow-y:auto;overflow-x:hidden;position:relative;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
       .cl{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;border:1px solid #e2e8f0;background:#f8fafc;color:#64748b;display:flex;align-items:center;justify-content:center;cursor:pointer}
-      .br{padding:36px 24px 20px;background:linear-gradient(135deg,#ff6b35 0%,#ff8c42 100%);display:flex;align-items:center;justify-content:center}
+      .br{padding:16px 20px 12px;background:linear-gradient(135deg,#ff6b35 0%,#ff8c42 100%);display:flex;align-items:center;justify-content:center}
       .ct{padding:26px 24px 28px}
       .tt{font-size:22px;font-weight:800;color:#1e293b;text-align:center;margin:0 0 8px}
       .ds{color:#64748b;text-align:center;font-size:14px;margin:0 0 18px}
@@ -136,8 +136,8 @@ export default function ModalAutenticacionShadow({ abierto, onCerrar }) {
     <div className="ov" onClick={cerrarPorOverlay} role="dialog" aria-modal="true">
       <div className="bx" onClick={(e) => e.stopPropagation()}>
         <button className="cl" onClick={onCerrar} aria-label="Cerrar"><X size={18} /></button>
-        <div className="br">
-          <img src="/MeLlevoEsto.Com Logo.png" alt="ME LLEVO ESTO" onError={(e) => { e.currentTarget.src = '/images/Logo oficial me llevo esto.jpg' }} />
+        <div className="br" style={{ padding: '12px 16px 10px' }}>
+          <img src="/MeLlevoEsto.Com Logo.png" alt="ME LLEVO ESTO" style={{ width: 64, height: 'auto' }} onError={(e) => { e.currentTarget.src = '/images/Logo oficial me llevo esto.jpg' }} />
         </div>
         {vista === 'login' && (
           <div className="ct">

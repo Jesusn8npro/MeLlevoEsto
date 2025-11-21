@@ -1,152 +1,152 @@
 [
   {
-    "nombre_columna": "id",
-    "tipo_dato": "uuid",
-    "acepta_nulos": "NO",
-    "valor_por_defecto": "gen_random_uuid()"
+    "column_name": "id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": "gen_random_uuid()"
   },
   {
-    "nombre_columna": "producto_id",
-    "tipo_dato": "uuid",
-    "acepta_nulos": "NO",
-    "valor_por_defecto": null
+    "column_name": "producto_id",
+    "data_type": "uuid",
+    "is_nullable": "NO",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_principal",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_principal",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_secundaria_1",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_secundaria_1",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_secundaria_2",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_secundaria_2",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_secundaria_3",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_secundaria_3",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_secundaria_4",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_secundaria_4",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_punto_dolor_1",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_punto_dolor_1",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_punto_dolor_2",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_punto_dolor_2",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_solucion_1",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_solucion_1",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_solucion_2",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_solucion_2",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_testimonio_persona_1",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_testimonio_persona_1",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_testimonio_persona_2",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_testimonio_persona_2",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_testimonio_persona_3",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_testimonio_persona_3",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_testimonio_producto_1",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_testimonio_producto_1",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_testimonio_producto_2",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_testimonio_producto_2",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_testimonio_producto_3",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_testimonio_producto_3",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_caracteristicas",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_caracteristicas",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_garantias",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_garantias",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "imagen_cta_final",
-    "tipo_dato": "text",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": null
+    "column_name": "imagen_cta_final",
+    "data_type": "text",
+    "is_nullable": "YES",
+    "column_default": null
   },
   {
-    "nombre_columna": "estado",
-    "tipo_dato": "character varying",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": "'pendiente'::character varying"
+    "column_name": "estado",
+    "data_type": "character varying",
+    "is_nullable": "YES",
+    "column_default": "'pendiente'::character varying"
   },
   {
-    "nombre_columna": "total_imagenes_generadas",
-    "tipo_dato": "integer",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": "0"
+    "column_name": "total_imagenes_generadas",
+    "data_type": "integer",
+    "is_nullable": "YES",
+    "column_default": "0"
   },
   {
-    "nombre_columna": "prompts_utilizados",
-    "tipo_dato": "jsonb",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": "'{}'::jsonb"
+    "column_name": "prompts_utilizados",
+    "data_type": "jsonb",
+    "is_nullable": "YES",
+    "column_default": "'{}'::jsonb"
   },
   {
-    "nombre_columna": "creado_el",
-    "tipo_dato": "timestamp with time zone",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": "now()"
+    "column_name": "creado_el",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": "now()"
   },
   {
-    "nombre_columna": "actualizado_el",
-    "tipo_dato": "timestamp with time zone",
-    "acepta_nulos": "YES",
-    "valor_por_defecto": "now()"
+    "column_name": "actualizado_el",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "YES",
+    "column_default": "now()"
   }
 ]

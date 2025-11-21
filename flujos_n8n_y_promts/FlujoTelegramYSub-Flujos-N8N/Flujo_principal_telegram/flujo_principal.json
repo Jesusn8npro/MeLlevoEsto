@@ -7,103 +7,11 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1088,
-        -288
+        -1104,
+        -192
       ],
       "id": "d3f713ca-3a6a-4bb0-bf04-2b79b7f79f79",
       "name": "Procesar Info Upload"
-    },
-    {
-      "parameters": {
-        "description": "Llama a esta herramienta para combinar dos imágenes. Debes pasar un prompt de generación de imagen, las URL de ambas imágenes y un título para esta nueva imagen. Para esto se debe consultar la herrmienta buscar_imagenes para esta funcion",
-        "workflowId": {
-          "__rl": true,
-          "value": "Pg0HU7Kw2J5qkOw5",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/Pg0HU7Kw2J5qkOw5",
-          "cachedResultName": "combinar_imagenes_nuevo"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "prompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('prompt', ``, 'string') }}",
-            "UrlImagen2": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('UrlImagen2', ``, 'string') }}",
-            "UrlImagen1": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('UrlImagen1', ``, 'string') }}",
-            "TituloDeLaImagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('TituloDeLaImagen', ``, 'string') }}",
-            "IdDelProducto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('IdDelProducto', ``, 'string') }}",
-            "TipoDeImagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('TipoDeImagen', ``, 'string') }}"
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "prompt",
-              "displayName": "prompt",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string"
-            },
-            {
-              "id": "UrlImagen2",
-              "displayName": "UrlImagen2",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string"
-            },
-            {
-              "id": "UrlImagen1",
-              "displayName": "UrlImagen1",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string"
-            },
-            {
-              "id": "TituloDeLaImagen",
-              "displayName": "TituloDeLaImagen",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string"
-            },
-            {
-              "id": "IdDelProducto",
-              "displayName": "IdDelProducto",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "TipoDeImagen",
-              "displayName": "TipoDeImagen",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
-      "typeVersion": 2.2,
-      "position": [
-        -288,
-        352
-      ],
-      "id": "ab9e2884-9515-4725-96ff-baf140de78de",
-      "name": "combinar_imagenes1"
     },
     {
       "parameters": {
@@ -125,8 +33,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -1296,
-        -288
+        -1328,
+        -192
       ],
       "id": "53cf1f05-f88b-409d-adc8-fb25495b8df2",
       "name": "Subir a Supabase",
@@ -143,14 +51,14 @@
         "text": "={{ $json.message.text }}",
         "needsFallback": true,
         "options": {
-          "systemMessage": "=# Prompt para Agente de E-commerce en N8N\n\n## 1. Rol y Objetivo\n\n**Rol**: Eres un asistente experto en gestión de e-commerce, especializado en la plataforma \"MeLlevaEstaMonda\". Tu nombre es \"Monda\".\n\n**Objetivo Principal**: Tu objetivo es ayudar a los usuarios a gestionar productos, categorías, y otras funcionalidades de la tienda de manera eficiente y precisa, utilizando las herramientas proporcionadas. Debes ser proactivo, amigable y seguir las instrucciones al pie de la letra.\n\n## 2. Contexto\n\nOperas dentro de un flujo de N8N que se activa a través de un bot de Telegram. Tienes acceso a una base de datos en Supabase y a un conjunto de herramientas (sub-flujos de N8N) para interactuar con ella. Cada interacción es parte de una conversación con un usuario que espera una respuesta clara y acciones concretas.\n\n## 3. Instrucciones Generales\n\n- **Analiza la Petición**: Lee y comprende cuidadosamente la solicitud del usuario para identificar su intención principal (crear, actualizar, consultar, etc.).\n- **Usa las Herramientas**: Utiliza las herramientas disponibles para cumplir con la solicitud. No intentes adivinar información; si los datos necesarios no están en la petición, haz preguntas claras y directas al usuario.\n- **Formato de Salida de Herramientas**: Responde siempre en el formato JSON especificado para cada herramienta. No añadas texto, explicaciones o saludos adicionales en la salida JSON de la herramienta.\n- **Formato de Respuesta al Usuario**:\n  - **CRÍTICO: NUNCA, bajo ninguna circunstancia, uses comillas simples inversas (`) para rodear URLs, IDs, nombres de archivo o cualquier otro dato en tus respuestas conversacionales.** La información debe ser entregada en texto plano para que el usuario pueda copiarla y pegarla directamente.\n    - **MAL:** `https://mi-url.com/recurso`\n    - **BIEN:** https://mi-url.com/recurso\n  - Sé amigable y conversacional, pero entrega los datos importantes de forma limpia.\n- **Regla sobre Nombres de Archivo**:\n    - **CRÍTICO: Al crear o renombrar archivos de imagen, el nombre DEBE ser único y NUNCA debe contener la extensión dos veces (ej: `imagen.jpg.jpg`).**\n    - Antes de proponer un nuevo nombre, verifica que no exista.\n    - Asegúrate de que la extensión (`.jpg`, `.png`, etc.) solo aparezca una vez al final del nombre.\n- **Manejo de Errores**: Si una herramienta falla o no puedes cumplir con la solicitud, informa al usuario de manera clara, explicando el problema y sugiriendo una solución.\n\n## 4. Herramientas Disponibles\n\nA continuación se describen las herramientas que puedes utilizar, en el orden lógico en que deberías considerar usarlas.\n\n### 4.1. `consultar_categorias`\n\n- **Descripción**: Obtiene un listado completo de todas las categorías de productos disponibles.\n- **Cuándo usarla**: Antes de crear o actualizar un producto, para asegurar que se asigna una categoría válida.\n\n### 4.2. `consultar_productos`\n\n- **Descripción:** Busca productos por nombre. Es el punto de partida para cualquier acción sobre un producto existente.\n- **Cuándo usarla**: **OBLIGATORIO** al inicio de cualquier flujo que implique un producto (editar, consultar imágenes, etc.).\n- **Parámetros**: `nombre_producto` (string).\n- **Reglas**: Confirma siempre el producto con el usuario antes de proceder.\n\n### 4.3. `consultar_imagenes_producto`\n\n- **Descripción:** Consulta la tabla `productos` para obtener las URLs de las imágenes asociadas a un producto específico.\n- **Cuándo usarla**: Después de confirmar un producto con `consultar_productos` y antes de cualquier acción sobre las imágenes.\n- **Parámetros**: `producto_id` (string, obligatorio).\n- **Reglas**: Informa al usuario qué campos de imagen tienen URL y cuáles están vacíos.\n\n### 4.4. `crear_producto`\n\n- **Descripción**: Crea un nuevo producto en la tienda.\n- **Parámetros**: `nombre_producto`, `De_que_trata_el_producto`, `precio`, `caracteristicas`, `categoria_id`.\n- **Reglas**: Al finalizar, proporciona un resumen y la URL pública del producto.\n\n### 4.5. `actualizar_productos`\n\n- **Descripción:** Actualiza cualquier campo de un producto existente, incluyendo la asignación de URLs de imágenes.\n- **Parámetros**: `id_del_producto_para_actualizar`, `campo_a_actualizar`, `nuevo_valor`.\n- **Reglas**: Requiere un `ID` de producto confirmado.\n\n### 4.6. `buscar_imagenes`\n\n- **Descripción:** Busca archivos en el bucket `imagenes` de Supabase Storage.\n- **Cuándo usarla**: Para listar imágenes existentes antes de una edición o asignación.\n- **Parámetros**: `prefix` (opcional).\n- **Reglas**: Construye y confirma siempre la URL completa con el usuario.\n\n### 4.7. `renombrar_archivo_supabase2`\n\n- **Descripción:** Renombra o mueve un archivo en Supabase Storage.\n- **Cuándo usarla**: Después de subir una imagen, para darle un nombre descriptivo y correcto.\n- **Parámetros**: `oldPath`, `newPath`.\n- **Reglas**: Informa siempre al usuario de la nueva URL tras el renombrado.\n\n### 4.8. `editar_imagen`\n\n- **Descripción:** Realiza ediciones sobre una imagen o genera una nueva a partir de un prompt.\n- **Parámetros**: `imagen_id`, `prompt_de_edicion`.\n- **Reglas**: **NUNCA** usar sin haber confirmado producto e imagen.\n\n### 4.9. `combinar_imagenes`\n\n- **Descripción:** Combina dos imágenes una al lado de la otra (horizontalmente) y guarda el resultado como un nuevo archivo.\n- **Cuándo usarla**: Solo cuando el usuario lo pida explícitamente y se haya seguido el flujo de confirmación.\n- **Parámetros**: `url_imagen1` (string), `url_imagen2` (string), `nombre_nuevo_archivo` (string).\n- **Reglas**:\n    - **Flujo Obligatorio**: Requiere haber confirmado el producto (`consultar_productos`) y las dos URLs de las imágenes a combinar.\n    - **Nombre de Archivo**: El `nombre_nuevo_archivo` debe ser único y no tener doble extensión.\n\n### 4.10. `creador_articulos`\n\n- **Descripción:** Genera un artículo de blog sobre un tema específico, utilizando información de un producto si se proporciona.\n- **Cuándo usarla**: Cuando el usuario quiera crear contenido para el blog de la tienda.\n- **Parámetros**: `tema_del_articulo` (string), `id_del_producto` (string, opcional).\n- **Reglas**:\n    - Si se proporciona un `id_del_producto`, primero usa `consultar_productos` para obtener sus detalles y usarlos como contexto.\n    - Informa al usuario cuando el artículo esté listo y proporciona un resumen o enlace.\n\n## 5. Flujos de Trabajo Obligatorios\n\n### 5.1. Flujo para Editar o Combinar Imágenes (Reglas Ultra Estrictas)\n\n1.  **Consulta de Producto**: Usa `consultar_productos` para encontrar y confirmar el producto.\n2.  **Consulta de Imágenes del Producto**: Usa `consultar_imagenes_producto` para ver las imágenes ya asignadas. Muestra al usuario las URLs.\n3.  **Confirmación de Imágenes**: Pregunta al usuario cuál(es) imagen(es) quiere usar (una para editar, dos para combinar).\n4.  **Ejecución de la Acción**:\n    - Para editar: Con la URL confirmada, usa `editar_imagen`.\n    - Para combinar: Con las dos URLs confirmadas, usa `combinar_imagenes`.\n\n### 5.2. Flujo para Subir y Asignar una Imagen\n\n1.  **Recepción y Renombrado**: Al subir una imagen, ofrece renombrarla con `renombrar_archivo_supabase2`, asegurando un nombre único y sin doble extensión.\n2.  **Preguntar Destino**: Pregunta si desea asignarla a un producto.\n3.  **Asignación a Producto**:\n    a. Usa `consultar_productos` para confirmar el producto.\n    b. Usa `consultar_imagenes_producto` para mostrar los campos de imagen disponibles.\n    c. Pregunta en qué campo (`imagen_principal`, etc.) debe ir la nueva imagen.\n    d. Usa `actualizar_productos` para guardar la URL.",
+          "systemMessage": "=# Prompt para Agente de E-commerce en N8N\n\n## 1. Rol y Objetivo\n\n**Rol**: Eres un asistente experto en gestión de e-commerce, especializado en la plataforma \"MeLlevaEstaMonda\"\n\n**Objetivo Principal**: Tu objetivo es ayudar a los usuarios a gestionar productos, categorías, y otras funcionalidades de la tienda de manera eficiente y precisa, utilizando las herramientas proporcionadas. Debes ser proactivo, amigable y seguir las instrucciones al pie de la letra.\n\n## 2. Contexto\n\nOperas dentro de un flujo de N8N que se activa a través de un bot de Telegram. Tienes acceso a una base de datos en Supabase y a un conjunto de herramientas (sub-flujos de N8N) para interactuar con ella. Cada interacción es parte de una conversación con un usuario que espera una respuesta clara y acciones concretas.\n\n## 3. Instrucciones Generales\n\n- **Analiza la Petición**: Lee y comprende cuidadosamente la solicitud del usuario para identificar su intención principal (crear, actualizar, consultar, etc.).\n- **Usa las Herramientas**: Utiliza las herramientas disponibles para cumplir con la solicitud. No intentes adivinar información; si los datos necesarios no están en la petición, haz preguntas claras y directas al usuario.\n- **Formato de Salida de Herramientas**: Responde siempre en el formato JSON especificado para cada herramienta. No añadas texto, explicaciones o saludos adicionales en la salida JSON de la herramienta.\n- **Formato de Respuesta al Usuario**:\n  - **CRÍTICO: NUNCA, bajo ninguna circunstancia, uses comillas simples inversas (`) para rodear URLs, IDs, nombres de archivo o cualquier otro dato en tus respuestas conversacionales.** La información debe ser entregada en texto plano para que el usuario pueda copiarla y pegarla directamente.\n    - **MAL:** `https://mi-url.com/recurso`\n    - **BIEN:** https://mi-url.com/recurso\n  - Sé amigable y conversacional, pero entrega los datos importantes de forma limpia.\n- **Regla sobre Nombres de Archivo**:\n    - **CRÍTICO: Al crear o renombrar archivos de imagen, el nombre DEBE ser único y NUNCA debe contener la extensión dos veces (ej: `imagen.jpg.jpg`).**\n    - Antes de proponer un nuevo nombre, verifica que no exista.\n    - Asegúrate de que la extensión (`.jpg`, `.png`, etc.) solo aparezca una vez al final del nombre.\n- **Manejo de Errores**: Si una herramienta falla o no puedes cumplir con la solicitud, informa al usuario de manera clara, explicando el problema y sugiriendo una solución.\n\nUsa la heramienta de SERP API, para consultar en internet cuando el usuario quiera crear un producto o cualquier cosa, y asi puedas tener informacion sobre lo que el usuario necesita y crear los productos o lo que vayas a crear con informacion veridicica. Consulta si el usuario necesita informacion al momento de crear un producto o algo para que tengas contexto  incluso le pasas la url de un producto que te estes guiando para que el usuario tenga idea del producto.\n## 4. Herramientas Disponibles\n\nA continuación se describen las herramientas que puedes utilizar, en el orden lógico en que deberías considerar usarlas.\n\n### 4.1. `consultar_categorias`\n\n- **Descripción**: Obtiene un listado completo de todas las categorías de productos disponibles.\n- **Cuándo usarla**: Antes de crear o actualizar un producto, para asegurar que se asigna una categoría válida.\n\n### 4.2. `consultar_productos`\n\n- **Descripción:** Busca productos por nombre. Es el punto de partida para cualquier acción sobre un producto existente.\n- **Cuándo usarla**: **OBLIGATORIO** al inicio de cualquier flujo que implique un producto (editar, consultar imágenes, etc.).\n- **Parámetros**: `nombre_producto` (string).\n- **Reglas**: Confirma siempre el producto con el usuario antes de proceder.\n\n### 4.3. `consultar_imagenes_producto`\n\n- **Descripción:** Consulta la tabla `productos` para obtener las URLs de las imágenes asociadas a un producto específico.\n- **Cuándo usarla**: Después de confirmar un producto con `consultar_productos` y antes de cualquier acción sobre las imágenes.\n- **Parámetros**: `producto_id` (string, obligatorio).\n- **Reglas**: Informa al usuario qué campos de imagen tienen URL y cuáles están vacíos.\n\n### 4.4. `crear_producto`\n\n- **Descripción**: Crea un nuevo producto en la tienda.\n- **Parámetros**: `nombre_producto`, `De_que_trata_el_producto`, `precio`, `caracteristicas`, `categoria_id`.\n- **Reglas**: Al finalizar, proporciona un resumen y la URL pública del producto la cual tiene la siguiente estructura: https://mellevoesto.com/producto/asad-lattafa-azul es decir luego de producto usas la URL del producto que acabaste de crear.\n- Recuerda siempre los precios en moneda COP es decir en pesos colombianos por favor, y utiliza la herramienta SERP API al momento de crear un producto para que tengas contexto y el producto sea lo mas realista posible.\n\n### 4.5. `actualizar_productos`\n\n- **Descripción:** Actualiza cualquier campo de un producto existente, incluyendo la asignación de URLs de imágenes y los videos por favor.\n- **Parámetros**: `id_del_producto_para_actualizar`, `campo_a_actualizar`, `nuevo_valor`.\n- **Reglas**: Requiere un `ID` de producto confirmado.\n- IMPORTANTE: Al momento de actualizar o el cliente quiera actualizar un video utiliza la herramienta de \"consultar_videos\" par que sepas cuales son las columnas que tenemos en la tabla de producto_videos y asi podamos actualizar correctamente el video, le prteguntas a el usuario antes de actualizar el video para que campo desea actualizar el video y le recuerdas la URL del video que vas a actualizar por favor! Los cvampos que tenemos disponibles son, en tipo: \"producto, beneficios, anuncio_1, anuncio_2, anuncio_3, testimonio, extra \"\n\n### 4.6. `buscar_imagenes`\n\n- **Descripción:** Busca archivos en el bucket `imagenes` de Supabase Storage.\n- **Cuándo usarla**: Para listar imágenes existentes antes de una edición o asignación.\n- **Parámetros**: `prefix` (opcional).\n- **Reglas**: Construye y confirma siempre la URL completa con el usuario.\n\n### 4.7. `renombrar_archivo_supabase2`\n\n- **Descripción:** Renombra o mueve un archivo en Supabase Storage.\n- **Cuándo usarla**: Después de subir una imagen, para darle un nombre descriptivo y correcto.\n- **Parámetros**: `oldPath`, `newPath`.\n- **Reglas**: Informa siempre al usuario de la nueva URL tras el renombrado.\n\n### 4.8. `renombrar_videos2`\n\n- **Descripción:** Renombra o mueve un archivo en Supabase Storage.\n- **Cuándo usarla**: Después de subir una video el usuario, para darle un nombre descriptivo y correcto. dale ideas a el usuario y preguntale como quiere que se llame el archivo \n- **Parámetros**: `oldPath`, `newPath`.\n- **Reglas**: Informa siempre al usuario de la nueva URL tras el renombrado.\n\n### 4.8. `editar_imagen`\n\n- **Descripción:** Realiza ediciones sobre una imagen o genera una nueva a partir de un prompt. Debes utilizar siempre la URL de la imagen con la que se realizara la edicion y el ID real del producto para editar la imagen correctamente y no se dañe ejecucion\n- **Parámetros**: `imagen_id`, `prompt_de_edicion`.\n- **Reglas**: **NUNCA** usar sin haber confirmado producto e imagen.\nAl crear las imagenes dale la URL a el usuario en ciertos momentos del producto al cual le estas creando las imagenes, por ejemplo: https://mellevoesto.com/producto/asad-lattafa-azul obviamente luego de producto va la URL real del producto al cual le editaste la imagen\n\n### 4.9. `combinar_imagenes`\n\n- **Descripción:** Combina dos imágenes una al lado de la otra (horizontalmente), guarda el resultado como un nuevo archivo y lo asigna al producto y campo de imagen especificados.\n- **Cuándo usarla**: Solo cuando el usuario lo pida explícitamente y se haya seguido el flujo de confirmación.\n- **Parámetros**:\n    - `IdDelProducto` (string): El ID del producto al que se asignará la imagen combinada.\n    - `TipoDeImagen` (string): El nombre de la columna donde se guardará la URL de la imagen (ej: `imagen_principal`, `imagen_solucion_al_problema`, etc.).\n    - `UrlImagen1` (string): La URL de la primera imagen a combinar.\n    - `UrlImagen2` (string): La URL de la segunda imagen a combinar.\n    - `TituloDeLaImagen` (string): Un nombre descriptivo para el nuevo archivo de imagen que se creará (sin extensión).\n- **Reglas**:\n    - **Flujo Obligatorio**: Requiere haber confirmado el producto (`consultar_productos`) y las dos URLs de las imágenes a combinar.\n    - **Parámetros Críticos**: `IdDelProducto` y `TipoDeImagen` son OBLIGATORIOS para que la imagen combinada se guarde correctamente en la base de datos.\n    - **Nombre de Archivo**: El `TituloDeLaImagen` debe ser único y no tener doble extensión. El sistema añadirá la extensión `.jpg` automáticamente.\n\n### 4.10. `creador_articulos`\n\n- **Descripción:** Genera un artículo de blog sobre un tema específico, utilizando información de un producto si se proporciona.\n- **Cuándo usarla**: Cuando el usuario quiera crear contenido para el blog de la tienda.\n- **Parámetros**: `tema_del_articulo` (string), `id_del_producto` (string, opcional).\n- **Reglas**:\n    - Si se proporciona un `id_del_producto`, primero usa `consultar_productos` para obtener sus detalles y usarlos como contexto.\n    - Informa al usuario cuando el artículo esté listo y proporciona un resumen o enlace.\n\n## 5. Flujos de Trabajo Obligatorios\n\n### 5.1. Flujo para Editar o Combinar Imágenes (Reglas Ultra Estrictas)\n\n1.  **Consulta de Producto (Obligatorio)**: Usa `consultar_productos` para encontrar y confirmar el producto con el usuario. Sin un producto confirmado, no se puede continuar.\n\n2.  **Consulta de Imágenes y Columnas (Obligatorio)**: Usa `consultar_imagenes_producto` para obtener todas las URLs de imágenes y los nombres de las columnas del producto confirmado. Muestra al usuario la lista de columnas y sus URLs actuales (o si están vacías).\n\n3.  **Confirmación de Imágenes y Destino (Obligatorio)**:\n    - **Para editar**: Pregunta al usuario cuál es la URL de la imagen que quiere editar.\n    - **Para combinar**:\n        a. Pregunta al usuario cuáles son las dos URLs de las imágenes que quiere combinar (`UrlImagen1`, `UrlImagen2`). Si no están claras, usa `buscar_imagenes` para encontrarlas y pide confirmación.\n        b. **CRÍTICO**: Pregunta al usuario el nombre exacto de la columna de destino (`TipoDeImagen`) donde se guardará la imagen combinada.\n\n4.  **Ejecución de la Acción (Tras confirmación)**:\n    - **Para editar**: Con la URL confirmada, usa `editar_imagen`.\n    - **Para combinar**: Solo después de tener la confirmación del producto, las dos URLs de origen y la columna de destino, usa `combinar_imagenes` con los parámetros `IdDelProducto`, `TipoDeImagen`, `UrlImagen1`, y `UrlImagen2`.\n\n### 5.2. Flujo para Subir y Asignar una Imagen\n\n1.  **Recepción y Renombrado**: Al subir una imagen, ofrece renombrarla con `renombrar_archivo_supabase2`, asegurando un nombre único y sin doble extensión.\n2.  **Preguntar Destino**: Pregunta si desea asignarla a un producto.\n3.  **Asignación a Producto**:\n    a. Usa `consultar_productos` para confirmar el producto.\n    b. Usa `consultar_imagenes_producto` para mostrar los campos de imagen disponibles.\n    c. Pregunta en qué campo (`imagen_principal`, etc.) debe ir la nueva imagen.\n    d. Usa `actualizar_productos` para guardar la URL.",
           "returnIntermediateSteps": true
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2.2,
       "position": [
-        -432,
+        -496,
         -48
       ],
       "id": "635285af-98a8-4830-b98f-01ee3daf76db",
@@ -190,8 +98,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -1488,
-        -288
+        -1568,
+        -192
       ],
       "id": "252159f0-94f2-4b8f-a672-08da564c26b6",
       "name": "Descargar Archivo",
@@ -229,6 +137,31 @@
                 ],
                 "combinator": "and"
               }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "511c92bf-d040-4bcf-b95d-a592662aad21",
+                    "leftValue": "={{ $json.message.video }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "video"
             },
             {
               "conditions": {
@@ -287,8 +220,8 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        -1776,
-        -96
+        -1952,
+        -128
       ],
       "id": "68ce16bf-b98c-43ae-adf3-6dbcbf64a5d9",
       "name": "Conmutador"
@@ -303,8 +236,8 @@
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.2,
       "position": [
-        -2032,
-        -80
+        -2400,
+        -48
       ],
       "id": "013c7be8-4e00-4a07-a089-70f8a8d07858",
       "name": "Disparador de Telegram",
@@ -370,7 +303,7 @@
       "typeVersion": 3.4,
       "position": [
         -896,
-        -288
+        -192
       ],
       "id": "4a1788be-4529-4301-8a15-1655ffcd036a",
       "name": "Establecer Texto1"
@@ -454,7 +387,7 @@
       "type": "n8n-nodes-base.supabaseTool",
       "typeVersion": 1,
       "position": [
-        -1280,
+        -1360,
         352
       ],
       "id": "4535bdcf-d405-48be-8abd-d61766b0cfde",
@@ -501,7 +434,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [
-        208,
+        432,
         352
       ],
       "id": "69417ffc-95b5-4d69-b6db-5e648ca44cce",
@@ -522,8 +455,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -1488,
-        -512
+        -1632,
+        -688
       ],
       "id": "5c251e58-ea36-4001-8d2b-7ad7b86d3b72",
       "name": "descargar nota de voz1",
@@ -544,8 +477,8 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 1.8,
       "position": [
-        -1104,
-        -512
+        -1136,
+        -768
       ],
       "id": "3ca00e65-ec1c-4423-b1a4-4f58a7aa9ba8",
       "name": "Translate a recording1",
@@ -573,106 +506,11 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -896,
-        -512
+        -736,
+        -704
       ],
       "id": "5b7bf4d1-03b1-43e7-9e8b-6e05f4f08fb8",
       "name": "text"
-    },
-    {
-      "parameters": {
-        "description": "🖼️ EDITAR IMAGEN - PROTOCOLO ESTRICTO OBLIGATORIO\n\n🚨 REGLAS CRÍTICAS ANTES DE USAR ESTA HERRAMIENTA:\n\n1. **NUNCA USAR SIN PREPARACIÓN PREVIA** - Esta herramienta SOLO se ejecuta después de completar TODOS los pasos obligatorios\n\n2. **PASO OBLIGATORIO 1 - BUSCAR IMAGEN REAL:**\n   - SIEMPRE usar 'Buscar Archivos Originales' PRIMERO\n   - Obtener: ID real, nombre real (.jpg), URL completa real\n   - NUNCA continuar sin estos datos reales\n\n3. **PASO OBLIGATORIO 2 - CONSULTAR PRODUCTO REAL:**\n   - SIEMPRE usar 'consultar_productos' con nombre EXACTO del producto\n   - Obtener UUID real del producto de la base de datos\n   - NUNCA inventar o asumir el id_del_producto\n   - EJEMPLO: Si es para 'Camiseta Azul', consultar exactamente 'Camiseta Azul'\n\n4. **PASO OBLIGATORIO 3 - CONSULTAR CONTENIDO (SI ES IMAGEN TEMÁTICA):**\n   - Para PUNTOS DE DOLOR: Consultar qué dice en 'puntos_de_dolor' del producto\n   - Para CARACTERÍSTICAS: Consultar características específicas del producto\n   - Para TESTIMONIOS: Consultar contenido de testimonios\n   - Generar prompt basado en contenido REAL consultado\n\n5. **FORMATO URL CORRECTO:**\n   - URL exacta: https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/public/imagenes/nombre-real.jpg\n   - NUNCA duplicar 'imagenes' en la URL\n   - Usar SOLO el nombre real obtenido con 'Buscar Archivos Originales'\n\n🚨 ESTA HERRAMIENTA SE EJECUTA SOLO DESPUÉS DE COMPLETAR TODOS LOS PASOS ANTERIORES",
-        "workflowId": {
-          "__rl": true,
-          "value": "jQoi0yBKSPgGJVdx",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/jQoi0yBKSPgGJVdx",
-          "cachedResultName": "Editar Imagenes Supabase"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "tipo_de_imagen": "={{ $fromAI('tipo_de_imagen', `Tipo de imagen (ej: imagen_principal, imagen_punto_dolor_1)`, 'string') }}",
-            "PromtParaEditarLaImagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('PromtParaEditarLaImagen', `🚨 PROMPT OBLIGATORIO BASADO EN CONTENIDO REAL: Si es imagen temática (puntos de dolor, características, testimonios), PRIMERO consultar el contenido específico del producto usando 'consultar_productos' y generar el prompt basado en esa información REAL. Para otras imágenes, crear prompt detallado, descriptivo y realista. SIEMPRE en español sin fallas.`, 'string') }}",
-            "IdDeLaImagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('IdDeLaImagen', `🚨 ID REAL OBLIGATORIO: NUNCA inventar este ID. SIEMPRE obtener usando 'Buscar Archivos Originales' PRIMERO. Este debe ser el ID real de la imagen en Supabase.`, 'string') }}",
-            "id_del_producto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('id_del_producto', `🚨 UUID REAL OBLIGATORIO: NUNCA inventar este UUID. SIEMPRE usar 'consultar_productos' con el nombre EXACTO del producto ANTES de usar esta herramienta. Obtener el UUID real de la base de datos. EJEMPLO: Si es para 'Camiseta Azul', consultar exactamente 'Camiseta Azul' primero.`, 'string') }}",
-            "url_de_la_imagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('url_de_la_imagen', `🚨 URL REAL OBLIGATORIA: NUNCA inventar esta URL. SIEMPRE usar 'Buscar Archivos Originales' PRIMERO para obtener la URL real completa. Formato correcto: https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/public/imagenes/nombre-real.jpg - NO duplicar 'imagenes' en la URL. Usar SOLO el nombre real terminado en .jpg obtenido de la herramienta de búsqueda.`, 'string') }}",
-            "nombre_para_la_nueva_imagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nombre_para_la_nueva_imagen', `el nombre para la nueva imagen sin espacios , sin tildes, sin mayusculas, sin \"ñ\" por ejemplo : nueva-imagen , siempre crea nombres diferentes para cada imagen por favor, en cada ejecucion cambia el nombre de la imagen por favor siempre varia los nombres nunca los repitas`, 'string') }}"
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "PromtParaEditarLaImagen",
-              "displayName": "PromtParaEditarLaImagen",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "IdDeLaImagen",
-              "displayName": "IdDeLaImagen",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "tipo_de_imagen",
-              "displayName": "tipo_de_imagen",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string"
-            },
-            {
-              "id": "id_del_producto",
-              "displayName": "id_del_producto",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "nombre_para_la_nueva_imagen",
-              "displayName": "nombre_para_la_nueva_imagen",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "url_de_la_imagen",
-              "displayName": "url_de_la_imagen",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
-      "typeVersion": 2.2,
-      "position": [
-        -128,
-        352
-      ],
-      "id": "c3b6cdbb-7024-484f-ba3e-9c155add7bc7",
-      "name": "editar_imagen2"
     },
     {
       "parameters": {
@@ -684,7 +522,7 @@
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
       "position": [
-        -1456,
+        -1520,
         352
       ],
       "id": "1210ef41-6d9d-4ce4-8cfd-53b6ff1469cc",
@@ -695,91 +533,6 @@
           "name": "Postgrest Me Llevo Esto"
         }
       }
-    },
-    {
-      "parameters": {
-        "description": "🚨 HERRAMIENTA CRÍTICA PARA ACTUALIZAR PRODUCTOS 🚨\n\nREGLAS OBLIGATORIAS:\n1. ✅ SIEMPRE consultar consultar_productos ANTES de actualizar\n2. ✅ CONFIRMAR datos reales del producto con el usuario\n3. ✅ Para puntos_dolor: SOLO usar iconos de caras básicos (😀😃😄😁😊😍😘😗😙😚😋😛😝😜🤪🤨🧐🤓😎🤩🥳😏😒😞😔😟😕🙁😣😖😫😩🥺😢😭😤😠😡🤬🤯😳🥵🥶😱😨😰😥😓🤗🤔🤭🤫🤥😶😐😑😬🙄😯😦😧😮😲🥱😴🤤😪😵🤐🥴🤢🤮🤧😷🤒🤕)\n4. ✅ Para puntos_dolor: textoBoton DEBE variar: 'VER SOLUCIÓN', 'DESCUBRE CÓMO', 'CONOCE MÁS', 'SABER MÁS'\n5. ✅ NUNCA usar iconos problemáticos: 🔋🔒💔🚫💧⚡🛡️📱💻🎮🎯\n6. ✅ SIEMPRE devolver objeto completo JSON para campos complejos",
-        "workflowId": {
-          "__rl": true,
-          "value": "ioOUYjzmWWHeH5oc",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/ioOUYjzmWWHeH5oc",
-          "cachedResultName": "🎞️Actualizador_de_productos"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "id_del_producto_para_actualizar": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('id_del_producto_para_actualizar', `El ID real del producto, consultado en la herramienta llamada consultar_productos`, 'string') }}",
-            "campo_a_actualizar": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('campo_a_actualizar', `Cambo de la tabla exacto que se desea actualizar, por ejemplo: nombre, descripcion, puntos de dolor, testimonios.... Consultar la herramienta CONSULTAR PRODUCTOS, para obtener el valor real que se desea modificar`, 'string') }}",
-            "nuevo_valor": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nuevo_valor', `🚨 INFORMACIÓN PARA REEMPLAZAR EL VALOR 🚨\n\nPara puntos_dolor:\n- ✅ OBJETO JSON COMPLETO con titulo, timeline (4 elementos), subtitulo\n- ✅ Iconos SOLO de caras básicas: 😀😃😄😁😊😍😘😗😙😚😋😛😝😜🤪🤨🧐🤓😎🤩🥳😏😒😞😔😟😕🙁😣😖😫😩🥺😢😭😤😠😡🤬🤯😳🥵🥶😱😨😰😥😓🤗🤔🤭🤫🤥😶😐😑😬🙄😯😦😧😮😲🥱😴🤤😪😵🤐🥴🤢🤮🤧😷🤒🤕\n- ✅ textoBoton variado: VER SOLUCIÓN, DESCUBRE CÓMO, CONOCE MÁS, SABER MÁS\n- ❌ NUNCA usar: 🔋🔒💔🚫💧⚡🛡️📱💻🎮🎯\n- ❌ NUNCA solo el array timeline\n- ❌ NUNCA string escapado\n\nPara otros campos: información normal de reemplazo`, 'string') }}",
-            "tipo_actualizacion": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('tipo_actualizacion', `Que se desea actualizar. \nUn producto o imagen, si es producto solo devolver la respuesta \"producto\" y si es imagen solo devolver \"imagen\"`, 'string') }}",
-            "de_que_trata_el_producto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('de_que_trata_el_producto', `Breve descripcion de que trata el producto`, 'string') }}"
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "id_del_producto_para_actualizar",
-              "displayName": "id_del_producto_para_actualizar",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "campo_a_actualizar",
-              "displayName": "campo_a_actualizar",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "nuevo_valor",
-              "displayName": "nuevo_valor",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "tipo_actualizacion",
-              "displayName": "tipo_actualizacion",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "de_que_trata_el_producto",
-              "displayName": "de_que_trata_el_producto",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
-      "typeVersion": 2.2,
-      "position": [
-        -480,
-        352
-      ],
-      "id": "df5f480a-1f8e-4a9d-a8cb-c8f69b6a3914",
-      "name": "Actualizador_de_productos"
     },
     {
       "parameters": {
@@ -816,7 +569,7 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.2,
       "position": [
-        32,
+        256,
         352
       ],
       "id": "5a8a7b93-f91b-4dcd-9b1d-e0f42936a63c",
@@ -918,7 +671,7 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        432,
+        608,
         352
       ],
       "id": "22c241a8-13c8-45bb-bf84-81361416eb26",
@@ -939,7 +692,7 @@
       "credentials": {
         "googlePalmApi": {
           "id": "afEdUlo465aPlyDq",
-          "name": "Google Gemini(PaLM) Api account"
+          "name": "Jesus Gonzalez Oficial"
         }
       }
     },
@@ -958,7 +711,7 @@
       "credentials": {
         "googlePalmApi": {
           "id": "afEdUlo465aPlyDq",
-          "name": "Google Gemini(PaLM) Api account"
+          "name": "Jesus Gonzalez Oficial"
         }
       }
     },
@@ -971,7 +724,7 @@
       "type": "n8n-nodes-base.supabaseTool",
       "typeVersion": 1,
       "position": [
-        -1056,
+        -1168,
         352
       ],
       "id": "f4039f44-b81f-4569-bad9-c6fd88be68f6",
@@ -1001,7 +754,7 @@
       "type": "n8n-nodes-base.supabaseTool",
       "typeVersion": 1,
       "position": [
-        -848,
+        -992,
         352
       ],
       "id": "e3577ea0-7ece-4173-b6d0-1119479ec5d4",
@@ -1012,6 +765,610 @@
           "name": "Supabase Me LLEVO ESTO"
         }
       }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        752,
+        352
+      ],
+      "id": "697eb7c2-6582-4e6c-9fa7-3feb105f97e3",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "8eVV36Lq9ymfrIE3",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.video.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1568,
+        -368
+      ],
+      "id": "5182a27b-7ada-48c0-ac6a-de45b9445c36",
+      "name": "Descargar Video",
+      "webhookId": "fb18f65f-c1cf-4473-b59d-d59d6b96e9ea",
+      "credentials": {
+        "telegramApi": {
+          "id": "Tsll6EFLsILnT8d3",
+          "name": "Chat NANO BOT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/videos/{{ $now.toUnixInteger() }}-{{ $binary.data.fileName }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1328,
+        -368
+      ],
+      "id": "e22f68af-f4a5-415a-9738-1e6f985d0f1e",
+      "name": "subir video a supabase1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const respuestaSubida = items[0].json;\nconst datosTelegram = $('Disparador de Telegram').item.json;\n\n// Supabase normalmente devuelve algo como:\n// { Key: 'videos/1736689487-file_238.MP4', Id: '...' }\nconst key = respuestaSubida.Key || respuestaSubida.key || respuestaSubida.path;\n\nif (!key) {\n  throw new Error('Supabase no devolvió Key/path en la respuesta');\n}\n\n// URL pública usando directamente la Key\nconst urlPublica = `https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/public/${key}`;\n\nconst partes = key.split('/');\nconst bucket = partes[0];\nconst nombreArchivo = partes[partes.length - 1];\n\nreturn {\n  json: {\n    exito: true,\n    key,\n    bucket,\n    nombreArchivo,\n    rutaCompleta: key,\n    urlPublica,\n    enlaceVisualizacion: urlPublica,\n    fechaSubida: new Date().toISOString(),\n    mensajeOriginal: datosTelegram.message?.caption || '',\n    idChat: datosTelegram.message?.chat?.id\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1104,
+        -368
+      ],
+      "id": "50b976f4-61c4-43b4-933b-e10dd0113a90",
+      "name": "Procesar Info Upload1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "53de4eb0-6684-48f5-a5b5-2b3bedaff817",
+              "name": "message.text",
+              "value": "=✅ Imagen subida exitosamente a Supabase!\n\n📁 **Información del archivo:**\n- **Ruta completa**: {{ $json.rutaCompleta }}\n- **Nombre actual**: {{ $json.nombreArchivo }}\n- **URL pública**: {{ $json.urlPublica }}\n\n🔧 **Para renombrar este archivo**, usa la herramienta `Cambiar Nombre` con:\n- **ID del archivo**: {{ $('subir video a supabase1').item.json.Id }}\n- **Nuevo nombre**: El nombre que desees para la imagen\n\n❓ Pregunta al usuario: ¿Cómo quieres nombrar esta imagen?",
+              "type": "string"
+            },
+            {
+              "id": "a0c2ce8d-42f9-4728-9e87-3b0000fdf105",
+              "name": "Id",
+              "value": "={{ $('subir video a supabase1').item.json.Id }}",
+              "type": "string"
+            },
+            {
+              "id": "7cfd76ae-1ee6-4703-8d9a-b49bfdb85ecd",
+              "name": "publicUrl",
+              "value": "={{ $json.urlPublica }}",
+              "type": "string"
+            },
+            {
+              "id": "44dfdd5e-c404-4490-80fb-a4c0b5683243",
+              "name": "webViewLink",
+              "value": "={{ $json.enlaceVisualizacion }}",
+              "type": "string"
+            },
+            {
+              "id": "64cbefb9-a2f9-404e-a8e5-4443583b404c",
+              "name": "fullPath",
+              "value": "={{ $json.rutaCompleta }}",
+              "type": "string"
+            },
+            {
+              "id": "bfb2c69a-1561-4522-bf2f-30df6ce7c823",
+              "name": "name",
+              "value": "={{ $json.nombreArchivo }}",
+              "type": "string"
+            },
+            {
+              "id": "08cb5971-1507-44b7-8aba-50108fd46719",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        -368
+      ],
+      "id": "ecba0b5c-ccda-496f-b270-31d40dac9e06",
+      "name": "Establecer Texto"
+    },
+    {
+      "parameters": {
+        "toolDescription": "RENOMBRA los videos que tenemos en SUPABASE",
+        "method": "POST",
+        "url": "https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/move",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "bucketId",
+              "value": "imagenes"
+            },
+            {
+              "name": "sourceKey",
+              "value": "={{ $fromAI('oldPath', '', 'string').replace(/^imagenes\\//gi, '').replace(/\\s+/g, '-') }}"
+            },
+            {
+              "name": "destinationKey",
+              "value": "={{ $fromAI('newPath', '', 'string').replace(/^imagenes\\//gi, '').replace(/\\s+/g, '-') }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        928,
+        336
+      ],
+      "id": "1de9080d-b20a-4c6d-8e93-1ab38727ce55",
+      "name": "renombrar_videos",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "RENOMBRA los videos que tenemos en SUPABASE",
+        "method": "POST",
+        "url": "https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/move",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "bucketId",
+              "value": "videos"
+            },
+            {
+              "name": "sourceKey",
+              "value": "={{ $fromAI('oldPath', '', 'string').replace(/^videos\\//gi, '') }}"
+            },
+            {
+              "name": "destinationKey",
+              "value": "={{ $fromAI('newPath', '', 'string').replace(/^videos\\//gi, '') }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        336
+      ],
+      "id": "fe4bb38b-2b3a-439b-8b12-31754d66c593",
+      "name": "renombrar_videos1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "producto_videos",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "producto_id",
+              "condition": "eq",
+              "keyValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('conditions0_Field_Value', ``, 'string') }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabaseTool",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        352
+      ],
+      "id": "2cb1bb1d-7615-4949-a1d7-4e303e1a741a",
+      "name": "consultar_videos",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Herramienta para actualizar productos, imágenes y videos. Usa campos válidos según tipo_actualizacion.",
+        "workflowId": {
+          "__rl": true,
+          "value": "ioOUYjzmWWHeH5oc",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/ioOUYjzmWWHeH5oc",
+          "cachedResultName": "🎞️Actualizador_de_productos"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_del_producto_para_actualizar": "={{ $fromAI('id_del_producto_para_actualizar', 'ID del producto (UUID). Debe existir.', 'string') }}",
+            "tipo_actualizacion": "={{ $fromAI('tipo_actualizacion', 'Tipo: producto | imagen | video', 'string') }}",
+            "campo_a_actualizar": "={{ $fromAI('campo_a_actualizar', 'Campos válidos según tipo:\\n\\n- producto (tabla productos): nombre, descripcion, beneficios, anuncio_1, anuncio_2, anuncio_3, testimonio, extra, estado\\n- imagen (tabla producto_imagenes): imagen_principal, imagen_secundaria_1, imagen_secundaria_2, imagen_secundaria_3, imagen_secundaria_4, imagen_punto_dolor_1, imagen_punto_dolor_2, imagen_solucion_1, imagen_solucion_2, imagen_testimonio_persona_1, imagen_testimonio_persona_2, imagen_testimonio_persona_3, imagen_testimonio_producto_1, imagen_testimonio_producto_2, imagen_testimonio_producto_3, imagen_caracteristicas, imagen_garantias, imagen_cta_final, estado\\n- video (tabla producto_videos): video_producto, video_beneficios, video_anuncio_1, video_anuncio_2, video_anuncio_3, video_testimonio_1, video_testimonio_2, video_testimonio_3, video_caracteristicas, video_extra, estado', 'string') }}",
+            "nuevo_valor": "={{ $fromAI('nuevo_valor', 'Valor final a guardar.\\n- imagen/video: normalmente URL pública\\n- estado: pendiente | procesando | completado\\n- producto: texto/JSON limpio según campo', 'string') }}",
+            "de_que_trata_el_producto": "={{ $fromAI('de_que_trata_el_producto', 'Breve descripción para contexto', 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id_del_producto_para_actualizar",
+              "displayName": "id_del_producto_para_actualizar",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tipo_actualizacion",
+              "displayName": "tipo_actualizacion",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "campo_a_actualizar",
+              "displayName": "campo_a_actualizar",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nuevo_valor",
+              "displayName": "nuevo_valor",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "de_que_trata_el_producto",
+              "displayName": "de_que_trata_el_producto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -464,
+        352
+      ],
+      "id": "fc948d55-7fb9-4ac1-aae3-24915bdb681c",
+      "name": "Actualizador_de_productos"
+    },
+    {
+      "parameters": {
+        "description": "Llama a esta herramienta para combinar dos imágenes. Debes pasar un prompt de generación de imagen, las URL de ambas imágenes y un título para esta nueva imagen. Para esto se debe consultar la herrmienta buscar_imagenes para esta funcion",
+        "workflowId": {
+          "__rl": true,
+          "value": "Pg0HU7Kw2J5qkOw5",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Pg0HU7Kw2J5qkOw5",
+          "cachedResultName": "combinar_imagenes_nuevo"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "prompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('prompt', ``, 'string') }}",
+            "UrlImagen2": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('UrlImagen2', ``, 'string') }}",
+            "UrlImagen1": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('UrlImagen1', ``, 'string') }}",
+            "TituloDeLaImagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('TituloDeLaImagen', ``, 'string') }}",
+            "IdDelProducto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('IdDelProducto', ``, 'string') }}",
+            "TipoDeImagen": "={{ $fromAI('tipo_de_imagen', `Tipo de imagen (ej: imagen_principal, imagen_punto_dolor_1)`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "prompt",
+              "displayName": "prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "UrlImagen2",
+              "displayName": "UrlImagen2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "UrlImagen1",
+              "displayName": "UrlImagen1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "TituloDeLaImagen",
+              "displayName": "TituloDeLaImagen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "IdDelProducto",
+              "displayName": "IdDelProducto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "TipoDeImagen",
+              "displayName": "TipoDeImagen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -288,
+        352
+      ],
+      "id": "ab9e2884-9515-4725-96ff-baf140de78de",
+      "name": "combinar_imagenes"
+    },
+    {
+      "parameters": {
+        "description": "🖼️ EDITAR IMAGEN - PROTOCOLO ESTRICTO PARA ANUNCIOS Y PRODUCTOS\n\n🚨 REGLAS CRÍTICAS ANTES DE USAR ESTA HERRAMIENTA:\n\n1. NUNCA USAR SIN PREPARACIÓN PREVIA\n   - Esta herramienta SOLO se ejecuta después de completar TODOS los pasos obligatorios\n\n2. PASO OBLIGATORIO 1 - BUSCAR IMAGEN REAL:\n   - SIEMPRE usar 'Buscar Archivos Originales' PRIMERO\n   - Obtener: ID real, nombre real (.jpg), URL completa real\n   - NUNCA continuar sin estos datos reales\n\n3. PASO OBLIGATORIO 2 - CONSULTAR PRODUCTO REAL:\n   - SIEMPRE usar 'consultar_productos' con nombre EXACTO del producto\n   - Obtener UUID real del producto de la base de datos\n   - NUNCA inventar o asumir el id_del_producto\n   - EJEMPLO: Si es para 'Camiseta Azul', consultar exactamente 'Camiseta Azul'\n\n4. PASO OBLIGATORIO 3 - CONSULTAR CONTENIDO (SI ES IMAGEN TEMÁTICA):\n   - Para PUNTOS DE DOLOR: Consultar qué dice en 'puntos_de_dolor' del producto\n   - Para CARACTERÍSTICAS: Consultar características específicas del producto\n   - Para TESTIMONIOS: Consultar contenido de testimonios\n   - Generar el prompt SIEMPRE basado en contenido REAL consultado\n\n5. FORMATO URL CORRECTO:\n   - URL exacta: https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/public/imagenes/nombre-real.jpg\n   - NUNCA duplicar 'imagenes' en la URL\n   - Usar SOLO el nombre real obtenido con 'Buscar Archivos Originales'\n\n6. DISEÑO ENFOCADO EN ANUNCIOS Y PRODUCTOS:\n   - Si es imagen de ANUNCIO (banners, creativos publicitarios): el prompt debe describir claramente la composición, colores, estilo, ubicación de textos, títulos, subtítulos, beneficios, sellos de descuento y llamada a la acción, TODO en español.\n   - Si es imagen de PRODUCTO (foto principal o galería): el prompt debe enfocarse en resaltar el producto con fondo profesional (limpio o contextual), buena iluminación, encuadre claro y estilo fotográfico atractivo para ecommerce.\n   - Si es imagen temática (puntos de dolor, beneficios, testimonios): transformar el contenido real del producto en una escena visual clara, persuasiva y coherente con la marca.\n\n🚨 ESTA HERRAMIENTA SE EJECUTA SOLO DESPUÉS DE COMPLETAR TODOS LOS PASOS ANTERIORES",
+        "workflowId": {
+          "__rl": true,
+          "value": "jQoi0yBKSPgGJVdx",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/jQoi0yBKSPgGJVdx",
+          "cachedResultName": "Editar Imagenes Supabase"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "tipo_de_imagen": "={{ $fromAI('tipo_de_imagen', `Tipo de imagen (ej: imagen_principal, imagen_punto_dolor_1, anuncio_principal, anuncio_retargueteo, testimonio, mockup_producto, banner_oferta, etc.)`, 'string') }}",
+            "PromtParaEditarLaImagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('PromtParaEditarLaImagen', `🚨 PROMPT ULTRA DETALLADO PARA EDICIÓN DE IMÁGENES (ANUNCIOS Y PRODUCTOS):\n\n1) SIEMPRE basar el prompt en información REAL del producto y en el valor de tipo_de_imagen (por ejemplo: imagen_principal, anuncio_punto_dolor, anuncio_beneficio, testimonio, mockup_del_producto, banner_oferta, etc.).\n\n2) Si es una imagen de ANUNCIO PUBLICITARIO:\n   - Diseñar un creativo publicitario completo en español que incluya:\n     • idea visual principal,\n     • composición clara (posición del producto, zonas donde irán los textos, elementos gráficos decorativos),\n     • estilo visual (moderno, limpio, minimalista, elegante, premium, juvenil, etc.),\n     • colores dominantes coherentes con la marca,\n     • indicaciones de dónde van los textos (por ejemplo: texto principal en la parte superior, subtítulo centrado, llamada a la acción en un botón en la parte inferior, sello de descuento en una esquina, etc.).\n   - Especificar textos para el anuncio en español: título potente, subtítulo, beneficios cortos o bullets, llamada a la acción clara (por ejemplo: Compra ahora, Escríbenos a WhatsApp, Pide el tuyo hoy), y si aplica, un sello de descuento o beneficio especial.\n\n3) Si es una imagen de PRODUCTO (foto principal o galería):\n   - Describir con detalle el encuadre, fondo, iluminación y ángulo de la cámara.\n   - Indicar si el fondo debe ser blanco, neutro, de color sólido, o contextual (ambiente real de uso del producto).\n   - Indicar si el producto debe aparecer solo o acompañado de elementos de contexto (por ejemplo: manos sosteniendo el producto, escritorio, habitación, persona usando el producto).\n   - Hacer que el resultado se vea profesional, nítido y listo para ecommerce o tienda online.\n\n4) Si es una imagen TEMÁTICA (puntos de dolor, características, beneficios, testimonios):\n   - PRIMERO consultar el contenido específico del producto usando consultar_productos (puntos_de_dolor, beneficios, características, testimonios).\n   - Convertir esa información REAL en una escena visual clara y persuasiva: qué se ve en la imagen, qué siente la persona, qué texto corto aparece como mensaje principal y qué texto secundario refuerza el beneficio.\n   - Mantener siempre los textos en español, con tono persuasivo pero claro y fácil de leer.\n\n5) NUNCA inventar datos del producto, beneficios o promociones que no aparezcan en la información real consultada.\n\n6) El prompt final debe ser un texto corrido (uno o varios párrafos) muy descriptivo, sin viñetas, escrito en español neutro y directo, listo para ser usado por un modelo de edición o generación de imágenes para anuncios y fotos de producto.`, 'string') }}",
+            "IdDeLaImagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('IdDeLaImagen', `🚨 ID REAL OBLIGATORIO: NUNCA inventar este ID. SIEMPRE obtener usando 'Buscar Archivos Originales' PRIMERO. Este debe ser el ID real de la imagen en Supabase.`, 'string') }}",
+            "id_del_producto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('id_del_producto', `🚨 UUID REAL OBLIGATORIO: NUNCA inventar este UUID. SIEMPRE usar 'consultar_productos' con el nombre EXACTO del producto ANTES de usar esta herramienta. Obtener el UUID real de la base de datos. EJEMPLO: Si es para 'Camiseta Azul', consultar exactamente 'Camiseta Azul' primero.`, 'string') }}",
+            "url_de_la_imagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('url_de_la_imagen', `🚨 URL REAL OBLIGATORIA: NUNCA inventar esta URL. SIEMPRE usar 'Buscar Archivos Originales' PRIMERO para obtener la URL real completa. Formato correcto: https://rrmafdbxvimmvcerwguy.supabase.co/storage/v1/object/public/imagenes/nombre-real.jpg - NO duplicar 'imagenes' en la URL. Usar SOLO el nombre real terminado en .jpg obtenido de la herramienta de búsqueda.`, 'string') }}",
+            "nombre_para_la_nueva_imagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nombre_para_la_nueva_imagen', `el nombre para la nueva imagen sin espacios , sin tildes, sin mayusculas, sin ñ por ejemplo : nueva-imagen , siempre crea nombres diferentes para cada imagen por favor, en cada ejecucion cambia el nombre de la imagen por favor siempre varia los nombres nunca los repitas`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PromtParaEditarLaImagen",
+              "displayName": "PromtParaEditarLaImagen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "IdDeLaImagen",
+              "displayName": "IdDeLaImagen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tipo_de_imagen",
+              "displayName": "tipo_de_imagen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "id_del_producto",
+              "displayName": "id_del_producto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre_para_la_nueva_imagen",
+              "displayName": "nombre_para_la_nueva_imagen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "url_de_la_imagen",
+              "displayName": "url_de_la_imagen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -144,
+        352
+      ],
+      "id": "62e694ec-ac4e-40fb-8594-e93131311049",
+      "name": "editar_imagen"
+    },
+    {
+      "parameters": {
+        "description": "Usa esta herramienta para cuando el usuario quiera crear imagenes desde 0 totalmente, recuerda que deben ser alucivas a el producto que el usuario esta creando ",
+        "workflowId": {
+          "__rl": true,
+          "value": "BZYpqmg1Ouk6IrGz",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/BZYpqmg1Ouk6IrGz",
+          "cachedResultName": "😒Creador Imagenes productos"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "PromtParaCrearLaImagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('PromtParaCrearLaImagen', ``, 'string') }}",
+            "NombreParaLaImagen": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('NombreParaLaImagen', ``, 'string') }}",
+            "DeQueTrataElProducto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('DeQueTrataElProducto', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "PromtParaCrearLaImagen",
+              "displayName": "PromtParaCrearLaImagen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "NombreParaLaImagen",
+              "displayName": "NombreParaLaImagen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "DeQueTrataElProducto",
+              "displayName": "DeQueTrataElProducto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        352
+      ],
+      "id": "aa575af0-ef31-4f65-93de-177e5d439d64",
+      "name": "Creador_de_imagenes"
     }
   ],
   "connections": {
@@ -1021,17 +1378,6 @@
           {
             "node": "Establecer Texto1",
             "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "combinar_imagenes1": {
-      "ai_tool": [
-        [
-          {
-            "node": "Agente Google",
-            "type": "ai_tool",
             "index": 0
           }
         ]
@@ -1075,6 +1421,13 @@
         [
           {
             "node": "descargar nota de voz1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Descargar Video",
             "type": "main",
             "index": 0
           }
@@ -1183,34 +1536,12 @@
         ]
       ]
     },
-    "editar_imagen2": {
-      "ai_tool": [
-        [
-          {
-            "node": "Agente Google",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Postgres Chat Memory": {
       "ai_memory": [
         [
           {
             "node": "Agente Google",
             "type": "ai_memory",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Actualizador_de_productos": {
-      "ai_tool": [
-        [
-          {
-            "node": "Agente Google",
-            "type": "ai_tool",
             "index": 0
           }
         ]
@@ -1272,6 +1603,132 @@
       ]
     },
     "consultar_imagenes_producto": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar Video": {
+      "main": [
+        [
+          {
+            "node": "subir video a supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "subir video a supabase1": {
+      "main": [
+        [
+          {
+            "node": "Procesar Info Upload1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesar Info Upload1": {
+      "main": [
+        [
+          {
+            "node": "Establecer Texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Establecer Texto": {
+      "main": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "renombrar_videos": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "renombrar_videos1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_videos": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizador_de_productos": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "combinar_imagenes": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "editar_imagen": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Google",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Creador_de_imagenes": {
       "ai_tool": [
         [
           {

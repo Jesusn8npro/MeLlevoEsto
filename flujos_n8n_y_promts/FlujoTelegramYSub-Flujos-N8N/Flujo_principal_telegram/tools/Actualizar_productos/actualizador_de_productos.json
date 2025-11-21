@@ -27,7 +27,7 @@
       "name": "When Executed by Another Workflow",
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "position": [
-        -480,
+        -560,
         448
       ]
     },
@@ -72,45 +72,11 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -272,
+        -352,
         448
       ],
       "id": "c8674095-3716-4d4f-bdbd-9e84cc32fb5d",
       "name": "Preparar Datos"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": false,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "03840f2f-dd06-4001-a4b8-e49f1a82d9b6",
-              "leftValue": "={{ $json.tipo }}",
-              "rightValue": "imagen",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        -80,
-        448
-      ],
-      "id": "70193036-a458-4e0e-890f-e3e412f98b4a",
-      "name": "¿Es Imagen?"
     },
     {
       "parameters": {
@@ -129,8 +95,8 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        112,
-        352
+        176,
+        208
       ],
       "id": "846d1ef1-ae61-47fb-a1ab-81f59bdcdbd0",
       "name": "Consultar Imágenes",
@@ -158,8 +124,8 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        96,
-        560
+        128,
+        704
       ],
       "id": "42433ac7-10be-4cf9-87a3-3d10c1863349",
       "name": "Obtener Datos del Producto",
@@ -205,8 +171,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        320,
-        560
+        400,
+        704
       ],
       "id": "5014eb6a-1988-4559-9559-9216673b48a8",
       "name": "Generar Valor Inteligente"
@@ -218,8 +184,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        640,
-        560
+        704,
+        704
       ],
       "id": "2b972034-b1b3-493d-af1e-dcfede85f47f",
       "name": "Limpiar JSON"
@@ -253,8 +219,8 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        896,
-        624
+        976,
+        704
       ],
       "id": "9885e0d1-0ef8-4c28-a8d1-0403f277f4fe",
       "name": "Actualizar Campo Producto",
@@ -331,7 +297,7 @@
       "typeVersion": 3.4,
       "position": [
         1120,
-        352
+        208
       ],
       "id": "1a7158de-6fa9-419b-8873-58b1564e1ce8",
       "name": "Resultado Final"
@@ -366,8 +332,8 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        368,
-        352
+        576,
+        208
       ],
       "id": "808e83aa-7e57-4be2-a685-763bb05219b6",
       "name": "Actualizar Imagen Supabase1",
@@ -377,6 +343,239 @@
           "name": "Supabase Me LLEVO ESTO"
         }
       }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.tipo }}",
+                    "rightValue": "imagen",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "6f313189-3868-4217-9f67-fbb4c27fb7e6"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Actualizar Imagenes"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "38633294-b2d6-47d3-ac8d-f9ce5f4c3a52",
+                    "leftValue": "={{ $json.tipo }}",
+                    "rightValue": "video",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Actualizar Videos"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "def397b3-617b-495c-b323-255dbcf2c292",
+                    "leftValue": "={{ $json.tipo }}",
+                    "rightValue": "producto",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Actualizar Producto textos"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -176,
+        432
+      ],
+      "id": "137fe88c-3dd4-4f9e-a44a-8f4c1240f63a",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "producto_videos",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "producto_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Preparar Datos').item.json.id_producto }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        160,
+        448
+      ],
+      "id": "6950afef-c49d-47cd-803a-4116cd1eb796",
+      "name": "Consultar Videos",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "producto_videos",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "producto_id",
+              "condition": "eq",
+              "keyValue": "={{ $('When Executed by Another Workflow').item.json.id_del_producto_para_actualizar }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "={{ $('When Executed by Another Workflow').item.json.campo_a_actualizar }}",
+              "fieldValue": "={{ $('When Executed by Another Workflow').item.json.nuevo_valor }}"
+            },
+            {
+              "fieldId": "estado",
+              "fieldValue": "completado"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        448,
+        448
+      ],
+      "id": "0a2ecf86-90bd-4aa9-84ba-3a0bf4bbda8d",
+      "name": "Actualizar Video Supabase",
+      "credentials": {
+        "supabaseApi": {
+          "id": "W8gqsCw5s1YHm5SZ",
+          "name": "Supabase Me LLEVO ESTO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "success-id",
+              "name": "resultado",
+              "value": "éxito",
+              "type": "string"
+            },
+            {
+              "id": "message-id",
+              "name": "mensaje",
+              "value": "={{ $if($('Preparar Datos').isExecuted, $json.tipo === 'imagen' ? 'Imagen ' + $('Preparar Datos').item.json.campo + ' actualizada correctamente en el producto ' + $('Preparar Datos').item.json.id_producto : 'Campo ' + $('Preparar Datos').item.json.campo + ' actualizado correctamente en el producto ' + $('Preparar Datos').item.json.id_producto, 'Actualización completada') }}",
+              "type": "string"
+            },
+            {
+              "id": "producto-id",
+              "name": "producto_id",
+              "value": "={{ $if($('Preparar Datos').isExecuted, $('Preparar Datos').item.json.id_producto, '') }}",
+              "type": "string"
+            },
+            {
+              "id": "campo-actualizado",
+              "name": "campo_para_actualizar",
+              "value": "={{ $if($('Preparar Datos').isExecuted, $('Preparar Datos').item.json.campo, '') }}",
+              "type": "string"
+            },
+            {
+              "id": "valor-anterior",
+              "name": "valor_anterior",
+              "value": "={{ $if($('Obtener Datos del Producto').isExecuted, ($('Preparar Datos').item.json.tipo === 'imagen' ? 'N/A' : ($('Obtener Datos del Producto').item.json[$('Preparar Datos').item.json.campo] ?? 'Sin valor previo')), 'Sin valor previo') }}",
+              "type": "string"
+            },
+            {
+              "id": "valor-nuevo",
+              "name": "valor_nuevo",
+              "value": "={{ $if($('Preparar Datos').isExecuted, ($('Preparar Datos').item.json.tipo === 'imagen' ? $('Preparar Datos').item.json.valor_usuario : $if($('Limpiar JSON').isExecuted, $('Limpiar JSON').item.json.valor_limpio, $('Preparar Datos').item.json.valor_usuario)), '') }}",
+              "type": "auto"
+            },
+            {
+              "id": "tipo-actualizacion",
+              "name": "tipo_actualizacion",
+              "value": "={{ $if($('Preparar Datos').isExecuted, $('Preparar Datos').item.json.tipo, '') }}",
+              "type": "string"
+            },
+            {
+              "id": "timestamp",
+              "name": "timestamp",
+              "value": "={{ new Date().toISOString() }}",
+              "type": "string"
+            },
+            {
+              "id": "version-producto",
+              "name": "version_producto",
+              "value": 1,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        752,
+        448
+      ],
+      "id": "6dd89486-8fd1-4a61-92d8-4a4563ab5d64",
+      "name": "Resultado Final1"
     }
   ],
   "connections": {
@@ -395,25 +594,7 @@
       "main": [
         [
           {
-            "node": "¿Es Imagen?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "¿Es Imagen?": {
-      "main": [
-        [
-          {
-            "node": "Consultar Imágenes",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Obtener Datos del Producto",
+            "node": "Switch",
             "type": "main",
             "index": 0
           }
@@ -485,21 +666,57 @@
           }
         ]
       ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Consultar Imágenes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Consultar Videos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Obtener Datos del Producto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar Videos": {
+      "main": [
+        [
+          {
+            "node": "Actualizar Video Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar Video Supabase": {
+      "main": [
+        [
+          {
+            "node": "Resultado Final1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "pinData": {
-    "When Executed by Another Workflow": [
-      {
-        "id_del_producto_para_actualizar": "9635f5ea-56d1-446e-876f-8f5e37bd88e9",
-        "campo_a_actualizar": "imagen_principal",
-        "nuevo_valor": "https://i.pinimg.com/736x/83/10/7e/83107eb75f910bab989794e17da012ec.jpg",
-        "tipo_actualizacion": "imagen",
-        "de_que_trata_el_producto": "Juego de aventura"
-      }
-    ]
-  },
+  "pinData": {},
   "meta": {
-    "templateCredsSetupCompleted": true,
     "instanceId": "8000b702e0a3d9ac6d70099a2751603316de4028cd14af0949776a26efecb219"
   }
 }

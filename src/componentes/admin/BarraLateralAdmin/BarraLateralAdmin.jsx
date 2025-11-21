@@ -60,6 +60,7 @@ const elementosNavegacion = [
     nombre: 'Imágenes',
     subItems: [
       { nombre: 'Imágenes IA', ruta: '/admin/imagenes-ia', pro: false },
+      { nombre: 'Videos Productos', ruta: '/admin/videos', pro: false },
     ],
   },
   {
@@ -156,8 +157,10 @@ const BarraLateralAdmin = () => {
   // Memoizar la función de renderizado para evitar re-renders innecesarios
   const renderizarElementosMenu = useCallback((items, tipoMenu) => (
     <ul className="barra-lateral-menu-lista">
-      {items.map((nav, index) => (
-        <li key={nav.nombre}>
+      {items
+        .filter((nav) => nav && (nav.nombre || nav.ruta || nav.subItems))
+        .map((nav, index) => (
+        <li key={`${tipoMenu}-${index}-${nav.nombre || nav.ruta || 'item'}`}>
           {nav.subItems ? (
             <button
               onClick={() => manejarAlternarSubmenu(index, tipoMenu)}

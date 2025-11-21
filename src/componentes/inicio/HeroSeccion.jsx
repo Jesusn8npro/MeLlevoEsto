@@ -177,6 +177,11 @@ const HeroSeccion = () => {
                   src={imagen.src} 
                   alt={imagen.alt}
                   className="imagen-slide"
+                  loading={indice === indiceSliderActual ? 'eager' : 'lazy'}
+                  decoding="async"
+                  fetchpriority={indice === indiceSliderActual ? 'high' : 'low'}
+                  width={1920}
+                  height={640}
                 />
               </div>
             ))}
@@ -203,6 +208,11 @@ const HeroSeccion = () => {
                 src={categoria.src} 
                 alt={categoria.alt}
                 className="imagen-categoria"
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
+                width={320}
+                height={320}
               />
               <div className="overlay-categoria">
                 <h3 className="titulo-categoria">{categoria.titulo}</h3>
@@ -219,6 +229,11 @@ const HeroSeccion = () => {
           src="/images/Home/Banner Me llevo esto.jpg" 
           alt="Banner Me Llevo Esto - Todo a un solo clic"
           className="banner-imagen"
+          loading="lazy"
+          decoding="async"
+          fetchpriority="low"
+          width={1920}
+          height={360}
         />
       </div>
 
@@ -267,6 +282,11 @@ const HeroSeccion = () => {
                       alt={categoria.nombre}
                       className="imagen-categoria-circular"
                       draggable={false}
+                      loading="lazy"
+                      decoding="async"
+                      fetchpriority="low"
+                      width={120}
+                      height={120}
                       onError={(e) => {
                         e.target.src = '/images/Home/Categorias/Categorias fondo blanco/default.jpg';
                       }}

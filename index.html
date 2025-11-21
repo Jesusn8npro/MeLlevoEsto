@@ -9,11 +9,12 @@
   </head>
   <body>
     <div id="root"></div>
-    <!-- Protección básica: deshabilitar clic derecho -->
+    <!-- Protección básica: dragstart deshabilitado; clic derecho habilitado para pruebas -->
     <script>
       (function(){
         try {
-          document.addEventListener('contextmenu', function(e){ e.preventDefault(); }, { passive: false });
+          // Habilitar clic derecho (contextmenu) temporalmente para pruebas
+          // Deshabilitar solo arrastre de elementos
           document.addEventListener('dragstart', function(e){ e.preventDefault(); }, { passive: false });
         } catch (_) {}
       })();

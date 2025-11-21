@@ -37,9 +37,30 @@ export default function ImagenesIA() {
   const [guardandoCampo, setGuardandoCampo] = useState(false)
   const [actualizarActiva, setActualizarActiva] = useState(true)
   const [conservarOriginal, setConservarOriginal] = useState(true)
+  const [pagina, setPagina] = useState(1)
+  const [porPagina, setPorPagina] = useState(12)
+  const [archivoNuevo, setArchivoNuevo] = useState(null)
+  const [nombreNuevo, setNombreNuevo] = useState('')
+  const [bucketDestino, setBucketDestino] = useState('imagenes')
+  const [optimizarNuevo, setOptimizarNuevo] = useState(true)
+  const [presetNuevo, setPresetNuevo] = useState('web')
+  const [calidadNueva, setCalidadNueva] = useState(null)
+  const [conservarOriginalNuevo, setConservarOriginalNuevo] = useState(true)
+  const [subiendoNuevo, setSubiendoNuevo] = useState(false)
+  const [modalSubirAbierto, setModalSubirAbierto] = useState(false)
+  const [urlPreviewNuevo, setUrlPreviewNuevo] = useState(null)
+  const [tamOriginalNuevoKB, setTamOriginalNuevoKB] = useState(null)
+  const [tamEstimadoNuevoKB, setTamEstimadoNuevoKB] = useState(null)
+  const [calculandoTamanoNuevo, setCalculandoTamanoNuevo] = useState(false)
+  const [carpetasDisponibles, setCarpetasDisponibles] = useState(['imagenes'])
+  const [productosDisponibles, setProductosDisponibles] = useState([])
+  const [busquedaProducto, setBusquedaProducto] = useState('')
+  const [cargandoProductos, setCargandoProductos] = useState(false)
+  const [mensajeOk, setMensajeOk] = useState('')
 
   // Listar archivos del bucket seleccionado
   const listarArchivos = useCallback(async () => {
+    const carpetas = new Set(['imagenes'])
     async function listarRecursivo(base = '', depth = 0, acc = []) {
       const { data, error } = await clienteSupabase.storage.from(bucketSeleccionado).list(base, { limit: 1000 })
       if (error) throw error
@@ -52,6 +73,7 @@ export default function ImagenesIA() {
         } else {
           const nextBase = base ? `${base}/${item.name}` : item.name
           if (depth < 3) {
+            carpetas.add(nextBase)
             await listarRecursivo(nextBase, depth + 1, acc)
           }
         }
@@ -63,6 +85,9 @@ export default function ImagenesIA() {
       setError(null)
       const archivosPlanos = await listarRecursivo('')
       setArchivos(archivosPlanos)
+      setSeleccionados(new Set())
+      setCarpetasDisponibles(Array.from(carpetas).sort((a,b)=>a.localeCompare(b)))
+      if (!['imagenes','imagenes_tienda','imagenes_categorias','imagenes_articulos'].includes(bucketDestino)) setBucketDestino('imagenes')
     } catch (e) {
       setError(e.message)
     } finally {
@@ -71,6 +96,13 @@ export default function ImagenesIA() {
   }, [bucketSeleccionado])
 
   useEffect(() => { listarArchivos() }, [listarArchivos])
+
+  useEffect(() => {
+    if (mensajeOk) {
+      const t = setTimeout(() => setMensajeOk(''), 3000)
+      return () => clearTimeout(t)
+    }
+  }, [mensajeOk])
 
   const archivosFiltrados = useMemo(() => {
     let lista = [...archivos]
@@ -103,10 +135,107 @@ export default function ImagenesIA() {
     return lista
   }, [archivos, busqueda, tamMinKB, tamMaxKB, orden, tamanosPorKey])
 
+  const totalPaginas = useMemo(() => Math.max(1, Math.ceil(archivosFiltrados.length / porPagina)), [archivosFiltrados.length, porPagina])
+  const inicio = useMemo(() => Math.min((pagina - 1) * porPagina, Math.max(0, (totalPaginas - 1) * porPagina)), [pagina, porPagina, totalPaginas])
+  const archivosPaginados = useMemo(() => archivosFiltrados.slice(inicio, inicio + porPagina), [archivosFiltrados, inicio, porPagina])
+  useEffect(() => { setPagina(1) }, [bucketSeleccionado, busqueda, tamMinKB, tamMaxKB, orden])
+
   const obtenerUrlPublica = useCallback((key) => {
     const { data } = clienteSupabase.storage.from(bucketSeleccionado).getPublicUrl(key)
     return data?.publicUrl || ''
   }, [bucketSeleccionado])
+
+  const descargarArchivo = useCallback(async (file) => {
+    try {
+      const url = obtenerUrlPublica(file.key || `${file.path}${file.name}`)
+      const resp = await fetch(url)
+      if (!resp.ok) return
+      const blob = await resp.blob()
+      const a = document.createElement('a')
+      const objectUrl = URL.createObjectURL(blob)
+      a.href = objectUrl
+      a.download = file.name || 'imagen'
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 500)
+    } catch {}
+  }, [obtenerUrlPublica])
+
+  const subirNuevaImagen = useCallback(async () => {
+    try {
+      if (!archivoNuevo) return
+      setSubiendoNuevo(true)
+      const nombreBase = (nombreNuevo || archivoNuevo.name).trim()
+      const tieneExt = /\.[a-zA-Z0-9]+$/.test(nombreBase)
+      const extOrig = (archivoNuevo.type.split('/')[1] || (tieneExt ? nombreBase.split('.').pop() : 'jpg'))
+      const baseName = tieneExt ? nombreBase.replace(/\.[a-zA-Z0-9]+$/, '') : nombreBase
+
+      if (conservarOriginalNuevo) {
+        const nombreOriginal = `${baseName}.original.${extOrig}`
+        await clienteSupabase.storage.from(bucketDestino).upload(nombreOriginal, archivoNuevo, { upsert: true, contentType: archivoNuevo.type })
+      }
+
+      let archivoFinal = archivoNuevo
+      if (optimizarNuevo) {
+        const base = CONFIGURACIONES_PREDEFINIDAS[presetNuevo] || CONFIGURACIONES_PREDEFINIDAS.web
+        const config = typeof calidadNueva === 'number' ? { ...base, quality: calidadNueva, convertSize: 0 } : base
+        const { archivoComprimido } = await comprimirImagen(archivoNuevo, config)
+        archivoFinal = archivoComprimido || archivoNuevo
+      }
+      const extFinal = (archivoFinal.type.split('/')[1] || extOrig || 'webp')
+      const nombreFinal = `${baseName}.${extFinal}`
+
+      await clienteSupabase.storage.from(bucketDestino).upload(nombreFinal, archivoFinal, { upsert: true, contentType: archivoFinal.type })
+      await listarArchivos()
+      setArchivoNuevo(null); setNombreNuevo(''); setCalidadNueva(null)
+      if (urlPreviewNuevo) { URL.revokeObjectURL(urlPreviewNuevo); setUrlPreviewNuevo(null) }
+      setModalSubirAbierto(false)
+      setMensajeOk('Imagen subida correctamente')
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setSubiendoNuevo(false)
+    }
+  }, [archivoNuevo, nombreNuevo, conservarOriginalNuevo, optimizarNuevo, presetNuevo, calidadNueva, bucketDestino, listarArchivos, urlPreviewNuevo])
+
+  // Previsualización y estimación de tamaño para la subida nueva
+  useEffect(() => {
+    const prepararPreview = async () => {
+      try {
+        setTamOriginalNuevoKB(null)
+        setTamEstimadoNuevoKB(null)
+        if (!archivoNuevo) return
+        const url = URL.createObjectURL(archivoNuevo)
+        setUrlPreviewNuevo(url)
+        setTamOriginalNuevoKB(Math.round(archivoNuevo.size / 1024))
+        if (optimizarNuevo) {
+          setCalculandoTamanoNuevo(true)
+          const base = CONFIGURACIONES_PREDEFINIDAS[presetNuevo] || CONFIGURACIONES_PREDEFINIDAS.web
+          const config = typeof calidadNueva === 'number' ? { ...base, quality: calidadNueva, convertSize: 0 } : base
+          try {
+            const { archivoComprimido } = await comprimirImagen(archivoNuevo, config)
+            setTamEstimadoNuevoKB(Math.round(archivoComprimido.size / 1024))
+          } catch (_) {
+            setTamEstimadoNuevoKB(null)
+          } finally {
+            setCalculandoTamanoNuevo(false)
+          }
+        }
+      } catch {}
+    }
+    prepararPreview()
+    return () => { if (urlPreviewNuevo) { URL.revokeObjectURL(urlPreviewNuevo); setUrlPreviewNuevo(null) } }
+  }, [archivoNuevo, optimizarNuevo, presetNuevo, calidadNueva])
+
+  const toggleSeleccion = useCallback((file) => {
+    const key = file.key || `${file.path}${file.name}`
+    setSeleccionados(prev => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key); else next.add(key)
+      return next
+    })
+  }, [])
 
   // Ver en qué productos se usa una imagen
   const consultarUsos = useCallback(async (file) => {
@@ -115,6 +244,12 @@ export default function ImagenesIA() {
       setMostrandoUsos(key)
       setImagenModal(obtenerUrlPublica(key))
       setModalAbierto(true)
+      // Reset de campos del formulario de edición
+      setProductoSeleccionadoId(null)
+      setCampoSeleccionado('')
+      setNombreDestino('')
+      setActualizarActiva(true)
+      setConservarOriginal(true)
       setArchivoSeleccionado(file)
       setUsos([])
       const url = obtenerUrlPublica(key)
@@ -160,11 +295,62 @@ export default function ImagenesIA() {
         .in('producto_id', ids) : { data: [] }
       const mapaImgs = new Map((imgs || []).map(i => [i.producto_id, i]))
       setPreviewsProductos(ids.map(pid => ({ producto: mapa.get(pid), imagenes: mapaImgs.get(pid) || {} })))
+      // Cargar catálogo completo de productos para selección manual
+      setBusquedaProducto('')
+      setCargandoProductos(true)
+      try {
+        const { data: prodsTodos } = await clienteSupabase
+          .from('productos')
+          .select('id, nombre, slug, precio')
+          .eq('activo', true)
+          .order('nombre', { ascending: true })
+          .limit(200)
+        setProductosDisponibles(prodsTodos || [])
+      } finally {
+        setCargandoProductos(false)
+      }
     } catch (e) {
       setUsos([])
       setPreviewsProductos([])
     }
   }, [obtenerUrlPublica])
+
+  const cargarProductosFiltrados = useCallback(async (q) => {
+    try {
+      setCargandoProductos(true)
+      let consulta = clienteSupabase
+        .from('productos')
+        .select('id, nombre, slug, precio')
+        .eq('activo', true)
+        .order('nombre', { ascending: true })
+        .limit(200)
+      if (q && q.trim().length >= 2) {
+        const like = `%${q.trim()}%`
+        consulta = consulta.or(`nombre.ilike.${like},slug.ilike.${like}`)
+      }
+      const { data } = await consulta
+      setProductosDisponibles(data || [])
+    } finally {
+      setCargandoProductos(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (modalAbierto) {
+      const t = setTimeout(() => cargarProductosFiltrados(busquedaProducto), 250)
+      return () => clearTimeout(t)
+    }
+  }, [modalAbierto, busquedaProducto, cargarProductosFiltrados])
+
+  const productosSelector = useMemo(() => {
+    const lista = [...productosDisponibles]
+    const ids = new Set(lista.map(p => p.id))
+    previewsProductos.forEach(pv => {
+      const p = pv.producto
+      if (p && !ids.has(p.id)) { lista.push(p); ids.add(p.id) }
+    })
+    return lista
+  }, [productosDisponibles, previewsProductos])
 
   // Cargar blob original al abrir modal
   useEffect(() => {
@@ -206,38 +392,37 @@ export default function ImagenesIA() {
     return () => clearTimeout(t)
   }, [blobOriginalModal, presetCompresion, calidadManual])
 
-  // Calcular tamaños faltantes para tarjetas
+  // Calcular tamaños solo para la página visible (throttle y solo HEAD)
   useEffect(() => {
+    const controller = new AbortController()
     const calcSizes = async () => {
       try {
-        const faltantes = archivos.filter(a => !a.size || a.size === 0).slice(0, 30)
-        for (const a of faltantes) {
-          const url = obtenerUrlPublica(a.key)
-          let size = 0
-          try {
-            const head = await fetch(url, { method: 'HEAD' })
-            if (head.ok) {
-              const cl = head.headers.get('content-length')
-              if (cl) size = parseInt(cl, 10)
-            }
-          } catch {}
-          if (!size) {
+        const visibles = archivosPaginados.filter(a => (!a.size || a.size === 0) && !(a.key in tamanosPorKey))
+        const limit = 2
+        let index = 0
+        const worker = async () => {
+          while (index < visibles.length && !controller.signal.aborted) {
+            const a = visibles[index++]
+            const url = obtenerUrlPublica(a.key)
             try {
-              const r = await fetch(url)
-              if (r.ok) {
-                const b = await r.blob()
-                size = b.size
+              const head = await fetch(url, { method: 'HEAD', signal: controller.signal })
+              if (head.ok) {
+                const cl = head.headers.get('content-length')
+                if (cl) {
+                  const size = parseInt(cl, 10)
+                  setTamanosPorKey(prev => ({ ...prev, [a.key]: size }))
+                }
               }
             } catch {}
           }
-          if (size) {
-            setTamanosPorKey(prev => ({ ...prev, [a.key]: size }))
-          }
         }
+        const workers = Array.from({ length: Math.min(limit, visibles.length) }, () => worker())
+        await Promise.allSettled(workers)
       } catch {}
     }
-    if (archivos.length) calcSizes()
-  }, [archivos, obtenerUrlPublica])
+    calcSizes()
+    return () => controller.abort()
+  }, [archivosPaginados, obtenerUrlPublica, tamanosPorKey])
 
   const formatoKB = (bytes) => {
     if (typeof bytes === 'number' && bytes > 0) return Math.round(bytes / 1024)
@@ -326,6 +511,7 @@ export default function ImagenesIA() {
           <input type="number" min="0" placeholder="Tamaño min (KB)" value={tamMinKB} onChange={e => setTamMinKB(e.target.value)} />
           <input type="number" min="0" placeholder="Tamaño max (KB)" value={tamMaxKB} onChange={e => setTamMaxKB(e.target.value)} />
         </div>
+        <button className="btn btn-primario" onClick={() => setModalSubirAbierto(true)}>Subir archivo</button>
         <button className="btn btn-peligro" disabled={seleccionados.size === 0} onClick={async () => {
           try {
             setCargando(true)
@@ -345,14 +531,25 @@ export default function ImagenesIA() {
       {error && (
         <div className="mensaje-error">{error}</div>
       )}
+      {mensajeOk && (
+        <div className="mensaje-exito">{mensajeOk}</div>
+      )}
 
       {cargando && (
         <div className="cargando">Cargando...</div>
       )}
 
       <div className="grid-archivos">
-        {archivosFiltrados.map(file => (
-          <div key={file.name} className="tarjeta-archivo">
+        {archivosPaginados.map(file => (
+          <div key={file.key} className={`tarjeta-archivo ${seleccionados.has(file.key) ? 'seleccionada' : ''}`}>
+            <label className="seleccion-checkbox" onClick={(e) => e.stopPropagation()}>
+              <input
+                type="checkbox"
+                checked={seleccionados.has(file.key)}
+                onChange={() => toggleSeleccion(file)}
+                aria-label={`Seleccionar ${file.name}`}
+              />
+            </label>
             <div className="vista-cuadrada" onClick={() => consultarUsos(file)}>
               {/* imagen */}
               <img
@@ -372,36 +569,64 @@ export default function ImagenesIA() {
               <div className="acciones-secundarias">
                 <button className="btn btn-secundario" onClick={() => navigator.clipboard.writeText(obtenerUrlPublica(`${file.path}${file.name}`))}>Copiar URL</button>
                 <button className="btn btn-ligero" onClick={() => consultarUsos(file)}>Abrir</button>
+                <button className="btn" onClick={() => descargarArchivo(file)}>Descargar</button>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      {mostrandoUsos && (
-        <div className="panel-usos">
-          <h2 className="titulo-usos">Usos de: {mostrandoUsos}</h2>
-          {usos.length === 0 ? (
-            <div className="no-usos">No se encontraron usos en productos.</div>
-          ) : (
-            <ul className="lista-usos">
-              {usos.map(u => (
-                <li key={`${u.producto_id}-${u.campo}`} className="item-uso">
-                  <div>
-                    <div className="uso-id">Producto ID: {u.producto_id}</div>
-                    <div className="uso-detalle">{u.producto?.nombre} {u.producto?.slug ? `— /producto/${u.producto.slug}` : ''}</div>
-                    <div className="uso-detalle">Campo: {u.campo}</div>
+      <div className="paginacion-ia">
+        <button className="btn" onClick={() => setPagina(p => Math.max(1, p - 1))} disabled={pagina === 1}>Anterior</button>
+        <span className="pagina-info">Página {pagina} de {totalPaginas}</span>
+        <button className="btn" onClick={() => setPagina(p => Math.min(totalPaginas, p + 1))} disabled={pagina >= totalPaginas}>Siguiente</button>
+        <select className="select-por-pagina" value={porPagina} onChange={e => { setPagina(1); setPorPagina(parseInt(e.target.value)) }}>
+          <option value={8}>8</option>
+          <option value={12}>12</option>
+          <option value={24}>24</option>
+          <option value={48}>48</option>
+        </select>
+      </div>
+
+      {modalSubirAbierto && (
+        <div className="modal-subida-ia" onClick={() => setModalSubirAbierto(false)}>
+          <div className="modal-subida-contenido" onClick={(e) => e.stopPropagation()}>
+            <h2 className="modal-subida-titulo">Subir imagen al bucket</h2>
+            <div className="modal-subida-form">
+              <input type="file" accept="image/*" onChange={e => setArchivoNuevo(e.target.files?.[0] || null)} />
+              <input type="text" placeholder="Nombre del archivo (opcional)" value={nombreNuevo} onChange={e => setNombreNuevo(e.target.value)} />
+              <select className="select-preset" value={bucketDestino} onChange={e => setBucketDestino(e.target.value)}>
+                {BUCKETS.map((b) => (
+                  <option key={`bkt-${b}`} value={b}>{b}</option>
+                ))}
+              </select>
+              {urlPreviewNuevo && (
+                <div className="preview-subida">
+                  <img src={urlPreviewNuevo} alt="Previsualización" />
+                  <div className="preview-info">
+                    <div>Nombre seleccionado: <b>{archivoNuevo?.name}</b></div>
+                    <div>Tamaño original: {tamOriginalNuevoKB ? `${tamOriginalNuevoKB} KB` : '—'}</div>
+                    <div>Optimizado: {calculandoTamanoNuevo ? 'Calculando…' : (tamEstimadoNuevoKB ? `${tamEstimadoNuevoKB} KB` : '—')}</div>
                   </div>
-                  {u.producto?.slug && (
-                    <div className="links-producto">
-                      <a href={`/producto/${u.producto.slug}`} className="link-producto">Ver producto</a>
-                      <a href={`/landing/${u.producto.slug}`} className="link-producto">Ver landing</a>
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
+                </div>
+              )}
+              <label className="check"><input type="checkbox" checked={optimizarNuevo} onChange={e => setOptimizarNuevo(e.target.checked)} /> Optimizar imagen</label>
+              <select className="select-preset" value={presetNuevo} onChange={e => setPresetNuevo(e.target.value)}>
+                <option value="producto">Producto (90%)</option>
+                <option value="web">Web (80%)</option>
+                <option value="movil">Móvil (75%)</option>
+                <option value="thumbnail">Thumbnail (70%)</option>
+                <option value="ultra">Ultra (60%)</option>
+                <option value="extremo">Extremo (35%)</option>
+              </select>
+              <input type="range" min={0.1} max={0.95} step={0.05} value={typeof calidadNueva === 'number' ? calidadNueva : 0.8} onChange={e => setCalidadNueva(parseFloat(e.target.value))} />
+              <label className="check"><input type="checkbox" checked={conservarOriginalNuevo} onChange={e => setConservarOriginalNuevo(e.target.checked)} /> Conservar original (backup)</label>
+            </div>
+            <div className="modal-subida-acciones">
+              <button className="btn" onClick={() => { setModalSubirAbierto(false); setArchivoNuevo(null); setNombreNuevo(''); setCalidadNueva(null) }}>Cancelar</button>
+              <button className="btn btn-primario" disabled={!archivoNuevo || subiendoNuevo} onClick={async () => { await subirNuevaImagen(); setModalSubirAbierto(false) }}>{subiendoNuevo ? 'Subiendo...' : 'Subir'}</button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -409,7 +634,7 @@ export default function ImagenesIA() {
         <div className="modal-imagen-ia fade-in" onClick={() => setModalAbierto(false)}>
           <div className="modal-contenido-ia slide-up" onClick={e => e.stopPropagation()}>
             <button className="modal-cerrar-ia" onClick={() => setModalAbierto(false)}>Cerrar</button>
-            <div className="modal-body-ia">
+            <div className="modal-body-ia" style={{ position: 'relative' }}>
               <div className="modal-left">
                 <img src={imagenModal} alt="Imagen" className="modal-imagen-preview" />
               </div>
@@ -438,7 +663,7 @@ export default function ImagenesIA() {
                   <span className="estimado">{calculandoTamano ? 'Calculando…' : `Optimizado: ${tamEstimadoKB ? `${tamEstimadoKB} KB` : '—'}`}</span>
                 </div>
               </div>
-                  <button className="btn btn-ambar" disabled={!archivoSeleccionado || !productoSeleccionadoId || !campoSeleccionado} onClick={async () => {
+                  <button className="btn btn-ambar" disabled={guardandoCampo || !archivoSeleccionado || !productoSeleccionadoId || !campoSeleccionado} onClick={async () => {
                     try {
                       setGuardandoCampo(true)
                       // 1. Obtener blob actual de la imagen modal
@@ -471,9 +696,20 @@ export default function ImagenesIA() {
                         archivoFinal = archivoComprimido || blobActual
                       }
                       const extFinal = (archivoFinal.type.split('/')[1] || 'webp')
+                      const originalKey = archivoSeleccionado.key || `${archivoSeleccionado.path}${archivoSeleccionado.name}`
                       const pathFinal = (() => {
-                        const nombreBase = (nombreDestino?.trim() || `${campoSeleccionado}`)
-                        if (nombreDestino?.trim()) {
+                        const nombreBaseDest = nombreDestino?.trim()
+                        if (!conservarOriginal) {
+                          if (nombreBaseDest) {
+                            const tieneExt = /\.[a-zA-Z0-9]+$/.test(nombreBaseDest)
+                            const nuevoNombre = tieneExt ? nombreBaseDest : `${nombreBaseDest}.${extFinal}`
+                            // Mantener la carpeta original del archivo
+                            return `${archivoSeleccionado.path}${nuevoNombre}`
+                          }
+                          return originalKey
+                        }
+                        const nombreBase = (nombreBaseDest || `${campoSeleccionado}`)
+                        if (nombreBaseDest) {
                           const tieneExt = /\.[a-zA-Z0-9]+$/.test(nombreBase)
                           const nombreConExt = tieneExt ? nombreBase : `${nombreBase}.${extFinal}`
                           return `productos/${productoSeleccionadoId}/${campoSeleccionado}/${nombreConExt}`
@@ -510,15 +746,26 @@ export default function ImagenesIA() {
                           .insert({ producto_id: productoSeleccionadoId, [campoSeleccionado]: pubFinal.publicUrl, estado: 'pendiente' })
                       }
 
-                      // 7. Refresco visual
+                      // 7. Si se renombró sin conservar original, eliminar la anterior clave
+                      if (!conservarOriginal && originalKey && originalKey !== pathFinal) {
+                        await clienteSupabase.storage.from(bucketSeleccionado).remove([originalKey])
+                      }
+
+                      // 8. Refresco visual y feedback
                       setImagenModal(`${pubFinal.publicUrl}?v=${Date.now()}`)
                       await listarArchivos()
+                      setModalAbierto(false)
+                      setMensajeOk('Cambios aplicados correctamente')
+                      setProductoSeleccionadoId(null)
+                      setCampoSeleccionado('')
+                      setNombreDestino('')
                     } catch (e) {
                       setError(e.message)
                     } finally {
                       setGuardandoCampo(false)
                     }
                   }}>Aplicar cambios</button>
+                  {guardandoCampo && <div className="modal-guardando">Guardando…</div>}
                 </div>
                 <div className="seleccion-guardado">
                   <div className="checks">
@@ -533,16 +780,19 @@ export default function ImagenesIA() {
                   </div>
                   <div className="grupo">
                     <label>Producto</label>
+                    <input type="text" placeholder="Buscar producto (min 2 letras)" value={busquedaProducto} onChange={e => setBusquedaProducto(e.target.value)} />
                     <select value={productoSeleccionadoId || ''} onChange={e => setProductoSeleccionadoId(e.target.value || null)}>
                       <option value="">Selecciona…</option>
-                      {previewsProductos.map(p => (
-                        <option key={`opt-${p.producto?.id}`} value={p.producto?.id}>{p.producto?.nombre}</option>
+                      {productosSelector.map(p => (
+                        <option key={`opt-${p.id}`} value={p.id}>{p.nombre}</option>
                       ))}
                     </select>
+                    {cargandoProductos && <small>Cargando productos…</small>}
                   </div>
                   <div className="grupo">
                     <label>Campo</label>
                     <select value={campoSeleccionado} onChange={e => setCampoSeleccionado(e.target.value)}>
+                      <option value="">Selecciona campo…</option>
                       <option value="imagen_principal">imagen_principal</option>
                       <option value="imagen_secundaria_1">imagen_secundaria_1</option>
                       <option value="imagen_secundaria_2">imagen_secundaria_2</option>

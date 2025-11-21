@@ -6,6 +6,7 @@ import './CreadorProductosPR.css'
 import FormularioProducto from './Componentes/FormularioProducto'
 import ImagenesLanding from './Componentes/ImagenesLanding'
 import CrearProductoIA from './Componentes/CrearProductoIA'
+import VideosProducto from './Componentes/VideosProducto'
 import ChatImagenesIAInline from './Componentes/ChatImagenesIAInline'
 
 // Importar configuración de Supabase
@@ -653,6 +654,7 @@ const CreadorProductosPR = ({ modo = 'crear', slug = null, onSuccess = null }) =
   const pestanas = [
     { id: 'formulario', nombre: 'Formulario', icono: '📝' },
     { id: 'imagenes', nombre: 'Imágenes (Landing)', icono: '🖼️' },
+    { id: 'videos', nombre: 'Videos (Producto)', icono: '🎬' },
     { id: 'crearIA', nombre: 'Crear con IA', icono: '🤖' },
     { id: 'imagenesIA', nombre: 'Imágenes con IA', icono: '🎨' },
     { id: 'vistaPrevia', nombre: 'Vista Previa', icono: '👁️' }
@@ -681,6 +683,14 @@ const CreadorProductosPR = ({ modo = 'crear', slug = null, onSuccess = null }) =
             manejarExito={manejarExito}
             manejarError={manejarError}
             productoId={productoId}
+          />
+        )
+      case 'videos':
+        return (
+          <VideosProducto
+            productoId={productoId}
+            manejarExito={manejarExito}
+            manejarError={manejarError}
           />
         )
       

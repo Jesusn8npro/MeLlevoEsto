@@ -47,34 +47,19 @@ const ImagenesLanding = ({
     imagen_secundaria_2: null,
     imagen_secundaria_3: null,
     imagen_secundaria_4: null,
-    // Imágenes de puntos de dolor
     imagen_punto_dolor_1: null,
     imagen_punto_dolor_2: null,
-    imagen_punto_dolor_3: null,
-    imagen_punto_dolor_4: null,
-    // Imágenes de soluciones
+    
     imagen_solucion_1: null,
     imagen_solucion_2: null,
-    imagen_solucion_3: null,
-    imagen_solucion_4: null,
-    // Imágenes de testimonios
+    
     imagen_testimonio_persona_1: null,
     imagen_testimonio_persona_2: null,
     imagen_testimonio_persona_3: null,
-    imagen_testimonio_persona_4: null,
-    imagen_testimonio_persona_5: null,
-    imagen_testimonio_persona_6: null,
     imagen_testimonio_producto_1: null,
     imagen_testimonio_producto_2: null,
     imagen_testimonio_producto_3: null,
-    imagen_testimonio_producto_4: null,
-    imagen_testimonio_producto_5: null,
-    imagen_testimonio_producto_6: null,
-    // Imágenes adicionales
-    imagen_beneficio_1: null,
-    imagen_beneficio_2: null,
-    imagen_beneficio_3: null,
-    imagen_beneficio_4: null,
+    
     imagen_caracteristicas: null,
     imagen_garantias: null,
     imagen_cta_final: null
@@ -97,9 +82,16 @@ const ImagenesLanding = ({
   const [calidadPorImagen, setCalidadPorImagen] = useState({}) // { keyImagen: 0.5..0.95 }
   const [statsPorImagen, setStatsPorImagen] = useState({}) // { keyImagen: estadisticas }
   const [archivoSeleccionadoPorKey, setArchivoSeleccionadoPorKey] = useState({}) // { keyImagen: File }
-  const [pagina, setPagina] = useState(1)
-  const [porPagina, setPorPagina] = useState(12)
+  
   const [optimizandoPorKey, setOptimizandoPorKey] = useState({}) // { keyImagen: true }
+  const [actualizarPorImagen, setActualizarPorImagen] = useState({})
+  const [conservarOriginalPorImagen, setConservarOriginalPorImagen] = useState({})
+  const [nombreDestinoPorImagen, setNombreDestinoPorImagen] = useState({})
+  const [mensajeOk, setMensajeOk] = useState('')
+  const [modalAbierto, setModalAbierto] = useState(false)
+  const [campoModalKey, setCampoModalKey] = useState(null)
+  const [imagenModal, setImagenModal] = useState(null)
+  const [guardandoCampo, setGuardandoCampo] = useState(false)
   
   // ===== SISTEMA DE LOGGING Y DEBUG =====
   const [mostrarDebug, setMostrarDebug] = useState(true)
@@ -171,17 +163,40 @@ const ImagenesLanding = ({
       setEstadisticasOptimizacion(resultado.estadisticas)
 
       const extension = 'webp'
-      const nombreArchivo = `optimizadas/${productoId}/${tipoImagen}.${extension}`
+      const conservar = conservarOriginalPorImagen[tipoImagen] ?? true
+      const nombreDestino = (nombreDestinoPorImagen[tipoImagen] || '').trim()
+
+      const extraerBucketYKeyDeURL = (url) => {
+        try {
+          const u = new URL(url)
+          const m = u.pathname.match(/\/object\/public\/([^/]+)\/(.+)/)
+          if (m) return { bucket: m[1], key: m[2] }
+        } catch {}
+        return { bucket: 'imagenes_tienda', key: null }
+      }
+      const { bucket, key: originalKey } = extraerBucketYKeyDeURL(urlActual)
+
+      let destinoKey = `optimizadas/${productoId}/${tipoImagen}.${extension}`
+      if (!conservar) {
+        if (nombreDestino) {
+          const tieneExt = /\.[a-zA-Z0-9]+$/.test(nombreDestino)
+          const nuevoNombre = tieneExt ? nombreDestino : `${nombreDestino}.${extension}`
+          const carpeta = originalKey ? originalKey.replace(/[^/]+$/, '') : `optimizadas/${productoId}/`
+          destinoKey = `${carpeta}${nuevoNombre}`
+        } else if (originalKey) {
+          destinoKey = originalKey
+        }
+      }
 
       const { data, error } = await clienteSupabase.storage
-        .from('imagenes_tienda')
-        .upload(nombreArchivo, archivoFinal, { cacheControl: '3600', upsert: true })
+        .from(bucket)
+        .upload(destinoKey, archivoFinal, { cacheControl: '3600', upsert: true })
 
       if (error) throw error
 
       const { data: { publicUrl } } = clienteSupabase.storage
-        .from('imagenes_tienda')
-        .getPublicUrl(nombreArchivo)
+        .from(bucket)
+        .getPublicUrl(destinoKey)
 
       const ok = await verificarDisponible(publicUrl)
       if (!ok) throw new Error('La imagen optimizada no se pudo verificar en Storage')
@@ -194,7 +209,12 @@ const ImagenesLanding = ({
 
       if (errorGuardar) throw errorGuardar
 
-      manejarExito('Imagen reoptimizada y reemplazada correctamente')
+      if (!conservar && originalKey && originalKey !== destinoKey) {
+        await clienteSupabase.storage.from(bucket).remove([originalKey])
+      }
+      manejarExito('Imagen reoptimizada y guardada correctamente')
+      setMensajeOk('Cambios aplicados correctamente')
+      setNombreDestinoPorImagen(prev => ({ ...prev, [tipoImagen]: '' }))
     } catch (error) {
       console.error('Error al reoptimizar imagen:', error)
       manejarError('No se pudo reoptimizar la imagen')
@@ -202,6 +222,100 @@ const ImagenesLanding = ({
       setSubiendoImagenLanding(false)
       setOptimizandoImagen(false)
       setOptimizandoPorKey(prev => ({ ...prev, [tipoImagen]: false }))
+    }
+  }
+
+  const extraerBucketYKeyDeURL = (url) => {
+    try {
+      const u = new URL(url)
+      const m = u.pathname.match(/\/object\/public\/([^/]+)\/(.+)/)
+      if (m) return { bucket: m[1], key: m[2] }
+    } catch {}
+    return { bucket: 'imagenes_tienda', key: null }
+  }
+
+  const abrirModalCampo = (tipoImagen) => {
+    const url = imagenesLanding[tipoImagen]
+    if (!url) return
+    setCampoModalKey(tipoImagen)
+    setImagenModal(url)
+    setModalAbierto(true)
+  }
+
+  const cerrarModalCampo = () => {
+    setModalAbierto(false)
+    setCampoModalKey(null)
+    setImagenModal(null)
+    setGuardandoCampo(false)
+  }
+
+  const aplicarCambiosCampo = async () => {
+    if (!campoModalKey || !imagenModal) return
+    try {
+      setGuardandoCampo(true)
+      const urlActual = imagenModal
+      const resp = await fetch(urlActual)
+      const blobActual = await resp.blob()
+      const preset = presetsPorImagen[campoModalKey] || presetCompresion
+      const calidad = calidadPorImagen[campoModalKey]
+      let archivoFinal = blobActual
+      if (actualizarPorImagen[campoModalKey] ?? true) {
+        const base = CONFIGURACIONES_PREDEFINIDAS[preset] || CONFIGURACIONES_PREDEFINIDAS.web
+        const config = typeof calidad === 'number' ? { ...base, quality: calidad, convertSize: 0 } : base
+        const { archivoComprimido } = await comprimirImagen(blobActual, config)
+        archivoFinal = archivoComprimido || blobActual
+      }
+      const extFinal = (archivoFinal.type.split('/')[1] || 'webp')
+      const { bucket, key: originalKey } = extraerBucketYKeyDeURL(urlActual)
+      const nombreBaseDest = (nombreDestinoPorImagen[campoModalKey] || '').trim()
+      let destinoKey = `optimizadas/${productoId}/${campoModalKey}.${extFinal}`
+      const conservar = conservarOriginalPorImagen[campoModalKey] ?? true
+      if (!conservar) {
+        if (nombreBaseDest) {
+          const tieneExt = /\.[a-zA-Z0-9]+$/.test(nombreBaseDest)
+          const nuevoNombre = tieneExt ? nombreBaseDest : `${nombreBaseDest}.${extFinal}`
+          const carpeta = originalKey ? originalKey.replace(/[^/]+$/, '') : `optimizadas/${productoId}/`
+          destinoKey = `${carpeta}${nuevoNombre}`
+        } else if (originalKey) {
+          destinoKey = originalKey
+        }
+      }
+      const { error: errUpload } = await clienteSupabase.storage
+        .from(bucket)
+        .upload(destinoKey, archivoFinal, { upsert: true, contentType: archivoFinal.type })
+      if (errUpload) throw errUpload
+      const { data: pub } = clienteSupabase.storage.from(bucket).getPublicUrl(destinoKey)
+      if (!pub?.publicUrl) throw new Error('No se pudo obtener URL pública del destino')
+      const okFinal = await (async () => { try { const r = await fetch(pub.publicUrl); if (!r.ok) return false; const b = await r.blob(); return b.size > 0 } catch { return false } })()
+      if (!okFinal) throw new Error('El archivo optimizado no está disponible aún')
+      // Persistir en BD
+      const { data: row, error: errRow } = await clienteSupabase
+        .from('producto_imagenes')
+        .select('producto_id')
+        .eq('producto_id', productoId)
+        .single()
+      if (!errRow && row) {
+        await clienteSupabase
+          .from('producto_imagenes')
+          .update({ [campoModalKey]: pub.publicUrl, actualizado_el: new Date().toISOString() })
+          .eq('producto_id', productoId)
+      } else {
+        await clienteSupabase
+          .from('producto_imagenes')
+          .insert({ producto_id: productoId, [campoModalKey]: pub.publicUrl, estado: 'pendiente' })
+      }
+      // Si renombró sin conservar, eliminar clave anterior
+      if (!conservar && originalKey && originalKey !== destinoKey) {
+        await clienteSupabase.storage.from(bucket).remove([originalKey])
+      }
+      setImagenesLanding(prev => ({ ...prev, [campoModalKey]: pub.publicUrl }))
+      setMensajeOk('Cambios aplicados correctamente')
+      setNombreDestinoPorImagen(prev => ({ ...prev, [campoModalKey]: '' }))
+      cerrarModalCampo()
+    } catch (error) {
+      manejarError(error?.message || 'Error aplicando cambios')
+    } finally {
+      setGuardandoCampo(false)
     }
   }
 
@@ -223,9 +337,7 @@ const ImagenesLanding = ({
       descripcion: 'Imágenes que muestran problemas que resuelve el producto',
       campos: [
         { key: 'imagen_punto_dolor_1', label: 'Punto de Dolor 1', descripcion: 'Primera imagen de problema' },
-        { key: 'imagen_punto_dolor_2', label: 'Punto de Dolor 2', descripcion: 'Segunda imagen de problema' },
-        { key: 'imagen_punto_dolor_3', label: 'Punto de Dolor 3', descripcion: 'Tercera imagen de problema' },
-        { key: 'imagen_punto_dolor_4', label: 'Punto de Dolor 4', descripcion: 'Cuarta imagen de problema' }
+        { key: 'imagen_punto_dolor_2', label: 'Punto de Dolor 2', descripcion: 'Segunda imagen de problema' }
       ]
     },
     soluciones: {
@@ -412,8 +524,10 @@ const ImagenesLanding = ({
       let extOpt = 'webp'
       let extOrig = (archivo?.type?.split('/')[1] || 'jpg').toLowerCase()
       if (extOrig === 'jpeg') extOrig = 'jpg'
+      const conservar = conservarOriginalPorImagen[tipoImagen] ?? true
+      const nombreDestino = (nombreDestinoPorImagen[tipoImagen] || '').trim()
       const nombreOriginal = `originales/${productoId}/${tipoImagen}.${extOrig}`
-      const nombreOptimizado = `optimizadas/${productoId}/${tipoImagen}.${extOpt}`
+      let nombreOptimizado = `optimizadas/${productoId}/${tipoImagen}.${extOpt}`
       
       agregarLog('info', `🗂️ Subiendo imagen optimizada a bucket 'imagenes_tienda'`, { 
         nombreOptimizado,
@@ -421,20 +535,35 @@ const ImagenesLanding = ({
         optimizada: archivoFinal !== archivo
       })
       
-      await clienteSupabase.storage
-        .from('imagenes_tienda')
-        .upload(nombreOriginal, archivo, { cacheControl: '3600', upsert: true })
-
-      const { data, error } = await clienteSupabase.storage
-        .from('imagenes_tienda')
-        .upload(nombreOptimizado, archivoFinal, { cacheControl: '3600', upsert: true })
-
-      if (error) {
-        agregarLog('error', `❌ Error en Storage Supabase: ${error.message}`, error)
-        throw error
+      if (!conservar) {
+        if (imagenesLanding[tipoImagen]) {
+          const parse = (url)=>{ try{ const u=new URL(url); const m=u.pathname.match(/\/object\/public\/([^/]+)\/(.+)/); if(m) return {bucket:m[1],key:m[2]} }catch{}; return {bucket:'imagenes_tienda',key:null} }
+          const { bucket, key } = parse(imagenesLanding[tipoImagen])
+          if (nombreDestino) {
+            const tieneExt = /\.[a-zA-Z0-9]+$/.test(nombreDestino)
+            const nuevoNombre = tieneExt ? nombreDestino : `${nombreDestino}.${extOpt}`
+            const carpeta = key ? key.replace(/[^/]+$/, '') : `optimizadas/${productoId}/`
+            nombreOptimizado = `${carpeta}${nuevoNombre}`
+            const { error: errUp } = await clienteSupabase.storage.from(bucket).upload(nombreOptimizado, archivoFinal, { cacheControl: '3600', upsert: true })
+            if (errUp) throw errUp
+            if (key && key !== nombreOptimizado) await clienteSupabase.storage.from(bucket).remove([key])
+          } else if (key) {
+            const { error: errUp } = await clienteSupabase.storage.from(bucket).upload(key, archivoFinal, { cacheControl: '3600', upsert: true })
+            if (errUp) throw errUp
+            nombreOptimizado = key
+          } else {
+            const { error: errUp } = await clienteSupabase.storage.from('imagenes_tienda').upload(nombreOptimizado, archivoFinal, { cacheControl: '3600', upsert: true })
+            if (errUp) throw errUp
+          }
+        } else {
+          const { error: errUp } = await clienteSupabase.storage.from('imagenes_tienda').upload(nombreOptimizado, archivoFinal, { cacheControl: '3600', upsert: true })
+          if (errUp) throw errUp
+        }
+      } else {
+        await clienteSupabase.storage.from('imagenes_tienda').upload(nombreOriginal, archivo, { cacheControl: '3600', upsert: true })
+        const { error: errUp } = await clienteSupabase.storage.from('imagenes_tienda').upload(nombreOptimizado, archivoFinal, { cacheControl: '3600', upsert: true })
+        if (errUp) throw errUp
       }
-
-      agregarLog('success', '✅ Archivo subido al storage', data)
 
       const { data: { publicUrl } } = clienteSupabase.storage
         .from('imagenes_tienda')
@@ -466,6 +595,8 @@ const ImagenesLanding = ({
       agregarLog('success', `✅ Imagen ${tipoImagen} guardada en BD automáticamente`)
       agregarLog('success', `✅ Imagen ${tipoImagen} actualizada correctamente`)
       manejarExito('Imagen subida y guardada correctamente')
+      setMensajeOk('Imagen subida correctamente')
+      setNombreDestinoPorImagen(prev => ({ ...prev, [tipoImagen]: '' }))
     } catch (error) {
       console.error('Error al subir imagen:', error)
       agregarLog('error', `💥 Error crítico en subida: ${error.message}`, error)
@@ -482,6 +613,10 @@ const ImagenesLanding = ({
     if (!confirm('¿Estás seguro de que quieres eliminar esta imagen?')) return
 
     try {
+      // Eliminar del storage si es una URL pública
+      const parse = (url)=>{ try{ const u=new URL(url); const m=u.pathname.match(/\/object\/public\/([^/]+)\/(.+)/); if(m) return {bucket:m[1],key:m[2]} }catch{}; return {bucket:null,key:null} }
+      const { bucket, key } = parse(imagenesLanding[tipoImagen])
+      if (bucket && key) { await clienteSupabase.storage.from(bucket).remove([key]) }
       setImagenesLanding(prev => ({
         ...prev,
         [tipoImagen]: null
@@ -578,13 +713,13 @@ const ImagenesLanding = ({
               src={imagen.valor} 
               alt={imagen.label}
               className="imagen-preview-grande"
-              onClick={() => setImagenSeleccionada(imagen.valor)}
+              onClick={() => abrirModalCampo(imagen.key)}
             />
             <div className="imagen-acciones">
               <button
                 type="button"
                 className="boton-accion ver"
-                onClick={() => setImagenSeleccionada(imagen.valor)}
+                onClick={() => abrirModalCampo(imagen.key)}
                 title="Ver imagen completa"
               >
                 <Eye className="icono" />
@@ -622,7 +757,7 @@ const ImagenesLanding = ({
             </div>
           </div>
         )}
-      </div>
+        </div>
 
       {/* Panel de compresión por imagen */}
       <div className="panel-compresion">
@@ -659,10 +794,10 @@ const ImagenesLanding = ({
             <button
               type="button"
               className="boton-optimizar"
-              onClick={() => reoptimizarImagenDesdeURL(imagen.key)}
+              onClick={() => abrirModalCampo(imagen.key)}
               disabled={subiendoImagenLanding || !productoId || optimizandoPorKey[imagen.key]}
             >
-              {optimizandoPorKey[imagen.key] ? 'Optimizando…' : 'Optimizar y reemplazar'}
+              {optimizandoPorKey[imagen.key] ? 'Optimizando…' : 'Editar / Optimizar'}
             </button>
           )}
         </div>
@@ -762,12 +897,53 @@ const ImagenesLanding = ({
   }
 
   const imagenesFiltradas = obtenerImagenesFiltradas()
-  const inicio = (pagina - 1) * porPagina
-  const fin = inicio + porPagina
-  const imagenesPaginadas = imagenesFiltradas.slice(inicio, fin)
 
   return (
     <>
+      {mensajeOk && (
+        <div className="mensaje-exito">{mensajeOk}</div>
+      )}
+      {imagenModal && (
+        <div className="modal-imagen-ia fade-in" onClick={cerrarModalCampo}>
+          <div className="modal-contenido-ia slide-up" onClick={e => e.stopPropagation()}>
+            <button className="modal-cerrar-ia" onClick={cerrarModalCampo}>Cerrar</button>
+            <div className="modal-body-ia">
+              <div className="modal-left">
+                <img src={imagenModal} alt="Imagen" className="modal-imagen-preview" />
+              </div>
+              <div className="modal-right">
+                <div className="control">
+                  <label>Preset de optimización</label>
+                  <select value={presetsPorImagen[campoModalKey] || presetCompresion} onChange={e => setPresetsPorImagen(prev => ({ ...prev, [campoModalKey]: e.target.value }))}>
+                    <option value="producto">Producto (90%)</option>
+                    <option value="web">Web (80%)</option>
+                    <option value="movil">Móvil (75%)</option>
+                    <option value="thumbnail">Thumbnail (70%)</option>
+                    <option value="ultra">Ultra (60%)</option>
+                    <option value="extremo">Extremo (35%)</option>
+                  </select>
+                </div>
+                <div className="control">
+                  <label>Calidad manual</label>
+                  <input type="range" min={0.1} max={0.95} step={0.05} value={typeof calidadPorImagen[campoModalKey] === 'number' ? calidadPorImagen[campoModalKey] : 0.8} onChange={e => setCalidadPorImagen(prev => ({ ...prev, [campoModalKey]: parseFloat(e.target.value) }))} />
+                </div>
+                <div className="controles-guardar">
+                  <label className="check"><input type="checkbox" checked={actualizarPorImagen[campoModalKey] ?? true} onChange={e => setActualizarPorImagen(prev => ({ ...prev, [campoModalKey]: e.target.checked }))} /> Actualizar imagen (optimizar)</label>
+                  <label className="check"><input type="checkbox" checked={conservarOriginalPorImagen[campoModalKey] ?? true} onChange={e => setConservarOriginalPorImagen(prev => ({ ...prev, [campoModalKey]: e.target.checked }))} /> Conservar original (backup)</label>
+                  <label className="control"><span>Nombre destino</span><input type="text" value={nombreDestinoPorImagen[campoModalKey] || ''} onChange={e => setNombreDestinoPorImagen(prev => ({ ...prev, [campoModalKey]: e.target.value }))} placeholder={campoModalKey ? `${campoModalKey}.webp` : 'nombre.ext'} /></label>
+                </div>
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '12px' }}>
+                  <button className="btn" onClick={cerrarModalCampo}>Cancelar</button>
+                  <button className="btn btn-primario" disabled={guardandoCampo} onClick={aplicarCambiosCampo}>{guardandoCampo ? 'Guardando…' : 'Aplicar cambios'}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {mensajeOk && (
+        <div className="mensaje-exito">{mensajeOk}</div>
+      )}
       {/* Modal de imagen ampliada */}
       {imagenSeleccionada && (
         <div className="modal-imagen" onClick={() => setImagenSeleccionada(null)}>
@@ -900,11 +1076,11 @@ const ImagenesLanding = ({
       <div className={`imagenes-contenedor ${vistaActual}`}>
         {vistaActual === 'grid' ? (
           <div className="imagenes-grid-moderno">
-            {imagenesPaginadas.map(renderizarTarjetaImagen)}
+            {imagenesFiltradas.map(renderizarTarjetaImagen)}
           </div>
         ) : (
           <div className="imagenes-lista-moderno">
-            {imagenesPaginadas.map(renderizarFilaImagen)}
+            {imagenesFiltradas.map(renderizarFilaImagen)}
           </div>
         )}
       </div>
@@ -962,7 +1138,6 @@ const ImagenesLanding = ({
         </div>
       )}
 
-      {/* Acciones principales */}
       <div className="acciones-principales">
         <button
           type="button"
@@ -984,94 +1159,9 @@ const ImagenesLanding = ({
         </button>
       </div>
 
-      <div className="paginacion-editor">
-        <button onClick={() => setPagina(p => Math.max(1, p - 1))} disabled={pagina === 1}>Anterior</button>
-        <span>Página {pagina}</span>
-        <button onClick={() => setPagina(p => p + 1)} disabled={fin >= imagenesFiltradas.length}>Siguiente</button>
-        <select value={porPagina} onChange={e => { setPagina(1); setPorPagina(parseInt(e.target.value)) }}>
-          <option value={8}>8</option>
-          <option value={12}>12</option>
-          <option value={16}>16</option>
-        </select>
-      </div>
+      
 
-      {/* Panel de Debug */}
-      <div className="debug-panel">
-        <div className="debug-header">
-          <button
-            type="button"
-            className={`debug-toggle ${mostrarDebug ? 'activo' : ''}`}
-            onClick={() => setMostrarDebug(!mostrarDebug)}
-          >
-            <Bug className="icono" />
-            Debug Panel {mostrarDebug ? '▼' : '▶'}
-          </button>
-          {mostrarDebug && (
-            <button
-              type="button"
-              className="debug-clear"
-              onClick={() => setLogsDebug([])}
-            >
-              Limpiar Logs
-            </button>
-          )}
-        </div>
-
-        {mostrarDebug && (
-          <div className="debug-content">
-            {/* Información de Supabase */}
-            <div className="debug-section">
-              <h4><Database className="icono" /> Estado de Supabase</h4>
-              <div className="debug-info">
-                <div className="info-item">
-                  <strong>Producto ID:</strong> {productoId || 'No definido'}
-                </div>
-                <div className="info-item">
-                  <strong>Tabla:</strong> producto_imagenes
-                </div>
-                <div className="info-item">
-                  <strong>Bucket:</strong> imagenes_tienda
-                </div>
-                <div className="info-item">
-                  <strong>Estado:</strong> {imagenesLanding.estado}
-                </div>
-                {datosSupabase && (
-                  <div className="info-item">
-                    <strong>Última consulta:</strong>
-                    <pre>{JSON.stringify(datosSupabase, null, 2)}</pre>
-                  </div>
-                )}
-                {errorSupabase && (
-                  <div className="info-item error">
-                    <strong>Último error:</strong>
-                    <pre>{JSON.stringify(errorSupabase, null, 2)}</pre>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Logs de actividad */}
-            <div className="debug-section">
-              <h4>📋 Logs de Actividad</h4>
-              <div className="debug-logs">
-                {logsDebug.length === 0 ? (
-                  <p className="no-logs">No hay logs disponibles</p>
-                ) : (
-                  logsDebug.slice(-20).map((log, index) => (
-                    <div key={`log-${log.timestamp}-${index}`} className={`log-entry ${log.tipo}`}>
-                      <span className="log-time">{log.timestamp}</span>
-                      <span className="log-message">{log.mensaje}</span>
-                      {log.datos && (
-                        <pre className="log-data">{JSON.stringify(log.datos, null, 2)}</pre>
-                      )}
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+      
     </>
   )
 }
