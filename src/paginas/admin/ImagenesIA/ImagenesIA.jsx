@@ -484,9 +484,8 @@ export default function ImagenesIA() {
       <h1 className="titulo-pagina">Gestión de Imágenes IA</h1>
 
       <div className="barra-herramientas">
-        <label className="text-sm">Bucket</label>
+        <label>Bucket</label>
         <select
-          className="select-bucket"
           value={bucketSeleccionado}
           onChange={(e) => setBucketSeleccionado(e.target.value)}
         >
@@ -495,12 +494,11 @@ export default function ImagenesIA() {
           ))}
         </select>
         <input
-          className="buscador"
           placeholder="Buscar por nombre..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
         />
-        <select className="select-orden" value={orden} onChange={e => setOrden(e.target.value)}>
+        <select value={orden} onChange={e => setOrden(e.target.value)}>
           <option value="recientes">Más recientes</option>
           <option value="antiguas">Más antiguas</option>
           <option value="tamano_mayor">Tamaño mayor</option>

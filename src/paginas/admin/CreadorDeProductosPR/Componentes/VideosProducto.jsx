@@ -43,6 +43,7 @@ export default function VideosProducto({ productoId, manejarExito, manejarError 
   const [guardando, setGuardando] = useState(false)
   const [tamOriginalKB, setTamOriginalKB] = useState(null)
   const [tamOptimizadoKB, setTamOptimizadoKB] = useState(null)
+  const [actualizarVideo, setActualizarVideo] = useState(false)
 
   const cargarVideos = useCallback(async () => {
     if (!productoId) return
@@ -109,7 +110,13 @@ export default function VideosProducto({ productoId, manejarExito, manejarError 
     setPresetOpt('web')
     setCalidadOpt(0.8)
     setConservarOriginal(true)
-    setNombreDestino('')
+    // Sugerir nombre destino basado en el archivo actual
+    try {
+      const actualKey = parseKeyFromPublicUrl(video.url_publica) || ''
+      const baseName = actualKey.replace(/^.*\//, '').replace(/\.[a-zA-Z0-9]+$/, '')
+      setNombreDestino(`${baseName}_optimizado`)
+    } catch { setNombreDestino('') }
+    setActualizarVideo(false)
     setTamOptimizadoKB(null)
     try {
       const r = await fetch(video.url_publica, { method: 'HEAD' })
@@ -119,6 +126,29 @@ export default function VideosProducto({ productoId, manejarExito, manejarError 
       }
     } catch {}
   }, [])
+
+  // Cálculo del tamaño optimizado en tiempo real, como en ImagenesIA
+  useEffect(() => {
+    if (!modalOptimizar) return
+    if (!urlOpt || !apiKey) return
+    const calcular = async () => {
+      try {
+        const resp = await fetch(urlOpt, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey },
+          body: JSON.stringify({ url: modalOptimizar.url_publica, preset: presetOpt, calidad: calidadOpt, calcular_solo: true })
+        })
+        if (resp.ok) {
+          const { tamanio_optimizado } = await resp.json()
+          if (typeof tamanio_optimizado === 'number') {
+            setTamOptimizadoKB(Math.round(tamanio_optimizado / 1024))
+          }
+        }
+      } catch {}
+    }
+    const t = setTimeout(calcular, 350)
+    return () => clearTimeout(t)
+  }, [modalOptimizar, presetOpt, calidadOpt, urlOpt, apiKey])
 
   const videosFiltrados = useMemo(() => {
     let lista = [...videos]
@@ -200,7 +230,7 @@ export default function VideosProducto({ productoId, manejarExito, manejarError 
       setSubiendo(true)
       const resp = await fetch(urlOpt, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'apikey': apiKey },
+        headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey },
         body: JSON.stringify({ url: video.url_publica, preset: presetOpt, calidad: calidadOpt, producto_id: productoId })
       })
       if (!resp.ok) throw new Error('No se pudo optimizar el video')
@@ -209,23 +239,40 @@ export default function VideosProducto({ productoId, manejarExito, manejarError 
       const blob = new Blob([bin], { type: mime || 'video/mp4' })
       setTamOptimizadoKB(Math.round(blob.size / 1024))
       const ext = (mime || 'video/mp4').split('/')[1] || 'mp4'
-      const baseName = (nombreDestino?.trim() || nombre_sugerido || 'video_opt').replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_\-]/g,'')
       const keyActual = parseKeyFromPublicUrl(video.url_publica) || ''
       const carpetaOriginal = keyActual.replace(/[^/]+$/, '')
-      const nombreFinal = `${carpetaOriginal}${baseName}.${ext}`
-      if (conservarOriginal && video.ruta_storage) {
-        const extOrig = (video.url_publica.split('.').pop() || 'mp4')
-        const nombreBackup = `${carpetaOriginal}${baseName}.original.${extOrig}`
-        const respOrig = await fetch(video.url_publica)
-        const blobOrig = await respOrig.blob()
-        await clienteSupabase.storage.from('videos').upload(nombreBackup, blobOrig, { upsert: true, contentType: blobOrig.type })
+      let nombreFinal
+      if (actualizarVideo) {
+        // Sobrescribir el mismo archivo
+        nombreFinal = keyActual
+      } else {
+        const baseName = (nombreDestino?.trim() || nombre_sugerido || 'video_opt').replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_\-]/g,'')
+        nombreFinal = `${carpetaOriginal}${baseName}.${ext}`
       }
+
+      // Backup del original si se solicitó y no estamos ya sobrescribiendo con conservarOriginal=false
+      if (conservarOriginal && keyActual) {
+        try {
+          const respOrig = await fetch(video.url_publica)
+          if (respOrig.ok) {
+            const blobOrig = await respOrig.blob()
+            const extOrig = (blobOrig.type.split('/')[1] || 'mp4')
+            const baseBackup = keyActual.replace(/\.[a-zA-Z0-9]+$/, '')
+            const nombreBackup = `${baseBackup}.original.${extOrig}`
+            await clienteSupabase.storage.from('videos').upload(nombreBackup, blobOrig, { upsert: true, contentType: blobOrig.type })
+          }
+        } catch {}
+      }
+
       const { error: errUp } = await clienteSupabase.storage.from('videos').upload(nombreFinal, blob, { upsert: true, contentType: blob.type })
       if (errUp) throw errUp
       const { data: pub } = clienteSupabase.storage.from('videos').getPublicUrl(nombreFinal)
-      if (!conservarOriginal && keyActual && keyActual !== nombreFinal) {
+
+      // Si no se conservará el original y se creó un nuevo archivo, eliminar el anterior
+      if (!conservarOriginal && !actualizarVideo && keyActual && keyActual !== nombreFinal) {
         await clienteSupabase.storage.from('videos').remove([keyActual])
       }
+
       const { error } = await clienteSupabase.from('producto_videos').update({ [video.campo]: pub.publicUrl, estado: 'completado' }).eq('producto_id', productoId)
       if (error) throw error
       manejarExito('Video optimizado correctamente')
@@ -291,9 +338,12 @@ export default function VideosProducto({ productoId, manejarExito, manejarError 
               </select>
               <label>Calidad manual</label>
               <input type="range" min={0.1} max={0.95} step={0.05} value={calidadOpt} onChange={e=>setCalidadOpt(parseFloat(e.target.value))} />
-              <div className="detalle-archivo">Tamaño original: {tamOriginalKB ? `${tamOriginalKB} KB` : '—'} • Optimizado: {tamOptimizadoKB ? `${tamOptimizadoKB} KB` : '—'}</div>
+              <div className="detalle-archivo">Tamaño original: {tamOriginalKB ? `${tamOriginalKB} KB` : '—'} • Optimizado: {tamOptimizadoKB ? `${tamOptimizadoKB} KB` : 'Calculando…'}</div>
               <label className="check"><input type="checkbox" checked={conservarOriginal} onChange={e=>setConservarOriginal(e.target.checked)} /> Conservar original (backup)</label>
-              <input type="text" placeholder="Nombre de archivo destino (opcional)" value={nombreDestino} onChange={e=>setNombreDestino(e.target.value)} />
+              <label className="check"><input type="checkbox" checked={actualizarVideo} onChange={e=>setActualizarVideo(e.target.checked)} /> Actualizar video (sobrescribir)</label>
+              {!actualizarVideo && (
+                <input type="text" placeholder="Nombre de archivo destino (opcional)" value={nombreDestino} onChange={e=>setNombreDestino(e.target.value)} />
+              )}
             </div>
             <div className="modal-subida-acciones">
               <button className="btn" onClick={()=>setModalOptimizar(null)}>Cancelar</button>
