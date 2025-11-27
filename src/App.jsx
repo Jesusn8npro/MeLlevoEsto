@@ -52,6 +52,7 @@ const Usuarios = lazy(() => import('./paginas/admin/Usuarios/Usuarios.jsx'));
 const AdminChats = lazy(() => import('./paginas/admin/ManejoDeChats/AdminChats.jsx'));
 const ImagenesIA = lazy(() => import('./paginas/admin/ImagenesIA/ImagenesIA.jsx'));
 const VideosIA = lazy(() => import('./paginas/admin/VideosIA/VideosIA.jsx'));
+const PanelFeedMeta = lazy(() => import('./paginas/admin/FeedMeta/PanelFeedMeta.jsx'));
 const GenericaAdmin = lazy(() => import('./paginas/admin/GenericaAdmin.jsx'));
 const CalendarioTareas = lazy(() => import('./paginas/admin/calendario_tareas/CalendarioTareas.jsx'));
 const TableroTareas = lazy(() => import('./paginas/admin/calendario_tareas/TableroTareas.jsx'));
@@ -190,6 +191,13 @@ function App() {
               <RutaAdmin>
                 <DisposicionAdmin>
                   <ImagenesIA />
+                </DisposicionAdmin>
+              </RutaAdmin>
+            } />
+            <Route path="/admin/feed-meta" element={
+              <RutaAdmin>
+                <DisposicionAdmin>
+                  <PanelFeedMeta />
                 </DisposicionAdmin>
               </RutaAdmin>
             } />

@@ -35,6 +35,7 @@ const elementosNavegacion = [
       { nombre: 'Cupones de Descuento', ruta: '/admin/cupones', pro: false },
       { nombre: 'Pedidos', ruta: '/admin/pedidos', pro: false },
       { nombre: 'Inventario', ruta: '/admin/inventario', pro: false },
+      { nombre: 'Feed Meta', ruta: '/admin/feed-meta', pro: false },
     ],
   },
   {
